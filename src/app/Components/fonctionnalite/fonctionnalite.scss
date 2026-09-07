@@ -1,0 +1,111 @@
+/* ============================================
+   FONCTIONNALITÉS V1 – CARTES
+   (styles inchangés par rapport au template original.
+   .container, .section-header, .section-tag, .section-title,
+   .section-subtitle, .highlight, .animate-on-scroll et
+   .wave-separator viennent de src/shared.css)
+   ============================================ */
+.features-v1-section {
+    padding: 100px 0 140px;
+    background: linear-gradient(180deg, var(--white) 0%, #f0f6ff 100%);
+    overflow: hidden;
+    position: relative;
+}
+
+.v1-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.v1-card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 36px 28px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.v1-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(26,73,125,0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.v1-card:hover::after { opacity: 1; }
+
+.v1-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(26,73,125,0.15);
+}
+
+.v1-card-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: rgba(26,73,125,0.08);
+    color: var(--primary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 50px;
+    border: 1px solid rgba(26,73,125,0.15);
+}
+
+.v1-icon {
+    width: 56px; height: 56px;
+    background: rgba(26,73,125,0.08);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.v1-card:hover .v1-icon {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+.v1-title { font-size: 1.1rem; font-weight: 600; color: var(--gray-900); margin-bottom: 10px; }
+.v1-desc { font-size: 0.9rem; color: var(--gray-500); line-height: 1.7; }
+
+/* Staggered reveal for V1 cards (repose sur .animate-on-scroll de shared.css) */
+.v1-grid .v1-card:nth-child(1) { transition-delay: 0s; }
+.v1-grid .v1-card:nth-child(2) { transition-delay: 0.1s; }
+.v1-grid .v1-card:nth-child(3) { transition-delay: 0.2s; }
+.v1-grid .v1-card:nth-child(4) { transition-delay: 0.3s; }
+.v1-grid .v1-card:nth-child(5) { transition-delay: 0.4s; }
+.v1-grid .v1-card:nth-child(6) { transition-delay: 0.5s; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 1024px) {
+    .v1-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .v1-grid { grid-template-columns: repeat(2, 1fr); }
+    .section-title { font-size: 1.6rem; }
+}
+
+@media (max-width: 480px) {
+    .v1-grid { grid-template-columns: 1fr; }
+}

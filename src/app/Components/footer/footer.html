@@ -1,0 +1,45 @@
+<!-- ============================================
+     FOOTER
+============================================= -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="#hero" class="footer-logo" (click)="onAnchorClick($event, '#hero')">
+                    <img src="/images/Logo.png" alt="NextLearn" class="footer-logo-img"> Next<span>Learn</span>
+                </a>
+                <p>La bibliothèque académique intelligente. Accédez à vos cours, TD et examens, même hors ligne.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#hero" (click)="onAnchorClick($event, '#hero')">Accueil</a></li>
+                    <li><a href="#about" (click)="onAnchorClick($event, '#about')">À propos</a></li>
+                    <li><a href="#features-v1" (click)="onAnchorClick($event, '#features-v1')">Fonctionnalités</a></li>
+                    <li><a href="#founders" (click)="onAnchorClick($event, '#founders')">Équipe</a></li>
+                    <li><a href="#download" (click)="onAnchorClick($event, '#download')">Télécharger</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Légal</h4>
+                <ul>
+                    <li><a href="#">Mentions légales</a></li>
+                    <li><a href="#">Politique de confidentialité</a></li>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="mailto:nextlearncm@gmail.com"><i class="fas fa-envelope"></i> Email</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 NextLearn est un des produits de la NextCommunity. Tous droits réservés.</p>
+            <a href="#hero" class="back-to-top" aria-label="Retour en haut" (click)="onAnchorClick($event, '#hero')">
+                <i class="fas fa-chevron-up"></i>
+            </a>
+        </div>
+    </div>
+</footer>

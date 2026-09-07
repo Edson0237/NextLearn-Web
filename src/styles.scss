@@ -1,1 +1,333 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   NEXTLEARN – STYLES GLOBAUX
+   ============================================ */
+
+/* ---- Variables CSS ---- */
+:root {
+    --primary: #1a497d;
+    --primary-dark: #0d2844;
+    --primary-light: #2a5a9e;
+    --primary-glow: rgba(26, 73, 125, 0.4);
+    --accent: #7db8ff;
+    --accent-glow: rgba(125, 184, 255, 0.3);
+    --white: #ffffff;
+    --off-white: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1;
+    --gray-500: #64748b;
+    --gray-700: #334155;
+    --gray-900: #0f172a;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 20px rgba(26, 73, 125, 0.1);
+    --shadow-lg: 0 10px 40px rgba(26, 73, 125, 0.15);
+    --shadow-xl: 0 20px 60px rgba(26, 73, 125, 0.2);
+    --shadow-glow: 0 0 40px rgba(26, 73, 125, 0.2);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Reset & Base ---- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--gray-700);
+    background-color: var(--white);
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: default;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+section {
+    position: relative;
+}
+
+/* ============================================
+   CURSEUR LUMINEUX
+   ============================================ */
+.cursor-glow {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    background: radial-gradient(circle, rgba(26, 73, 125, 0.04) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+    opacity: 0;
+
+    &.active {
+        opacity: 1;
+    }
+}
+
+/* ============================================
+   BARRE DE PROGRESSION SCROLL
+   ============================================ */
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    width: 0%;
+    z-index: 10001;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* ============================================
+   SECTIONS GLOBALES
+   ============================================ */
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-tag {
+    display: inline-block;
+    background: rgba(26, 73, 125, 0.08);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+
+    &.tag-light {
+        background: rgba(255, 255, 255, 0.15);
+        color: var(--white);
+    }
+}
+
+.section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1.2;
+    margin-bottom: 16px;
+
+    &.text-white {
+        color: var(--white);
+    }
+}
+
+.section-subtitle {
+    font-size: 1.05rem;
+    color: var(--gray-500);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+
+    &.text-light {
+        color: rgba(255, 255, 255, 0.7);
+    }
+}
+
+.highlight {
+    color: var(--primary);
+}
+
+.highlight-light {
+    color: var(--accent);
+}
+
+/* ============================================
+   SHIMMER TEXT
+   ============================================ */
+.shimmer-text {
+    background: linear-gradient(120deg,
+            var(--primary) 0%,
+            var(--primary) 35%,
+            var(--accent) 50%,
+            var(--primary) 65%,
+            var(--primary) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+
+    0%,
+    100% {
+        background-position: 200% center;
+    }
+
+    50% {
+        background-position: 0% center;
+    }
+}
+
+/* ============================================
+   BUTTONS GLOBAUX
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-family);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 4px 15px var(--primary-glow);
+
+    &:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+
+    &:hover {
+        background: rgba(26, 73, 125, 0.05);
+        transform: translateY(-2px);
+    }
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 1rem;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   ANIMATIONS GLOBALES
+   ============================================ */
+.pulse-animation {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px var(--primary-glow);
+    }
+
+    50% {
+        box-shadow: 0 4px 30px var(--primary-glow);
+    }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: var(--transition-slow);
+
+    &.in-view {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   MAGNETIC BUTTON
+   ============================================ */
+.magnetic-btn {
+    position: relative;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+/* ============================================
+   WAVE SEPARATOR
+   ============================================ */
+.wave-separator {
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+}
+
+.wave-blue {
+    background: linear-gradient(180deg, #ffffff 0%, #0d2844 100%);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .section-header {
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: clamp(1.4rem, 3vw, 2rem);
+    }
+}

@@ -1,0 +1,48 @@
+<!-- ============================================
+     NAVIGATION
+============================================= -->
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="nav-container">
+    <a href="#hero" class="nav-logo" (click)="onNavLinkClick($event, '#hero')">
+      <span class="logo-icon"><img src="/images/Logo.png" alt="NextLearn" class="logo-img"></span>
+      <span class="logo-text">Next<span class="logo-highlight">Learn</span></span>
+    </a>
+
+    <ul class="nav-menu" [class.active]="isMenuOpen">
+      <li>
+        <a href="#hero" class="nav-link" [class.active]="activeSection === 'hero'"
+          (click)="onNavLinkClick($event, '#hero')">Accueil</a>
+      </li>
+      <li>
+        <a href="#features-v1" class="nav-link" [class.active]="activeSection === 'features-v1'"
+          (click)="onNavLinkClick($event, '#features-v1')">Fonctionnalités</a>
+      </li>
+      <li>
+        <a href="#founders" class="nav-link" [class.active]="activeSection === 'founders'"
+          (click)="onNavLinkClick($event, '#founders')">Équipe</a>
+      </li>
+      <li>
+        <a href="#contact" class="nav-link" [class.active]="activeSection === 'contact'"
+          (click)="onNavLinkClick($event, '#contact')">Contact</a>
+      </li>
+      <li>
+        <a href="#about" class="nav-link" [class.active]="activeSection === 'about'"
+          (click)="onNavLinkClick($event, '#about')">À propos</a>
+      </li>
+      <li>
+        <a href="#download" class="nav-link nav-cta magnetic-btn" (click)="onNavLinkClick($event, '#download')">
+          Télécharger <i class="fas fa-download"></i>
+        </a>
+      </li>
+    </ul>
+
+    <button class="nav-toggle" [class.active]="isMenuOpen" (click)="toggleMobileMenu()" aria-label="Menu">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Overlay mobile -->
+<div class="nav-overlay" [class.active]="isMenuOpen" (click)="closeMobileMenu()"></div>

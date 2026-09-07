@@ -1,0 +1,70 @@
+/* ============================================
+   CONTACT
+   (styles inchangés. .container, .section-header,
+   .section-tag, .section-title, .section-subtitle,
+   .highlight, .animate-on-scroll, .wave-separator
+   viennent de src/shared.css)
+   ============================================ */
+.contact-section {
+    padding: 100px 0 140px;
+    background: var(--white);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contact-card {
+    text-align: center;
+    padding: 40px 24px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.contact-card:hover::before { transform: scaleX(1); }
+
+.contact-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: transparent; }
+
+.contact-icon {
+    width: 60px; height: 60px;
+    background: rgba(26,73,125,0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--primary);
+    margin: 0 auto 16px;
+    transition: var(--transition);
+}
+
+.contact-card:hover .contact-icon { background: var(--primary); color: var(--white); box-shadow: 0 4px 20px var(--primary-glow); }
+.contact-card h3 { font-size: 1rem; font-weight: 600; color: var(--gray-900); margin-bottom: 8px; }
+.contact-card a { color: var(--primary); font-size: 0.9rem; }
+.contact-card a:hover { text-decoration: underline; }
+.contact-card p { font-size: 0.9rem; color: var(--gray-500); }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 1.6rem; }
+}

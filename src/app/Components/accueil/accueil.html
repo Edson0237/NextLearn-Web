@@ -1,0 +1,108 @@
+<!-- ============================================
+     HERO SECTION
+============================================= -->
+<section id="hero" class="hero">
+    <div class="hero-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Gradient mesh blobs -->
+    <div class="hero-mesh">
+        <div class="mesh-blob mesh-blob-1"></div>
+        <div class="mesh-blob mesh-blob-2"></div>
+        <div class="mesh-blob mesh-blob-3"></div>
+    </div>
+
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-badge animate-on-scroll">
+                <i class="fas fa-rocket"></i> Application disponible en V1
+            </div>
+            <h1 class="hero-title animate-on-scroll">
+                Next<span class="highlight shimmer-text">Learn</span>
+            </h1>
+            <p class="hero-subtitle animate-on-scroll">
+                Votre bibliothèque académique intelligente
+            </p>
+            <p class="hero-description animate-on-scroll">
+                Centralise cours, TD, synthèses et épreuves en un seul endroit.
+                Accédez à vos ressources académiques où que vous soyez, même sans connexion.
+            </p>
+            <div class="hero-buttons animate-on-scroll">
+                <a href="/apk/nextlearn_v1_1.0_android.apk"
+                   class="btn btn-primary btn-lg pulse-animation magnetic-btn"
+                   (click)="onAndroidDownloadClick($event)">
+                    <i class="fab fa-android"></i> Télécharger pour Android
+                </a>
+                <a href="#" class="btn btn-outline btn-lg magnetic-btn ios-btn" (click)="onIosClick($event)">
+                    <i class="fab fa-apple"></i> iOS – Consulter la version Web
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-mockup animate-on-scroll">
+            <div class="phone-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen phone-screen-screenshot">
+                        <img src="/images/Login Page Wireframe Mobile UI Prototype (6).png" alt="Capture d'écran NextLearn" class="phone-screenshot">
+                    </div>
+                </div>
+                <!-- Reflet sous le téléphone -->
+                <div class="phone-reflection"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wave-separator">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,70 1440,60 L1440,120 L0,120 Z" fill="#ffffff"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ============================================
+     MODALE : ALERTE SPAM (téléchargement Android)
+============================================= -->
+<div class="ios-alert-overlay" *ngIf="showSpamAlert" (click)="onSpamOverlayClick($event)">
+    <div class="ios-alert-box">
+        <button class="ios-alert-close" aria-label="Fermer" (click)="closeSpamAlert()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="ios-alert-icon" style="background:rgba(255,171,0,0.12);color:#e6a200;">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="ios-alert-title">Vérifiez vos spams !</h3>
+        <p class="ios-alert-text">
+            Lors de votre inscription, un <strong>e-mail de vérification</strong> vous sera envoyé.
+            Il est possible qu'il arrive dans votre dossier <strong>Spam / Courrier indésirable</strong>.
+            Pensez à le vérifier si vous ne le trouvez pas dans votre boîte de réception.
+        </p>
+        <button class="ios-alert-btn" (click)="confirmSpamAlert()">Compris, télécharger l'APK</button>
+    </div>
+</div>
+
+<!-- ============================================
+     MODALE : VERSION iOS À VENIR
+============================================= -->
+<div class="ios-alert-overlay" *ngIf="showIosAlert" (click)="onIosOverlayClick($event)">
+    <div class="ios-alert-box">
+        <button class="ios-alert-close" aria-label="Fermer" (click)="closeIosAlert()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="ios-alert-icon"><i class="fab fa-apple"></i></div>
+        <h3 class="ios-alert-title">Version iOS à venir !</h3>
+        <p class="ios-alert-text">
+            L'application iOS est en cours de développement et sera disponible prochainement.
+            En attendant, découvrez la version web de NextLearn.
+        </p>
+        <button class="ios-alert-btn" (click)="confirmIosAlert()">Continuer vers la version Web</button>
+    </div>
+</div>

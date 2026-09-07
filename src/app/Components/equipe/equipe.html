@@ -1,0 +1,222 @@
+<!-- ============================================
+     SECTION FONDATEURS
+============================================= -->
+<section id="founders" class="founders-section">
+    <!-- Grille de fond animée -->
+    <div class="founders-bg-grid"></div>
+
+    <!-- Particules fond -->
+    <div class="founders-particles">
+        <div class="fp fp-1"></div>
+        <div class="fp fp-2"></div>
+        <div class="fp fp-3"></div>
+        <div class="fp fp-4"></div>
+        <div class="fp fp-5"></div>
+        <div class="fp fp-6"></div>
+    </div>
+
+    <div class="container">
+        <div class="section-header animate-on-scroll">
+            <span class="section-tag">L'équipe</span>
+            <h2 class="section-title">Les <span class="highlight">fondateurs</span></h2>
+            <p class="section-subtitle">
+                Trois étudiants développeurs de l'Institut Universitaire Saint-Jean qui ont décidé de résoudre un problème concret : l'accès difficile aux ressources académiques.
+            </p>
+        </div>
+
+        <div class="founders-carousel-container animate-on-scroll">
+            <div class="founders-carousel" #carousel (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+                <!-- Fondateur 1 -->
+                <div class="founder-slide" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+                    <div class="founder-card-wrapper">
+                        <div class="founder-card-glow"></div>
+                        <div class="founder-card">
+                            <div class="founder-card-inner">
+                                <div class="founder-img-container">
+                                    <img src="/images/TientcheuSianiJoel Marvin.jpg" alt="Marvin Tientcheu" loading="lazy">
+                                </div>
+                                <div class="founder-info">
+                                    <div class="founder-role-badge">Co-Fondateur</div>
+                                    <h3 class="founder-name">Marvin Tientcheu</h3>
+                                    <p class="founder-bio">A initié NextLearn face aux difficultés d'accès aux ressources à l'Institut Universitaire Saint-Jean.Transforme les besoins des étudiants en interfaces simples et élégantes.</p>
+                                    <div class="founder-skills">
+                                        <span class="skill-tag">Ionic</span>
+                                        <span class="skill-tag">Design</span>
+                                        <span class="skill-tag">Product Vision</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fondateur 2 -->
+                <div class="founder-slide" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+                    <div class="founder-card-wrapper">
+                        <div class="founder-card-glow"></div>
+                        <div class="founder-card">
+                            <div class="founder-card-inner">
+                                <div class="founder-img-container">
+                                    <img src="/images/GiovanniCharles.jpeg" alt="Giovanni Charles" loading="lazy">
+                                </div>
+                                <div class="founder-info">
+                                    <div class="founder-role-badge">Co-fondateur</div>
+                                    <h3 class="founder-name">Giovanni Charles</h3>
+                                    <p class="founder-bio">Architecte backend. Construit l'infrastructure solide qui permet à NextLearn de servir des milliers d'étudiants.</p>
+                                    <div class="founder-skills">
+                                        <span class="skill-tag">Node.js</span>
+                                        <span class="skill-tag">MongoDB</span>
+                                        <span class="skill-tag">API</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fondateur 3 -->
+                <div class="founder-slide" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+                    <div class="founder-card-wrapper">
+                        <div class="founder-card-glow"></div>
+                        <div class="founder-card">
+                            <div class="founder-card-inner">
+                                <div class="founder-img-container">
+                                    <img src="/images/EdsonMbouh.jpeg" alt="Mbouh Edson" loading="lazy">
+                                </div>
+                                <div class="founder-info">
+                                    <div class="founder-role-badge">Co-fondateur</div>
+                                    <h3 class="founder-name">Mbouh Edson</h3>
+                                    <p class="founder-bio">Collecte les ressources pédagogiques et veille à leur qualité pour garantir une expérience d'apprentissage optimale.</p>
+                                    <div class="founder-skills">
+                                        <span class="skill-tag">Collecte</span>
+                                        <span class="skill-tag">Ressources</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-btn carousel-prev" (click)="prevSlide()" aria-label="Précédent">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-btn carousel-next" (click)="nextSlide()" aria-label="Suivant">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="carousel-dots">
+                <span
+                    class="carousel-dot"
+                    *ngFor="let slide of slides; let i = index"
+                    [class.active]="i === currentSlide"
+                    (click)="goToSlide(i)">
+                </span>
+            </div>
+        </div>
+
+        <!-- Citation fondatrice -->
+        <div class="founders-quote animate-on-scroll">
+            <div class="quote-mark">"</div>
+            <blockquote>
+                NextLearn, ce n'est pas juste une application. C'est une réponse à une réalité vécue, pensée par des étudiants, pour des étudiants. C'est le début d'une transformation de l'éducation.
+            </blockquote>
+            <div class="quote-author">— L'équipe NextLearn</div>
+        </div>
+    </div>
+
+    <div class="wave-separator">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,60 C240,120 480,0 720,60 C960,120 1200,0 1440,60 L1440,120 L0,120 Z" fill="#f8fafc"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ============================================
+     SECTION TÉLÉCHARGEMENT
+============================================= -->
+<section id="download" class="download-section">
+    <div class="container">
+        <div class="download-wrapper animate-on-scroll">
+            <div class="download-content">
+                <span class="section-tag">Téléchargement gratuit</span>
+                <h2 class="section-title">Prêt à révolutionner <br>vos <span class="highlight">révisions</span> ?</h2>
+                <p class="section-subtitle">
+                    Obtenez NextLearn gratuitement dès maintenant et rejoignez des centaines d'étudiants qui ont déjà transformé leur façon d'apprendre.
+                </p>
+
+                <div class="download-buttons">
+                    <a href="/apk/nextlearn_v1_1.0_android.apk"
+                       class="btn btn-download pulse-animation magnetic-btn"
+                       (click)="onAndroidDownloadClick($event)">
+                        <div class="btn-icon-wrap"><i class="fab fa-android"></i></div>
+                        <div class="btn-text-wrap">
+                            <span class="btn-small-text">Télécharger pour</span>
+                            <span class="btn-big-text">Android (APK)</span>
+                        </div>
+                    </a>
+                    <a href="#" class="btn btn-ios-soon ios-btn" (click)="onIosClick($event)">
+                        <div class="btn-icon-wrap"><i class="fab fa-apple"></i></div>
+                        <div class="btn-text-wrap">
+                            <span class="btn-small-text">Bientôt disponible sur</span>
+                            <span class="btn-big-text">iOS (App Store)</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="download-visual">
+                <div class="ios-notify">
+                    <h4><i class="fab fa-apple"></i> Être notifié pour iOS</h4>
+
+                    <form class="notify-form" *ngIf="!notifySubmitted" (submit)="onNotifySubmit($event)">
+                        <input type="email" name="email" placeholder="Votre adresse email" required #emailInput>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-bell"></i> Me notifier
+                        </button>
+                    </form>
+                    <p class="notify-info" *ngIf="!notifySubmitted">Nous vous préviendrons dès la sortie iOS.</p>
+
+                    <div class="notify-success" *ngIf="notifySubmitted">
+                        <i class="fas fa-check-circle"></i> Merci ! Vous serez notifié(e) dès la sortie iOS.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     MODALE : ALERTE SPAM (téléchargement Android)
+============================================= -->
+<div class="ios-alert-overlay" *ngIf="showSpamAlert" (click)="onSpamOverlayClick($event)">
+    <div class="ios-alert-box">
+        <button class="ios-alert-close" aria-label="Fermer" (click)="closeSpamAlert()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="ios-alert-icon" style="background:rgba(255,171,0,0.12);color:#e6a200;">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="ios-alert-title">Vérifiez vos spams !</h3>
+        <p class="ios-alert-text">
+            Lors de votre inscription, un <strong>e-mail de vérification</strong> vous sera envoyé.
+            Il est possible qu'il arrive dans votre dossier <strong>Spam / Courrier indésirable</strong>.
+            Pensez à le vérifier si vous ne le trouvez pas dans votre boîte de réception.
+        </p>
+        <button class="ios-alert-btn" (click)="confirmSpamAlert()">Compris, télécharger l'APK</button>
+    </div>
+</div>
+
+<!-- ============================================
+     MODALE : VERSION iOS À VENIR
+============================================= -->
+<div class="ios-alert-overlay" *ngIf="showIosAlert" (click)="onIosOverlayClick($event)">
+    <div class="ios-alert-box">
+        <button class="ios-alert-close" aria-label="Fermer" (click)="closeIosAlert()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="ios-alert-icon"><i class="fab fa-apple"></i></div>
+        <h3 class="ios-alert-title">Version iOS à venir !</h3>
+        <p class="ios-alert-text">
+            L'application iOS est en cours de développement et sera disponible prochainement.
+            En attendant, découvrez la version web de NextLearn.
+        </p>
+        <button class="ios-alert-btn" (click)="confirmIosAlert()">Continuer vers la version Web</button>
+    </div>
+</div>
