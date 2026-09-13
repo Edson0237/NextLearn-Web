@@ -1,5 +1,5 @@
 /* ============================================
-   NEXTLEARN – STYLES GLOBAUX
+   NEXTLEARN – DESIGN UPGRADÉ
    ============================================ */
 
 /* ---- Variables CSS ---- */
@@ -18,11 +18,11 @@
     --gray-500: #64748b;
     --gray-700: #334155;
     --gray-900: #0f172a;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 20px rgba(26, 73, 125, 0.1);
-    --shadow-lg: 0 10px 40px rgba(26, 73, 125, 0.15);
-    --shadow-xl: 0 20px 60px rgba(26, 73, 125, 0.2);
-    --shadow-glow: 0 0 40px rgba(26, 73, 125, 0.2);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 20px rgba(26,73,125,0.1);
+    --shadow-lg: 0 10px 40px rgba(26,73,125,0.15);
+    --shadow-xl: 0 20px 60px rgba(26,73,125,0.2);
+    --shadow-glow: 0 0 40px rgba(26,73,125,0.2);
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 20px;
@@ -33,13 +33,7 @@
 }
 
 /* ---- Reset & Base ---- */
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {
     scroll-behavior: smooth;
@@ -56,30 +50,12 @@ body {
     cursor: default;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-    transition: var(--transition);
-}
+a { text-decoration: none; color: inherit; transition: var(--transition); }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
 
-ul {
-    list-style: none;
-}
-
-img {
-    max-width: 100%;
-    display: block;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
-
-section {
-    position: relative;
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+section { position: relative; }
 
 /* ============================================
    CURSEUR LUMINEUX
@@ -91,15 +67,13 @@ section {
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
-    background: radial-gradient(circle, rgba(26, 73, 125, 0.04) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(26,73,125,0.04) 0%, transparent 70%);
     transform: translate(-50%, -50%);
     transition: opacity 0.3s;
     opacity: 0;
-
-    &.active {
-        opacity: 1;
-    }
 }
+
+.cursor-glow.active { opacity: 1; }
 
 /* ============================================
    BARRE DE PROGRESSION SCROLL
@@ -119,14 +93,11 @@ section {
 /* ============================================
    SECTIONS GLOBALES
    ============================================ */
-.section-header {
-    text-align: center;
-    margin-bottom: 60px;
-}
+.section-header { text-align: center; margin-bottom: 60px; }
 
 .section-tag {
     display: inline-block;
-    background: rgba(26, 73, 125, 0.08);
+    background: rgba(26,73,125,0.08);
     color: var(--primary);
     font-size: 0.8rem;
     font-weight: 600;
@@ -135,12 +106,9 @@ section {
     padding: 6px 18px;
     border-radius: 50px;
     margin-bottom: 16px;
-
-    &.tag-light {
-        background: rgba(255, 255, 255, 0.15);
-        color: var(--white);
-    }
 }
+
+.section-tag.tag-light { background: rgba(255,255,255,0.15); color: var(--white); }
 
 .section-title {
     font-size: clamp(1.8rem, 4vw, 2.8rem);
@@ -148,11 +116,9 @@ section {
     color: var(--gray-900);
     line-height: 1.2;
     margin-bottom: 16px;
-
-    &.text-white {
-        color: var(--white);
-    }
 }
+
+.section-title.text-white { color: var(--white); }
 
 .section-subtitle {
     font-size: 1.05rem;
@@ -160,30 +126,25 @@ section {
     max-width: 600px;
     margin: 0 auto;
     line-height: 1.8;
-
-    &.text-light {
-        color: rgba(255, 255, 255, 0.7);
-    }
 }
 
-.highlight {
-    color: var(--primary);
-}
+.section-subtitle.text-light { color: rgba(255,255,255,0.7); }
 
-.highlight-light {
-    color: var(--accent);
-}
+.highlight { color: var(--primary); }
+.highlight-light { color: var(--accent); }
 
 /* ============================================
    SHIMMER TEXT
    ============================================ */
 .shimmer-text {
-    background: linear-gradient(120deg,
-            var(--primary) 0%,
-            var(--primary) 35%,
-            var(--accent) 50%,
-            var(--primary) 65%,
-            var(--primary) 100%);
+    background: linear-gradient(
+        120deg,
+        var(--primary) 0%,
+        var(--primary) 35%,
+        var(--accent) 50%,
+        var(--primary) 65%,
+        var(--primary) 100%
+    );
     background-size: 200% 100%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -192,19 +153,12 @@ section {
 }
 
 @keyframes shimmer {
-
-    0%,
-    100% {
-        background-position: 200% center;
-    }
-
-    50% {
-        background-position: 0% center;
-    }
+    0%, 100% { background-position: 200% center; }
+    50% { background-position: 0% center; }
 }
 
 /* ============================================
-   BUTTONS GLOBAUX
+   BOUTONS
    ============================================ */
 .btn {
     display: inline-flex;
@@ -213,121 +167,109 @@ section {
     gap: 10px;
     font-family: var(--font-family);
     font-weight: 600;
+    font-size: 0.95rem;
     border: none;
     cursor: pointer;
     transition: var(--transition);
-    border-radius: var(--radius-lg);
     text-decoration: none;
-    position: relative;
-    overflow: hidden;
 }
 
 .btn-primary {
-    background: var(--primary);
+    background: linear-gradient(135deg, #1a497d, #2a5a9e);
     color: var(--white);
+    padding: 14px 28px;
+    border-radius: 50px;
     box-shadow: 0 4px 15px var(--primary-glow);
+}
 
-    &:hover {
-        background: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--primary-glow);
 }
 
 .btn-outline {
     background: transparent;
     color: var(--primary);
-    border: 2px solid var(--primary);
-
-    &:hover {
-        background: rgba(26, 73, 125, 0.05);
-        transform: translateY(-2px);
-    }
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: 2px solid rgba(26,73,125,0.25);
 }
 
-.btn-lg {
-    padding: 14px 32px;
-    font-size: 1rem;
+.btn-outline:hover {
+    border-color: var(--primary);
+    background: rgba(26,73,125,0.05);
+    transform: translateY(-2px);
 }
 
-.btn-sm {
-    padding: 8px 16px;
-    font-size: 0.85rem;
-}
+.btn-lg { padding: 16px 32px; font-size: 1rem; }
+.btn-sm { padding: 10px 20px; font-size: 0.85rem; }
 
 /* ============================================
    ANIMATIONS GLOBALES
    ============================================ */
-.pulse-animation {
-    animation: pulse 2s ease-in-out infinite;
+.pulse-animation { position: relative; }
+
+.pulse-animation::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: var(--primary);
+    opacity: 0;
+    z-index: -1;
+    animation: pulse 2.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
-
-    0%,
-    100% {
-        box-shadow: 0 4px 15px var(--primary-glow);
-    }
-
-    50% {
-        box-shadow: 0 4px 30px var(--primary-glow);
-    }
+    0% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.05); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
 }
 
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(30px);
-    transition: var(--transition-slow);
-
-    &.in-view {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1);
 }
+
+.animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
 
 /* ============================================
    MAGNETIC BUTTON
    ============================================ */
 .magnetic-btn {
     position: relative;
+}
 
-    &:hover {
-        transform: scale(1.05);
-    }
+.magnetic-btn:hover {
+    transform: scale(1.05);
 }
 
 /* ============================================
    WAVE SEPARATOR
    ============================================ */
-.wave-separator {
-    position: relative;
-    height: 120px;
-    overflow: hidden;
-
-    svg {
-        width: 100%;
-        height: 100%;
-        display: block;
-    }
-}
+.wave-separator { position: absolute; bottom: 0; left: 0; width: 100%; line-height: 0; }
+.wave-separator svg { width: 100%; height: 80px; }
 
 .wave-blue {
     background: linear-gradient(180deg, #ffffff 0%, #0d2844 100%);
 }
 
 /* ============================================
+   SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--gray-100); }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+::selection { background: rgba(26,73,125,0.2); color: var(--primary-dark); }
+
+/* ============================================
    RESPONSIVE
    ============================================ */
 @media (max-width: 768px) {
-    .container {
-        padding: 0 16px;
-    }
-
-    .section-header {
-        margin-bottom: 40px;
-    }
-
-    .section-title {
-        font-size: clamp(1.4rem, 3vw, 2rem);
-    }
+    .container { padding: 0 16px; }
+    .section-header { margin-bottom: 40px; }
+    .section-title { font-size: clamp(1.4rem, 3vw, 2rem); }
+    .cursor-glow { display: none; }
 }
