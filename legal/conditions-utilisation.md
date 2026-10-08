@@ -1,44 +1,6 @@
 # Conditions générales d'utilisation de l'application NextLearn
 
-Dernière mise à jour : 8 septembre 2026
-
-<!--
-  PROJET — À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION.
-
-  Cadre retenu : loi n° 2010/021 du 21 décembre 2010 régissant le commerce
-  électronique, loi n° 2010/012 du 21 décembre 2010 relative à la cybersécurité
-  et à la cybercriminalité, loi n° 2000/011 du 19 décembre 2000 relative au
-  droit d'auteur et aux droits voisins, loi n° 2011/012 du 6 mai 2011 portant
-  protection du consommateur, et loi n° 2024/017 du 23 décembre 2024 relative à
-  la protection des données à caractère personnel.
-
-  ÉDITEUR PERSONNE PHYSIQUE. NextLearn est exploité par un promoteur
-  individuel, sans société constituée : ni dénomination sociale, ni capital, ni
-  immatriculation au RCCM, ni directeur de la publication distinct de l'éditeur
-  lui-même. Il ne faut surtout pas en inventer — une mention d'immatriculation
-  fausse est une infraction en elle-même. La loi sur le commerce électronique
-  impose que l'éditeur soit identifiable, non qu'il soit immatriculé au
-  registre du commerce ; le NIU porté à l'article 3 y pourvoit.
-
-  IDENTITÉ COMMUNE AUX DEUX DOCUMENTS. Les mentions de l'article 3 doivent
-  rester strictement identiques à celles de l'article premier de la politique
-  de protection des données : deux identités divergentes dans deux textes qui
-  engagent la même personne se retournent contre elle. Toute correction faite
-  ici doit l'être là aussi.
-
-  PAS D'ADRESSE POSTALE. L'éditeur n'en dispose pas ; l'adresse électronique
-  tient lieu d'adresse de contact et la ville d'exercice est indiquée. À faire
-  trancher par le conseil, et à revoir si l'un des magasins d'applications
-  exige une adresse postale à la publication.
-
-  Les numéros d'articles des lois citées n'ont volontairement pas été repris :
-  ils doivent être vérifiés au Journal officiel par le conseil.
-
-  ARBITRAGE À TRANCHER PAR L'ÉDITEUR — article 8. Le catalogue est aujourd'hui
-  alimenté par l'équipe seule. Le texte est écrit pour couvrir également le
-  dépôt par les étudiants, prévu à terme. Si cette ouverture est abandonnée,
-  les alinéas correspondants doivent être retirés plutôt que laissés sans objet.
--->
+Dernière mise à jour : 8 octobre 2026
 
 ## Préambule
 

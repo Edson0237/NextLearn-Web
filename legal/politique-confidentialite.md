@@ -1,50 +1,6 @@
 # Politique de protection des données à caractère personnel
 
-Dernière mise à jour : 8 septembre 2026
-
-<!--
-  PROJET — À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION.
-
-  Ce texte décrit fidèlement ce que le code fait aujourd'hui : il a été rédigé
-  à partir des modèles de données, des prestataires et des durées de rétention
-  réellement en place, et non d'un modèle générique.
-
-  ÉDITEUR PERSONNE PHYSIQUE. NextLearn est exploité par un promoteur
-  individuel, sans société constituée : il n'y a donc ni dénomination sociale,
-  ni capital, ni immatriculation au RCCM, et il ne faut surtout pas en
-  inventer — une mention d'immatriculation fausse est une infraction en
-  elle-même, et elle rendrait attaquable l'ensemble du document. La loi
-  camerounaise n'impose pas d'être immatriculé au registre du commerce pour
-  être responsable d'un traitement : elle impose d'être identifiable. Le
-  numéro identifiant unique (NIU) porté à l'article premier y pourvoit.
-
-  PAS D'ADRESSE POSTALE. L'éditeur n'en dispose pas ; seuls la ville d'exercice
-  et le canal électronique sont indiqués. C'est un point à faire trancher par
-  le conseil : la loi sur le commerce électronique attend une adresse de
-  contact, et l'adresse électronique la constitue ici. Si Google Play ou l'App
-  Store en réclament une postale à la publication, une boîte postale ou une
-  domiciliation devra être ouverte, et cet article mis à jour.
-
-  L'ADRESSE ÉLECTRONIQUE DOIT ÊTRE RELEVÉE. Elle est le seul canal de contact :
-  c'est par elle que s'exercent les droits d'accès et d'effacement, et ne pas
-  répondre dans le délai de l'article 10 est un manquement.
-
-  Cadre retenu : loi n° 2024/017 du 23 décembre 2024 relative à la protection
-  des données à caractère personnel au Cameroun, applicable depuis le
-  23 juin 2026. Les références d'articles n'ont volontairement pas été citées :
-  elles doivent être vérifiées sur le Journal officiel par le conseil.
-
-  POINT D'ATTENTION MAJEUR : la loi soumet à autorisation préalable de l'APDP
-  le traitement des données et leur transfert hors du Cameroun. Or l'ensemble
-  de l'hébergement (base de données, fichiers, envoi d'e-mails) est situé hors
-  du territoire. Ces formalités doivent être accomplies indépendamment de la
-  publication du présent document, et elles n'ont rien à voir avec le fait
-  d'être ou non immatriculé au registre du commerce.
-
-  Ce même fichier doit être publié à une URL publique : les deux magasins
-  d'applications exigent un lien accessible sans connexion, en plus de
-  l'affichage dans l'application.
--->
+Dernière mise à jour : 8 octobre 2026
 
 ## Préambule
 
@@ -192,14 +148,20 @@ Nous faisons par ailleurs appel aux sous-traitants techniques suivants, liés
 par leurs conditions contractuelles et tenus d'agir sur nos seules
 instructions :
 
+- Contabo GmbH, pour l'hébergement du serveur applicatif, ainsi que des
+  documents, des épreuves, des soumissions et des justificatifs, lesquels
+  sont conservés sur le disque de ce serveur ;
 - MongoDB Atlas, pour l'hébergement de la base de données ;
-- Cloudinary, pour l'hébergement des documents, des photos de profil et des
-  justificatifs ;
-- Render, pour l'hébergement du serveur applicatif ;
+- Cloudinary, pour l'hébergement des seules photos de profil ;
 - Google Firebase Cloud Messaging, pour l'acheminement des notifications
   lorsque vous les avez activées ;
 - Google (service de messagerie Gmail), pour la transmission des codes de
   connexion et des messages de service.
+
+Votre justificatif d'identité ou de scolarité n'est pas confié à un
+hébergeur de fichiers tiers : il demeure sur le serveur applicatif, et n'est
+jamais servi par une adresse fixe ou devinable. Chaque consultation passe par
+une adresse à durée de vie limitée, signée cryptographiquement.
 
 L'accès aux justificatifs d'identité est restreint aux seules personnes
 habilitées à instruire les dossiers, et chaque consultation est journalisée.
