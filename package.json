@@ -10,7 +10,7 @@
     "legal": "node tools/build-legal.mjs",
     "prebuild": "npm run legal",
     "prestart": "npm run legal",
-    "test:legal": "node --test tools/build-legal.test.mjs"
+    "test:site": "node --test \"tools/*.test.mjs\""
   },
   "private": true,
   "packageManager": "npm@11.11.0",
