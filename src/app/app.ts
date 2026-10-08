@@ -1,5 +1,4 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { Header } from './Components/header/header';
 import { Accueil } from './Components/accueil/accueil';
 import { About } from './Components/about/about';
@@ -11,7 +10,7 @@ import { Fonctionnalite } from './Components/fonctionnalite/fonctionnalite';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Accueil, About, Contact, Equipe, Footer, Fonctionnalite],
+  imports: [Header, Accueil, About, Contact, Equipe, Footer, Fonctionnalite],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
