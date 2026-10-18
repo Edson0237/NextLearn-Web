@@ -3,12 +3,15 @@
 // arrondi : un utilisateur qui passe de l'app mobile à la PWA ne doit rien
 // remarquer.
 //
-// Portée : tout est sous `.nl-app`, jamais sur `:root`. La vitrine
-// (`features/vitrine/`) a sa propre palette dans `src/styles.scss` et ne
-// doit rien en hériter — les deux coexistent dans le même projet (un seul
-// domaine), pas dans le même espace visuel. `.nl-app` s'applique sur la
-// coque applicative que la Phase 3 construira ; en attendant, chaque route
-// qui en a besoin l'importe elle-même (voir design-catalog.scss).
+// Portée : jamais sur `:root`. La vitrine (`features/vitrine/`) a sa
+// propre palette dans `src/styles.scss` et ne doit rien en hériter — les
+// deux coexistent dans le même projet (un seul domaine), pas dans le même
+// espace visuel. Deux façons de les poser : la classe `.nl-app`, pour une
+// route entièrement sous la coque applicative (design-catalog, app-shell) ;
+// le mixin `nl-app-tokens` directement sur son propre `:host`, pour un
+// composant qui peut se retrouver à côté de la vitrine dans le même arbre
+// — `App` sert les deux, donc ce qu'il affiche à sa racine (`FatalError`,
+// `ToastHost`) ne peut pas compter sur un ancêtre `.nl-app`.
 //
 // Thème : trois états, comme `ThemeModeNotifier` côté Flutter — clair,
 // sombre, système. Par défaut (`.nl-app` seul) : clair. Le système décide
@@ -131,7 +134,13 @@
   --type-tp: #93a6bc;
 }
 
-.nl-app {
+// Le corps de `.nl-app`, extrait en mixin : un composant rendu hors de
+// toute coque applicative — `FatalError`/`ToastHost` posés à la racine de
+// `App`, qui sert aussi la vitrine — ne peut pas compter sur un ancêtre
+// `.nl-app`. Il s'inclut directement sur son propre `:host` à la place.
+// `.nl-app` elle-même n'est plus qu'un alias pratique pour les routes
+// entièrement sous la coque applicative (design-catalog, futur app-shell).
+@mixin nl-app-tokens {
   @include palette-claire;
 
   // Espacement — grille base 4, un `16` et un `18` posés côte à côte dans
@@ -188,6 +197,10 @@
   &[data-theme='dark'] {
     @include palette-sombre;
   }
+}
+
+.nl-app {
+  @include nl-app-tokens;
 }
 
 // ── Utilitaires d'ombre (équivalent de AppColors.shadowCard/shadowSoft) ──

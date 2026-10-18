@@ -1,0 +1,18 @@
+<div class="nl-shell__corps">
+  <router-outlet />
+</div>
+
+<nav class="nl-shell__barre" aria-label="Navigation principale">
+  @for (onglet of onglets; track onglet.route) {
+    <a
+      [routerLink]="['/app', onglet.route]"
+      routerLinkActive="nl-shell__onglet--actif"
+      #lien="routerLinkActive"
+      class="nl-shell__onglet"
+      (click)="surTap()"
+    >
+      <nl-icon [name]="lien.isActive ? onglet.iconActif : onglet.icon" [size]="24" />
+      <span class="nl-shell__libelle">{{ onglet.label }}</span>
+    </a>
+  }
+</nav>

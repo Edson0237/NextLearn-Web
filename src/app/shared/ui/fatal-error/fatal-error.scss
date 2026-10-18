@@ -1,4 +1,12 @@
+// Auto-suffisant plutôt que dépendant d'un ancêtre `.nl-app` : ce filet
+// peut remplacer la page entière à la racine de `App`, qui sert aussi la
+// vitrine — il ne peut donc pas compter sur une coque applicative pour
+// lui fournir ses jetons. Voir `_tokens.scss`.
+@use '../../styles/tokens';
+@use '../../styles/fonts';
+
 :host {
+  @include tokens.nl-app-tokens;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,6 +15,7 @@
   min-height: 100dvh;
   justify-content: center;
   background: var(--bg-canvas);
+  font-family: var(--font-family-body);
 }
 
 .nl-fatal__icone {

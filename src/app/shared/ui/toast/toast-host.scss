@@ -1,4 +1,9 @@
+// Auto-suffisant plutôt que dépendant d'un ancêtre `.nl-app` : posé une
+// fois à la racine de `App`, qui sert aussi la vitrine — voir `_tokens.scss`.
+@use '../../styles/tokens';
+
 :host {
+  @include tokens.nl-app-tokens;
   position: fixed;
   left: 16px;
   right: 16px;

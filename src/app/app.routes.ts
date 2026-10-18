@@ -6,11 +6,18 @@ import { Routes } from '@angular/router';
  * décision d'architecture et ce qu'elle implique).
  *
  * `/` reste la page vitrine, défilement d'ancres, inchangée dans son
- * fonctionnement. Tout ce qui relève de l'application vit sous `/app` — la
- * Phase 3 y ajoutera l'authentification, le shell à cinq onglets et les
- * écrans. Pour l'instant, une seule route y existe : la page de
- * démonstration du design system (Phase 2, point 6), qui n'est pas destinée
- * à rester accessible publiquement une fois la Phase 4 commencée.
+ * fonctionnement. Tout ce qui relève de l'application vit sous `/app` :
+ * authentification, shell à cinq onglets, gardes de routage — voir
+ * `app-shell.routes.ts` pour l'arbre complet (Phase 3).
+ *
+ * `loadChildren`, et non un import statique : quelqu'un qui ne visite
+ * jamais l'application (la vitrine seule) ne doit pas payer son code —
+ * Phase 3, point 2 du portage (« routes lazy-loadées »), et Phase 5
+ * (budget de performance) le demandent tout autant.
+ *
+ * `app/design-system` reste accessible en Phase 3/4 (comparaison visuelle
+ * continue avec Flutter au fil des écrans) ; elle n'est pas destinée à
+ * rester publique une fois la Phase 4 terminée.
  */
 export const routes: Routes = [
   {
@@ -24,5 +31,10 @@ export const routes: Routes = [
       import('./features/design-system/design-catalog/design-catalog').then(
         (m) => m.DesignCatalog,
       ),
+  },
+  {
+    path: 'app',
+    loadChildren: () =>
+      import('./features/app-shell/app-shell.routes').then((m) => m.APP_SHELL_ROUTES),
   },
 ];
