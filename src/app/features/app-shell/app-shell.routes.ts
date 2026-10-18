@@ -14,6 +14,8 @@ import { Unlock } from '../auth/unlock/unlock';
 import { ResetPin } from '../auth/reset-pin/reset-pin';
 import { EpreuvesList } from '../epreuves/epreuves-list/epreuves-list';
 import { EpreuveDetail } from '../epreuves/epreuve-detail/epreuve-detail';
+import { MesDepots } from '../contributions/mes-depots/mes-depots';
+import { DepotForm } from '../contributions/depot-form/depot-form';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -54,7 +56,7 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.supportTickets, ...stub('Signalements', 'support_tickets_page.dart') },
       { path: AppRoutes.deleteAccount, ...stub('Supprimer mon compte', 'delete_account_page.dart') },
       { path: AppRoutes.aPropos, ...stub('À propos', 'a_propos_page.dart') },
-      { path: AppRoutes.depotForm, ...stub('Proposer un document', 'depot_form_page.dart') },
+      { path: AppRoutes.depotForm, component: DepotForm },
       { path: AppRoutes.recours, ...stub('Voie de recours', 'recours_page.dart') },
       { path: AppRoutes.parametres, ...stub('Réglages', 'parametres_page.dart') },
       { path: AppRoutes.sessions, ...stub('Appareils connectés', 'sessions_page.dart') },
@@ -77,7 +79,7 @@ export const APP_SHELL_ROUTES: Routes = [
           { path: AppRoutes.bibliotheque, ...stub('Bibliothèque', 'bibliotheque_home_page.dart') },
           { path: AppRoutes.epreuves, component: EpreuvesList },
           { path: AppRoutes.progression, ...stub('Progression', 'progression_dashboard_page.dart') },
-          { path: AppRoutes.mesDepots, ...stub('Mes dépôts', 'mes_depots_page.dart') },
+          { path: AppRoutes.mesDepots, component: MesDepots },
           { path: AppRoutes.profil, ...stub('Profil', 'profil_home_page.dart') },
         ],
       },

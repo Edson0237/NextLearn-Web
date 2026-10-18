@@ -1,0 +1,165 @@
+<div class="nl-depf">
+  <header class="nl-depf__entete">
+    <button type="button" class="nl-depf__retour" (click)="annuler()" aria-label="Annuler">
+      <nl-icon name="arrow_back" [size]="20" />
+    </button>
+    <h1 class="nl-depf__titre-entete">Proposer un document</h1>
+  </header>
+
+  <div class="nl-depf__corps">
+    <div class="nl-depf__encadre">
+      <nl-icon name="info" [size]="20" />
+      <div>
+        <strong>Relu avant publication</strong>
+        <p>
+          Ton document n'apparaît pas tout de suite dans la bibliothèque : un administrateur le lit d'abord. Tu seras
+          prévenu de sa décision, et tu retrouveras l'état de tes envois dans « Mes dépôts ».
+        </p>
+      </div>
+    </div>
+
+    <h2 class="nl-depf__section">Le document</h2>
+
+    <label class="nl-depf__champ">
+      <span>Titre</span>
+      <input
+        type="text"
+        placeholder="ex. Chapitre 3 — Les intégrales multiples"
+        [value]="titre()"
+        (input)="titre.set(val($event))"
+      />
+    </label>
+
+    <label class="nl-depf__champ">
+      <span>Description</span>
+      <textarea
+        rows="3"
+        placeholder="Ce que contient le document, et ce qu'il vaut. C'est ce que liront les autres étudiants."
+        [value]="description()"
+        (input)="description.set(val($event))"
+      ></textarea>
+    </label>
+
+    <label class="nl-depf__champ">
+      <span>Type</span>
+      @switch (types().statut) {
+        @case ('erreur') {
+          <p class="nl-depf__erreur">Types indisponibles.</p>
+        }
+        @default {
+          <select [value]="type() ?? ''" (change)="type.set(val($event) || undefined)">
+            <option value="" disabled>Cours, TD ou synthèse</option>
+            @for (t of types().items; track t.value) {
+              <option [value]="t.value">{{ t.label }}</option>
+            }
+          </select>
+        }
+      }
+    </label>
+
+    <div class="nl-depf__rattachement">
+      <nl-icon name="check_circle" [size]="16" />
+      <div>
+        <strong>Classé automatiquement</strong>
+        <p>Ton école, ta filière et ton niveau sont repris de ton profil. Le document ira à ta promotion.</p>
+      </div>
+    </div>
+
+    <label class="nl-depf__champ">
+      <span>Auteur du document</span>
+      <input type="text" placeholder="Nom de l'enseignant ou de l'auteur" [value]="auteur()" (input)="auteur.set(val($event))" />
+    </label>
+
+    <label class="nl-depf__champ">
+      <span>Matière</span>
+      @switch (matieres().statut) {
+        @case ('erreur') {
+          <p class="nl-depf__erreur">Matières indisponibles.</p>
+        }
+        @default {
+          @if (matieres().items.length === 0 && matieres().statut === 'pret') {
+            <p class="nl-depf__erreur">Aucune matière pour ce niveau.</p>
+          } @else {
+            <select [value]="matiereId() ?? ''" (change)="matiereId.set(val($event) || undefined)">
+              <option value="" disabled>Choisis la matière</option>
+              @for (m of matieres().items; track m.id) {
+                <option [value]="m.id">{{ m.nom }}</option>
+              }
+            </select>
+          }
+        }
+      }
+    </label>
+
+    <label class="nl-depf__champ">
+      <span>Année académique</span>
+      <select [value]="anneeAcademique()" (change)="anneeAcademique.set(val($event))">
+        @for (a of annees; track a) {
+          <option [value]="a">{{ a }}</option>
+        }
+      </select>
+    </label>
+
+    <h2 class="nl-depf__section">D'où vient ce document ?</h2>
+    <p class="nl-depf__sous-texte">
+      Cette réponse nous permet de répondre si quelqu'un réclame le retrait du document. Réponds franchement : aucune
+      des réponses n'empêche le dépôt.
+    </p>
+
+    @for (l of licences; track l.valeur) {
+      <button type="button" class="nl-depf__licence" [class.nl-depf__licence--actif]="licence() === l.valeur" (click)="licence.set(l.valeur)">
+        <span class="nl-depf__licence-puce" [class.nl-depf__licence-puce--actif]="licence() === l.valeur"></span>
+        <span class="nl-depf__licence-texte">
+          <strong>{{ l.titre }}</strong>
+          <small>{{ l.explication }}</small>
+        </span>
+      </button>
+    }
+
+    @if (licence() === DepotLicence.autorise || licence() === DepotLicence.institutionnel) {
+      <label class="nl-depf__champ">
+        <span>Précise la source (facultatif)</span>
+        <input
+          type="text"
+          placeholder="ex. remis par M. Ngonga, UE INF231, 2025"
+          [value]="sourceDeclaree()"
+          (input)="sourceDeclaree.set(val($event))"
+        />
+      </label>
+    }
+
+    <h2 class="nl-depf__section">Le fichier</h2>
+    <p class="nl-depf__sous-texte">Un PDF, 20 Mo au maximum.</p>
+
+    @if (!fichier()) {
+      <label class="nl-depf__depot">
+        <input type="file" accept="application/pdf" (change)="surFichierChoisi($event)" hidden />
+        <nl-icon name="upload_file" [size]="28" />
+        <strong>Choisir un PDF</strong>
+      </label>
+    } @else {
+      <div class="nl-depf__fichier">
+        <nl-icon name="description" [size]="22" />
+        <div class="nl-depf__fichier-infos">
+          <strong>{{ fichier()!.name }}</strong>
+          <small>{{ (fichier()!.size / (1024 * 1024)).toFixed(1) }} Mo</small>
+        </div>
+        <button type="button" class="nl-depf__retirer" (click)="retirerFichier()" aria-label="Retirer ce fichier">
+          <nl-icon name="close" [size]="18" />
+        </button>
+      </div>
+    }
+
+    <button type="button" class="nl-depf__cta" [disabled]="envoiEnCours()" (click)="envoyer()">
+      @if (envoiEnCours()) {
+        <span class="nl-depf__spinner"></span>
+      } @else {
+        Envoyer pour relecture
+      }
+    </button>
+    <p class="nl-depf__engagement">
+      En envoyant ce document, tu confirmes que tu as le droit de le partager et qu'il ne contient aucune donnée
+      personnelle d'autrui (notes, noms, coordonnées).
+    </p>
+  </div>
+</div>

@@ -46,8 +46,11 @@ export class ReferencesRepository {
     });
   }
 
-  getMatieres(filiereId?: string): Promise<MatiereOption[]> {
-    return this.liste('/api/references/matieres', matiereDepuisJson, filiereId ? { filiereId } : {});
+  getMatieres(filtres: { filiereId?: string; niveau?: string } = {}): Promise<MatiereOption[]> {
+    return this.liste('/api/references/matieres', matiereDepuisJson, {
+      ...(filtres.filiereId ? { filiereId: filtres.filiereId } : {}),
+      ...(filtres.niveau ? { niveau: filtres.niveau } : {}),
+    });
   }
 
   getSemestres(universiteId?: string): Promise<OptionReference[]> {

@@ -1,0 +1,70 @@
+<div class="nl-dep">
+  <header class="nl-dep__entete">
+    <h1 class="nl-dep__titre">Mes dépôts</h1>
+    @if (depots().length > 0) {
+      <button type="button" class="nl-dep__ajouter" (click)="proposer()">
+        <nl-icon name="upload_file" [size]="18" />
+        Proposer
+      </button>
+    }
+  </header>
+
+  <nl-refreshable class="nl-dep__corps" [refreshing]="rafraichissement()" (refresh)="rafraichir()">
+    @switch (statut()) {
+      @case ('chargement') {
+        <div class="nl-dep__liste">
+          @for (i of [0, 1, 2]; track i) {
+            <nl-document-skeleton />
+          }
+        </div>
+      }
+      @case ('erreur') {
+        <nl-empty-state title="Chargement impossible" [subtitle]="erreur()" ctaLabel="Réessayer" (cta)="rafraichir()" />
+      }
+      @case ('pret') {
+        @if (depots().length === 0) {
+          <nl-empty-state
+            title="Aucun dépôt pour le moment"
+            subtitle="Tu peux proposer tes notes de cours, une synthèse ou un TD. Un administrateur les relit avant publication."
+            ctaLabel="Proposer"
+            (cta)="proposer()"
+          />
+        } @else {
+          <div class="nl-dep__liste">
+            @for (d of depots(); track d.id) {
+              <div class="nl-dep__carte">
+                <div class="nl-dep__ligne-titre">
+                  <span class="nl-dep__titre-depot">{{ d.titre }}</span>
+                  <span [class]="'nl-dep__pastille nl-dep__pastille--' + d.statut">
+                    <nl-icon [name]="iconeStatut(d.statut)" [size]="13" />
+                    {{ libelleDepotStatut(d.statut) }}
+                  </span>
+                </div>
+                @if (d.description) {
+                  <p class="nl-dep__description">{{ d.description }}</p>
+                }
+
+                @if (d.statut === DepotStatut.enAttente || d.statut === DepotStatut.enRevue) {
+                  <p class="nl-dep__note">
+                    Ce document n'est pas encore visible par les autres étudiants. Tu seras prévenu dès qu'il aura été relu.
+                  </p>
+                }
+
+                @if (d.statut === DepotStatut.refuse) {
+                  <div class="nl-dep__refus">
+                    <strong>Motif du refus</strong>
+                    <p>{{ d.motifRefus?.trim() || "Aucun motif n'a été précisé." }}</p>
+                    <button type="button" class="nl-dep__contester" (click)="contester()">
+                      <nl-icon name="fact_check" [size]="15" />
+                      Contester cette décision
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+  </nl-refreshable>
+</div>
