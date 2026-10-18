@@ -8,6 +8,10 @@ import { Onboarding } from '../auth/onboarding/onboarding';
 import { Splash } from '../auth/splash/splash';
 import { Register } from '../auth/register/register';
 import { Otp } from '../auth/otp/otp';
+import { PinSetup } from '../auth/pin-setup/pin-setup';
+import { LoginPin } from '../auth/login-pin/login-pin';
+import { Unlock } from '../auth/unlock/unlock';
+import { ResetPin } from '../auth/reset-pin/reset-pin';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -35,11 +39,11 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.onboarding, component: Onboarding },
       { path: AppRoutes.register, component: Register },
       { path: AppRoutes.otp, component: Otp, data: { isLogin2fa: false } },
-      { path: AppRoutes.pinSetup, ...stub('Créer un code', 'pin_setup_page.dart') },
-      { path: AppRoutes.login, ...stub('Connexion', 'login_pin_page.dart') },
+      { path: AppRoutes.pinSetup, component: PinSetup },
+      { path: AppRoutes.login, component: LoginPin },
       { path: AppRoutes.loginOtp, component: Otp, data: { isLogin2fa: true } },
-      { path: AppRoutes.unlock, ...stub('Déverrouillage', 'unlock_page.dart') },
-      { path: AppRoutes.resetPin, ...stub('Code oublié', 'reset_pin_page.dart') },
+      { path: AppRoutes.unlock, component: Unlock },
+      { path: AppRoutes.resetPin, component: ResetPin },
 
       // ── Hors coque (poussés par-dessus) ──────────────────────────────────
       { path: AppRoutes.notifications, ...stub('Notifications', 'notifications_page.dart') },

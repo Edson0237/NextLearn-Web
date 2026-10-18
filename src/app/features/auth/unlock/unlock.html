@@ -1,0 +1,26 @@
+<div class="nl-unlock">
+  <div class="nl-unlock__avatar">
+    <span>{{ initialesAffichees }}</span>
+  </div>
+  <h1 class="nl-unlock__titre">{{ accroche }}</h1>
+  <p class="nl-unlock__texte">Entre ton PIN pour rouvrir ton espace</p>
+
+  <nl-pin-input
+    [pin]="pin()"
+    [error]="erreur()"
+    [isLoading]="chargement"
+    [withBiometric]="biometrieDisponible()"
+    (digit)="onChiffre($event)"
+    (backspace)="onBackspace()"
+    (biometric)="tenterBiometrie()"
+  />
+
+  <div class="nl-unlock__pied">
+    <button type="button" class="nl-unlock__lien" [disabled]="chargement" (click)="allerReinitialisation()">
+      PIN oublié ?
+    </button>
+    <button type="button" class="nl-unlock__lien nl-unlock__lien--discret" [disabled]="chargement" (click)="changerDeCompte()">
+      Ce n'est pas moi
+    </button>
+  </div>
+</div>

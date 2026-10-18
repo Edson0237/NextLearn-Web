@@ -1,0 +1,26 @@
+<div class="nl-pinset">
+  <header class="nl-pinset__entete">
+    <button type="button" class="nl-pinset__fermer" (click)="demanderAbandon()" aria-label="Abandonner">
+      <nl-icon name="close" [size]="20" />
+    </button>
+    <h1 class="nl-pinset__titre-entete">Créer ton PIN</h1>
+  </header>
+
+  <div class="nl-pinset__corps">
+    <div class="nl-pinset__pastille">
+      <nl-icon name="fingerprint" [size]="28" />
+    </div>
+    <h2 class="nl-pinset__titre">{{ confirmant() ? 'Confirme ton PIN' : 'Choisis un PIN' }}</h2>
+    <p class="nl-pinset__texte">
+      {{ confirmant() ? 'Saisis à nouveau ton code à 4 chiffres' : 'Ce code te permettra de te connecter rapidement' }}
+    </p>
+
+    <nl-pin-input
+      [pin]="saisieActuelle()"
+      [error]="erreur()"
+      [isLoading]="chargement()"
+      (digit)="onChiffre($event)"
+      (backspace)="onBackspace()"
+    />
+  </div>
+</div>

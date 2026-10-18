@@ -1,0 +1,33 @@
+<div class="nl-loginpin">
+  <div class="nl-loginpin__avatar">
+    <span>{{ initialesAffichees }}</span>
+  </div>
+  <h1 class="nl-loginpin__titre">{{ accroche }}</h1>
+  <p class="nl-loginpin__texte">Entre ton e-mail et ton PIN pour continuer</p>
+
+  <label class="nl-loginpin__champ">
+    <span>Email</span>
+    <input
+      type="email"
+      placeholder="toi@exemple.com"
+      [value]="email()"
+      [disabled]="chargement"
+      (input)="email.set(val($event))"
+    />
+  </label>
+
+  <nl-pin-input
+    [pin]="pin()"
+    [error]="erreur()"
+    [isLoading]="chargement"
+    (digit)="onChiffre($event)"
+    (backspace)="onBackspace()"
+  />
+
+  <div class="nl-loginpin__pied">
+    <button type="button" class="nl-loginpin__lien" (click)="allerReinitialisation()">PIN oublié ?</button>
+    <button type="button" class="nl-loginpin__lien nl-loginpin__lien--discret" (click)="allerInscription()">
+      Pas encore de compte ? <strong>S'inscrire</strong>
+    </button>
+  </div>
+</div>

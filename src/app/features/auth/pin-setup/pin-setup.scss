@@ -1,0 +1,72 @@
+@use '../../../shared/styles/type';
+
+:host {
+  display: block;
+  height: 100dvh;
+}
+
+.nl-pinset {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-canvas);
+}
+
+.nl-pinset__entete {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg) 0;
+  padding-top: max(var(--space-md), env(safe-area-inset-top));
+}
+
+.nl-pinset__fermer {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  margin-left: -10px;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.nl-pinset__titre-entete {
+  margin: 0;
+  font: 700 1.1rem/1 var(--font-family);
+}
+
+.nl-pinset__corps {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-xxl) var(--space-xxl) var(--space-xxxl);
+  text-align: center;
+}
+
+.nl-pinset__pastille {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border-radius: 19px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  margin-bottom: var(--space-lg);
+}
+
+.nl-pinset__titre {
+  @include type.nl-h2;
+  margin: 0 0 var(--space-sm);
+}
+
+.nl-pinset__texte {
+  margin: 0 0 var(--space-xxxl);
+  color: var(--text-muted);
+  font: 400 0.95rem/1.5 var(--font-family-body);
+  max-width: 280px;
+}
