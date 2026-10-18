@@ -1,0 +1,105 @@
+// Échelle typographique — copie directe de `app_text_styles.dart`.
+//
+// Des mixins, pas des classes : une règle de classe partagée (`.nl-h3 {...}`)
+// ne traverserait pas l'encapsulation de vues d'Angular — chaque composant
+// compile son propre CSS, scopé par un attribut que seul CE composant pose
+// sur ses propres éléments. Un `.nl-h3` écrit ici et un `<p class="nl-h3">`
+// posé dans un autre composant ne se rencontreraient jamais. Un mixin, lui,
+// copie les propriétés au point d'inclusion : aucune dépendance à un
+// sélecteur partagé, donc aucun risque de ce genre.
+//
+// Chaque composant qui a besoin d'un style l'inclut directement dans sa
+// propre feuille : `@include nl-h3;`. Les variables CSS (`var(--primary)`,
+// etc.) restent, elles, partageables sans ce problème — elles se propagent
+// par héritage du DOM, pas par correspondance de sélecteur.
+
+@mixin nl-display-lg {
+  font: 800 2rem/1.15 var(--font-family);
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+@mixin nl-display-md {
+  font: 800 1.625rem/1.2 var(--font-family);
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+@mixin nl-h1 {
+  font: 700 1.5rem/1.25 var(--font-family);
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+}
+@mixin nl-h2 {
+  font: 700 1.25rem/1.3 var(--font-family);
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+}
+@mixin nl-h3 {
+  font: 700 1.0625rem/1.35 var(--font-family);
+  color: var(--text-primary);
+}
+@mixin nl-h4 {
+  font: 600 0.9375rem/1.4 var(--font-family);
+  color: var(--text-primary);
+}
+
+@mixin nl-body-lg {
+  font: 400 1rem/1.55 var(--font-family-body);
+  color: var(--text-primary);
+}
+@mixin nl-body-md {
+  font: 400 0.875rem/1.5 var(--font-family-body);
+  color: var(--text-primary);
+}
+@mixin nl-body-sm {
+  font: 400 0.75rem/1.5 var(--font-family-body);
+  color: var(--text-secondary);
+}
+
+@mixin nl-label-lg {
+  font: 600 0.875rem/1.2 var(--font-family-body);
+  letter-spacing: 0.1px;
+  color: var(--text-primary);
+}
+@mixin nl-label-md {
+  font: 600 0.75rem/1.2 var(--font-family-body);
+  letter-spacing: 0.2px;
+  color: var(--text-secondary);
+}
+@mixin nl-label-sm {
+  font: 600 0.625rem/1.2 var(--font-family-body);
+  letter-spacing: 0.3px;
+  color: var(--text-muted);
+}
+@mixin nl-caption {
+  font: 500 0.6875rem/1.4 var(--font-family-body);
+  color: var(--text-muted);
+}
+
+@mixin nl-button-text {
+  font: 700 0.9375rem/1.2 var(--font-family);
+  letter-spacing: 0.1px;
+}
+@mixin nl-button-text-sm {
+  font: 600 0.8125rem/1.2 var(--font-family);
+  letter-spacing: 0.1px;
+}
+
+@mixin nl-pin-digit {
+  font: 700 1.875rem/1.2 var(--font-family-mono);
+  letter-spacing: 2px;
+  color: var(--primary);
+}
+@mixin nl-stat-value {
+  font: 800 1.375rem/1 var(--font-family);
+  letter-spacing: -0.3px;
+  color: var(--primary);
+}
+@mixin nl-streak-number {
+  font: 800 1.0625rem/1.2 var(--font-family);
+  color: var(--streak-orange);
+}
+@mixin nl-badge-text {
+  font: 700 0.625rem/1.2 var(--font-family);
+  letter-spacing: 0.5px;
+  color: var(--text-on-primary);
+}

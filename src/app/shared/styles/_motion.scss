@@ -1,0 +1,28 @@
+// Contrat d'accessibilité du mouvement — copie du raisonnement de
+// `AppMotion.reduireLeMouvement` : le choix explicite fait dans
+// l'application l'emporte sur le réglage du système ; à défaut, le système
+// décide. `prefers-reduced-motion: reduce` est la version web de
+// « Réduire les animations » (iOS) / « Échelle d'animation » (Android), et
+// `.nl-motion-reduced` est l'équivalent du choix explicite stocké côté
+// Flutter dans les préférences.
+//
+// Toute transition posée dans `.nl-app` doit utiliser les variables de durée
+// de `_tokens.scss` (`--motion-standard`, etc.), jamais une valeur en dur :
+// c'est ce qui permet de tout couper d'un coup ici, sans repasser composant
+// par composant.
+
+.nl-app {
+  @media (prefers-reduced-motion: reduce) {
+    --motion-micro: 0ms;
+    --motion-standard: 0ms;
+    --motion-lente: 0ms;
+    --motion-fondu: 0ms;
+  }
+
+  &.nl-motion-reduced {
+    --motion-micro: 0ms;
+    --motion-standard: 0ms;
+    --motion-lente: 0ms;
+    --motion-fondu: 0ms;
+  }
+}

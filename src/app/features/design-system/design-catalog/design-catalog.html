@@ -1,0 +1,101 @@
+<div class="nl-app nl-catalog" [attr.data-theme]="attributTheme()">
+  <header class="nl-catalog__header">
+    <h1 class="nl-catalog__title">Design system NextLearn</h1>
+    <p class="nl-catalog__subtitle">
+      Comparaison visuelle avec l'application Flutter — Phase 2 du portage.
+    </p>
+
+    <div class="nl-catalog__theme-switch" role="group" aria-label="Thème">
+      <button nlButton variant="text" [fullWidth]="false"
+              (click)="choisirTheme('light')">Clair</button>
+      <button nlButton variant="text" [fullWidth]="false"
+              (click)="choisirTheme('dark')">Sombre</button>
+      <button nlButton variant="text" [fullWidth]="false"
+              (click)="choisirTheme('system')">Système</button>
+    </div>
+  </header>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Couleurs</h2>
+    <div class="nl-catalog__swatches">
+      @for (nom of ['primary', 'primary-dark', 'secondary', 'tertiary', 'danger',
+                     'warning', 'neutral', 'accent']; track nom) {
+        <div class="nl-swatch">
+          <div class="nl-swatch__chip" [style.background]="'var(--' + nom + ')'"></div>
+          <span class="nl-swatch__label">{{ nom }}</span>
+        </div>
+      }
+    </div>
+    <div class="nl-catalog__swatches">
+      @for (nom of ['bg-primary', 'bg-canvas', 'bg-secondary', 'bg-tertiary',
+                     'text-primary', 'text-secondary', 'text-muted', 'border'];
+            track nom) {
+        <div class="nl-swatch">
+          <div class="nl-swatch__chip nl-swatch__chip--bordee"
+               [style.background]="'var(--' + nom + ')'"></div>
+          <span class="nl-swatch__label">{{ nom }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Typographie</h2>
+    <p class="nl-type-sample nl-type-sample--display-lg">Display large</p>
+    <p class="nl-type-sample nl-type-sample--h1">Titre H1</p>
+    <p class="nl-type-sample nl-type-sample--h2">Titre H2</p>
+    <p class="nl-type-sample nl-type-sample--h3">Titre H3</p>
+    <p class="nl-type-sample nl-type-sample--body-lg">Corps de texte, taille large — lecture confortable sur mobile.</p>
+    <p class="nl-type-sample nl-type-sample--body-md">Corps de texte, taille courante.</p>
+    <p class="nl-type-sample nl-type-sample--label-md">ÉTIQUETTE</p>
+    <p class="nl-type-sample nl-type-sample--caption">Légende discrète</p>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Boutons</h2>
+    <div class="nl-catalog__row">
+      <button nlButton variant="primary" [fullWidth]="false">Primaire</button>
+      <button nlButton variant="outline" [fullWidth]="false">Contour</button>
+      <button nlButton variant="text" [fullWidth]="false">Texte</button>
+      <button nlButton variant="primary" size="sm" [fullWidth]="false">Petit</button>
+      <button nlButton variant="primary" [fullWidth]="false" disabled>Désactivé</button>
+    </div>
+    <button nlButton variant="primary">Pleine largeur (défaut)</button>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Puces de filtre</h2>
+    <div class="nl-catalog__row">
+      <nl-chip color="var(--type-cours)" [selected]="true">Cours</nl-chip>
+      <nl-chip color="var(--type-cours)">Cours</nl-chip>
+      <nl-chip color="var(--type-td)" [selected]="true">TD</nl-chip>
+      <nl-chip color="var(--type-epreuve)">Épreuve</nl-chip>
+      <nl-chip color="var(--type-synthese)" [compact]="true">Synthèse</nl-chip>
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Carte</h2>
+    <nl-card [pressable]="true" class="nl-catalog__card-demo">
+      <p class="nl-catalog__card-title">Cours — Analyse I</p>
+      <p class="nl-catalog__card-meta">ISI · Niveau 3 · 24 pages</p>
+    </nl-card>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Squelette de chargement</h2>
+    <nl-skeleton height="100px" />
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">État vide</h2>
+    <nl-card>
+      <nl-empty-state
+        title="Aucun favori pour l'instant"
+        subtitle="Les documents que vous mettez en favori apparaîtront ici."
+        ctaLabel="Parcourir la bibliothèque">
+        <span icon>☆</span>
+      </nl-empty-state>
+    </nl-card>
+  </section>
+</div>

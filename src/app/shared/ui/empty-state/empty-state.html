@@ -1,0 +1,14 @@
+<div class="nl-empty">
+  <div class="nl-empty__badge">
+    <ng-content select="[icon]" />
+  </div>
+
+  <p class="nl-empty__title">{{ title() }}</p>
+  <p class="nl-empty__subtitle">{{ subtitle() }}</p>
+
+  @if (ctaLabel()) {
+    <button nlButton [fullWidth]="false" class="nl-empty__cta" (click)="cta.emit()">
+      {{ ctaLabel() }}
+    </button>
+  }
+</div>

@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  background: linear-gradient(
+    100deg,
+    var(--bg-secondary) 35%,
+    var(--bg-primary) 50%,
+    var(--bg-secondary) 65%
+  );
+  background-size: 200% 100%;
+  animation: nl-shimmer 1.5s ease-in-out infinite;
+
+  // Contrat `prefers-reduced-motion` : un balayage qui boucle à l'infini est
+  // precisément le genre de mouvement que ce réglage existe pour supprimer.
+  // Fond statique plutôt qu'animation coupée à mi-balayage.
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: var(--bg-secondary);
+  }
+}
+
+:host-context(.nl-motion-reduced) {
+  animation: none;
+  background: var(--bg-secondary);
+}
+
+@keyframes nl-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

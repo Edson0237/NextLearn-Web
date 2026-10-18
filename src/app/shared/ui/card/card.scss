@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  padding: var(--space-lg);
+
+  &.nl-card--pressable {
+    cursor: pointer;
+    transition: transform var(--motion-micro) var(--ease-entree);
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+}

@@ -1,0 +1,30 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: var(--radius-pilule);
+  font: 600 0.75rem/1.2 var(--font-family-body);
+  color: var(--chip-color);
+  background: color-mix(in srgb, var(--chip-color) 10%, transparent);
+  padding: 6px 12px;
+  transition: background-color var(--motion-micro) var(--ease-entree);
+
+  &.nl-chip--compact {
+    padding: 3px 8px;
+    font-size: 0.625rem;
+  }
+
+  &.nl-chip--selected {
+    background: var(--chip-color);
+    color: var(--text-on-primary);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+  }
+}

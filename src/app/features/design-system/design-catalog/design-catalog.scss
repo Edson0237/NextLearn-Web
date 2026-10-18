@@ -1,0 +1,117 @@
+// Point d'entrée unique des styles d'application pour cette phase : tokens,
+// polices, règles « natives » et contrat de mouvement réduit ne sont
+// chargés qu'ici. La Phase 3 déplacera cette responsabilité vers la coque
+// applicative — voir le commentaire en tête de design-catalog.ts.
+@use '../../../shared/styles/tokens';
+@use '../../../shared/styles/fonts';
+@use '../../../shared/styles/native';
+@use '../../../shared/styles/motion';
+@use '../../../shared/styles/type';
+
+.nl-app {
+  background: var(--bg-canvas);
+  font-family: var(--font-family-body);
+}
+
+.nl-catalog {
+  padding: var(--space-page) var(--space-page) var(--space-xxxl);
+  max-width: 480px; // largeur d'un téléphone : c'est l'usage réel visé
+  margin: 0 auto;
+}
+
+.nl-catalog__header {
+  padding-block: var(--space-xxl);
+}
+
+.nl-catalog__title {
+  @include type.nl-h1;
+  margin: 0 0 var(--space-xs);
+}
+
+.nl-catalog__subtitle {
+  @include type.nl-body-sm;
+  color: var(--text-muted);
+  margin: 0 0 var(--space-lg);
+}
+
+.nl-catalog__theme-switch {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.nl-catalog__section {
+  margin-bottom: var(--space-xxxl);
+}
+
+.nl-catalog__section-title {
+  @include type.nl-label-md;
+  text-transform: uppercase;
+  margin: 0 0 var(--space-md);
+}
+
+.nl-catalog__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.nl-catalog__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.nl-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 72px;
+}
+
+.nl-swatch__chip {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+
+  &--bordee {
+    border: 1px solid var(--border);
+  }
+}
+
+.nl-swatch__label {
+  @include type.nl-caption;
+  text-align: center;
+  word-break: break-word;
+}
+
+.nl-type-sample {
+  margin: 0 0 var(--space-sm);
+
+  &--display-lg { @include type.nl-display-lg; }
+  &--h1 { @include type.nl-h1; }
+  &--h2 { @include type.nl-h2; }
+  &--h3 { @include type.nl-h3; }
+  &--body-lg { @include type.nl-body-lg; }
+  &--body-md { @include type.nl-body-md; }
+  &--label-md { @include type.nl-label-md; }
+  &--caption { @include type.nl-caption; }
+}
+
+.nl-catalog__card-demo {
+  display: block;
+}
+
+.nl-catalog__card-title {
+  @include type.nl-h4;
+  margin: 0 0 var(--space-xs);
+}
+
+.nl-catalog__card-meta {
+  @include type.nl-body-sm;
+  color: var(--text-muted);
+  margin: 0;
+}

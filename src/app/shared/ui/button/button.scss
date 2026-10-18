@@ -1,0 +1,98 @@
+// Pas de @use des tokens ici : les variables CSS (--primary, etc.) se
+// propagent par héritage normal du DOM depuis `.nl-app`, qui les importe une
+// seule fois (voir design-catalog.scss, puis le futur app-shell). Les
+// réimporter ici dupliquerait le bloc `.nl-app { --primary: ...; }` dans
+// chaque chunk de composant.
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font: inherit;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--motion-micro) var(--ease-entree),
+    transform var(--motion-micro) var(--ease-entree);
+
+  &.nl-btn--full {
+    width: 100%;
+  }
+
+  // ── Tailles ──────────────────────────────────────────────────────────────
+  &.nl-btn--md {
+    min-height: var(--touch-min); // 48px rendu, 54px Flutter — l'un des deux
+    // seuils d'accessibilité web (48px WCAG) l'emporte quand les deux
+    // diffèrent légèrement ; l'écart de 6px est invisible à l'usage.
+    height: 54px;
+    padding: 0 24px;
+    border-radius: var(--radius-sm);
+    font: 700 0.9375rem/1.2 var(--font-family);
+    letter-spacing: 0.1px;
+  }
+
+  &.nl-btn--sm {
+    height: 40px;
+    padding: 0 16px;
+    border-radius: var(--radius-sm);
+    font: 600 0.8125rem/1.2 var(--font-family);
+    letter-spacing: 0.1px;
+  }
+
+  // ── Variantes ────────────────────────────────────────────────────────────
+  &.nl-btn--primary {
+    background: var(--primary);
+    color: var(--text-on-primary);
+
+    &:active {
+      transform: scale(0.97);
+      background: var(--primary-dark);
+    }
+
+    &:disabled {
+      background: var(--border);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+  }
+
+  &.nl-btn--outline {
+    background: var(--bg-primary);
+    color: var(--primary);
+    border: 1.5px solid var(--border);
+
+    &:active {
+      transform: scale(0.97);
+      background: var(--bg-secondary);
+    }
+
+    &:disabled {
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+  }
+
+  &.nl-btn--text {
+    background: transparent;
+    color: var(--primary);
+    height: auto;
+    min-height: var(--touch-min);
+    padding: 0 var(--space-sm);
+
+    &:active {
+      opacity: 0.7;
+    }
+
+    &:disabled {
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+  }
+}
