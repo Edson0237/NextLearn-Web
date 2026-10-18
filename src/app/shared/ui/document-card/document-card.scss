@@ -1,0 +1,128 @@
+:host {
+  display: block;
+}
+
+.nl-doc-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-feuille);
+  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  padding: 14px;
+  cursor: pointer;
+
+  &--h {
+    width: 172px;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+.nl-doc-card__ligne {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+}
+
+.nl-doc-card__tuile {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--doc-color) 12%, transparent);
+  color: var(--doc-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nl-doc-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.nl-doc-card__entete {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--tertiary);
+
+  nl-chip {
+    margin-right: auto;
+  }
+}
+
+.nl-doc-card__titre {
+  margin: 7px 0 3px;
+  font: 600 0.9375rem/1.4 var(--font-family);
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  &--h {
+    margin: 9px 12px 4px;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+}
+
+.nl-doc-card__matiere {
+  margin: 0;
+  font: 600 0.75rem/1.5 var(--font-family-body);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nl-doc-card--h .nl-doc-card__matiere {
+  margin: 0 12px 10px;
+  font-size: 0.6875rem;
+}
+
+.nl-doc-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.nl-doc-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 500 0.6875rem/1.4 var(--font-family-body);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+nl-reading-progress {
+  display: block;
+  margin-top: 12px;
+}
+
+.nl-doc-card__bandeau {
+  height: 86px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--doc-color);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--doc-color) 16%, transparent),
+    color-mix(in srgb, var(--doc-color) 7%, transparent)
+  );
+}
+
+.nl-doc-card__hors-ligne {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  color: var(--tertiary);
+  display: flex;
+}

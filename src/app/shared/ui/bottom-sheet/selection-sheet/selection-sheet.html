@@ -1,0 +1,49 @@
+<nl-bottom-sheet-shell>
+  <div class="nl-select__entete">
+    <p class="nl-select__titre">{{ data.title }}</p>
+    <button type="button" class="nl-select__fermer" aria-label="Fermer" (click)="ref.close(undefined)">
+      <nl-icon name="close" [size]="20" />
+    </button>
+  </div>
+
+  @if (avecRecherche()) {
+    <div class="nl-select__recherche">
+      <nl-icon name="search" [size]="18" />
+      <input
+        type="search"
+        [placeholder]="data.searchHint ?? 'Rechercher'"
+        [ngModel]="filtre()"
+        (ngModelChange)="filtre.set($event)"
+      />
+      @if (filtre()) {
+        <button type="button" aria-label="Effacer la recherche" (click)="effacerRecherche()">
+          <nl-icon name="clear" [size]="16" />
+        </button>
+      }
+    </div>
+  }
+
+  @if (visibles().length === 0) {
+    <p class="nl-select__vide">{{ data.emptyMessage ?? 'Aucun résultat' }}</p>
+  } @else {
+    <ul class="nl-select__liste" role="listbox">
+      @for (choix of visibles(); track choix.label) {
+        <li role="option" [attr.aria-selected]="choix.value === data.currentValue">
+          <button type="button" class="nl-select__ligne"
+                  [class.nl-select__ligne--selectionne]="choix.value === data.currentValue"
+                  (click)="choisir(choix)">
+            <span class="nl-select__texte">
+              <span class="nl-select__libelle">{{ choix.label }}</span>
+              @if (choix.description) {
+                <span class="nl-select__description">{{ choix.description }}</span>
+              }
+            </span>
+            @if (choix.value === data.currentValue) {
+              <nl-icon name="check" [size]="18" />
+            }
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</nl-bottom-sheet-shell>

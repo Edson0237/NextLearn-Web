@@ -1,0 +1,55 @@
+<div class="nl-pin__points" role="img" [attr.aria-label]="libelleCompteur()" aria-live="polite">
+  @for (rempli of points(); track $index) {
+    <span
+      class="nl-pin__point"
+      [class.nl-pin__point--rempli]="rempli"
+      [class.nl-pin__point--erreur]="!!error()"
+    ></span>
+  }
+</div>
+
+<div class="nl-pin__erreur-zone">
+  @if (error()) {
+    <p class="nl-pin__erreur" role="alert">{{ error() }}</p>
+  }
+</div>
+
+@if (isLoading()) {
+  <div class="nl-pin__chargement" role="status" aria-label="Vérification en cours">
+    <span class="nl-pin__spin"></span>
+  </div>
+} @else {
+  <div class="nl-pin__numpad">
+    @for (rangee of rangees; track $index) {
+      <div class="nl-pin__rangee">
+        @for (chiffre of rangee; track chiffre) {
+          <button
+            type="button"
+            class="nl-pin__touche"
+            [disabled]="!peutSaisir()"
+            (click)="digit.emit(chiffre)"
+          >{{ chiffre }}</button>
+        }
+      </div>
+    }
+    <div class="nl-pin__rangee">
+      @if (withBiometric()) {
+        <button type="button" class="nl-pin__touche" aria-label="Déverrouiller par empreinte" (click)="biometric.emit()">
+          <nl-icon name="fingerprint" [size]="24" />
+        </button>
+      } @else {
+        <span class="nl-pin__touche nl-pin__touche--vide"></span>
+      }
+      <button type="button" class="nl-pin__touche" [disabled]="!peutSaisir()" (click)="digit.emit('0')">0</button>
+      <button
+        type="button"
+        class="nl-pin__touche nl-pin__touche--secondaire"
+        [disabled]="!peutEffacer()"
+        aria-label="Effacer le dernier chiffre"
+        (click)="backspace.emit()"
+      >
+        <nl-icon name="backspace" [size]="22" />
+      </button>
+    </div>
+  </div>
+}

@@ -1,0 +1,57 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: var(--bg-canvas);
+  padding: var(--space-xxxl);
+}
+
+.nl-offline__contenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 320px;
+}
+
+.nl-offline__illustration {
+  color: var(--text-muted);
+  margin-bottom: var(--space-xxl);
+}
+
+.nl-offline__titre {
+  font: 700 1.25rem/1.3 var(--font-family);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm);
+}
+
+.nl-offline__corps {
+  font: 400 0.875rem/1.5 var(--font-family-body);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-xxl);
+}
+
+.nl-offline__retry {
+  max-width: 240px;
+  margin-bottom: var(--space-sm);
+}
+
+.nl-offline__spin {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: nl-spin 700ms linear infinite;
+}
+
+@keyframes nl-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-offline__spin {
+    animation-duration: 1400ms;
+  }
+}

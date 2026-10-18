@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
+  <!-- Une loupe qui ne trouve rien : le cercle est vide, la croix discrete. -->
+  <circle cx="70" cy="52" r="28" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-width="3"/>
+  <path d="M91 73l22 22" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+  <path d="M61 43l18 18M79 43l-18 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".45"/>
+</svg>

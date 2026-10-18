@@ -1,0 +1,46 @@
+.nl-actions__liste {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 16px;
+}
+
+.nl-actions__ligne {
+  width: 100%;
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:active {
+    background: var(--bg-secondary);
+  }
+
+  &--destructif {
+    color: var(--danger);
+  }
+}
+
+.nl-actions__texte {
+  display: flex;
+  flex-direction: column;
+}
+
+.nl-actions__libelle {
+  font: 600 0.875rem var(--font-family-body);
+  color: var(--text-primary);
+}
+
+.nl-actions__ligne--destructif .nl-actions__libelle {
+  color: var(--danger);
+}
+
+.nl-actions__description {
+  font: 400 0.75rem/1.5 var(--font-family-body);
+  color: var(--text-muted);
+}

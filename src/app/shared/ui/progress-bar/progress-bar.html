@@ -1,0 +1,12 @@
+@if (showLabel()) {
+  <p class="nl-progress__label" [class.nl-progress__label--termine]="termine()">
+    {{ termine() ? 'Lu ✓' : 'Lu ' + pourcentage() + '%' }}
+  </p>
+}
+<div class="nl-progress__piste" [style.height.px]="height()" [style.border-radius.px]="height()">
+  <div
+    class="nl-progress__remplissage"
+    [style.width.%]="pourcentage()"
+    [style.background]="couleurBarre()"
+  ></div>
+</div>

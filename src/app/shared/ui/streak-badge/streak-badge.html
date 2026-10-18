@@ -1,0 +1,10 @@
+@if (compact()) {
+  <span class="nl-streak__emoji nl-streak__emoji--sm">🔥</span>
+  <span class="nl-streak__nombre nl-streak__nombre--sm">{{ streak() }}</span>
+} @else {
+  <span class="nl-streak__emoji">🔥</span>
+  <span class="nl-streak__texte">
+    <span class="nl-streak__nombre">{{ streak() }} jours de suite</span>
+    <span class="nl-streak__encouragement">Continue, tu progresses chaque jour</span>
+  </span>
+}

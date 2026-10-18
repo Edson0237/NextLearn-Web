@@ -1,0 +1,28 @@
+@if (horizontal()) {
+  <div class="nl-doc-skel nl-doc-skel--h">
+    <nl-skeleton height="86px" radius="var(--radius-feuille) var(--radius-feuille) 0 0" />
+    <div class="nl-doc-skel__corps">
+      <nl-skeleton width="56px" height="16px" radius="var(--radius-pilule)" />
+      <nl-skeleton height="12px" />
+      <nl-skeleton width="88px" height="12px" />
+      <nl-skeleton width="68px" height="10px" />
+    </div>
+  </div>
+} @else {
+  <div class="nl-doc-skel">
+    <div class="nl-doc-skel__ligne">
+      <nl-skeleton width="52px" height="52px" radius="var(--radius-md)" />
+      <div class="nl-doc-skel__info">
+        <nl-skeleton width="62px" height="18px" radius="var(--radius-pilule)" />
+        <nl-skeleton height="14px" />
+        <nl-skeleton width="150px" height="14px" />
+        <nl-skeleton width="96px" height="11px" />
+      </div>
+    </div>
+    <div class="nl-doc-skel__meta">
+      <nl-skeleton width="76px" height="11px" />
+      <nl-skeleton width="58px" height="11px" />
+      <nl-skeleton width="48px" height="11px" />
+    </div>
+  </div>
+}

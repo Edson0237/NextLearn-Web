@@ -1,0 +1,112 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nl-pin__points {
+  display: flex;
+  gap: 20px;
+}
+
+.nl-pin__point {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  transition: all 150ms var(--ease-entree);
+
+  &--rempli {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  &--rempli.nl-pin__point--erreur {
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+}
+
+.nl-pin__erreur-zone {
+  min-height: 24px;
+  margin-top: 12px;
+}
+
+.nl-pin__erreur {
+  margin: 0;
+  font: 400 0.75rem/1.4 var(--font-family-body);
+  color: var(--danger);
+  text-align: center;
+}
+
+.nl-pin__chargement {
+  padding: 24px;
+}
+
+.nl-pin__spin {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--bg-tertiary);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: nl-pin-spin 700ms linear infinite;
+}
+
+@keyframes nl-pin-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-pin__spin { animation-duration: 1400ms; }
+}
+
+.nl-pin__numpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.nl-pin__rangee {
+  display: flex;
+  justify-content: center;
+}
+
+.nl-pin__touche {
+  width: 70px;
+  height: 70px;
+  margin: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-primary);
+  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  font: 700 1.25rem var(--font-family);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform var(--motion-micro) var(--ease-entree);
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-muted);
+    cursor: default;
+  }
+
+  &--secondaire {
+    color: var(--text-secondary);
+  }
+
+  &--vide {
+    background: transparent;
+    box-shadow: none;
+  }
+}

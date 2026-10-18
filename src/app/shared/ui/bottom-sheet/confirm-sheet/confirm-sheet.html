@@ -1,0 +1,19 @@
+<nl-bottom-sheet-shell>
+  @if (data.icon) {
+    <div class="nl-confirm__icone" [class.nl-confirm__icone--destructif]="data.destructive">
+      <nl-icon [name]="data.icon" [size]="28" />
+    </div>
+  }
+
+  <p class="nl-confirm__titre">{{ data.title }}</p>
+  <p class="nl-confirm__description">{{ data.description }}</p>
+
+  <button nlButton [variant]="data.destructive ? 'primary' : 'primary'"
+          [class.nl-confirm__bouton--destructif]="data.destructive"
+          (click)="confirmer()">
+    {{ data.confirmLabel }}
+  </button>
+  <button nlButton variant="text" (click)="annuler()">
+    {{ data.cancelLabel ?? 'Annuler' }}
+  </button>
+</nl-bottom-sheet-shell>

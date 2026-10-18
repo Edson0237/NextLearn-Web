@@ -52,6 +52,24 @@
   </section>
 
   <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Icônes (Material Symbols, tracés inline)</h2>
+    <div class="nl-catalog__row">
+      @for (nom of iconesDemo; track nom) {
+        <nl-icon [name]="nom" [size]="22" />
+      }
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Illustrations</h2>
+    <div class="nl-catalog__row">
+      <nl-illustration name="vide_documents" [size]="72" class="nl-catalog__illustration" />
+      <nl-illustration name="vide_favoris" [size]="72" class="nl-catalog__illustration" />
+      <nl-illustration name="erreur_reseau" [size]="72" class="nl-catalog__illustration" />
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
     <h2 class="nl-catalog__section-title">Boutons</h2>
     <div class="nl-catalog__row">
       <button nlButton variant="primary" [fullWidth]="false">Primaire</button>
@@ -59,6 +77,7 @@
       <button nlButton variant="text" [fullWidth]="false">Texte</button>
       <button nlButton variant="primary" size="sm" [fullWidth]="false">Petit</button>
       <button nlButton variant="primary" [fullWidth]="false" disabled>Désactivé</button>
+      <button nlIconButton icon="search" ariaLabel="Rechercher"></button>
     </div>
     <button nlButton variant="primary">Pleine largeur (défaut)</button>
   </section>
@@ -75,16 +94,111 @@
   </section>
 
   <section class="nl-catalog__section">
-    <h2 class="nl-catalog__section-title">Carte</h2>
-    <nl-card [pressable]="true" class="nl-catalog__card-demo">
-      <p class="nl-catalog__card-title">Cours — Analyse I</p>
-      <p class="nl-catalog__card-meta">ISI · Niveau 3 · 24 pages</p>
-    </nl-card>
+    <h2 class="nl-catalog__section-title">Avatar</h2>
+    <div class="nl-catalog__row">
+      <nl-avatar initials="AN" [size]="48" [onDarkBackground]="false" />
+      <nl-avatar initials="JM" [size]="64" photoUrl="https://exemple.invalide/photo.jpg" [onDarkBackground]="false" [editable]="true" />
+      <div class="nl-catalog__avatar-sombre">
+        <nl-avatar initials="AN" [size]="48" />
+      </div>
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Carte de document</h2>
+    <div class="nl-catalog__row nl-catalog__row--wrap">
+      <nl-document-card
+        title="Analyse I — Suites et séries"
+        subject="Mathématiques"
+        typeLabel="Cours"
+        typeIcon="menu_book"
+        typeColor="var(--type-cours)"
+        [meta]="metaDemo"
+        [progress]="0.65"
+      />
+      <nl-document-card
+        title="TP Algorithmique n°3"
+        subject="Informatique"
+        typeLabel="TD"
+        typeIcon="edit_note"
+        typeColor="var(--type-td)"
+        [horizontal]="true"
+        [offline]="true"
+      />
+    </div>
   </section>
 
   <section class="nl-catalog__section">
     <h2 class="nl-catalog__section-title">Squelette de chargement</h2>
-    <nl-skeleton height="100px" />
+    <div class="nl-catalog__row">
+      <nl-skeleton height="100px" />
+    </div>
+    <div class="nl-catalog__row nl-catalog__row--wrap">
+      <nl-document-skeleton />
+      <nl-document-skeleton [horizontal]="true" />
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Progression de lecture</h2>
+    <nl-reading-progress [progress]="0.42" />
+    <div style="height: 12px"></div>
+    <nl-reading-progress [progress]="1" />
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Série et nombre animé</h2>
+    <div class="nl-catalog__row">
+      <nl-streak-badge [streak]="12" />
+      <nl-streak-badge [streak]="5" [compact]="true" />
+    </div>
+    <div class="nl-catalog__row">
+      <nl-animated-number [value]="compteur()" suffix=" pts" class="nl-catalog__nombre" />
+      <button nlButton variant="outline" [fullWidth]="false" (click)="relancerCompteur()">Relancer</button>
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Bandeau hors-ligne</h2>
+    <nl-offline-banner [offlineCount]="7" />
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Saisie du code PIN</h2>
+    <nl-pin-input
+      [pin]="pin()"
+      [error]="pinError()"
+      [withBiometric]="true"
+      (digit)="surChiffre($event)"
+      (backspace)="surEffacement()"
+    />
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Liste rafraîchissable (tirer vers le bas)</h2>
+    <nl-refreshable [refreshing]="rafraichissement()" (refresh)="surRafraichissement()" class="nl-catalog__refreshable">
+      <nl-card [pressable]="true">Document A</nl-card>
+      <nl-card [pressable]="true">Document B</nl-card>
+      <nl-card [pressable]="true">Document C</nl-card>
+    </nl-refreshable>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Entrée en cascade</h2>
+    <div class="nl-catalog__row nl-catalog__row--wrap">
+      @for (i of [0, 1, 2, 3]; track i) {
+        <nl-card [nlCascadeEnter]="i" class="nl-catalog__cascade-item">Élément {{ i + 1 }}</nl-card>
+      }
+    </div>
+  </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Feuilles glissantes (CDK Overlay)</h2>
+    <div class="nl-catalog__row">
+      <button nlButton variant="outline" [fullWidth]="false" (click)="ouvrirConfirmation()">Confirmation</button>
+      <button nlButton variant="outline" [fullWidth]="false" (click)="ouvrirListeActions()">Liste d'actions</button>
+      <button nlButton variant="outline" [fullWidth]="false" (click)="ouvrirSelection()">Sélection (recherche)</button>
+    </div>
   </section>
 
   <section class="nl-catalog__section">
@@ -98,4 +212,30 @@
       </nl-empty-state>
     </nl-card>
   </section>
+
+  <section class="nl-catalog__section">
+    <h2 class="nl-catalog__section-title">Écrans plein format</h2>
+    <div class="nl-catalog__row">
+      <button nlButton variant="outline" [fullWidth]="false" (click)="ecranVolet.set('erreur-fatale')">Erreur fatale</button>
+      <button nlButton variant="outline" [fullWidth]="false" (click)="ecranVolet.set('hors-ligne')">Sans connexion</button>
+      <button nlButton variant="outline" [fullWidth]="false" (click)="ecranVolet.set('catalogue')">Fermer l'aperçu</button>
+    </div>
+
+    @switch (ecranVolet()) {
+      @case ('erreur-fatale') {
+        <div class="nl-catalog__volet">
+          <nl-fatal-error [canGoBack]="true" [showDetails]="true" details="Error: exemple de trace"
+                           (back)="ecranVolet.set('catalogue')" />
+        </div>
+      }
+      @case ('hors-ligne') {
+        <div class="nl-catalog__volet">
+          <nl-offline-screen [canContinueAnyway]="true" (retry)="ecranVolet.set('catalogue')"
+                              (continueAnyway)="ecranVolet.set('catalogue')" />
+        </div>
+      }
+    }
+  </section>
 </div>
+
+<nl-toast-host class="nl-app" />

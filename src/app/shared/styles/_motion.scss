@@ -26,3 +26,35 @@
     --motion-fondu: 0ms;
   }
 }
+
+// ── Entrée en cascade (CascadeEnter) ────────────────────────────────────
+// Traduction d'`ApparitionCascade` : fondu + remontée de 16px, décalées de
+// 40ms par élément (plafonné à 8 via `--cascade-index`, posé par la
+// directive). Sous mouvement réduit, l'élément apparaît à sa place, sans
+// transition — pas de fondu coupé à mi-course.
+.nl-cascade-enter {
+  --cascade-pas: 40ms;
+  animation: nl-cascade-in var(--motion-standard, 250ms) var(--ease-entree, ease-out) both;
+  animation-delay: calc(var(--cascade-index, 0) * var(--cascade-pas));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-cascade-enter {
+    animation: none;
+  }
+}
+
+.nl-app.nl-motion-reduced .nl-cascade-enter {
+  animation: none;
+}
+
+@keyframes nl-cascade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

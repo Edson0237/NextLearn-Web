@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
+  <!-- Les arcs du signal, coupes. Le dernier manque : la coupure se lit sans
+       texte, y compris pour qui ne lit pas la langue de l'application. -->
+  <path d="M44 62a50 50 0 0 1 72 0" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".25"/>
+  <path d="M56 74a33 33 0 0 1 48 0" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".5"/>
+  <path d="M68 86a16 16 0 0 1 24 0" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="80" cy="98" r="4" fill="currentColor"/>
+  <path d="M112 34L136 58M136 34L112 58" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+</svg>

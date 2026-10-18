@@ -1,0 +1,9 @@
+@if (service.actif(); as toast) {
+  <div class="nl-toast" [class.nl-toast--avec-action]="!!toast.actionLabel">
+    <nl-icon [name]="service.icone(toast.tone)" [size]="20" [class]="'nl-toast__icone--' + toast.tone" />
+    <span class="nl-toast__message">{{ toast.message }}</span>
+    @if (toast.actionLabel) {
+      <button type="button" class="nl-toast__action" (click)="agir()">{{ toast.actionLabel }}</button>
+    }
+  </div>
+}

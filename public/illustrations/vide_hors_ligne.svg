@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
+  <!-- Un nuage et une fleche descendante : ce qui n'a pas encore ete rapatrie. -->
+  <path d="M50 74a16 16 0 0 1 2-32 22 22 0 0 1 42-4 15 15 0 0 1 4 36H50z" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M80 62v30M70 84l10 10 10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+</svg>

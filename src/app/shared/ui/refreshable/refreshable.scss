@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  position: relative;
+  overflow-y: auto;
+  height: 100%;
+  // Empêche le navigateur de gérer lui-même le tiré vertical (rebond natif,
+  // navigation "pull to refresh" de certains navigateurs mobiles) : c'est
+  // ce composant qui décide, pas la plateforme.
+  touch-action: pan-x;
+}
+
+.nl-refresh__indicateur {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  box-shadow: 0 4px 12px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  &--visible {
+    transition: opacity var(--motion-micro) var(--ease-entree);
+  }
+}
+
+.nl-refresh__spin {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--bg-tertiary);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+
+  &--actif {
+    animation: nl-refresh-spin 700ms linear infinite;
+  }
+}
+
+@keyframes nl-refresh-spin {
+  to { transform: rotate(360deg); }
+}
+
+.nl-refresh__contenu {
+  transition: transform var(--motion-micro) var(--ease-entree);
+}

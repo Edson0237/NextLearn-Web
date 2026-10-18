@@ -1,0 +1,26 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: transform var(--motion-micro) var(--ease-entree);
+
+  // 0.9 plutôt que le 0.97 global de `_native.scss` : une icône seule, sans
+  // le poids visuel d'une carte autour, a besoin d'un tassement plus net
+  // pour se voir — exactement `IconePressable.echelle = 0.9`.
+  &:active {
+    transform: scale(0.9);
+    background: var(--bg-secondary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+  }
+}

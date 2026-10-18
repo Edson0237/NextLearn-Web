@@ -101,17 +101,53 @@
   &--caption { @include type.nl-caption; }
 }
 
-.nl-catalog__card-demo {
-  display: block;
+.nl-catalog__row--wrap {
+  align-items: flex-start;
 }
 
-.nl-catalog__card-title {
-  @include type.nl-h4;
-  margin: 0 0 var(--space-xs);
-}
-
-.nl-catalog__card-meta {
-  @include type.nl-body-sm;
+.nl-catalog__illustration {
   color: var(--text-muted);
-  margin: 0;
+}
+
+.nl-catalog__avatar-sombre {
+  background: var(--primary);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.nl-catalog__nombre {
+  @include type.nl-stat-value;
+}
+
+.nl-catalog__refreshable {
+  height: 220px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+
+  nl-card {
+    padding: var(--space-md);
+  }
+}
+
+.nl-catalog__cascade-item {
+  width: 120px;
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.nl-catalog__volet {
+  margin-top: var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  // Les deux écrans plein format imposent `min-height: 100dvh` sur leur
+  // propre hôte : dans cet aperçu encadré, on ne veut qu'un extrait.
+  nl-fatal-error, nl-offline-screen {
+    min-height: 320px;
+  }
 }

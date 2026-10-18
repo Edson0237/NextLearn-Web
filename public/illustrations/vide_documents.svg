@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" fill="none">
+  <!-- Trois feuilles empilees, la derniere vide : « il n'y a rien ici », sans
+       dramatiser. Les traits sont ouverts plutot que pleins, pour que
+       l'illustration reste legere a cote d'un titre. -->
+  <rect x="28" y="26" width="74" height="66" rx="8" stroke="currentColor" stroke-width="3" opacity=".25"/>
+  <rect x="42" y="18" width="74" height="66" rx="8" stroke="currentColor" stroke-width="3" opacity=".5"/>
+  <rect x="56" y="34" width="74" height="66" rx="8" fill="currentColor" fill-opacity=".07" stroke="currentColor" stroke-width="3"/>
+  <path d="M70 54h46M70 66h32M70 78h20" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".45"/>
+</svg>

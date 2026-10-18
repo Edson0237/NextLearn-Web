@@ -1,0 +1,22 @@
+<div class="nl-offline__contenu">
+  <nl-illustration name="erreur_reseau" [size]="160" class="nl-offline__illustration" />
+
+  <p class="nl-offline__titre">Pas de connexion</p>
+  <p class="nl-offline__corps">
+    Vérifiez votre connexion internet et réessayez.
+  </p>
+
+  <button nlButton [fullWidth]="false" [disabled]="retrying()" (click)="retry.emit()" class="nl-offline__retry">
+    @if (retrying()) {
+      <span class="nl-offline__spin" aria-hidden="true"></span>
+    } @else {
+      Réessayer
+    }
+  </button>
+
+  @if (canContinueAnyway()) {
+    <button nlButton variant="text" [disabled]="retrying()" (click)="continueAnyway.emit()">
+      Continuer sans connexion
+    </button>
+  }
+</div>

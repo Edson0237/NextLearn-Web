@@ -1,0 +1,60 @@
+@if (horizontal()) {
+  <div
+    class="nl-doc-card nl-doc-card--h"
+    nlPressable
+    [attr.aria-label]="resume()"
+    (click)="activate.emit()"
+  >
+    <div class="nl-doc-card__bandeau" [style.--doc-color]="typeColor()">
+      <nl-icon [name]="typeIcon()" [size]="38" />
+      @if (offline()) {
+        <span class="nl-doc-card__hors-ligne">
+          <nl-icon name="cloud_done" [size]="14" />
+        </span>
+      }
+    </div>
+    <div class="nl-doc-card__corps">
+      <nl-chip [color]="typeColor()" [compact]="true">{{ typeLabel() }}</nl-chip>
+      <p class="nl-doc-card__titre nl-doc-card__titre--h">{{ title() }}</p>
+      <p class="nl-doc-card__matiere" [style.color]="typeColor()">{{ subject() }}</p>
+    </div>
+  </div>
+} @else {
+  <div
+    class="nl-doc-card"
+    nlPressable
+    [attr.aria-label]="resume()"
+    (click)="activate.emit()"
+  >
+    <div class="nl-doc-card__ligne">
+      <div class="nl-doc-card__tuile" [style.--doc-color]="typeColor()">
+        <nl-icon [name]="typeIcon()" [size]="26" />
+      </div>
+      <div class="nl-doc-card__info">
+        <div class="nl-doc-card__entete">
+          <nl-chip [color]="typeColor()" [compact]="true">{{ typeLabel() }}</nl-chip>
+          @if (offline()) {
+            <nl-icon name="cloud_done" [size]="17" />
+          }
+        </div>
+        <p class="nl-doc-card__titre">{{ title() }}</p>
+        <p class="nl-doc-card__matiere" [style.color]="typeColor()">{{ subject() }}</p>
+      </div>
+    </div>
+
+    @if (meta().length > 0) {
+      <div class="nl-doc-card__meta">
+        @for (item of meta(); track item.label) {
+          <span class="nl-doc-card__meta-item">
+            <nl-icon [name]="item.icon" [size]="13" />
+            {{ item.label }}
+          </span>
+        }
+      </div>
+    }
+
+    @if (progress() !== undefined) {
+      <nl-reading-progress [progress]="progress()!" />
+    }
+  </div>
+}

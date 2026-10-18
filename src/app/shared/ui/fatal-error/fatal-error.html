@@ -1,0 +1,22 @@
+<div class="nl-fatal__icone">
+  <nl-icon name="report_problem" [size]="34" />
+</div>
+
+<p class="nl-fatal__titre">Quelque chose s'est mal passé</p>
+<p class="nl-fatal__corps">
+  Ce n'est pas de votre fait. Vous pouvez revenir en arrière et réessayer.
+</p>
+
+@if (canGoBack()) {
+  <button nlButton variant="outline" (click)="back.emit()">Revenir en arrière</button>
+}
+
+@if (showDetails() && details()) {
+  <button type="button" class="nl-fatal__toggle" (click)="detailsVisibles.set(!detailsVisibles())">
+    {{ detailsVisibles() ? 'Masquer les détails' : 'Afficher les détails' }}
+  </button>
+
+  @if (detailsVisibles()) {
+    <pre class="nl-fatal__trace">{{ details() }}</pre>
+  }
+}

@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  padding: 8px 24px 24px;
+  text-align: center;
+}
+
+.nl-confirm__icone {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--destructif {
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+    color: var(--danger);
+  }
+}
+
+.nl-confirm__titre {
+  font: 700 1.25rem/1.3 var(--font-family);
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.nl-confirm__description {
+  font: 400 0.875rem/1.5 var(--font-family-body);
+  color: var(--text-secondary);
+  margin: 0 0 24px;
+}
+
+// `!important` : `Button` fixe déjà `background` sur `.nl-btn--primary`
+// dans sa propre feuille encapsulée, avec la même spécificité qu'ici —
+// sans ce poids, le résultat dépendrait de l'ordre de chargement des deux
+// bundles plutôt que de cette règle.
+.nl-confirm__bouton--destructif {
+  background: var(--danger) !important;
+}

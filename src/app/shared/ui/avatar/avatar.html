@@ -1,0 +1,23 @@
+@if (editable()) {
+  <button type="button" class="nl-avatar-wrap nl-avatar-wrap--editable"
+          aria-label="Changer la photo de profil" (click)="edit.emit()">
+    <ng-container [ngTemplateOutlet]="rond" />
+    <span class="nl-avatar__camera">
+      <nl-icon name="photo_camera" [size]="14" />
+    </span>
+  </button>
+} @else {
+  <div class="nl-avatar-wrap">
+    <ng-container [ngTemplateOutlet]="rond" />
+  </div>
+}
+
+<ng-template #rond>
+  <div class="nl-avatar">
+    @if (afficherPhoto()) {
+      <img [src]="photoUrl()" alt="" (error)="surErreur()" />
+    } @else {
+      <span class="nl-avatar__initiales">{{ initials() }}</span>
+    }
+  </div>
+</ng-template>

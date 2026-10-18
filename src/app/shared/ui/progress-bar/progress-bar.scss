@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.nl-progress__label {
+  margin: 0 0 4px;
+  font: 400 0.6875rem/1.4 var(--font-family-body);
+  color: var(--text-muted);
+
+  &--termine {
+    color: var(--tertiary);
+    font-weight: 600;
+  }
+}
+
+.nl-progress__piste {
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.nl-progress__remplissage {
+  height: 100%;
+  transition: width var(--motion-standard) var(--ease-entree);
+}

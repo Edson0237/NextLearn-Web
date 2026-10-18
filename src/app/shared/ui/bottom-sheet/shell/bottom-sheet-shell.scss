@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border-radius: var(--radius-feuille) var(--radius-feuille) 0 0;
+  max-height: 92vh;
+  // Le clavier, s'il s'ouvre sur un champ de la feuille, doit pousser le
+  // contenu plutôt que de le recouvrir : `interactive-widget=resizes-content`
+  // (meta viewport, Phase 3) rétracte déjà la fenêtre visuelle ; cette marge
+  // ne couvre que l'indicateur d'accueil iOS, pas le clavier lui-même.
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nl-sheet__poignee {
+  width: 40px;
+  height: 4px;
+  margin: 12px auto;
+  border-radius: var(--radius-pilule);
+  background: var(--border);
+  flex: none;
+}
+
+.nl-sheet__titre {
+  margin: 0 20px 12px;
+  font: 700 1.0625rem/1.35 var(--font-family);
+  color: var(--text-primary);
+}
+
+.nl-sheet__corps {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}

@@ -1,0 +1,24 @@
+<nl-bottom-sheet-shell [title]="data.title">
+  <ul class="nl-actions__liste" role="list">
+    @for (option of data.options; track option.label) {
+      <li>
+        <button
+          type="button"
+          class="nl-actions__ligne"
+          [class.nl-actions__ligne--destructif]="option.destructive"
+          (click)="choisir(option)"
+        >
+          @if (option.icon) {
+            <nl-icon [name]="option.icon" [size]="20" />
+          }
+          <span class="nl-actions__texte">
+            <span class="nl-actions__libelle">{{ option.label }}</span>
+            @if (option.description) {
+              <span class="nl-actions__description">{{ option.description }}</span>
+            }
+          </span>
+        </button>
+      </li>
+    }
+  </ul>
+</nl-bottom-sheet-shell>
