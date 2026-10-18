@@ -1,0 +1,134 @@
+@use '../../../shared/styles/tokens' as *;
+
+:host {
+  @include nl-app-tokens;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg-canvas);
+}
+
+.nl-prf {
+  padding-bottom: 32px;
+}
+
+.nl-prf__header {
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.nl-prf__header-bg {
+  position: absolute;
+  inset: 0 0 0 0;
+  background: linear-gradient(180deg, var(--primary-deep) 0%, var(--primary) 100%);
+  border-radius: 0 0 32px 32px;
+}
+
+.nl-prf__header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 20px 28px;
+  color: var(--text-on-primary);
+}
+
+.nl-prf__titre {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.nl-prf__avatar {
+  margin-bottom: 14px;
+}
+
+.nl-prf__avatar-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+.nl-prf__nom {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+.nl-prf__promo,
+.nl-prf__filiere,
+.nl-prf__universite {
+  margin: 0;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.nl-prf__promo {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.nl-prf__filiere {
+  font-size: 0.85rem;
+  margin-bottom: 2px;
+}
+
+.nl-prf__universite {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.nl-prf__body {
+  padding: 0 16px;
+}
+
+.nl-prf__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: -28px 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.nl-prf__stat {
+  background: var(--bg-primary);
+  border-radius: 18px;
+  padding: 14px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+}
+
+.nl-prf__stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 7px;
+
+  &--streak { background: rgba(232, 90, 56, 0.12); color: var(--streak-orange); }
+  &--docs { background: rgba(46, 158, 91, 0.12); color: var(--tertiary); }
+  &--hours { background: rgba(26, 74, 126, 0.12); color: var(--primary); }
+  &--offline { background: rgba(255, 122, 89, 0.12); color: var(--secondary); }
+}
+
+.nl-prf__stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.nl-prf__stat-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.1;
+}

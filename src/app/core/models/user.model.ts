@@ -157,3 +157,43 @@ export function utilisateurVersCache(u: UserModel): Record<string, unknown> {
     langue: u.langue, avatarUrl: u.avatarUrl, verificationStatus: u.verificationStatus,
   };
 }
+
+/**
+ * Un niveau que ce compte peut occuper — traduction de
+ * `NiveauDisponible` (`lib/domains/auth/domain/models/niveau_disponible.dart`).
+ */
+export interface NiveauDisponible {
+  readonly code: string;
+  readonly label: string;
+}
+
+export function niveauDisponibleDepuisApi(json: Record<string, unknown>): NiveauDisponible {
+  const code = String(json['code'] ?? '');
+  const label = String(json['label'] ?? '');
+  return { code, label: label.trim().length > 0 ? label : code };
+}
+
+/**
+ * Réponse du serveur pour les niveaux du cycle courant — traduction de
+ * `NiveauxDuCycle` (`lib/domains/auth/domain/models/niveau_disponible.dart`).
+ */
+export interface NiveauxDuCycle {
+  readonly niveaux: readonly NiveauDisponible[];
+  readonly actuel?: string;
+  readonly cycle?: string;
+  readonly cycleLabel?: string;
+  readonly niveauLabel?: string;
+}
+
+export function niveauxDuCycleDepuisApi(json: Record<string, unknown>): NiveauxDuCycle {
+  const raw = Array.isArray(json['niveaux']) ? json['niveaux'] as unknown[] : [];
+  return {
+    niveaux: raw
+      .filter((r): r is Record<string, unknown> => r != null && typeof r === 'object')
+      .map(niveauDisponibleDepuisApi),
+    actuel: json['actuel'] == null ? undefined : String(json['actuel']),
+    cycle: json['cycle'] == null ? undefined : String(json['cycle']),
+    cycleLabel: json['cycleLabel'] == null ? undefined : String(json['cycleLabel']),
+    niveauLabel: json['niveauLabel'] == null ? undefined : String(json['niveauLabel']),
+  };
+}

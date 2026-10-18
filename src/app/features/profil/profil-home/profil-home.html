@@ -1,0 +1,66 @@
+<div class="nl-prf">
+  <header class="nl-prf__header">
+    <div class="nl-prf__header-bg"></div>
+    <div class="nl-prf__header-content">
+      <h1 class="nl-prf__titre">Profil</h1>
+      @if (user()) {
+        <nl-avatar
+          class="nl-prf__avatar"
+          [initials]="initiales()"
+          [photoUrl]="user()!.avatarUrl"
+          [size]="84"
+          [editable]="true"
+          (edit)="ouvrirChoixPhoto()"
+        />
+        <input
+          #avatarInput
+          type="file"
+          accept="image/*"
+          class="nl-prf__avatar-input"
+          (change)="onFileSelected($event)"
+        />
+        <p class="nl-prf__nom">{{ nomComplet() }}</p>
+        <p class="nl-prf__promo">
+          {{ libelleCycle() }}{{ libelleCycle() && libelleNiveau() ? ' · ' : '' }}{{ libelleNiveau() }}
+        </p>
+        <p class="nl-prf__filiere">{{ user()!.filiere }}</p>
+        <p class="nl-prf__universite">{{ user()!.universite }}</p>
+      }
+    </div>
+  </header>
+
+  <main class="nl-prf__body">
+    <div class="nl-prf__stats">
+      <div class="nl-prf__stat">
+        <div class="nl-prf__stat-icon nl-prf__stat-icon--streak">
+          <nl-icon name="local_fire" [size]="22" />
+        </div>
+        <nl-animated-number class="nl-prf__stat-value" [value]="stats().streak" />
+        <span class="nl-prf__stat-label">jours de suite</span>
+      </div>
+      <div class="nl-prf__stat">
+        <div class="nl-prf__stat-icon nl-prf__stat-icon--docs">
+          <nl-icon name="menu_book" [size]="22" />
+        </div>
+        <nl-animated-number class="nl-prf__stat-value" [value]="stats().docsLus" />
+        <span class="nl-prf__stat-label">docs lus</span>
+      </div>
+      <div class="nl-prf__stat">
+        <div class="nl-prf__stat-icon nl-prf__stat-icon--hours">
+          <nl-icon name="schedule" [size]="22" />
+        </div>
+        <nl-animated-number class="nl-prf__stat-value" [value]="stats().heuresEtude" suffix="h" />
+        <span class="nl-prf__stat-label">heures</span>
+      </div>
+      <div class="nl-prf__stat">
+        <div class="nl-prf__stat-icon nl-prf__stat-icon--offline">
+          <nl-icon name="cloud_done" [size]="22" />
+        </div>
+        <nl-animated-number class="nl-prf__stat-value" [value]="stats().docsTelecharges" />
+        <span class="nl-prf__stat-label">hors-ligne</span>
+      </div>
+    </div>
+
+    <app-settings-list [inline]="true" />
+  </main>
+</div>

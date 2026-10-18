@@ -1,0 +1,56 @@
+<div class="nl-sup">
+  <header class="nl-sup__header">
+    <button type="button" class="nl-sup__back" (click)="retour()" aria-label="Retour">
+      <nl-icon name="arrow_back" [size]="24" />
+    </button>
+    <h1 class="nl-sup__titre">Mes signalements</h1>
+  </header>
+
+  <main class="nl-sup__body">
+    <p class="nl-sup__intro">
+      Retrouve ici les demandes que tu as envoyées à l'équipe NextLearn et leurs réponses.
+    </p>
+
+    @if (chargement()) {
+      <div class="nl-sup__squelette">
+        @for (i of [1,2,3]; track i) {
+          <div class="nl-sup__squelette-ligne"></div>
+        }
+      </div>
+    } @else if (erreur()) {
+      <div class="nl-sup__vide">
+        <p>{{ erreur() }}</p>
+        <button type="button" class="nl-sup__btn" (click)="charger()">Réessayer</button>
+      </div>
+    } @else if (tickets().length === 0) {
+      <div class="nl-sup__vide">
+        <div class="nl-sup__vide-icon">
+          <nl-icon name="admin_panel_settings" [size]="48" />
+        </div>
+        <p>Aucun signalement pour l'instant.</p>
+        <p class="nl-sup__vide-aide">Utilise le bouton « Signaler un problème » dans tes réglages.</p>
+      </div>
+    } @else {
+      <ul class="nl-sup__liste">
+        @for (ticket of tickets(); track ticket.id) {
+          <li class="nl-sup__ticket">
+            <div class="nl-sup__ticket-header">
+              <span class="nl-sup__ticket-sujet">{{ ticket.sujet }}</span>
+              <span class="nl-sup__ticket-status" [style.color]="'var(' + couleurStatut(ticket.status) + ')'">
+                {{ statusLibelle(ticket.status) }}
+              </span>
+            </div>
+            <p class="nl-sup__ticket-message">{{ ticket.message }}</p>
+            @if (ticket.reponseAdmin) {
+              <div class="nl-sup__ticket-reponse">
+                <span class="nl-sup__ticket-reponse-label">Réponse de l'équipe</span>
+                <p>{{ ticket.reponseAdmin }}</p>
+              </div>
+            }
+            <span class="nl-sup__ticket-date">{{ formatDate(ticket.createdAt) }}</span>
+          </li>
+        }
+      </ul>
+    }
+  </main>
+</div>

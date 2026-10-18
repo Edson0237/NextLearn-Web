@@ -3,7 +3,7 @@ import { AuthRepository } from './auth-repository';
 import { SessionExpiredService } from '../network/session-expired.service';
 import { VerificationService } from '../verification/verification.service';
 import { AuthState, ETAT_INITIAL, PendingJustificatif } from './auth.model';
-import { Cycle, NiveauEtude } from '../models/user.model';
+import { Cycle, NiveauEtude, NiveauxDuCycle } from '../models/user.model';
 import { ParcoursOtp } from '../models/parcours-otp.model';
 import { StatutDemandeOtp } from '../models/demande-otp.model';
 import { Failure } from '../models/failure.model';
@@ -311,6 +311,50 @@ export class AuthService {
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e, 'Changement impossible.') });
       return null;
+    }
+  }
+
+  /** Les niveaux entre lesquels ce compte peut changer. */
+  async niveauxDuCycle(): Promise<NiveauxDuCycle> {
+    return this.repo.niveauxDuCycle();
+  }
+
+  /** Change le niveau et met le profil local à jour. */
+  async changerNiveau(code: string): Promise<string | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const utilisateur = await this.repo.changerNiveau(code);
+      this.patch({ isLoading: false, user: utilisateur });
+      return null;
+    } catch (e) {
+      this.patch({ isLoading: false, error: this.messageErreur(e, 'Niveau non enregistré.') });
+      return this.messageErreur(e, 'Niveau non enregistré.');
+    }
+  }
+
+  /** Dépose une photo de profil. */
+  async changerAvatar(fichier: File): Promise<string | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const utilisateur = await this.repo.televerserAvatar(fichier);
+      this.patch({ isLoading: false, user: utilisateur });
+      return null;
+    } catch (e) {
+      this.patch({ isLoading: false, error: this.messageErreur(e, 'Photo non enregistrée.') });
+      return this.messageErreur(e, 'Photo non enregistrée.');
+    }
+  }
+
+  /** Retire la photo de profil. */
+  async supprimerAvatar(): Promise<string | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const utilisateur = await this.repo.supprimerAvatar();
+      this.patch({ isLoading: false, user: utilisateur });
+      return null;
+    } catch (e) {
+      this.patch({ isLoading: false, error: this.messageErreur(e, 'Photo non retirée.') });
+      return this.messageErreur(e, 'Photo non retirée.');
     }
   }
 

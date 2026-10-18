@@ -16,6 +16,11 @@ import { EpreuvesList } from '../epreuves/epreuves-list/epreuves-list';
 import { EpreuveDetail } from '../epreuves/epreuve-detail/epreuve-detail';
 import { MesDepots } from '../contributions/mes-depots/mes-depots';
 import { DepotForm } from '../contributions/depot-form/depot-form';
+import { ProfilHome } from '../profil/profil-home/profil-home';
+import { Parametres } from '../profil/parametres/parametres';
+import { Sessions } from '../profil/sessions/sessions';
+import { SupportTickets } from '../profil/support-tickets/support-tickets';
+import { DeleteAccount } from '../profil/delete-account/delete-account';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -53,13 +58,13 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.notifications, ...stub('Notifications', 'notifications_page.dart') },
       { path: AppRoutes.verificationForm, ...stub('Vérification académique', 'verification_form_page.dart') },
       { path: AppRoutes.verificationPending, ...stub('Dossier en attente', 'verification_pending_page.dart') },
-      { path: AppRoutes.supportTickets, ...stub('Signalements', 'support_tickets_page.dart') },
-      { path: AppRoutes.deleteAccount, ...stub('Supprimer mon compte', 'delete_account_page.dart') },
+      { path: AppRoutes.supportTickets, component: SupportTickets },
+      { path: AppRoutes.deleteAccount, component: DeleteAccount },
       { path: AppRoutes.aPropos, ...stub('À propos', 'a_propos_page.dart') },
       { path: AppRoutes.depotForm, component: DepotForm },
       { path: AppRoutes.recours, ...stub('Voie de recours', 'recours_page.dart') },
-      { path: AppRoutes.parametres, ...stub('Réglages', 'parametres_page.dart') },
-      { path: AppRoutes.sessions, ...stub('Appareils connectés', 'sessions_page.dart') },
+      { path: AppRoutes.parametres, component: Parametres },
+      { path: AppRoutes.sessions, component: Sessions },
       { path: AppRoutes.matieres, ...stub('Catalogue par matière', 'catalogue_page.dart') },
       { path: AppRoutes.matiere, ...stub('Matière', 'matiere_page.dart') },
       { path: AppRoutes.favoris, ...stub('Favoris', 'favoris_page.dart') },
@@ -80,7 +85,7 @@ export const APP_SHELL_ROUTES: Routes = [
           { path: AppRoutes.epreuves, component: EpreuvesList },
           { path: AppRoutes.progression, ...stub('Progression', 'progression_dashboard_page.dart') },
           { path: AppRoutes.mesDepots, component: MesDepots },
-          { path: AppRoutes.profil, ...stub('Profil', 'profil_home_page.dart') },
+          { path: AppRoutes.profil, component: ProfilHome },
         ],
       },
     ],

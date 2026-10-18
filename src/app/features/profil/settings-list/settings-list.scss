@@ -1,0 +1,238 @@
+@use '../../../shared/styles/tokens' as *;
+
+:host {
+  display: block;
+}
+
+.nl-sl {
+  padding-bottom: 24px;
+}
+
+.nl-sl__groupe {
+  margin-bottom: 24px;
+}
+
+.nl-sl__groupe-titre {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 10px 4px;
+}
+
+.nl-sl__carte {
+  background: var(--bg-primary);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  overflow: hidden;
+}
+
+.nl-sl__ligne {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: var(--bg-secondary);
+  }
+
+  &--destructive {
+    color: var(--danger);
+  }
+}
+
+.nl-sl__ligne-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  margin-right: 14px;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+
+  &--destructive {
+    color: var(--danger);
+    background: rgba(209, 67, 67, 0.1);
+  }
+}
+
+.nl-sl__ligne--destructive .nl-sl__ligne-icon {
+  color: var(--danger);
+  background: rgba(209, 67, 67, 0.1);
+}
+
+.nl-sl__ligne-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.nl-sl__ligne-titre {
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.nl-sl__ligne-sous {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.nl-sl__ligne-valeur {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  max-width: 120px;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.nl-sl__ligne-fleche {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.nl-sl__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.nl-sl__modal {
+  background: var(--bg-primary);
+  border-radius: 22px;
+  width: 100%;
+  max-width: 420px;
+  padding: 22px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.nl-sl__modal-titre {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--text-primary);
+}
+
+.nl-sl__modal-aide {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 0 18px;
+}
+
+.nl-sl__pin-field,
+.nl-sl__support-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+
+  span {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.nl-sl__pin-erreur {
+  font-size: 0.85rem;
+  color: var(--danger);
+  margin: -4px 0 14px;
+}
+
+.nl-sl__modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.nl-sl__btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  min-width: 88px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: var(--primary);
+    color: var(--text-on-primary);
+  }
+
+  &--text {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+}
+
+.nl-sl__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: nl-spin 0.8s linear infinite;
+}
+
+@keyframes nl-spin {
+  to { transform: rotate(360deg); }
+}

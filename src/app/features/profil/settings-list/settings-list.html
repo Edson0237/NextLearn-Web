@@ -1,0 +1,125 @@
+<section class="nl-sl" [class.nl-sl--inline]="inline()">
+  @for (g of groupes(); track g.titre) {
+    <div class="nl-sl__groupe">
+      <h2 class="nl-sl__groupe-titre">{{ g.titre }}</h2>
+      <div class="nl-sl__carte">
+        @for (ligne of g.lignes; track ligne.titre) {
+          <button
+            type="button"
+            class="nl-sl__ligne"
+            [class.nl-sl__ligne--destructive]="ligne.destructive"
+            (click)="ligne.action()"
+          >
+            <div class="nl-sl__ligne-icon" [class.nl-sl__ligne-icon--destructive]="ligne.destructive">
+              <nl-icon [name]="ligne.icone" [size]="20" />
+            </div>
+            <div class="nl-sl__ligne-text">
+              <span class="nl-sl__ligne-titre">{{ ligne.titre }}</span>
+              <span class="nl-sl__ligne-sous">{{ ligne.sousTitre }}</span>
+            </div>
+            @if (ligne.valeur) {
+              <span class="nl-sl__ligne-valeur">{{ ligne.valeur }}</span>
+            }
+            <nl-icon class="nl-sl__ligne-fleche" name="chevron_right" [size]="20" />
+          </button>
+        }
+      </div>
+    </div>
+  }
+</section>
+
+@if (modalPinVisible()) {
+  <div class="nl-sl__overlay" (click)="fermerPinChange()">
+    <div class="nl-sl__modal" role="dialog" aria-modal="true" aria-labelledby="pin-titre" (click)="$event.stopPropagation()">
+      <h3 id="pin-titre" class="nl-sl__modal-titre">Changer le code PIN</h3>
+      <p class="nl-sl__modal-aide">Saisis ton code actuel, puis choisis-en un nouveau.</p>
+
+      <label class="nl-sl__pin-field">
+        <span>Code actuel</span>
+        <input
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          [value]="pinAncien()"
+          (input)="saisirPin('ancien', $event)"
+          [disabled]="pinEnvoi()"
+        />
+      </label>
+      <label class="nl-sl__pin-field">
+        <span>Nouveau code</span>
+        <input
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          [value]="pinNouveau()"
+          (input)="saisirPin('nouveau', $event)"
+          [disabled]="pinEnvoi()"
+        />
+      </label>
+      <label class="nl-sl__pin-field">
+        <span>Confirmer</span>
+        <input
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          [value]="pinConfirmation()"
+          (input)="saisirPin('confirmation', $event)"
+          [disabled]="pinEnvoi()"
+        />
+      </label>
+
+      @if (pinErreur()) {
+        <p class="nl-sl__pin-erreur">{{ pinErreur() }}</p>
+      }
+
+      <div class="nl-sl__modal-actions">
+        <button type="button" class="nl-sl__btn nl-sl__btn--text" [disabled]="pinEnvoi()" (click)="fermerPinChange()">Annuler</button>
+        <button type="button" class="nl-sl__btn nl-sl__btn--primary" [disabled]="pinEnvoi()" (click)="validerPinChange()">
+          @if (pinEnvoi()) {
+            <span class="nl-sl__spinner"></span>
+          } @else {
+            Enregistrer
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalSupportVisible()) {
+  <div class="nl-sl__overlay" (click)="fermerSupport()">
+    <div class="nl-sl__modal" role="dialog" aria-modal="true" aria-labelledby="support-titre" (click)="$event.stopPropagation()">
+      <h3 id="support-titre" class="nl-sl__modal-titre">Signaler un problème</h3>
+
+      <label class="nl-sl__support-field">
+        <span>Type de problème</span>
+        <select [value]="supportCategorie()" (change)="supportCategorie.set(val($event))">
+          @for (cat of categoriesSupport; track cat.value) {
+            <option [value]="cat.value">{{ cat.label }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="nl-sl__support-field">
+        <span>Sujet</span>
+        <input type="text" [value]="supportSujet()" (input)="supportSujet.set(val($event))" placeholder="Ex. impossible de me connecter" />
+      </label>
+
+      <label class="nl-sl__support-field">
+        <span>Description</span>
+        <textarea [value]="supportMessage()" (input)="supportMessage.set(val($event))" rows="4" placeholder="Décris ce qui se passe…"></textarea>
+      </label>
+
+      <div class="nl-sl__modal-actions">
+        <button type="button" class="nl-sl__btn nl-sl__btn--text" [disabled]="supportEnvoi()" (click)="fermerSupport()">Annuler</button>
+        <button type="button" class="nl-sl__btn nl-sl__btn--primary" [disabled]="supportEnvoi() || !supportSujet().trim() || !supportMessage().trim()" (click)="envoyerSupport()">
+          @if (supportEnvoi()) {
+            <span class="nl-sl__spinner"></span>
+          } @else {
+            Envoyer
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

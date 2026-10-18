@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AUTH_PATH } from '../network/api-config';
 import { SecureStorageService } from '../storage/secure-storage.service';
 import { Failure } from '../models/failure.model';
-import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../models/user.model';
+import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi, NiveauxDuCycle, niveauxDuCycleDepuisApi } from '../models/user.model';
 import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../models/demande-otp.model';
 import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../models/parcours-otp.model';
 import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../models/domaine.model';
@@ -371,6 +371,42 @@ export class AuthRepository {
     this.storage.clearPinAttempts();
     const fermees = data['sessionsFermees'];
     return typeof fermees === 'number' ? fermees : 0;
+  }
+
+  /** Les niveaux entre lesquels ce compte peut changer. */
+  async niveauxDuCycle(): Promise<NiveauxDuCycle> {
+    try {
+      const reponse = await firstValueFrom(this.http.get('/api/me/levels'));
+      return niveauxDuCycleDepuisApi(donnees(reponse));
+    } catch {
+      return { niveaux: [] };
+    }
+  }
+
+  /** Dépose une photo de profil. */
+  async televerserAvatar(fichier: File): Promise<UserModel> {
+    const formulaire = new FormData();
+    formulaire.append('avatar', fichier, fichier.name);
+    try {
+      const reponse = await firstValueFrom(this.http.post('/api/profile/avatar', formulaire));
+      const utilisateur = utilisateurDepuisApi(donnees(reponse));
+      this.storage.saveUser(utilisateur);
+      return utilisateur;
+    } catch (e) {
+      throw this.echec(e);
+    }
+  }
+
+  /** Retire la photo de profil. */
+  async supprimerAvatar(): Promise<UserModel> {
+    try {
+      const reponse = await firstValueFrom(this.http.delete('/api/profile/avatar'));
+      const utilisateur = utilisateurDepuisApi(donnees(reponse));
+      this.storage.saveUser(utilisateur);
+      return utilisateur;
+    } catch (e) {
+      throw this.echec(e);
+    }
   }
 
   // ── Verrouillage après échecs de PIN ─────────────────────────────────────

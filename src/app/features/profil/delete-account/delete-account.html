@@ -1,0 +1,76 @@
+<div class="nl-del">
+  <header class="nl-del__header">
+    <button type="button" class="nl-del__back" (click)="retour()" aria-label="Retour">
+      <nl-icon name="arrow_back" [size]="24" />
+    </button>
+    <h1 class="nl-del__titre">Supprimer mon compte</h1>
+  </header>
+
+  <main class="nl-del__body">
+    @if (etape() === 1) {
+      <div class="nl-del__warning">
+        <div class="nl-del__warning-icon">
+          <nl-icon name="warning" [size]="48" />
+        </div>
+        <h2 class="nl-del__warning-titre">Cette action est définitive</h2>
+        <p class="nl-del__warning-texte">
+          Nous supprimerons ton compte et les données associées. Les suppressions
+          démarrent immédiatement et ne peuvent pas être annulées.
+        </p>
+      </div>
+
+      <h3 class="nl-del__section-titre">Voici ce qui sera supprimé :</h3>
+      <ul class="nl-del__consequences">
+        @for (c of consequences(); track c.label) {
+          <li class="nl-del__consequence">
+            <div class="nl-del__consequence-icon">
+              <nl-icon [name]="c.icon" [size]="20" />
+            </div>
+            <span>{{ c.label }}</span>
+          </li>
+        }
+      </ul>
+
+      <button type="button" class="nl-del__btn-continuer" (click)="continuer()">
+        Continuer
+      </button>
+      <button type="button" class="nl-del__btn-annuler" (click)="retour()">
+        Annuler
+      </button>
+    } @else {
+      <div class="nl-del__pin">
+        <h2 class="nl-del__pin-titre">Saisis ton code PIN</h2>
+        <p class="nl-del__pin-aide">
+          Pour confirmer, entre le code PIN de déverrouillage à 4 chiffres.
+        </p>
+
+        <div class="nl-del__pin-bulles" aria-live="polite">
+          @for (i of [0,1,2,3]; track i) {
+            <div class="nl-del__pin-bulle" [class.nl-del__pin-bulle--remplie]="pin().length > i"></div>
+          }
+        </div>
+
+        <label class="nl-del__pin-label" for="pin-suppression">Code PIN</label>
+        <input
+          id="pin-suppression"
+          class="nl-del__pin-input"
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          autocomplete="off"
+          [value]="pin()"
+          (input)="saisirPin($event)"
+          [disabled]="envoi()"
+          aria-describedby="pin-aide"
+        />
+        <p id="pin-aide" class="nl-del__pin-aide-visuelle">
+          Saisie masquée. Le compte sera supprimé automatiquement à la 4e touche.
+        </p>
+
+        @if (erreur()) {
+          <p class="nl-del__pin-erreur">{{ erreur() }}</p>
+        }
+      </div>
+    }
+  </main>
+</div>

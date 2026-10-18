@@ -1,0 +1,69 @@
+<div class="nl-ses">
+  <header class="nl-ses__header">
+    <button type="button" class="nl-ses__back" (click)="retour()" aria-label="Retour">
+      <nl-icon name="arrow_back" [size]="24" />
+    </button>
+    <h1 class="nl-ses__titre">Appareils connectés</h1>
+  </header>
+
+  <main class="nl-ses__body">
+    <p class="nl-ses__intro">
+      Tu vois ici les sessions actives de ton compte. La session en cours est signalée.
+    </p>
+
+    @if (chargement()) {
+      <div class="nl-ses__squelette">
+        @for (i of [1,2,3]; track i) {
+          <div class="nl-ses__squelette-ligne"></div>
+        }
+      </div>
+    } @else if (erreur()) {
+      <div class="nl-ses__vide">
+        <p>{{ erreur() }}</p>
+        <button type="button" class="nl-ses__btn" (click)="charger()">Réessayer</button>
+      </div>
+    } @else {
+      @if (sessions().length > 1) {
+        <button type="button" class="nl-ses__revoke-others" (click)="revoquerLesAutres()">
+          Déconnecter tous les autres appareils
+        </button>
+      }
+
+      <ul class="nl-ses__liste">
+        @for (session of sessions(); track session.sessionId) {
+          <li class="nl-ses__item" [class.nl-ses__item--courante]="session.courante">
+            <div class="nl-ses__item-main">
+              <div class="nl-ses__item-icon">
+                <nl-icon [name]="iconePour(session)" [size]="22" />
+              </div>
+              <div class="nl-ses__item-text">
+                <span class="nl-ses__item-nom">
+                  {{ session.appareil }}
+                  @if (session.courante) {
+                    <span class="nl-ses__badge-courante">Cet appareil</span>
+                  }
+                </span>
+                <span class="nl-ses__item-meta">
+                  {{ session.plateforme }} {{ session.versionApp }}
+                  @if (session.derniereActivite) {
+                    · Actif le {{ formatDate(session.derniereActivite) }}
+                  }
+                </span>
+              </div>
+            </div>
+            @if (!session.courante) {
+              <button
+                type="button"
+                class="nl-ses__item-action"
+                (click)="revoquer(session)"
+                [attr.aria-label]="'Déconnecter ' + session.appareil"
+              >
+                <nl-icon name="logout" [size]="18" />
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </main>
+</div>
