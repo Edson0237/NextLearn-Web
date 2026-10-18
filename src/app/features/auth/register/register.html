@@ -1,0 +1,231 @@
+<div class="nl-reg">
+  <header class="nl-reg__entete">
+    <button type="button" class="nl-reg__retour" (click)="precedent()" aria-label="Retour">
+      <nl-icon name="arrow_back" [size]="20" />
+    </button>
+    <h1 class="nl-reg__titre-entete">Créer un compte</h1>
+    <span class="nl-reg__compteur">{{ etape() + 1 }}/{{ totalEtapes() }}</span>
+  </header>
+
+  <div class="nl-reg__progression">
+    <div class="nl-reg__progression-barre" [style.width.%]="((etape() + 1) / totalEtapes()) * 100"></div>
+  </div>
+
+  <div class="nl-reg__corps">
+    @if (etape() === 0) {
+      <section class="nl-reg__etape">
+        <h2 class="nl-reg__titre">Qui es-tu ?</h2>
+        <p class="nl-reg__sous-titre">Quelques informations pour commencer.</p>
+
+        <div class="nl-reg__ligne">
+          <label class="nl-reg__champ">
+            <span class="nl-reg__label">Prénom</span>
+            <input type="text" [value]="prenom()" (input)="prenom.set(val($event))" />
+          </label>
+          <label class="nl-reg__champ">
+            <span class="nl-reg__label">Nom</span>
+            <input type="text" [value]="nom()" (input)="nom.set(val($event))" />
+          </label>
+        </div>
+
+        <label class="nl-reg__champ">
+          <span class="nl-reg__label">{{ sansEmailInstitutionnel() ? 'E-mail personnel' : 'E-mail institutionnel' }}</span>
+          <input
+            type="email"
+            [placeholder]="sansEmailInstitutionnel() ? 'ex: jean.dupont@gmail.com' : 'ex: jean.dupont@isj.cm'"
+            [value]="email()"
+            (input)="surSaisieEmail(val($event))"
+          />
+        </label>
+
+        @if (!sansEmailInstitutionnel()) {
+          @switch (domaine().etat) {
+            @case ('verification') {
+              <p class="nl-reg__etat-domaine nl-reg__etat-domaine--neutre">Vérification…</p>
+            }
+            @case ('reconnu') {
+              <p class="nl-reg__etat-domaine nl-reg__etat-domaine--ok">
+                <nl-icon name="check_circle" [size]="16" />
+                Domaine reconnu{{ domaine().institution ? ' — ' + domaine().institution : '' }}
+              </p>
+            }
+            @case ('refuse') {
+              <p class="nl-reg__etat-domaine nl-reg__etat-domaine--refus">
+                <nl-icon name="error" [size]="16" />
+                {{ domaine().message || 'Ce domaine n’est pas reconnu.' }}
+              </p>
+            }
+          }
+        }
+
+        <button
+          type="button"
+          class="nl-reg__option"
+          [class.nl-reg__option--actif]="sansEmailInstitutionnel()"
+          (click)="surToggleSansEmail(!sansEmailInstitutionnel())"
+        >
+          <span class="nl-reg__option-puce" [class.nl-reg__option-puce--actif]="sansEmailInstitutionnel()"></span>
+          <span class="nl-reg__option-texte">
+            <strong>Je n'ai pas d'adresse institutionnelle</strong>
+            <small>Un justificatif de scolarité sera demandé.</small>
+          </span>
+        </button>
+
+        <label class="nl-reg__consent">
+          <input type="checkbox" [checked]="consent()" (change)="consent.set(coche($event))" />
+          <span>
+            J'ai lu et j'accepte la
+            <a href="/confidentialite/" target="_blank" rel="noopener">politique de confidentialité</a>
+            et les
+            <a href="/conditions/" target="_blank" rel="noopener">conditions d'utilisation</a>.
+          </span>
+        </label>
+
+        <button type="button" class="nl-reg__cta" [disabled]="chargement()" (click)="suivant()">
+          @if (chargement()) {
+            <span class="nl-reg__spinner"></span>
+          } @else {
+            Continuer
+          }
+        </button>
+
+        <button type="button" class="nl-reg__lien-connexion" (click)="allerConnexion()">
+          Déjà un compte ? <strong>Se connecter</strong>
+        </button>
+      </section>
+    }
+
+    @if (etape() === 1) {
+      <section class="nl-reg__etape">
+        <h2 class="nl-reg__titre">Ton parcours</h2>
+        <p class="nl-reg__sous-titre">Ces informations déterminent les contenus que tu verras.</p>
+
+        @switch (universites().statut) {
+          @case ('chargement') {
+            <div class="nl-reg__barre-chargement"></div>
+          }
+          @case ('erreur') {
+            <p class="nl-reg__erreur">{{ universites().erreur }}</p>
+          }
+          @default {
+            <button type="button" class="nl-reg__cascade" (click)="choisirUniversite()">
+              <span class="nl-reg__cascade-label">École</span>
+              <span class="nl-reg__cascade-valeur">{{ universiteNom() || 'Choisir…' }}</span>
+            </button>
+          }
+        }
+
+        @if (cycles().statut === 'verrouille') {
+          <p class="nl-reg__verrouille">Cycle — choisis une école d'abord.</p>
+        } @else if (cycles().statut === 'chargement') {
+          <div class="nl-reg__barre-chargement"></div>
+        } @else if (cycles().statut === 'erreur') {
+          <p class="nl-reg__erreur">{{ cycles().erreur }}</p>
+        } @else {
+          <button type="button" class="nl-reg__cascade" (click)="choisirCycle()">
+            <span class="nl-reg__cascade-label">Cycle</span>
+            <span class="nl-reg__cascade-valeur">{{ cycleLabel() || 'Choisir…' }}</span>
+          </button>
+        }
+
+        @if (niveaux().statut === 'verrouille') {
+          <p class="nl-reg__verrouille">Niveau — choisis un cycle d'abord.</p>
+        } @else if (niveaux().statut === 'chargement') {
+          <div class="nl-reg__barre-chargement"></div>
+        } @else if (niveaux().statut === 'erreur') {
+          <p class="nl-reg__erreur">{{ niveaux().erreur }}</p>
+        } @else {
+          <button type="button" class="nl-reg__cascade" (click)="choisirNiveau()">
+            <span class="nl-reg__cascade-label">Niveau</span>
+            <span class="nl-reg__cascade-valeur">{{ niveauLabel() || 'Choisir…' }}</span>
+          </button>
+        }
+
+        @if (filieres().statut === 'verrouille') {
+          <p class="nl-reg__verrouille">Filière — choisis un niveau d'abord.</p>
+        } @else if (filieres().statut === 'chargement') {
+          <div class="nl-reg__barre-chargement"></div>
+        } @else if (filieres().statut === 'erreur') {
+          <p class="nl-reg__erreur">{{ filieres().erreur }}</p>
+        } @else if (filieres().items.length === 0) {
+          <p class="nl-reg__verrouille">Aucune filière proposée par cette école.</p>
+        } @else {
+          <button type="button" class="nl-reg__cascade" (click)="choisirFiliere()">
+            <span class="nl-reg__cascade-label">Filière</span>
+            <span class="nl-reg__cascade-valeur">{{ filiereNom() || 'Choisir…' }}</span>
+          </button>
+        }
+
+        <button type="button" class="nl-reg__cta" [disabled]="chargement()" (click)="suivant()">
+          @if (chargement()) {
+            <span class="nl-reg__spinner"></span>
+          } @else {
+            {{ sansEmailInstitutionnel() ? 'Continuer' : 'Recevoir le code' }}
+          }
+        </button>
+      </section>
+    }
+
+    @if (etape() === 2) {
+      <section class="nl-reg__etape">
+        <h2 class="nl-reg__titre">Justifie ton inscription</h2>
+        <p class="nl-reg__sous-titre">
+          Sans adresse institutionnelle, un document prouvant ta scolarité est nécessaire.
+        </p>
+
+        <span class="nl-reg__label">Type de document</span>
+        @switch (typesJustificatif().statut) {
+          @case ('chargement') {
+            <div class="nl-reg__barre-chargement"></div>
+          }
+          @case ('erreur') {
+            <p class="nl-reg__erreur">{{ typesJustificatif().erreur }}</p>
+          }
+          @default {
+            @for (t of typesJustificatif().items; track t.value) {
+              <button
+                type="button"
+                class="nl-reg__option"
+                [class.nl-reg__option--actif]="justificatifType() === t.value"
+                (click)="justificatifType.set(t.value)"
+              >
+                <span class="nl-reg__option-puce" [class.nl-reg__option-puce--actif]="justificatifType() === t.value"></span>
+                <span class="nl-reg__option-texte">
+                  <strong>{{ t.label }}</strong>
+                  <small>{{ t.description }}</small>
+                </span>
+              </button>
+            }
+          }
+        }
+
+        <label class="nl-reg__champ">
+          <span class="nl-reg__label">Matricule (optionnel)</span>
+          <input type="text" [value]="matricule()" (input)="matricule.set(val($event))" />
+        </label>
+
+        <label class="nl-reg__depot">
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="surFichierChoisi($event)" hidden />
+          <nl-icon [name]="justificatifFichier() ? 'check_circle' : 'upload_file'" [size]="28" />
+          <strong>{{ justificatifFichier()?.name || 'Choisir un fichier' }}</strong>
+          <small>
+            @if (justificatifFichier()) {
+              {{ (justificatifFichier()!.size / 1024).toFixed(0) }} Ko — appuie pour changer
+            } @else {
+              PDF, JPG ou PNG
+            }
+          </small>
+        </label>
+
+        <button type="button" class="nl-reg__cta" [disabled]="chargement()" (click)="suivant()">
+          @if (chargement()) {
+            <span class="nl-reg__spinner"></span>
+          } @else {
+            Recevoir le code
+          }
+        </button>
+        <p class="nl-reg__confidentialite">Ton document n'est utilisé que pour valider ton inscription.</p>
+      </section>
+    }
+  </div>
+</div>

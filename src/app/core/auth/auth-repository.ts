@@ -7,6 +7,7 @@ import { Failure } from '../models/failure.model';
 import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../models/user.model';
 import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../models/demande-otp.model';
 import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../models/parcours-otp.model';
+import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../models/domaine.model';
 
 /** Durée de repli hors ligne quand aucune échéance n'a encore été mise en cache. */
 const OTP_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
@@ -116,6 +117,23 @@ export class AuthRepository {
       return cycleVerificationDepuisJson(donnees(reponse));
     } catch {
       return null;
+    }
+  }
+
+  /**
+   * Le serveur reconnaît-il ce domaine e-mail comme institutionnel ? Ne
+   * lève jamais — une coupure réseau rend `indisponible`, pas une erreur à
+   * afficher : le formulaire d'inscription ne doit pas bloquer pour un
+   * contrôle qui n'est qu'indicatif (`register()` retranche de toute façon).
+   */
+  async verifierDomaine(email: string): Promise<ReponseDomaine> {
+    try {
+      const reponse = await firstValueFrom(
+        this.http.get(`${AUTH_PATH}/institution-domain/check`, { params: { email } }),
+      );
+      return reponseDomaineDepuisJson(donnees(reponse));
+    } catch {
+      return { etat: EtatDomaine.indisponible };
     }
   }
 
