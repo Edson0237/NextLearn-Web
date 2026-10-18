@@ -12,6 +12,8 @@ import { PinSetup } from '../auth/pin-setup/pin-setup';
 import { LoginPin } from '../auth/login-pin/login-pin';
 import { Unlock } from '../auth/unlock/unlock';
 import { ResetPin } from '../auth/reset-pin/reset-pin';
+import { EpreuvesList } from '../epreuves/epreuves-list/epreuves-list';
+import { EpreuveDetail } from '../epreuves/epreuve-detail/epreuve-detail';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -63,7 +65,7 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.recherche, ...stub('Recherche', 'recherche_page.dart') },
       { path: AppRoutes.documentDetail, ...stub('Document', 'document_detail_page.dart') },
       { path: AppRoutes.pdfReader, ...stub('Lecteur', 'pdf_reader_page.dart') },
-      { path: AppRoutes.epreuveDetail, ...stub('Épreuve', 'epreuve_detail_page.dart') },
+      { path: AppRoutes.epreuveDetail, component: EpreuveDetail },
       { path: AppRoutes.quizSession, ...stub('Quiz', 'quiz_session_page.dart') },
 
       // ── Coque principale : cinq onglets qui gardent leur état ────────────
@@ -73,7 +75,7 @@ export const APP_SHELL_ROUTES: Routes = [
         children: [
           { path: AppRoutes.home, ...stub('Accueil', 'home_page.dart') },
           { path: AppRoutes.bibliotheque, ...stub('Bibliothèque', 'bibliotheque_home_page.dart') },
-          { path: AppRoutes.epreuves, ...stub('Épreuves', 'epreuves_list_page.dart') },
+          { path: AppRoutes.epreuves, component: EpreuvesList },
           { path: AppRoutes.progression, ...stub('Progression', 'progression_dashboard_page.dart') },
           { path: AppRoutes.mesDepots, ...stub('Mes dépôts', 'mes_depots_page.dart') },
           { path: AppRoutes.profil, ...stub('Profil', 'profil_home_page.dart') },

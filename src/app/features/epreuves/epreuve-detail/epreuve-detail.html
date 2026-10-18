@@ -1,0 +1,125 @@
+@switch (statut()) {
+  @case ('chargement') {
+    <div class="nl-epd__attente">
+      <span class="nl-epd__spinner"></span>
+    </div>
+  }
+  @case ('introuvable') {
+    <div class="nl-epd__attente">
+      <p>Épreuve introuvable.</p>
+    </div>
+  }
+  @case ('erreur') {
+    <div class="nl-epd__attente">
+      <p>{{ erreur() }}</p>
+    </div>
+  }
+  @case ('pret') {
+    @if (epreuve(); as ep) {
+      <div class="nl-epd">
+        <header class="nl-epd__entete">
+          <button type="button" class="nl-epd__retour" (click)="retour()" aria-label="Retour">
+            <nl-icon name="arrow_back" [size]="20" />
+          </button>
+          <span class="nl-epd__badge-annee">Épreuve {{ ep.annee }}</span>
+          <h1 class="nl-epd__titre">{{ ep.matiere }}</h1>
+          <p class="nl-epd__sous-titre">{{ ep.universite }}</p>
+        </header>
+
+        <div class="nl-epd__corps">
+          <div class="nl-epd__actions">
+            <button type="button" class="nl-epd__cta" [disabled]="!!telechargementEnCours()" (click)="ouvrirPdf('epreuve')">
+              <nl-icon name="description" [size]="18" />
+              Voir l'épreuve
+            </button>
+            @if (ep.avecCorrige) {
+              <button
+                type="button"
+                class="nl-epd__cta nl-epd__cta--secondaire"
+                [disabled]="!!telechargementEnCours()"
+                (click)="ouvrirPdf('corrige')"
+              >
+                <nl-icon name="check_circle" [size]="18" />
+                Corrigé
+              </button>
+            }
+          </div>
+
+          <h2 class="nl-epd__section-titre">Informations</h2>
+          <div class="nl-epd__carte">
+            <div class="nl-epd__ligne">
+              <span>Université</span>
+              <strong>{{ ep.universite }}</strong>
+            </div>
+            @if (ep.enseigne) {
+              <div class="nl-epd__ligne">
+                <span>Institution source</span>
+                <strong>{{ ep.enseigne }}</strong>
+              </div>
+            }
+            @if (ep.typeEpreuve) {
+              <div class="nl-epd__ligne">
+                <span>Type de document</span>
+                <strong>{{ ep.typeEpreuve === TypeEpreuve.cc ? 'Contrôle continu' : 'Session normale' }}</strong>
+              </div>
+            }
+            <div class="nl-epd__ligne">
+              <span>Niveau</span>
+              <strong>{{ ep.niveau }}</strong>
+            </div>
+            @if (ep.semestre) {
+              <div class="nl-epd__ligne">
+                <span>Semestre</span>
+                <strong>{{ ep.semestre }}</strong>
+              </div>
+            }
+            <div class="nl-epd__ligne">
+              <span>Année</span>
+              <strong>{{ ep.annee }}</strong>
+            </div>
+            <div class="nl-epd__ligne">
+              <span>Durée</span>
+              <strong>{{ ep.dureeMinutes }} min</strong>
+            </div>
+            <div class="nl-epd__ligne">
+              <span>Corrigé</span>
+              <strong>{{ ep.avecCorrige ? 'Disponible' : 'Non disponible' }}</strong>
+            </div>
+          </div>
+
+          <div class="nl-epd__stats">
+            <span class="nl-epd__stat">{{ ep.vues }} vue{{ ep.vues === 1 ? '' : 's' }}</span>
+            <span class="nl-epd__stat">{{ ep.telechargements }} télécharg.</span>
+            <span class="nl-epd__stat">{{ ep.noteMoyenne.toFixed(1) }} ★</span>
+          </div>
+
+          <div class="nl-epd__carte nl-epd__notation">
+            <p class="nl-epd__notation-titre">{{ noteEnvoyee() ? 'Merci pour ton avis !' : 'Donne ton avis' }}</p>
+            <div class="nl-epd__etoiles">
+              @for (n of [1, 2, 3, 4, 5]; track n) {
+                <button
+                  type="button"
+                  class="nl-epd__etoile"
+                  [attr.aria-label]="'Noter ' + n + ' sur 5'"
+                  [disabled]="envoiNote()"
+                  (click)="choisirNote(n)"
+                >
+                  <nl-icon [name]="n <= noteChoisie() ? 'star_fill' : 'star'" [size]="24" />
+                </button>
+              }
+              @if (noteChoisie() > 0 && !noteEnvoyee()) {
+                <button type="button" class="nl-epd__envoyer" [disabled]="envoiNote()" (click)="envoyerNote()">
+                  @if (envoiNote()) {
+                    <span class="nl-epd__spinner nl-epd__spinner--petit"></span>
+                  } @else {
+                    Envoyer
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+}

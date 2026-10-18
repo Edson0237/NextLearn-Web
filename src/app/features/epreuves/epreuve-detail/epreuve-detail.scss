@@ -1,0 +1,196 @@
+@use '../../../shared/styles/type';
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: var(--bg-canvas);
+}
+
+.nl-epd__attente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60dvh;
+  color: var(--text-muted);
+}
+
+.nl-epd__spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--primary) 25%, transparent);
+  border-top-color: var(--primary);
+  animation: nl-epd-spin 0.8s linear infinite;
+
+  &--petit {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+}
+
+@keyframes nl-epd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nl-epd__entete {
+  position: relative;
+  padding: 48px 20px 22px;
+  background: linear-gradient(135deg, var(--type-epreuve), color-mix(in srgb, var(--type-epreuve) 70%, transparent));
+  border-radius: 0 0 28px 28px;
+  color: #fff;
+}
+
+.nl-epd__retour {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  left: 12px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+}
+
+.nl-epd__badge-annee {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.22);
+  font: 700 0.8rem/1 var(--font-family-body);
+  margin-bottom: 10px;
+}
+
+.nl-epd__titre {
+  @include type.nl-h2;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.nl-epd__sous-titre {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font: 400 0.9rem/1 var(--font-family-body);
+}
+
+.nl-epd__corps {
+  padding: var(--space-xl) var(--space-lg) var(--space-xxxl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.nl-epd__actions {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.nl-epd__cta {
+  flex: 1;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font: 700 0.9rem/1 var(--font-family);
+  cursor: pointer;
+
+  &--secondaire {
+    background: none;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.nl-epd__section-titre {
+  @include type.nl-h3;
+  margin: 0 0 var(--space-md);
+}
+
+.nl-epd__carte {
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+}
+
+.nl-epd__ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-light);
+  font: 400 0.85rem/1 var(--font-family-body);
+  color: var(--text-secondary);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+}
+
+.nl-epd__stats {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.nl-epd__stat {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font: 400 0.78rem/1 var(--font-family-body);
+}
+
+.nl-epd__notation-titre {
+  margin: 0 0 var(--space-sm);
+  font: 600 0.9rem/1 var(--font-family-body);
+}
+
+.nl-epd__etoiles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nl-epd__etoile {
+  border: none;
+  background: none;
+  color: var(--secondary);
+  cursor: pointer;
+  padding: 2px;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.nl-epd__envoyer {
+  margin-left: var(--space-sm);
+  height: 32px;
+  padding: 0 var(--space-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--primary);
+  font: 600 0.85rem/1 var(--font-family-body);
+  cursor: pointer;
+}

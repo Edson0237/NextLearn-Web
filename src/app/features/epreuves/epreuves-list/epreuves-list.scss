@@ -1,0 +1,225 @@
+@use '../../../shared/styles/type';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-canvas);
+}
+
+.nl-epl__entete {
+  flex: none;
+  padding: var(--space-lg) var(--space-lg) 0;
+}
+
+.nl-epl__titre {
+  @include type.nl-h3;
+  margin: 0;
+}
+
+.nl-epl__filtres {
+  flex: none;
+  padding: var(--space-sm) var(--space-lg) var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.nl-epl__segments {
+  display: flex;
+  border-radius: var(--radius-sm);
+  background: var(--bg-tertiary);
+  padding: 3px;
+  gap: 2px;
+}
+
+.nl-epl__segment {
+  flex: 1;
+  height: 32px;
+  border: none;
+  border-radius: calc(var(--radius-sm) - 2px);
+  background: none;
+  color: var(--text-secondary);
+  font: 500 0.75rem/1 var(--font-family-body);
+  cursor: pointer;
+
+  &--actif {
+    background: var(--bg-primary);
+    color: var(--primary);
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(10, 42, 78, 0.12);
+  }
+}
+
+.nl-epl__matieres {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  padding-bottom: 2px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.nl-epl__puce {
+  flex: none;
+  height: 32px;
+  padding: 0 var(--space-md);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font: 400 0.82rem/1 var(--font-family-body);
+  cursor: pointer;
+  white-space: nowrap;
+
+  &--actif {
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
+    border-color: var(--primary);
+    color: var(--primary);
+    font-weight: 600;
+  }
+}
+
+.nl-epl__ligne {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.nl-epl__select {
+  height: 32px;
+  padding: 0 var(--space-sm);
+  border: none;
+  border-radius: 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: 400 0.78rem/1 var(--font-family-body);
+}
+
+.nl-epl__toggle {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 var(--space-sm);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  font: 400 0.78rem/1 var(--font-family-body);
+  cursor: pointer;
+
+  &--actif {
+    background: color-mix(in srgb, var(--tertiary) 20%, transparent);
+    border-color: var(--tertiary);
+    color: var(--tertiary);
+  }
+}
+
+.nl-epl__reset {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font: 400 0.75rem/1 var(--font-family-body);
+  cursor: pointer;
+}
+
+.nl-epl__corps {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nl-epl__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+}
+
+.nl-epl__carte {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border: none;
+  border-radius: 18px;
+  background: var(--bg-primary);
+  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  text-align: left;
+  cursor: pointer;
+}
+
+.nl-epl__annee {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--type-epreuve) 12%, transparent);
+  color: var(--type-epreuve);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+
+  span {
+    font: 800 0.9rem/1 var(--font-family-body);
+  }
+}
+
+.nl-epl__infos {
+  flex: 1;
+  min-width: 0;
+}
+
+.nl-epl__ligne-titre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.nl-epl__matiere {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  @include type.nl-h4;
+}
+
+.nl-epl__pastille {
+  flex: none;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  color: var(--primary);
+  font: 700 0.7rem/1.4 var(--font-family-body);
+}
+
+.nl-epl__source {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font: 400 0.82rem/1.3 var(--font-family-body);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nl-epl__meta {
+  margin-top: 6px;
+  display: flex;
+  gap: 5px;
+  color: var(--text-muted);
+  font: 400 0.75rem/1 var(--font-family-body);
+}
+
+.nl-epl__meta-corrige {
+  color: var(--tertiary);
+}

@@ -1,0 +1,123 @@
+<div class="nl-epl">
+  <header class="nl-epl__entete">
+    <h1 class="nl-epl__titre">Annales</h1>
+  </header>
+
+  <div class="nl-epl__filtres">
+    <div class="nl-epl__segments">
+      <button type="button" class="nl-epl__segment" [class.nl-epl__segment--actif]="!filtre().type" (click)="setType(undefined)">
+        Tous
+      </button>
+      <button
+        type="button"
+        class="nl-epl__segment"
+        [class.nl-epl__segment--actif]="filtre().type === TypeEpreuve.cc"
+        (click)="setType(TypeEpreuve.cc)"
+      >
+        Contrôle continu
+      </button>
+      <button
+        type="button"
+        class="nl-epl__segment"
+        [class.nl-epl__segment--actif]="filtre().type === TypeEpreuve.sn"
+        (click)="setType(TypeEpreuve.sn)"
+      >
+        Session normale
+      </button>
+    </div>
+
+    <div class="nl-epl__matieres">
+      <button type="button" class="nl-epl__puce" [class.nl-epl__puce--actif]="!filtre().matiereId" (click)="setMatiere(undefined)">
+        Toutes
+      </button>
+      @for (m of matieres(); track m.id) {
+        <button
+          type="button"
+          class="nl-epl__puce"
+          [class.nl-epl__puce--actif]="filtre().matiereId === m.id"
+          (click)="setMatiere(m.id)"
+        >
+          {{ m.nom }}
+        </button>
+      }
+    </div>
+
+    <div class="nl-epl__ligne">
+      <select
+        class="nl-epl__select"
+        [value]="filtre().annee ?? ''"
+        (change)="setAnnee(anneeSaisie($event))"
+      >
+        <option value="">Année</option>
+        @for (a of annees(); track a) {
+          <option [value]="a">{{ a }}</option>
+        }
+      </select>
+
+      <button type="button" class="nl-epl__toggle" [class.nl-epl__toggle--actif]="filtre().avecCorrige" (click)="toggleCorrige()">
+        <nl-icon name="check_circle" [size]="14" />
+        Avec corrigé
+      </button>
+
+      @if (filtreActif()) {
+        <button type="button" class="nl-epl__reset" (click)="reinitialiser()">
+          <nl-icon name="refresh" [size]="14" />
+          Réinitialiser
+        </button>
+      }
+    </div>
+  </div>
+
+  <nl-refreshable class="nl-epl__corps" [refreshing]="rafraichissement()" (refresh)="rafraichir()">
+    @switch (statut()) {
+      @case ('chargement') {
+        <div class="nl-epl__liste">
+          @for (i of [0, 1, 2, 3]; track i) {
+            <nl-document-skeleton />
+          }
+        </div>
+      }
+      @case ('erreur') {
+        <nl-empty-state title="Erreur de chargement" [subtitle]="erreur()" ctaLabel="Réessayer" (cta)="rafraichir()" />
+      }
+      @case ('pret') {
+        @if (filtrees().length === 0) {
+          <nl-empty-state
+            title="Aucune épreuve trouvée"
+            subtitle="Modifie tes filtres pour voir plus de résultats."
+            [ctaLabel]="filtreActif() ? 'Réinitialiser' : undefined"
+            (cta)="reinitialiser()"
+          />
+        } @else {
+          <div class="nl-epl__liste">
+            @for (ep of filtrees(); track ep.id) {
+              <button type="button" class="nl-epl__carte" (click)="ouvrir(ep.id)">
+                <div class="nl-epl__annee">
+                  <nl-icon name="history_edu" [size]="17" />
+                  <span>{{ ep.annee }}</span>
+                </div>
+                <div class="nl-epl__infos">
+                  <div class="nl-epl__ligne-titre">
+                    <span class="nl-epl__matiere">{{ ep.matiere }}</span>
+                    @if (ep.typeEpreuve) {
+                      <span class="nl-epl__pastille">{{ typeApi(ep.typeEpreuve) }}</span>
+                    }
+                  </div>
+                  <p class="nl-epl__source">{{ ep.enseigne || ep.universite }}</p>
+                  <div class="nl-epl__meta">
+                    <span>{{ ep.dureeMinutes }} min</span>
+                    <span>·</span>
+                    <span>{{ ep.niveau }}</span>
+                    @if (ep.avecCorrige) {
+                      <span class="nl-epl__meta-corrige">· Corrigé</span>
+                    }
+                  </div>
+                </div>
+              </button>
+            }
+          </div>
+        }
+      }
+    }
+  </nl-refreshable>
+</div>
