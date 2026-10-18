@@ -1,0 +1,180 @@
+@use '../../../shared/styles/type';
+
+:host {
+  display: block;
+  height: 100dvh;
+}
+
+.nl-otp {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-canvas);
+}
+
+.nl-otp__entete {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg) 0;
+  padding-top: max(var(--space-md), env(safe-area-inset-top));
+}
+
+.nl-otp__fermer {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  margin-left: -10px;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.nl-otp__titre-entete {
+  margin: 0;
+  font: 700 1.1rem/1 var(--font-family);
+}
+
+.nl-otp__corps {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nl-otp__section {
+  padding: var(--space-xl) var(--space-xxl) var(--space-xxxl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.nl-otp__pastille {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border-radius: 19px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+
+  &--refus {
+    background: color-mix(in srgb, var(--danger) 12%, transparent);
+    color: var(--danger);
+  }
+}
+
+.nl-otp__titre {
+  @include type.nl-h1;
+  margin: 0;
+}
+
+.nl-otp__texte {
+  margin: calc(-1 * var(--space-sm)) 0 0;
+  color: var(--text-muted);
+  font: 400 0.95rem/1.5 var(--font-family-body);
+}
+
+.nl-otp__cases {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.nl-otp__case {
+  width: 46px;
+  height: 56px;
+  text-align: center;
+  font: 700 1.3rem/1 var(--font-family);
+  color: var(--primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    border-width: 2px;
+  }
+
+  &--erreur {
+    border-color: var(--danger);
+  }
+}
+
+.nl-otp__erreur {
+  margin: calc(-1 * var(--space-sm)) 0 0;
+  color: var(--danger);
+  font: 400 0.85rem/1.4 var(--font-family-body);
+}
+
+.nl-otp__lien {
+  align-self: center;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font: 600 0.9rem/1 var(--font-family-body);
+  cursor: pointer;
+
+  &--discret {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.82rem;
+  }
+}
+
+.nl-otp__carte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.nl-otp__ligne {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 400 0.85rem/1 var(--font-family-body);
+  color: var(--text-muted);
+
+  strong {
+    color: var(--text-primary);
+    font: 600 0.9rem/1 var(--font-family-body);
+  }
+}
+
+.nl-otp__ligne-accent {
+  color: var(--primary) !important;
+  font: 700 1rem/1 var(--font-family) !important;
+}
+
+.nl-otp__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin: 0;
+  color: var(--text-secondary);
+  font: 400 0.82rem/1.5 var(--font-family-body);
+}
+
+.nl-otp__secondaire {
+  height: 48px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font: 600 0.9rem/1 var(--font-family-body);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}

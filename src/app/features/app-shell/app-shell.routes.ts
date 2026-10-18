@@ -7,6 +7,7 @@ import { AppShellRoot } from './app-shell-root';
 import { Onboarding } from '../auth/onboarding/onboarding';
 import { Splash } from '../auth/splash/splash';
 import { Register } from '../auth/register/register';
+import { Otp } from '../auth/otp/otp';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -33,10 +34,10 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: '', pathMatch: 'full', component: Splash },
       { path: AppRoutes.onboarding, component: Onboarding },
       { path: AppRoutes.register, component: Register },
-      { path: AppRoutes.otp, ...stub('Code de vérification', 'otp_page.dart') },
+      { path: AppRoutes.otp, component: Otp, data: { isLogin2fa: false } },
       { path: AppRoutes.pinSetup, ...stub('Créer un code', 'pin_setup_page.dart') },
       { path: AppRoutes.login, ...stub('Connexion', 'login_pin_page.dart') },
-      { path: AppRoutes.loginOtp, ...stub('Code de vérification', 'otp_page.dart (2FA)') },
+      { path: AppRoutes.loginOtp, component: Otp, data: { isLogin2fa: true } },
       { path: AppRoutes.unlock, ...stub('Déverrouillage', 'unlock_page.dart') },
       { path: AppRoutes.resetPin, ...stub('Code oublié', 'reset_pin_page.dart') },
 
