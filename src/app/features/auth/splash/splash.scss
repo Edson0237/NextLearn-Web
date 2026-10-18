@@ -1,0 +1,55 @@
+:host {
+  display: block;
+  height: 100dvh;
+}
+
+.nl-splash {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  // Toujours le bleu de marque, jamais `var(--primary)` (qui s'éclaircit en
+  // thème sombre) — même choix que `AppColors.primaireDeMarque` côté Flutter.
+  background: #1a4a7e;
+}
+
+.nl-splash__logo {
+  opacity: 0;
+  transform: scale(0.7);
+  animation: nl-splash-logo var(--motion-lente, 400ms) var(--ease-rebond, ease-out) forwards;
+}
+
+.nl-splash__accroche {
+  opacity: 0;
+  margin: 0;
+  max-width: 320px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.78);
+  font: 400 1rem/1.5 var(--font-family-body, 'Inter', sans-serif);
+  animation: nl-splash-accroche var(--motion-lente, 400ms) ease-out 160ms forwards;
+}
+
+@keyframes nl-splash-logo {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes nl-splash-accroche {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-splash__logo,
+  .nl-splash__accroche {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

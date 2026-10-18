@@ -3,6 +3,9 @@ import { authGuard } from '../../core/router/auth.guard';
 import { AppRoutes } from '../../core/router/app-routes';
 import { RouteStub } from '../route-stub/route-stub';
 import { MainShell } from '../shell/main-shell';
+import { AppShellRoot } from './app-shell-root';
+import { Onboarding } from '../auth/onboarding/onboarding';
+import { Splash } from '../auth/splash/splash';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -22,11 +25,12 @@ function stub(ecran: string, source: string) {
 export const APP_SHELL_ROUTES: Routes = [
   {
     path: '',
+    component: AppShellRoot,
     canActivateChild: [authGuard],
     children: [
       // ── Authentification ───────────────────────────────────────────────
-      { path: '', pathMatch: 'full', ...stub('Démarrage', 'splash_page.dart') },
-      { path: AppRoutes.onboarding, ...stub('Bienvenue', 'onboarding_page.dart') },
+      { path: '', pathMatch: 'full', component: Splash },
+      { path: AppRoutes.onboarding, component: Onboarding },
       { path: AppRoutes.register, ...stub('Inscription', 'register_page.dart') },
       { path: AppRoutes.otp, ...stub('Code de vérification', 'otp_page.dart') },
       { path: AppRoutes.pinSetup, ...stub('Créer un code', 'pin_setup_page.dart') },

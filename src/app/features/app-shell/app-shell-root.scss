@@ -1,0 +1,11 @@
+@use '../../shared/styles/tokens';
+@use '../../shared/styles/fonts';
+@use '../../shared/styles/native';
+@use '../../shared/styles/motion';
+
+.nl-app {
+  @include tokens.nl-app-tokens;
+  background: var(--bg-canvas);
+  font-family: var(--font-family-body);
+  color: var(--text-primary);
+}

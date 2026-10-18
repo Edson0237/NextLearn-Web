@@ -1,0 +1,60 @@
+<div class="nl-onb">
+  <header class="nl-onb__entete">
+    <span class="nl-onb__marque">
+      <span class="nl-onb__logo">🎓</span>
+      NextLearn
+    </span>
+    @if (index() < diapositives.length - 1) {
+      <button type="button" class="nl-onb__passer" (click)="passer()">Passer</button>
+    }
+  </header>
+
+  <div class="nl-onb__piste" #piste (scroll)="surDefilement($event)">
+    @for (slide of diapositives; track slide.titre) {
+      <section class="nl-onb__diapo">
+        <div class="nl-onb__illustration">
+          <div class="nl-onb__halo nl-onb__halo--grand" [style.background]="slide.accent + '12'"></div>
+          <div class="nl-onb__halo nl-onb__halo--petit" [style.background]="slide.accent + '1f'"></div>
+          <div
+            class="nl-onb__squircle"
+            [style.background]="'linear-gradient(135deg, ' + slide.accent + ', ' + slide.accentFonce + ')'"
+          >
+            <span>{{ slide.emoji }}</span>
+          </div>
+          @if (slide.badges[0]) {
+            <span class="nl-onb__badge nl-onb__badge--haut">{{ slide.badges[0].label }}</span>
+          }
+          @if (slide.badges[1]) {
+            <span class="nl-onb__badge nl-onb__badge--bas">{{ slide.badges[1].label }}</span>
+          }
+        </div>
+        <h1 class="nl-onb__titre">{{ slide.titre }}</h1>
+        <p class="nl-onb__corps">{{ slide.corps }}</p>
+      </section>
+    }
+  </div>
+
+  <footer class="nl-onb__pied">
+    <div class="nl-onb__points">
+      @for (slide of diapositives; track slide.titre; let i = $index) {
+        <button
+          type="button"
+          class="nl-onb__point"
+          [class.nl-onb__point--actif]="i === index()"
+          [style.background]="i === index() ? diapositives[index()].accent : null"
+          [attr.aria-label]="'Aller à la diapositive ' + (i + 1)"
+          (click)="allerA(i)"
+        ></button>
+      }
+    </div>
+    <button
+      type="button"
+      class="nl-onb__cta"
+      [style.background]="diapositives[index()].accent"
+      (click)="suivant()"
+    >
+      {{ index() === diapositives.length - 1 ? 'Commencer gratuitement' : 'Suivant' }}
+      <span aria-hidden="true">{{ index() === diapositives.length - 1 ? '→' : '›' }}</span>
+    </button>
+  </footer>
+</div>
