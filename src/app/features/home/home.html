@@ -1,0 +1,131 @@
+<div class="home">
+  <header class="home__hero">
+    <div class="home__hero-top">
+      <div class="home__avatar">
+        <span>{{ user()?.prenom?.[0] ?? '?' }}</span>
+      </div>
+      <button class="home__notif" (click)="openNotifications()" aria-label="Notifications">
+        <nl-icon name="notifications" />
+      </button>
+    </div>
+    <div class="home__hero-text">
+      <p class="home__greeting">Bonjour {{ user()?.prenom ?? 'étudiant' }}</p>
+      <h1 class="home__title">{{ subtitle() }}</h1>
+    </div>
+    <div class="home__stats">
+      <div class="home__stat">
+        <nl-icon name="local_fire" />
+        <span class="home__stat-value"><nl-animated-number [value]="streak()" /></span>
+        <span class="home__stat-label">Série</span>
+      </div>
+      <div class="home__stat">
+        <nl-icon name="cloud_download" />
+        <span class="home__stat-value">0</span>
+        <span class="home__stat-label">Hors ligne</span>
+      </div>
+      <div class="home__stat">
+        <nl-icon name="visibility" />
+        <span class="home__stat-value">0</span>
+        <span class="home__stat-label">Lus</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="home__tools">
+    <button class="home__tool home__tool--search" (click)="openSearch()">
+      <nl-icon name="search" />
+      <span>Rechercher</span>
+    </button>
+    <button class="home__tool" (click)="openFavoris()">
+      <nl-icon name="bookmark" />
+      <span>Favoris</span>
+    </button>
+    <button class="home__tool" (click)="openOffline()">
+      <nl-icon name="cloud_download" />
+      <span>Hors ligne</span>
+    </button>
+    <button class="home__tool" (click)="openDepot()">
+      <nl-icon name="upload_file" />
+      <span>Déposer</span>
+    </button>
+  </div>
+
+  <div class="home__body">
+    @if (loading()) {
+      <p class="home__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="home__etat home__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      </div>
+    } @else if (recommended().length === 0 && popular().length === 0 && recent().length === 0) {
+      <nl-empty-state
+        icon="menu_book"
+        title="Aucune recommandation"
+        subtitle="Explorez la bibliothèque pour commencer." />
+    } @else {
+      @if (recommended().length > 0) {
+        <section class="home__section">
+          <div class="home__section-header">
+            <h2 class="home__section-title">Recommandés pour vous</h2>
+            <button class="home__section-action" (click)="openBibliotheque()">Voir tout</button>
+          </div>
+          <div class="home__row">
+            @for (doc of recommended(); track doc.id) {
+              <nl-document-card
+                [title]="doc.titre"
+                [subject]="doc.matiere"
+                [typeLabel]="typeLabel(doc.type)"
+                [typeIcon]="typeIcon(doc.type)"
+                [typeColor]="typeColor(doc.type)"
+                [meta]="metaFor(doc)"
+                (activate)="openDocument(doc)" />
+            }
+          </div>
+        </section>
+      }
+
+      @if (popular().length > 0) {
+        <section class="home__section">
+          <div class="home__section-header">
+            <h2 class="home__section-title">Populaires</h2>
+            <button class="home__section-action" (click)="openBibliotheque()">Voir tout</button>
+          </div>
+          <div class="home__row">
+            @for (doc of popular(); track doc.id) {
+              <nl-document-card
+                [title]="doc.titre"
+                [subject]="doc.matiere"
+                [typeLabel]="typeLabel(doc.type)"
+                [typeIcon]="typeIcon(doc.type)"
+                [typeColor]="typeColor(doc.type)"
+                [meta]="metaFor(doc)"
+                (activate)="openDocument(doc)" />
+            }
+          </div>
+        </section>
+      }
+
+      @if (recent().length > 0) {
+        <section class="home__section">
+          <div class="home__section-header">
+            <h2 class="home__section-title">Récemment ajoutés</h2>
+            <button class="home__section-action" (click)="openBibliotheque()">Voir tout</button>
+          </div>
+          <div class="home__row">
+            @for (doc of recent(); track doc.id) {
+              <nl-document-card
+                [title]="doc.titre"
+                [subject]="doc.matiere"
+                [typeLabel]="typeLabel(doc.type)"
+                [typeIcon]="typeIcon(doc.type)"
+                [typeColor]="typeColor(doc.type)"
+                [meta]="metaFor(doc)"
+                (activate)="openDocument(doc)" />
+            }
+          </div>
+        </section>
+      }
+    }
+  </div>
+</div>

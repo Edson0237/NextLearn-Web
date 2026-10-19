@@ -1,0 +1,77 @@
+<div class="doc-detail">
+  @if (document(); as doc) {
+    <header class="doc-detail__hero" [style.--doc-color]="typeColor(doc.type)">
+      <button class="doc-detail__back" (click)="goBack()" aria-label="Retour">
+        <nl-icon name="arrow_back" />
+      </button>
+      <div class="doc-detail__hero-content">
+        <div class="doc-detail__type">
+          <nl-icon [name]="typeIcon(doc.type)" />
+          <span>{{ typeLabel(doc.type) }}</span>
+        </div>
+        <h1 class="doc-detail__title">{{ doc.titre }}</h1>
+        <p class="doc-detail__meta">{{ doc.matiere }} · {{ doc.enseignant }} · {{ doc.universite }}</p>
+      </div>
+      <button class="doc-detail__share" (click)="share()" aria-label="Partager">
+        <nl-icon name="share" />
+      </button>
+    </header>
+
+    <div class="doc-detail__body">
+      <section class="doc-detail__section">
+        <h2 class="doc-detail__section-title">Description</h2>
+        <p class="doc-detail__description">{{ doc.description || 'Aucune description.' }}</p>
+      </section>
+
+      <section class="doc-detail__section">
+        <h2 class="doc-detail__section-title">Informations</h2>
+        <div class="doc-detail__infos">
+          <div class="doc-detail__info">
+            <span class="doc-detail__info-label">Année</span>
+            <span class="doc-detail__info-value">{{ doc.anneeAcademique || '—' }}</span>
+          </div>
+          <div class="doc-detail__info">
+            <span class="doc-detail__info-label">Pages</span>
+            <span class="doc-detail__info-value">{{ doc.pages || '—' }}</span>
+          </div>
+          <div class="doc-detail__info">
+            <span class="doc-detail__info-label">Taille</span>
+            <span class="doc-detail__info-value">{{ doc.tailleMb > 0 ? (doc.tailleMb | number:'1.1-1') + ' Mo' : '—' }}</span>
+          </div>
+          <div class="doc-detail__info">
+            <span class="doc-detail__info-label">Vues</span>
+            <span class="doc-detail__info-value">{{ doc.vues }}</span>
+          </div>
+        </div>
+      </section>
+
+      @if (doc.avecCorrige && doc.urlCorrigePdf) {
+        <section class="doc-detail__section">
+          <h2 class="doc-detail__section-title">Corrigé</h2>
+          <a class="doc-detail__link" [href]="doc.urlCorrigePdf" target="_blank" rel="noopener">
+            <nl-icon name="fact_check" />
+            <span>Ouvrir le corrigé</span>
+          </a>
+        </section>
+      }
+    </div>
+
+    <div class="doc-detail__actions">
+      <button nlButton variant="primary" size="md" (click)="openDocument()">
+        <nl-icon name="visibility" />
+        <span>Lire le document</span>
+      </button>
+      <button nlButton variant="outline" size="md" (click)="share()">
+        <nl-icon name="share" />
+        <span>Partager</span>
+      </button>
+    </div>
+  } @else {
+    <nl-empty-state
+      icon="description"
+      title="Document introuvable"
+      subtitle="Ce document n'existe pas ou a été supprimé."
+      ctaLabel="Retour à la bibliothèque"
+      (cta)="goBack()" />
+  }
+</div>

@@ -1,0 +1,76 @@
+<div class="biblio">
+  <header class="biblio__entete">
+    <h1 class="biblio__titre">Bibliothèque</h1>
+    <div class="biblio__actions">
+      <button class="nl-icon-btn" (click)="openSearch()" aria-label="Rechercher">
+        <nl-icon name="search" />
+      </button>
+      <button class="nl-icon-btn" (click)="openCatalogue()" aria-label="Catalogue par matière">
+        <nl-icon name="list_alt" />
+      </button>
+      <button class="nl-icon-btn" (click)="openFavoris()" aria-label="Favoris">
+        <nl-icon name="bookmark" />
+      </button>
+      <button class="nl-icon-btn" (click)="openOffline()" aria-label="Hors ligne">
+        <nl-icon name="cloud_download" />
+      </button>
+    </div>
+  </header>
+
+  <nav class="biblio__tabs" aria-label="Types de document">
+    @for (tab of tabs; track tab.label) {
+      <button
+        class="biblio__tab"
+        [class.biblio__tab--active]="selectedType() === tab.type"
+        [style.--tab-color]="typeColor(tab.type)"
+        (click)="selectType(tab.type)">
+        @if (tab.type) {
+          <nl-icon [name]="typeIcon(tab.type)" />
+        }
+        <span>{{ tab.label }}</span>
+      </button>
+    }
+  </nav>
+
+  <div class="biblio__filtres">
+    <div class="biblio__matieres">
+      <button class="biblio__chip" [class.biblio__chip--active]="selectedMatiere() === null" (click)="selectMatiere(null)">
+        Toutes
+      </button>
+      @for (m of matiereOptions(); track m.id) {
+        <button class="biblio__chip" [class.biblio__chip--active]="selectedMatiere() === m.id" (click)="selectMatiere(m.id)">
+          {{ m.nom }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="biblio__corps">
+    @if (loading()) {
+      <p class="biblio__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="biblio__etat biblio__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      </div>
+    } @else if (filteredDocuments().length === 0) {
+      <nl-empty-state
+        icon="description"
+        title="Aucun document"
+        subtitle="Essayez un autre filtre ou revenez plus tard." />
+    } @else {
+      <div class="biblio__liste">
+        @for (doc of filteredDocuments(); track doc.id) {
+          <nl-document-card
+            [title]="doc.titre"
+            [subject]="doc.matiere"
+            [typeLabel]="typeLabel(doc.type)"
+            [typeIcon]="typeIcon(doc.type)"
+            [typeColor]="typeColor(doc.type)"
+            [meta]="metaFor(doc)"
+            (activate)="openDocument(doc)" />
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -21,6 +21,11 @@ import { Parametres } from '../profil/parametres/parametres';
 import { Sessions } from '../profil/sessions/sessions';
 import { SupportTickets } from '../profil/support-tickets/support-tickets';
 import { DeleteAccount } from '../profil/delete-account/delete-account';
+import { Home } from '../home/home';
+import { BibliothequeHome } from '../bibliotheque/bibliotheque-home/bibliotheque-home';
+import { Catalogue } from '../bibliotheque/catalogue/catalogue';
+import { Matiere } from '../bibliotheque/matiere/matiere';
+import { DocumentDetail } from '../bibliotheque/document-detail/document-detail';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -65,12 +70,12 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.recours, ...stub('Voie de recours', 'recours_page.dart') },
       { path: AppRoutes.parametres, component: Parametres },
       { path: AppRoutes.sessions, component: Sessions },
-      { path: AppRoutes.matieres, ...stub('Catalogue par matière', 'catalogue_page.dart') },
-      { path: AppRoutes.matiere, ...stub('Matière', 'matiere_page.dart') },
+      { path: AppRoutes.matieres, component: Catalogue },
+      { path: AppRoutes.matiere, component: Matiere },
       { path: AppRoutes.favoris, ...stub('Favoris', 'favoris_page.dart') },
       { path: AppRoutes.offlineLibrary, ...stub('Bibliothèque hors-ligne', 'offline_library_page.dart') },
       { path: AppRoutes.recherche, ...stub('Recherche', 'recherche_page.dart') },
-      { path: AppRoutes.documentDetail, ...stub('Document', 'document_detail_page.dart') },
+      { path: AppRoutes.documentDetail, component: DocumentDetail },
       { path: AppRoutes.pdfReader, ...stub('Lecteur', 'pdf_reader_page.dart') },
       { path: AppRoutes.epreuveDetail, component: EpreuveDetail },
       { path: AppRoutes.quizSession, ...stub('Quiz', 'quiz_session_page.dart') },
@@ -80,8 +85,8 @@ export const APP_SHELL_ROUTES: Routes = [
         path: '',
         component: MainShell,
         children: [
-          { path: AppRoutes.home, ...stub('Accueil', 'home_page.dart') },
-          { path: AppRoutes.bibliotheque, ...stub('Bibliothèque', 'bibliotheque_home_page.dart') },
+          { path: AppRoutes.home, component: Home },
+          { path: AppRoutes.bibliotheque, component: BibliothequeHome },
           { path: AppRoutes.epreuves, component: EpreuvesList },
           { path: AppRoutes.progression, ...stub('Progression', 'progression_dashboard_page.dart') },
           { path: AppRoutes.mesDepots, component: MesDepots },

@@ -1,0 +1,40 @@
+<div class="matiere">
+  <header class="matiere__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <div class="matiere__titre-wrap">
+      <h1 class="matiere__titre">{{ matiereNom() }}</h1>
+      <p class="matiere__sous-titre">{{ filtered().length }} document{{ filtered().length > 1 ? 's' : '' }}</p>
+    </div>
+  </header>
+
+  <div class="matiere__corps">
+    @if (loading()) {
+      <p class="matiere__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="matiere__etat matiere__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      </div>
+    } @else if (filtered().length === 0) {
+      <nl-empty-state
+        icon="description"
+        title="Aucun document"
+        subtitle="Cette matière n'a pas encore de document." />
+    } @else {
+      <div class="matiere__liste">
+        @for (doc of filtered(); track doc.id) {
+          <nl-document-card
+            [title]="doc.titre"
+            [subject]="doc.matiere"
+            [typeLabel]="typeLabel(doc.type)"
+            [typeIcon]="typeIcon(doc.type)"
+            [typeColor]="typeColor(doc.type)"
+            [meta]="metaFor(doc)"
+            (activate)="openDocument(doc)" />
+        }
+      </div>
+    }
+  </div>
+</div>
