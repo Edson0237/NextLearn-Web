@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/router/auth.guard';
 import { AppRoutes } from '../../core/router/app-routes';
-import { RouteStub } from '../route-stub/route-stub';
 import { MainShell } from '../shell/main-shell';
 import { AppShellRoot } from './app-shell-root';
 import { Onboarding } from '../auth/onboarding/onboarding';
@@ -45,15 +44,8 @@ import { LegalDocument } from '../legal/legal-document/legal-document';
  * une fois ici couvre toute navigation sous `/app`, exactement comme le
  * `redirect` unique de go_router s'applique à chaque route déclarée.
  *
- * Chaque écran est un `RouteStub` (Phase 4) sauf la coque à cinq onglets,
- * qui existe réellement (Phase 3 : c'est de l'architecture de navigation,
- * pas du contenu). Voir `route-stub.ts` pour pourquoi un composant
- * générique plutôt que 31 fichiers vides.
+ * Tous les écrans authentifiés sont maintenant de vrais composants.
  */
-function stub(ecran: string, source: string) {
-  return { component: RouteStub, data: { ecran, source } };
-}
-
 export const APP_SHELL_ROUTES: Routes = [
   {
     path: '',
