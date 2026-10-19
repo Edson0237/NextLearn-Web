@@ -1,0 +1,109 @@
+<div class="progression">
+  <header class="progression__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="progression__titre">Ma progression</h1>
+  </header>
+
+  <div class="progression__corps">
+    @if (loading()) {
+      <p class="progression__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="progression__etat progression__etat--erreur">
+        <p>{{ error() }}</p>
+        <button class="progression__retry" (click)="load()">Réessayer</button>
+      </div>
+    } @else {
+      @if (stats(); as s) {
+        <section class="progression__hero">
+          <div class="progression__streak">
+            <nl-icon name="local_fire" />
+            <span class="progression__streak-value"><nl-animated-number [value]="s.streak" /></span>
+            <span class="progression__streak-label">jours de suite</span>
+          </div>
+          <div class="progression__stats">
+            <div class="progression__stat">
+              <span class="progression__stat-value"><nl-animated-number [value]="s.docsLus" /></span>
+              <span class="progression__stat-label">Docs lus</span>
+            </div>
+            <div class="progression__stat">
+              <span class="progression__stat-value"><nl-animated-number [value]="s.heuresEtude" /></span>
+              <span class="progression__stat-label">Heures</span>
+            </div>
+            <div class="progression__stat">
+              <span class="progression__stat-value"><nl-animated-number [value]="s.docsTelecharges" /></span>
+              <span class="progression__stat-label">Téléchargés</span>
+            </div>
+          </div>
+        </section>
+      }
+
+      <section class="progression__section">
+        <h2 class="progression__section-title">Activité de la semaine</h2>
+        @if (week().length === 0) {
+          <p class="progression__empty">Aucune activité récente.</p>
+        } @else {
+          <div class="progression__chart">
+            @for (d of week(); track d.date) {
+              <div class="progression__bar-wrap">
+                <div class="progression__bar" [style.height]="barHeight(d.minutes, 120)"></div>
+                <span class="progression__bar-label">{{ d.date | date:'EEE' }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="progression__section">
+        <h2 class="progression__section-title">Badges</h2>
+        @if (badges().length === 0) {
+          <p class="progression__empty">Aucun badge pour l'instant.</p>
+        } @else {
+          <div class="progression__badges">
+            @for (b of badges(); track b.id) {
+              <div class="progression__badge" [class.progression__badge--locked]="!b.decroche">
+                <div class="progression__badge-icon"><nl-icon [name]="b.icone || 'badge'" /></div>
+                <span class="progression__badge-name">{{ b.nom }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="progression__section">
+        <h2 class="progression__section-title">Matières étudiées</h2>
+        @if (matieres().length === 0) {
+          <p class="progression__empty">Aucune matière enregistrée.</p>
+        } @else {
+          <div class="progression__matieres">
+            @for (m of matieres(); track m.matiereId) {
+              <div class="progression__matiere">
+                <span class="progression__matiere-name">{{ m.matiereNom }}</span>
+                <span class="progression__matiere-time">{{ formatMinutes(m.minutes) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <section class="progression__section">
+        <h2 class="progression__section-title">Dernières sessions</h2>
+        @if (sessions().length === 0) {
+          <p class="progression__empty">Aucune session récente.</p>
+        } @else {
+          <div class="progression__sessions">
+            @for (ses of sessions(); track ses.id) {
+              <div class="progression__session">
+                <div class="progression__session-title">{{ ses.documentTitre || 'Session' }}</div>
+                <div class="progression__session-meta">
+                  {{ formatDuration(ses.dureeSecondes) }} · {{ ses.pagesLues }} p.
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+  </div>
+</div>

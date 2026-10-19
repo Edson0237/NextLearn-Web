@@ -1,0 +1,67 @@
+<div class="quiz">
+  <header class="quiz__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="quiz__titre">{{ result() ? 'Résultat' : 'Quiz' }}</h1>
+  </header>
+
+  <div class="quiz__corps">
+    @if (loading()) {
+      <p class="quiz__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="quiz__etat quiz__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="goBack()">Retour</button>
+      </div>
+    } @else if (quiz(); as q) {
+      @if (result(); as r) {
+        <div class="quiz__result">
+          <div class="quiz__score">
+            <span class="quiz__score-value">{{ r.score }}</span>
+            <span class="quiz__score-total">/ {{ r.total }}</span>
+          </div>
+          <p class="quiz__score-label">{{ r.bonnesReponses }} bonne{{ r.bonnesReponses > 1 ? 's' : '' }} réponse{{ r.bonnesReponses > 1 ? 's' : '' }}</p>
+          <button nlButton variant="primary" size="md" (click)="restart()">Recommencer</button>
+        </div>
+      } @else {
+        <div class="quiz__progress">
+          <div class="quiz__progress-bar" [style.width.%]="((currentIndex() + 1) / q.questions.length) * 100"></div>
+        </div>
+        <p class="quiz__counter">Question {{ currentIndex() + 1 }} / {{ q.questions.length }}</p>
+
+        @if (q.questions[currentIndex()]; as question) {
+          <div class="quiz__question">
+            <h2 class="quiz__enonce">{{ question.enonce }}</h2>
+            <div class="quiz__options">
+              @for (option of question.options; track $index) {
+                <button
+                  class="quiz__option"
+                  [class.quiz__option--selected]="answers()[question.id] === $index"
+                  (click)="selectAnswer(question.id, $index)">
+                  <nl-icon [name]="answers()[question.id] === $index ? 'check_circle' : 'radio_button_unchecked'" />
+                  <span>{{ option }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="quiz__nav">
+          <button nlButton variant="outline" size="md" [disabled]="currentIndex() === 0" (click)="previous()">Précédent</button>
+          @if (currentIndex() === q.questions.length - 1) {
+            <button nlButton variant="primary" size="md" [disabled]="submitting()" (click)="submit()">
+              {{ submitting() ? 'Envoi…' : 'Terminer' }}
+            </button>
+          } @else {
+            <button nlButton variant="primary" size="md" (click)="next()">Suivant</button>
+          }
+        </div>
+
+        @if (submitError()) {
+          <p class="quiz__submit-error">{{ submitError() }}</p>
+        }
+      }
+    }
+  </div>
+</div>

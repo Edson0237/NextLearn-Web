@@ -30,6 +30,8 @@ import { Favoris } from '../bibliotheque/favoris/favoris';
 import { OfflineLibrary } from '../bibliotheque/offline-library/offline-library';
 import { Recherche } from '../recherche/recherche';
 import { PdfReader } from '../bibliotheque/pdf-reader/pdf-reader';
+import { ProgressionDashboard } from '../progression/progression-dashboard/progression-dashboard';
+import { QuizSession } from '../quiz/quiz-session/quiz-session';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -82,7 +84,7 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.documentDetail, component: DocumentDetail },
       { path: AppRoutes.pdfReader, component: PdfReader },
       { path: AppRoutes.epreuveDetail, component: EpreuveDetail },
-      { path: AppRoutes.quizSession, ...stub('Quiz', 'quiz_session_page.dart') },
+      { path: AppRoutes.quizSession, component: QuizSession },
 
       // ── Coque principale : cinq onglets qui gardent leur état ────────────
       {
@@ -92,7 +94,7 @@ export const APP_SHELL_ROUTES: Routes = [
           { path: AppRoutes.home, component: Home },
           { path: AppRoutes.bibliotheque, component: BibliothequeHome },
           { path: AppRoutes.epreuves, component: EpreuvesList },
-          { path: AppRoutes.progression, ...stub('Progression', 'progression_dashboard_page.dart') },
+          { path: AppRoutes.progression, component: ProgressionDashboard },
           { path: AppRoutes.mesDepots, component: MesDepots },
           { path: AppRoutes.profil, component: ProfilHome },
         ],
