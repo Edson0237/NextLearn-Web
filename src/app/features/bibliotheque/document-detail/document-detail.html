@@ -59,11 +59,15 @@
     <div class="doc-detail__actions">
       <button nlButton variant="primary" size="md" (click)="openDocument()">
         <nl-icon name="visibility" />
-        <span>Lire le document</span>
+        <span>Lire</span>
       </button>
-      <button nlButton variant="outline" size="md" (click)="share()">
-        <nl-icon name="share" />
-        <span>Partager</span>
+      <button nlButton variant="outline" size="md" (click)="toggleFavori()">
+        <nl-icon [name]="isFavori() ? 'bookmark' : 'bookmark_outline'" />
+        <span>{{ isFavori() ? 'Retirer' : 'Favori' }}</span>
+      </button>
+      <button nlButton variant="outline" size="md" (click)="toggleOffline()">
+        <nl-icon [name]="isOffline() ? 'cloud_done' : 'cloud_download'" />
+        <span>{{ isOffline() ? 'En ligne' : 'Hors ligne' }}</span>
       </button>
     </div>
   } @else {

@@ -26,6 +26,9 @@ import { BibliothequeHome } from '../bibliotheque/bibliotheque-home/bibliotheque
 import { Catalogue } from '../bibliotheque/catalogue/catalogue';
 import { Matiere } from '../bibliotheque/matiere/matiere';
 import { DocumentDetail } from '../bibliotheque/document-detail/document-detail';
+import { Favoris } from '../bibliotheque/favoris/favoris';
+import { OfflineLibrary } from '../bibliotheque/offline-library/offline-library';
+import { Recherche } from '../recherche/recherche';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -72,9 +75,9 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.sessions, component: Sessions },
       { path: AppRoutes.matieres, component: Catalogue },
       { path: AppRoutes.matiere, component: Matiere },
-      { path: AppRoutes.favoris, ...stub('Favoris', 'favoris_page.dart') },
-      { path: AppRoutes.offlineLibrary, ...stub('Bibliothèque hors-ligne', 'offline_library_page.dart') },
-      { path: AppRoutes.recherche, ...stub('Recherche', 'recherche_page.dart') },
+      { path: AppRoutes.favoris, component: Favoris },
+      { path: AppRoutes.offlineLibrary, component: OfflineLibrary },
+      { path: AppRoutes.recherche, component: Recherche },
       { path: AppRoutes.documentDetail, component: DocumentDetail },
       { path: AppRoutes.pdfReader, ...stub('Lecteur', 'pdf_reader_page.dart') },
       { path: AppRoutes.epreuveDetail, component: EpreuveDetail },

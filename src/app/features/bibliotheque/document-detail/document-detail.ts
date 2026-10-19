@@ -5,6 +5,8 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
+import { FavorisRepository } from '../../../core/bibliotheque/favoris-repository';
+import { OfflineRepository } from '../../../core/bibliotheque/offline-repository';
 import { DocumentModel, DocumentType, labelTypeDocument, couleurTypeDocument } from '../../../core/bibliotheque/document.model';
 import { AppRoutes } from '../../../core/router/app-routes';
 
@@ -20,10 +22,14 @@ export class DocumentDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly docsRepo = inject(DocumentsRepository);
+  private readonly favorisRepo = inject(FavorisRepository);
+  private readonly offlineRepo = inject(OfflineRepository);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly document = signal<DocumentModel | null>(null);
+  protected readonly isFavori = signal(false);
+  protected readonly isOffline = signal(false);
 
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
@@ -34,8 +40,14 @@ export class DocumentDetail implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const doc = await this.docsRepo.getById(id);
+      const [doc, favoris, offlineIds] = await Promise.all([
+        this.docsRepo.getById(id),
+        this.favorisRepo.getFavorites().catch(() => []),
+        this.offlineRepo.getOfflineIds().catch(() => new Set<string>()),
+      ]);
       this.document.set(doc);
+      this.isFavori.set(favoris.some((f) => f.id === id));
+      this.isOffline.set(offlineIds.has(id));
       if (doc) void this.docsRepo.recordView(doc.id);
     } catch (e) {
       this.error.set('Impossible de charger ce document.');
@@ -66,6 +78,30 @@ export class DocumentDetail implements OnInit {
       void navigator.share({ title: doc.titre, text: doc.description, url: window.location.href });
     } else {
       void navigator.clipboard.writeText(window.location.href);
+    }
+  }
+
+  protected async toggleFavori(): Promise<void> {
+    const doc = this.document();
+    if (!doc) return;
+    if (this.isFavori()) {
+      await this.favorisRepo.removeFavorite(doc.id);
+      this.isFavori.set(false);
+    } else {
+      await this.favorisRepo.addFavorite(doc.id);
+      this.isFavori.set(true);
+    }
+  }
+
+  protected async toggleOffline(): Promise<void> {
+    const doc = this.document();
+    if (!doc) return;
+    if (this.isOffline()) {
+      await this.offlineRepo.removeOffline(doc.id);
+      this.isOffline.set(false);
+    } else {
+      await this.offlineRepo.markOffline(doc.id);
+      this.isOffline.set(true);
     }
   }
 

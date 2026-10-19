@@ -1,0 +1,85 @@
+@use '../../../shared/styles/type';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-canvas);
+}
+
+.offline {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  &__entete {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-lg) var(--space-sm);
+  }
+
+  &__titre {
+    @include type.nl-h3;
+    margin: 0;
+  }
+
+  &__corps {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 var(--space-lg) var(--space-xxxl);
+  }
+
+  &__etat {
+    padding: var(--space-xl) var(--space-lg);
+    text-align: center;
+    color: var(--text-secondary);
+
+    &--erreur {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-md);
+    }
+  }
+
+  &__liste {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  &__item {
+    position: relative;
+  }
+
+  &__remove {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+}
+
+.nl-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}

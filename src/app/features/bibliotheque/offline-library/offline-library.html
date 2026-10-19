@@ -1,0 +1,41 @@
+<div class="offline">
+  <header class="offline__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="offline__titre">Hors ligne</h1>
+  </header>
+
+  <div class="offline__corps">
+    @if (loading()) {
+      <p class="offline__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="offline__etat offline__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      </div>
+    } @else if (offlineDocuments().length === 0) {
+      <nl-empty-state
+        icon="cloud_download"
+        title="Aucun document hors-ligne"
+        subtitle="Marquez des documents pour les consulter sans connexion." />
+    } @else {
+      <div class="offline__liste">
+        @for (doc of offlineDocuments(); track doc.id) {
+          <div class="offline__item" (click)="openDocument(doc)">
+            <nl-document-card
+              [title]="doc.titre"
+              [subject]="doc.matiere"
+              [typeLabel]="typeLabel(doc.type)"
+              [typeIcon]="typeIcon(doc.type)"
+              [typeColor]="typeColor(doc.type)"
+              [meta]="metaFor(doc)" />
+            <button class="offline__remove" (click)="remove(doc, $event)" aria-label="Retirer du hors-ligne">
+              <nl-icon name="close" />
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
