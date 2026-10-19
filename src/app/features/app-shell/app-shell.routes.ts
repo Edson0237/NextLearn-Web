@@ -29,6 +29,7 @@ import { DocumentDetail } from '../bibliotheque/document-detail/document-detail'
 import { Favoris } from '../bibliotheque/favoris/favoris';
 import { OfflineLibrary } from '../bibliotheque/offline-library/offline-library';
 import { Recherche } from '../recherche/recherche';
+import { PdfReader } from '../bibliotheque/pdf-reader/pdf-reader';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -79,7 +80,7 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.offlineLibrary, component: OfflineLibrary },
       { path: AppRoutes.recherche, component: Recherche },
       { path: AppRoutes.documentDetail, component: DocumentDetail },
-      { path: AppRoutes.pdfReader, ...stub('Lecteur', 'pdf_reader_page.dart') },
+      { path: AppRoutes.pdfReader, component: PdfReader },
       { path: AppRoutes.epreuveDetail, component: EpreuveDetail },
       { path: AppRoutes.quizSession, ...stub('Quiz', 'quiz_session_page.dart') },
 

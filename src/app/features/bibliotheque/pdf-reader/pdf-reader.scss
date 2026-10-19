@@ -1,0 +1,63 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-canvas);
+}
+
+.pdf-reader {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__barre {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__titre {
+    flex: 1;
+    text-align: center;
+    font: 600 1rem/1 var(--font-family-heading);
+    color: var(--text-primary);
+  }
+
+  &__etat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    padding: var(--space-lg);
+    text-align: center;
+
+    &--erreur {
+      color: var(--danger);
+    }
+  }
+
+  &__frame {
+    flex: 1;
+    width: 100%;
+    border: none;
+  }
+}
+
+.nl-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
