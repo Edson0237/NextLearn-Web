@@ -1,0 +1,35 @@
+<div class="pending">
+  <header class="pending__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="pending__titre">Vérification</h1>
+  </header>
+
+  <div class="pending__corps">
+    @if (loading()) {
+      <p class="pending__etat">Chargement…</p>
+    } @else {
+      <div class="pending__card">
+        @switch (status().statut) {
+          @case ('verifie') {
+            <nl-icon name="check_circle" />
+            <h2>Compte vérifié</h2>
+            <p>Votre justificatif a été accepté.</p>
+          }
+          @case ('rejete') {
+            <nl-icon name="report_problem" />
+            <h2>Demande rejetée</h2>
+            <p>{{ status().message || 'Veuillez soumettre un nouveau justificatif.' }}</p>
+            <button nlButton variant="primary" size="md" (click)="newRequest()">Nouvelle demande</button>
+          }
+          @default {
+            <nl-icon name="schedule" />
+            <h2>Dossier en attente</h2>
+            <p>Votre demande est en cours d'examen. Revenez plus tard.</p>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>

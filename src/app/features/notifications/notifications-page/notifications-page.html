@@ -1,0 +1,43 @@
+<div class="notifs">
+  <header class="notifs__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="notifs__titre">Notifications</h1>
+    @if (notifications().some((n) => !n.lu)) {
+      <button class="notifs__mark-all" (click)="markAllAsRead()">Tout lire</button>
+    }
+  </header>
+
+  <div class="notifs__corps">
+    @if (loading()) {
+      <p class="notifs__etat">Chargement…</p>
+    } @else if (error()) {
+      <div class="notifs__etat notifs__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      </div>
+    } @else if (notifications().length === 0) {
+      <nl-empty-state
+        icon="notifications"
+        title="Aucune notification"
+        subtitle="Vous êtes à jour." />
+    } @else {
+      <div class="notifs__liste">
+        @for (n of notifications(); track n.id) {
+          <button
+            class="notifs__item"
+            [class.notifs__item--unread]="!n.lu"
+            (click)="open(n)">
+            <div class="notifs__dot"></div>
+            <div class="notifs__content">
+              <span class="notifs__title">{{ n.titre }}</span>
+              <span class="notifs__message">{{ n.message }}</span>
+              <span class="notifs__date">{{ groupTitle(n.createdAt) }}</span>
+            </div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>

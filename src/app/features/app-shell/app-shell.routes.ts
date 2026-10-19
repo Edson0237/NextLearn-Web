@@ -32,6 +32,9 @@ import { Recherche } from '../recherche/recherche';
 import { PdfReader } from '../bibliotheque/pdf-reader/pdf-reader';
 import { ProgressionDashboard } from '../progression/progression-dashboard/progression-dashboard';
 import { QuizSession } from '../quiz/quiz-session/quiz-session';
+import { NotificationsPage } from '../notifications/notifications-page/notifications-page';
+import { VerificationForm } from '../verification/verification-form/verification-form';
+import { VerificationPending } from '../verification/verification-pending/verification-pending';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -66,9 +69,9 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.resetPin, component: ResetPin },
 
       // ── Hors coque (poussés par-dessus) ──────────────────────────────────
-      { path: AppRoutes.notifications, ...stub('Notifications', 'notifications_page.dart') },
-      { path: AppRoutes.verificationForm, ...stub('Vérification académique', 'verification_form_page.dart') },
-      { path: AppRoutes.verificationPending, ...stub('Dossier en attente', 'verification_pending_page.dart') },
+      { path: AppRoutes.notifications, component: NotificationsPage },
+      { path: AppRoutes.verificationForm, component: VerificationForm },
+      { path: AppRoutes.verificationPending, component: VerificationPending },
       { path: AppRoutes.supportTickets, component: SupportTickets },
       { path: AppRoutes.deleteAccount, component: DeleteAccount },
       { path: AppRoutes.aPropos, ...stub('À propos', 'a_propos_page.dart') },

@@ -1,0 +1,72 @@
+<div class="verif">
+  <header class="verif__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="verif__titre">Vérification académique</h1>
+  </header>
+
+  <div class="verif__corps">
+    @if (status()?.statut === 'en_attente') {
+      <div class="verif__pending">
+        <nl-icon name="schedule" />
+        <p>Votre demande est en cours de traitement.</p>
+        <button nlButton variant="primary" size="md" (click)="goBack()">Retour</button>
+      </div>
+    } @else if (status()?.statut === 'verifie') {
+      <div class="verif__success">
+        <nl-icon name="check_circle" />
+        <p>Votre compte est vérifié.</p>
+        <button nlButton variant="primary" size="md" (click)="goBack()">Retour</button>
+      </div>
+    } @else {
+      <form class="verif__form" (ngSubmit)="submit()">
+        <label class="verif__field">
+          <span>Nom</span>
+          <input type="text" [(ngModel)]="nom" name="nom" required />
+        </label>
+        <label class="verif__field">
+          <span>Prénom</span>
+          <input type="text" [(ngModel)]="prenom" name="prenom" required />
+        </label>
+        <label class="verif__field">
+          <span>Matricule</span>
+          <input type="text" [(ngModel)]="matricule" name="matricule" />
+        </label>
+        <label class="verif__field">
+          <span>Université</span>
+          <input type="text" [(ngModel)]="universite" name="universite" required />
+        </label>
+        <label class="verif__field">
+          <span>Filière</span>
+          <input type="text" [(ngModel)]="filiere" name="filiere" required />
+        </label>
+        <label class="verif__field">
+          <span>Niveau</span>
+          <input type="text" [(ngModel)]="niveau" name="niveau" placeholder="N3" required />
+        </label>
+        <label class="verif__field">
+          <span>Type de justificatif</span>
+          <select [(ngModel)]="justificatifType" name="justificatifType" required>
+            <option value="">Choisir…</option>
+            @for (t of types(); track t.id) {
+              <option [value]="t.id">{{ t.nom }}</option>
+            }
+          </select>
+        </label>
+        <label class="verif__field">
+          <span>Justificatif (PDF, JPG, PNG)</span>
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileChange($event)" required />
+        </label>
+
+        @if (error()) {
+          <p class="verif__error">{{ error() }}</p>
+        }
+
+        <button nlButton variant="primary" size="md" [disabled]="sending()">
+          {{ sending() ? 'Envoi…' : 'Envoyer la demande' }}
+        </button>
+      </form>
+    }
+  </div>
+</div>
