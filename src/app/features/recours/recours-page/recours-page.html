@@ -1,0 +1,70 @@
+<div class="recours">
+  <header class="recours__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="recours__titre">Recours</h1>
+  </header>
+
+  <div class="recours__corps">
+    @if (loading()) {
+      <p class="recours__etat">Chargement…</p>
+    } @else if (error() && !sending()) {
+      <div class="recours__etat recours__etat--erreur">
+        <p>{{ error() }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      </div>
+    }
+
+    @if (etat(); as e) {
+      @if (e.possibles.length === 0) {
+        <div class="recours__info">
+          <nl-icon name="check_circle" />
+          <h2>Rien à contester</h2>
+          <p>Aucune décision récente n'est contestable (délai : {{ e.delaiJours }} jours).</p>
+        </div>
+      } @else {
+        <p class="recours__intro">Vous pouvez contester une décision prise dans les {{ e.delaiJours }} derniers jours.</p>
+
+        <div class="recours__choix">
+          @for (p of e.possibles; track p.type + p.cibleId) {
+            <button
+              class="recours__type"
+              [class.recours__type--active]="selectedType() === p.type && selectedCibleId() === p.cibleId"
+              (click)="selectPossibilite(p.type, p.cibleId)">
+              <span class="recours__type-label">{{ p.libelle || labelType(p.type) }}</span>
+            </button>
+          }
+        </div>
+
+        @if (selectedType()) {
+          <label class="recours__field">
+            <span>Motif du recours</span>
+            <textarea [(ngModel)]="motif" rows="5" placeholder="Expliquez pourquoi vous contestez cette décision…"></textarea>
+          </label>
+
+          @if (error()) {
+            <p class="recours__error">{{ error() }}</p>
+          }
+
+          <button nlButton variant="primary" size="md" [disabled]="sending()" (click)="submit()">
+            {{ sending() ? 'Envoi…' : 'Déposer le recours' }}
+          </button>
+        }
+      }
+    }
+
+    @if (mesRecours().length > 0) {
+      <h2 class="recours__section-title">Mes recours</h2>
+      <div class="recours__historique">
+        @for (r of mesRecours(); track r.id) {
+          <div class="recours__item">
+            <div class="recours__item-type">{{ labelType(r.type) }}</div>
+            <div class="recours__item-meta">{{ r.dateDepot | date:'short' }} · <span class="recours__statut">{{ r.statut }}</span></div>
+            <p class="recours__item-motif">{{ r.motif }}</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

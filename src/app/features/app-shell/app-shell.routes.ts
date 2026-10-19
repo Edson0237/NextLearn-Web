@@ -35,6 +35,9 @@ import { QuizSession } from '../quiz/quiz-session/quiz-session';
 import { NotificationsPage } from '../notifications/notifications-page/notifications-page';
 import { VerificationForm } from '../verification/verification-form/verification-form';
 import { VerificationPending } from '../verification/verification-pending/verification-pending';
+import { RecoursPage } from '../recours/recours-page/recours-page';
+import { APropos } from '../legal/a-propos/a-propos';
+import { LegalDocument } from '../legal/legal-document/legal-document';
 
 /**
  * L'arbre de routes de l'application — traduction du `GoRouter` complet
@@ -74,9 +77,10 @@ export const APP_SHELL_ROUTES: Routes = [
       { path: AppRoutes.verificationPending, component: VerificationPending },
       { path: AppRoutes.supportTickets, component: SupportTickets },
       { path: AppRoutes.deleteAccount, component: DeleteAccount },
-      { path: AppRoutes.aPropos, ...stub('À propos', 'a_propos_page.dart') },
+      { path: AppRoutes.aPropos, component: APropos },
+      { path: AppRoutes.legalDocument, component: LegalDocument },
       { path: AppRoutes.depotForm, component: DepotForm },
-      { path: AppRoutes.recours, ...stub('Voie de recours', 'recours_page.dart') },
+      { path: AppRoutes.recours, component: RecoursPage },
       { path: AppRoutes.parametres, component: Parametres },
       { path: AppRoutes.sessions, component: Sessions },
       { path: AppRoutes.matieres, component: Catalogue },

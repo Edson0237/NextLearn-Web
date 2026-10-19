@@ -1,0 +1,16 @@
+<div class="legal">
+  <header class="legal__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="legal__titre">{{ title() }}</h1>
+  </header>
+
+  <div class="legal__corps">
+    @if (doc(); as d) {
+      <iframe class="legal__frame" [src]="'/' + d + '/index.html'" [title]="title()"></iframe>
+    } @else {
+      <p class="legal__etat">Document inconnu.</p>
+    }
+  </div>
+</div>

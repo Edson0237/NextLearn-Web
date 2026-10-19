@@ -1,0 +1,58 @@
+@use '../../../shared/styles/type';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-canvas);
+}
+
+.legal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__entete {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-lg) var(--space-sm);
+  }
+
+  &__titre {
+    @include type.nl-h3;
+    margin: 0;
+  }
+
+  &__corps {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--bg-primary);
+  }
+
+  &__etat {
+    padding: var(--space-xl);
+    text-align: center;
+    color: var(--text-secondary);
+  }
+}
+
+.nl-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}

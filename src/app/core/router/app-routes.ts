@@ -53,6 +53,7 @@ export abstract class AppRoutes {
   // ── Textes légaux (dans l'application — les pages publiques statiques
   // vivent hors du routage, voir public/confidentialite, public/conditions) ─
   static readonly aPropos = 'legal/a-propos';
+  static readonly legalDocument = 'legal/document/:doc';
 
   // ── Vérification académique ──────────────────────────────────────────────
   static readonly verificationForm = 'verification';

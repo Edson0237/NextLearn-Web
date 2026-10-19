@@ -1,0 +1,42 @@
+<div class="apropos">
+  <header class="apropos__entete">
+    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+      <nl-icon name="arrow_back" />
+    </button>
+    <h1 class="apropos__titre">À propos</h1>
+  </header>
+
+  <div class="apropos__corps">
+    <h2 class="apropos__brand">NextLearn</h2>
+    <p class="apropos__accroche">La bibliothèque numérique qui accompagne les étudiants de l'enseignement supérieur.</p>
+
+    <p class="apropos__paragraphe">NextLearn centralise cours, épreuves, TD et travaux pratiques pour faciliter la révision, le partage et la progression académique.</p>
+
+    <h3 class="apropos__section-title">Nos valeurs</h3>
+    <div class="apropos__valeurs">
+      @for (v of valeurs; track v.nom) {
+        <div class="apropos__valeur">
+          <span class="apropos__valeur-nom">{{ v.nom }}</span>
+          <span class="apropos__valeur-texte">{{ v.texte }}</span>
+        </div>
+      }
+    </div>
+
+    <h3 class="apropos__section-title">L'équipe</h3>
+    <div class="apropos__equipe">
+      @for (m of equipe; track m.nom) {
+        <div class="apropos__membre">
+          <span class="apropos__membre-nom">{{ m.nom }}</span>
+          <span class="apropos__membre-role">{{ m.role }}</span>
+          <span class="apropos__membre-competences">{{ m.competences }}</span>
+        </div>
+      }
+    </div>
+
+    <h3 class="apropos__section-title">Nous contacter</h3>
+    <div class="apropos__contact">
+      <div class="apropos__ligne"><span>Site</span><a href="https://nextlearn.cm" target="_blank">nextlearn.cm</a></div>
+      <div class="apropos__ligne"><span>Email</span><a href="mailto:nextlearncm@gmail.com">nextlearncm@gmail.com</a></div>
+    </div>
+  </div>
+</div>
