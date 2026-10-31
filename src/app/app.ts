@@ -5,6 +5,7 @@ import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
 import { GlobalErrorService } from './core/error-handling/global-error.service';
 import { InstallationService } from './core/pwa/installation.service';
+import { MiseAJourService } from './core/pwa/mise-a-jour.service';
 
 /**
  * Coque racine, réduite au routage depuis que la vitrine et l'application
@@ -30,6 +31,8 @@ export class App {
   private readonly historique = inject(HistoriqueNavigation);
   /** Instancié dès le démarrage : `beforeinstallprompt` peut partir avant le premier écran. */
   private readonly installation = inject(InstallationService);
+  /** Instancié dès le démarrage : la vitrine aussi doit recevoir les nouvelles versions, pas seulement l'application. */
+  private readonly miseAJour = inject(MiseAJourService);
   protected readonly erreurFatale = this.global.fatal;
   protected readonly modeDebug = isDevMode();
 }
