@@ -1150,8 +1150,7 @@
   "vitrineInstaller": "Installer sur mon téléphone",
   "vitrineGuideIos": "Sur iPhone : touche le bouton Partager de Safari, puis « Sur l’écran d’accueil ».",
   "vitrineGarantie1": "Gratuit",
-  "vitrineGarantie2": "Sans Play Store ni App Store",
-  "vitrineGarantie3": "Fonctionne hors ligne",
+  "vitrineGarantie2": "Fonctionne hors ligne",
   "vitrineApercuAlt": "Aperçu de l’écran d’accueil de NextLearn : formats de documents, documents recommandés et progression.",
   "vitrinePuceHorsLigne": "Disponible hors ligne",
   "vitrinePuceCorriges": "Épreuves et corrigés",
@@ -1175,10 +1174,8 @@
   "vitrineFinalSous": "Rejoins les étudiants qui retrouvent déjà leurs cours, épreuves et corrigés au même endroit.",
   "vitrinePiedBaseline": "La bibliothèque académique de ta filière, dans ta poche.",
   "vitrinePiedLegal": "Légal",
-  "vitrinePiedSupport": "Support",
   "vitrineLienConfidentialite": "Politique de confidentialité",
   "vitrineLienConditions": "Conditions d’utilisation",
   "vitrineLienSuppression": "Supprimer mon compte",
-  "vitrineLienContact": "Nous contacter",
   "vitrineDroits": "Tous droits réservés."
 }
