@@ -18,7 +18,7 @@ import { HistoriqueNavigation } from '../../../core/router/historique-navigation
  * `ng2-pdf-viewer` le charge sinon depuis jsdelivr. Deux conséquences, et la
  * seconde est la plus gênante pour cette application : une dépendance tierce
  * au moment précis où l'on ouvre un document, et **rien ne s'affiche hors
- * ligne** — c'est-à-dire dans la situation où l'on vient justement chercher
+ * ligne** - c'est-à-dire dans la situation où l'on vient justement chercher
  * un document téléchargé. En production, le fichier manquait tout court : le
  * chemin par défaut de pdf.js (`./pdf.worker.mjs`) se résout relativement à
  * l'URL de la page, donc sur une route qui n'existe pas.
@@ -30,7 +30,7 @@ import { HistoriqueNavigation } from '../../../core/router/historique-navigation
 (window as unknown as { pdfWorkerSrc?: string }).pdfWorkerSrc = '/pdf.worker.min.mjs';
 
 /**
- * Durée minimale d'une session d'étude, en secondes —
+ * Durée minimale d'une session d'étude, en secondes -
  * `StudySessionController.minimumDurationSeconds` côté Flutter.
  *
  * En deçà, on a ouvert puis refermé : compter cette seconde-là gonflerait les

@@ -57,7 +57,7 @@
           @case ('reconnu') {
             <p class="nl-reg__etat-domaine nl-reg__etat-domaine--ok">
               <nl-icon name="check_circle" [size]="16" />
-              Domaine reconnu{{ domaine().institution ? ' — ' + domaine().institution : '' }}
+              Domaine reconnu{{ domaine().institution ? ' - ' + domaine().institution : '' }}
             </p>
           }
           @case ('refuse') {
@@ -211,7 +211,7 @@
           <strong>{{ justificatifFichier()?.name || 'Choisir un fichier' }}</strong>
           <small>
             @if (justificatifFichier()) {
-              {{ (justificatifFichier()!.size / 1024).toFixed(0) }} Ko — appuie pour changer
+              {{ (justificatifFichier()!.size / 1024).toFixed(0) }} Ko - appuie pour changer
             } @else {
               PDF, JPG ou PNG
             }

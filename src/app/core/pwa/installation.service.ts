@@ -13,7 +13,7 @@ const CLE_REFUS = 'nl_install_refuse';
  *
  * Android et Chrome proposent `beforeinstallprompt` : l'événement était
  * ignoré, donc l'invitation native ne s'affichait jamais et aucun bouton ne
- * la remplaçait — la seule voie restante était le menu du navigateur, que
+ * la remplaçait - la seule voie restante était le menu du navigateur, que
  * personne ne va chercher.
  *
  * iOS n'a pas d'équivalent : Safari n'expose aucune API d'installation. La

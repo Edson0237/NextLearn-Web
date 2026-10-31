@@ -10,8 +10,8 @@
 // ## Pourquoi pas le CDN Google
 //
 // Le `<link>` vers `fonts.googleapis.com` bloque le premier rendu, dépend
-// d'un tiers au moment précis où l'on ouvre l'application — y compris
-// installée sur un écran d'accueil, hors ligne — et envoie l'adresse IP du
+// d'un tiers au moment précis où l'on ouvre l'application - y compris
+// installée sur un écran d'accueil, hors ligne - et envoie l'adresse IP du
 // lecteur à un serveur que la politique de confidentialité ne mentionne pas.
 // Les fichiers sont donc servis depuis `public/fonts/`.
 //

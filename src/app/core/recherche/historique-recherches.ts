@@ -3,13 +3,13 @@ import { Injectable, signal } from '@angular/core';
 const CLE = 'nl_recherches_recentes';
 
 /**
- * Les dernières recherches, conservées sur l'appareil — traduction de
+ * Les dernières recherches, conservées sur l'appareil - traduction de
  * `HistoriqueRecherches` (`historique_recherches.dart`).
  *
  * ## Pourquoi les garder
  *
  * Une recherche se refait. On cherche « thermodynamique » la veille d'un
- * contrôle, on rouvre l'application le lendemain, et il faut la retaper — avec
+ * contrôle, on rouvre l'application le lendemain, et il faut la retaper - avec
  * les mêmes fautes de frappe. Les reproposer épargne une saisie au clavier sur
  * un écran de téléphone, le geste le plus coûteux de cette page.
  *
@@ -17,7 +17,7 @@ const CLE = 'nl_recherches_recentes';
  *
  * Ce que quelqu'un cherche en dit long : une matière qu'il ne maîtrise pas, un
  * rattrapage qu'il prépare. Rien de cela n'a besoin de quitter l'appareil, donc
- * rien ne le quitte — pas d'envoi au serveur, et la liste disparaît avec les
+ * rien ne le quitte - pas d'envoi au serveur, et la liste disparaît avec les
  * données du site.
  */
 @Injectable({ providedIn: 'root' })

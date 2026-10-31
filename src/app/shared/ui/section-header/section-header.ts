@@ -5,8 +5,8 @@ import { IconName } from '../icon/icon-paths';
 /**
  * Tête de section : un titre, parfois une pastille, parfois une action.
  *
- * Chaque écran dessinait la sienne — un `h2`, un bouton, un `justify-content`
- * — avec des tailles et des espacements qui ne concordaient pas. C'est le
+ * Chaque écran dessinait la sienne - un `h2`, un bouton, un `justify-content`
+ * - avec des tailles et des espacements qui ne concordaient pas. C'est le
  * genre d'écart qu'on ne voit pas en écrivant un écran, et qui se voit en
  * les faisant défiler.
  *

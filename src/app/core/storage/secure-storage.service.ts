@@ -2,24 +2,24 @@ import { Injectable } from '@angular/core';
 import { UserModel, utilisateurDepuisCache, utilisateurVersCache } from '../models/user.model';
 
 /**
- * Stockage des jetons et de l'état d'authentification — traduction de
+ * Stockage des jetons et de l'état d'authentification - traduction de
  * `SecureStorageService` (`lib/core/storage/secure_storage_service.dart`).
  *
  * ## La décision que ce fichier ne peut pas éviter (audit Phase 1, §2, Q2)
  *
  * `flutter_secure_storage` s'appuie sur le Keychain iOS et le Keystore
- * Android — une zone protégée par le système. **Il n'y a rien d'équivalent
+ * Android - une zone protégée par le système. **Il n'y a rien d'équivalent
  * sur le web.** Ce fichier écrit dans `localStorage`, en clair, lisible par
- * n'importe quel script qui s'exécute sur la page — exactement le risque
+ * n'importe quel script qui s'exécute sur la page - exactement le risque
  * qu'un vol par injection de script (XSS) chercherait à exploiter.
  *
  * Deux alternatives existent et ont été écartées, pas oubliées :
  * - Un cookie `httpOnly` pour le refresh token exigerait une modification
- *   du backend (`nextlearn_api_v1`) et un déploiement same-origin — hors de
+ *   du backend (`nextlearn_api_v1`) et un déploiement same-origin - hors de
  *   portée de ce dépôt tant que cette modification n'est pas faite et
  *   confirmée.
  * - Une Content Security Policy stricte réduirait la surface XSS sans
- *   supprimer le risque — à poser en Phase 5, pas ici.
+ *   supprimer le risque - à poser en Phase 5, pas ici.
  *
  * En l'état, le risque est accepté et documenté, pas caché : la politique
  * de confidentialité devra le mentionner si ce choix reste définitif.
@@ -95,7 +95,7 @@ export class SecureStorageService {
   // ── Jeton temporaire (inscription, 2FA, PIN oublié) ─────────────────────
   // Volontairement séparé du jeton d'accès : un rafraîchissement déclenché
   // en arrière-plan ne doit jamais écraser un jeton de réinitialisation en
-  // cours d'usage — ils n'ont ni la même portée ni le même destinataire.
+  // cours d'usage - ils n'ont ni la même portée ni le même destinataire.
   saveTempToken(token: string): void {
     this.ecrire(this.cle.tempToken, token);
   }

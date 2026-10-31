@@ -6,13 +6,13 @@ import { Badge } from '../badge/badge';
 import { Pressable } from '../../directives/pressable';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 
-/** Une métadonnée de la ligne du bas — pages, poids, date, téléchargements. */
+/** Une métadonnée de la ligne du bas - pages, poids, date, téléchargements. */
 export interface MetaDocument {
   icon: IconName;
   label: string;
 }
 
-/** Une étiquette de la ligne du haut — matière, niveau, statut. */
+/** Une étiquette de la ligne du haut - matière, niveau, statut. */
 export interface EtiquetteDocument {
   readonly texte: string;
   readonly ton?: 'neutre' | 'primaire' | 'cyan' | 'ambre' | 'emeraude';
@@ -31,8 +31,8 @@ export interface EtiquetteDocument {
  * La carte reprend la structure de la référence, qui tient en quatre étages :
  *
  * 1. **la vignette de type** (40×40, fond teinté, icône de la couleur du
- *    type) — c'est elle qu'on balaie du regard pour trier une liste ;
- * 2. **la rangée d'étiquettes** — code de matière, niveau, statut ;
+ *    type) - c'est elle qu'on balaie du regard pour trier une liste ;
+ * 2. **la rangée d'étiquettes** - code de matière, niveau, statut ;
  * 3. **le titre et sa ligne d'auteur** ;
  * 4. **la rangée de métadonnées**, séparée par un filet, avec la note à
  *    droite et le bouton d'action.
@@ -40,7 +40,7 @@ export interface EtiquetteDocument {
  * ## Ce qu'elle ne fait toujours pas
  *
  * Elle ne connaît aucun modèle de domaine. L'appelant lui donne des chaînes
- * déjà choisies — c'est lui qui sait qu'un nombre de pages à zéro veut dire
+ * déjà choisies - c'est lui qui sait qu'un nombre de pages à zéro veut dire
  * « non mesuré » et ne doit pas s'afficher.
  */
 @Component({
@@ -92,7 +92,7 @@ export class DocumentCard {
   readonly nombreAvis = input<number>();
   /**
    * L'identifiant de la ressource : quand il est fourni, la carte porte son
-   * bouton favori, géré ici (état partagé `FavorisEtat`) — les écrans n'ont
+   * bouton favori, géré ici (état partagé `FavorisEtat`) - les écrans n'ont
    * rien à brancher.
    */
   readonly documentId = input<string>();
@@ -110,7 +110,7 @@ export class DocumentCard {
    *
    * Sans ce drapeau, « retirer du hors-ligne » portait le cobalt de l'action
    * principale, et le bouton était en tout point celui qui télécharge sur
-   * l'écran d'à côté — deux gestes opposés sous le même rond bleu.
+   * l'écran d'à côté - deux gestes opposés sous le même rond bleu.
    */
   readonly actionDestructive = input(false);
 
@@ -120,7 +120,7 @@ export class DocumentCard {
   /**
    * La ligne sous le titre : qui l'a produit, et quand.
    *
-   * La matière n'y figure plus — elle est déjà la première étiquette, et la
+   * La matière n'y figure plus - elle est déjà la première étiquette, et la
    * répéter deux lignes plus bas faisait lire trois fois la même chose sur
    * une carte de six lignes.
    */

@@ -10,7 +10,7 @@ import { ThemeService } from '../../shared/services/theme';
  * L'application n'en avait aucune : une navigation vers un chemin non déclaré
  * levait `NG04002` dans la console et laissait l'utilisateur sur l'écran
  * précédent, sans rien lui dire. Une erreur muette est pire qu'une erreur
- * visible — celle-ci se remarque, donc elle se corrige.
+ * visible - celle-ci se remarque, donc elle se corrige.
  *
  * Côté Flutter la question ne se pose pas : on ne tape pas une URL dans une
  * application mobile. Sur le web, si.

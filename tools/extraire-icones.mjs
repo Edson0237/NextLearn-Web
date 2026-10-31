@@ -2,7 +2,7 @@
  * Régénère `icon-paths.ts` depuis Lucide (`lucide-static`, licence ISC).
  *
  * Les icônes étaient des Material Symbols arrondis : pleines, épaisses,
- * reconnaissables entre mille — c'est ce qui donnait l'air « généré » à toute
+ * reconnaissables entre mille - c'est ce qui donnait l'air « généré » à toute
  * l'interface. Lucide est un trait de 24 px, fin et régulier, celui qu'on
  * retrouve dans les applications d'apprentissage soignées : peu de matière,
  * des angles francs, aucune ornementation.
@@ -13,7 +13,7 @@
  * `NOMS` fait le lien entre les noms de l'application (inchangés : aucun écran
  * n'a à bouger) et les fichiers Lucide. Le deuxième champ dit comment
  * l'icône se remplit quand l'état l'exige : `plein` (marque-page, étoile, cœur,
- * dossier — un aplat plein), `doux` (une teinte translucide sous le trait,
+ * dossier - un aplat plein), `doux` (une teinte translucide sous le trait,
  * pour l'onglet courant) ; absent, l'icône reste au trait.
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -98,14 +98,14 @@ const lignes = Object.entries(NOMS).map(([nom, [fichier, remplissage]]) => {
 });
 
 const sortie = `/**
- * Icônes — Lucide (\`lucide-static\`, licence ISC), trait de 24 px.
+ * Icônes - Lucide (\`lucide-static\`, licence ISC), trait de 24 px.
  *
  * **Fichier généré** : \`node tools/extraire-icones.mjs\`. Ne pas éditer à la
  * main ; pour changer une icône, changer sa correspondance dans l'outil.
  *
- * \`f\` — remplissage quand l'état l'exige : \`plein\` (aplat), \`doux\` (teinte
+ * \`f\` - remplissage quand l'état l'exige : \`plein\` (aplat), \`doux\` (teinte
  * translucide sous le trait) ; \`null\`, l'icône reste au trait.
- * \`e\` — les éléments SVG, dans un repère 24 × 24.
+ * \`e\` - les éléments SVG, dans un repère 24 × 24.
  */
 export interface ElementIcone {
   readonly t: 'path' | 'circle' | 'rect' | 'line' | 'polyline' | 'polygon' | 'ellipse';

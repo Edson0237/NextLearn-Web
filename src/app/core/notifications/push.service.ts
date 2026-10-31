@@ -33,9 +33,9 @@ export type EtatPush =
  *
  * L'API le dit dans son propre service d'envoi : « l'absence de configuration
  * n'est pas une panne ». C'est repris tel quel ici. Sans
- * `public/firebase-config.json` — ou avec un `appId`/`vapidKey` vide, ce qui
+ * `public/firebase-config.json` - ou avec un `appId`/`vapidKey` vide, ce qui
  * est l'état tant qu'une application **web** n'a pas été déclarée dans la
- * console Firebase — le service se dit `non-configure` et ne tente rien. Les
+ * console Firebase - le service se dit `non-configure` et ne tente rien. Les
  * notifications restent consultables dans l'application : le push est un canal
  * de plus, jamais le seul.
  *
@@ -51,7 +51,7 @@ export type EtatPush =
  * La permission n'est jamais réclamée au premier lancement : une autorisation
  * demandée avant qu'on ait vu à quoi elle sert est refusée la plupart du
  * temps, et le navigateur ne la redemande plus. Elle part donc d'un geste
- * explicite — l'interrupteur des réglages — exactement comme
+ * explicite - l'interrupteur des réglages - exactement comme
  * `activerPourSessionOuverte` côté Flutter.
  *
  * ## iOS
@@ -82,7 +82,7 @@ export class PushService {
 
   /**
    * Demande la permission, obtient le jeton et l'enregistre.
-   * Rend l'état atteint — c'est lui que l'interface montre.
+   * Rend l'état atteint - c'est lui que l'interface montre.
    */
   async activer(): Promise<EtatPush> {
     if (!this.supporte) return this.poser('indisponible');
@@ -141,7 +141,7 @@ export class PushService {
    * Coupe la réception sur cet appareil.
    *
    * Le jeton est retiré **côté serveur** : plus fort qu'ignorer les messages à
-   * l'arrivée, puisque le serveur cesse d'en envoyer — ce qui épargne aussi la
+   * l'arrivée, puisque le serveur cesse d'en envoyer - ce qui épargne aussi la
    * batterie et les données. La permission système n'est pas révoquée : on ne
    * veut pas enfermer quelqu'un qui réactiverait plus tard.
    */

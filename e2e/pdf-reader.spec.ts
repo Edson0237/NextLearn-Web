@@ -42,7 +42,7 @@ test.describe('Lecteur PDF', () => {
     await page.goto('/app/bibliotheque/doc/test-doc/read');
 
     // `toBeAttached()` suffisait jusqu'ici : il ne regarde que la présence
-    // dans le DOM. Or le lecteur était bien là, et mesurait 390x0 — le PDF
+    // dans le DOM. Or le lecteur était bien là, et mesurait 390x0 - le PDF
     // était chargé et jamais peint. Ce test passait donc sur une
     // fonctionnalité invisible. On vérifie désormais la seule chose qui
     // compte pour un lecteur : qu'il occupe de la place et qu'il a dessiné.
@@ -65,8 +65,8 @@ test.describe('Lecteur PDF', () => {
 
     await page.goto('/app/bibliotheque/doc/test-doc/read');
 
-    // Le lecteur distingue deux échecs : l'URL signée absente — ce que ce
-    // test provoque — et l'exception. Le test attendait le second message
+    // Le lecteur distingue deux échecs : l'URL signée absente - ce que ce
+    // test provoque - et l'exception. Le test attendait le second message
     // parce qu'avec un backend injoignable `getById` levait, et que la
     // branche `catch` répondait à sa place. L'assertion portait donc sur
     // une panne de réseau, pas sur le cas qu'elle nomme.

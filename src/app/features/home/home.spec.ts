@@ -39,7 +39,7 @@ describe('Home', () => {
     http.expectOne('/api/progression/stats').flush({ data: { streak: 0 } });
     // L'accueil charge aussi le contexte (matières du programme), la
     // progression de lecture (section « Reprendre ») et le compteur de
-    // notifications non lues — les trois sections que la PWA n'affichait pas.
+    // notifications non lues - les trois sections que la PWA n'affichait pas.
     http.expectOne('/api/me/context').flush({ data: { resolved: true, subjects: [] } });
     http.expectOne('/api/progress/lecture').flush({ data: [] });
     http.expectOne('/api/notifications/unread-count').flush({ data: { count: 0 } });

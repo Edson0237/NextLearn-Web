@@ -56,8 +56,8 @@ export class Catalogue implements OnInit {
    * Le programme de l'étudiant est-il rattaché à des matières ?
    *
    * Sinon, « Ma filière » mentirait : les matières affichées viennent des
-   * documents eux-mêmes, pas du programme. La version mobile le dit — « Matières
-   * disponibles », avec une phrase d'explication — et la PWA affichait la même
+   * documents eux-mêmes, pas du programme. La version mobile le dit - « Matières
+   * disponibles », avec une phrase d'explication - et la PWA affichait la même
    * étiquette dans les deux cas.
    */
   protected readonly programmeConnu = computed(() => this.contexte.matieres().length > 0);
@@ -85,7 +85,7 @@ export class Catalogue implements OnInit {
    */
   protected teinte(_couleur: string, rang = 0): string {
     // Le bleu de l'application pour tous les dossiers : la couleur que
-    // l'administration donne à une matière ne sert pas ici — vingt dossiers de
+    // l'administration donne à une matière ne sert pas ici - vingt dossiers de
     // vingt couleurs ne se lisent pas mieux que vingt dossiers bleus.
     return PALETTE[rang % PALETTE.length];
   }

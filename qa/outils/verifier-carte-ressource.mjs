@@ -1,4 +1,4 @@
-/** Une carte de ressource montre toujours pages, poids, vues et note — même quand le serveur n'a rien à dire. */
+/** Une carte de ressource montre toujours pages, poids, vues et note - même quand le serveur n'a rien à dire. */
 import { chromium } from 'playwright';
 const base = process.argv[2] ?? 'http://localhost:4200';
 const docs = [
@@ -20,7 +20,7 @@ await page.goto(`${base}/app/bibliotheque/matiere/m1`, { waitUntil: 'networkidle
 await page.waitForTimeout(2500);
 const cartes = await page.locator('nl-document-card').evaluateAll((l) => l.map((c) => ({ titre: c.querySelector('.nl-doc-card__titre')?.textContent?.trim(), bas: c.querySelector('.nl-doc-card__bas')?.textContent?.replace(/\s+/g, ' ').trim() })));
 for (const c of cartes) console.log(c.titre.padEnd(16), '→', c.bas);
-const ok = cartes.length === 3 && cartes.every((c) => /p\./.test(c.bas) && /Mo/.test(c.bas)) && !/ 0 /.test(cartes[1].bas + ' ') && !cartes[1].bas.includes('—', cartes[1].bas.indexOf('Mo'));
+const ok = cartes.length === 3 && cartes.every((c) => /p\./.test(c.bas) && /Mo/.test(c.bas)) && !/ 0 /.test(cartes[1].bas + ' ') && !cartes[1].bas.includes('-', cartes[1].bas.indexOf('Mo'));
 console.log(ok ? 'OK : les trois cartes ont la même forme' : 'ÉCHEC');
 await page.screenshot({ path: 'qa/screenshots/refonte/cartes-ressource.png' });
 await nav.close();

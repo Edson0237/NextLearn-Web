@@ -13,7 +13,7 @@
 
   // 0.9 plutôt que le 0.97 global de `_native.scss` : une icône seule, sans
   // le poids visuel d'une carte autour, a besoin d'un tassement plus net
-  // pour se voir — exactement `IconePressable.echelle = 0.9`.
+  // pour se voir - exactement `IconePressable.echelle = 0.9`.
   &:active {
     transform: scale(0.9);
     background: var(--bg-secondary);

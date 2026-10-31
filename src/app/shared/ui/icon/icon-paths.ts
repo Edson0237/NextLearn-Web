@@ -1,12 +1,12 @@
 /**
- * Icônes — Lucide (`lucide-static`, licence ISC), trait de 24 px.
+ * Icônes - Lucide (`lucide-static`, licence ISC), trait de 24 px.
  *
  * **Fichier généré** : `node tools/extraire-icones.mjs`. Ne pas éditer à la
  * main ; pour changer une icône, changer sa correspondance dans l'outil.
  *
- * `f` — remplissage quand l'état l'exige : `plein` (aplat), `doux` (teinte
+ * `f` - remplissage quand l'état l'exige : `plein` (aplat), `doux` (teinte
  * translucide sous le trait) ; `null`, l'icône reste au trait.
- * `e` — les éléments SVG, dans un repère 24 × 24.
+ * `e` - les éléments SVG, dans un repère 24 × 24.
  */
 export interface ElementIcone {
   readonly t: 'path' | 'circle' | 'rect' | 'line' | 'polyline' | 'polygon' | 'ellipse';

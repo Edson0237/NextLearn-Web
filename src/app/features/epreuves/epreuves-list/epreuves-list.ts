@@ -21,9 +21,9 @@ interface Filtre {
 const FILTRE_VIDE: Filtre = {};
 
 /**
- * Liste des épreuves (onglet du shell) — traduction d'`EpreuvesListPage`
+ * Liste des épreuves (onglet du shell) - traduction d'`EpreuvesListPage`
  * (`lib/domains/epreuves/presentation/pages/epreuves_list/epreuves_list_page.dart`).
- * Filtrage entièrement client, sur la liste complète déjà chargée — comme
+ * Filtrage entièrement client, sur la liste complète déjà chargée - comme
  * dans la source, qui en dérive les filtres plutôt que de les redemander
  * au serveur.
  */
@@ -55,7 +55,7 @@ export class EpreuvesList {
     if (f.annee != null) liste = liste.filter((e) => e.annee === f.annee);
     if (f.avecCorrige) liste = liste.filter((e) => e.avecCorrige);
     // Égalité stricte : un sujet de nature inconnue n'est ni CC ni SN et
-    // reste sous « Tous » — le faire apparaître sous les deux rendrait le
+    // reste sous « Tous » - le faire apparaître sous les deux rendrait le
     // découpage inutile.
     if (f.type) liste = liste.filter((e) => e.typeEpreuve === f.type);
     return [...liste].sort((a, b) => b.annee - a.annee);

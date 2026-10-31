@@ -17,7 +17,7 @@ import { VERIFICATION_AUCUNE, VerificationState, VerificationStatut, estApprouve
 import { AppRoutes } from '../../../core/router/app-routes';
 
 /**
- * Le dépôt du justificatif — pour les comptes dont l'adresse n'est pas celle
+ * Le dépôt du justificatif - pour les comptes dont l'adresse n'est pas celle
  * d'un établissement. Le parcours (école, filière, niveau) a déjà été donné à
  * l'inscription : il est repris tel quel, on ne le redemande pas.
  */
@@ -149,8 +149,8 @@ export class VerificationForm implements OnInit {
       });
       // La garde de routage s'en remet à l'état de vérification : lui laisser
       // « requis » la ferait renvoyer ici, en boucle. On pose donc l'état à
-      // partir de la réponse de l'envoi — sans dépendre d'une seconde requête
-      // qui pourrait échouer ou traîner —, puis on le confirme auprès du serveur.
+      // partir de la réponse de l'envoi - sans dépendre d'une seconde requête
+      // qui pourrait échouer ou traîner -, puis on le confirme auprès du serveur.
       this.verification.state.set(
         verificationDepuisJson({ statut: 'en_attente', resoumissionsRestantes: 0, ...depose, requis: true }),
       );
@@ -166,7 +166,7 @@ export class VerificationForm implements OnInit {
   /**
    * « Retour ». Tant que l'accès est fermé, la garde renvoie ici de toute autre
    * page : un retour vers l'application ne mènerait nulle part. La seule sortie
-   * honnête est de quitter ce compte — par exemple pour en prendre un autre.
+   * honnête est de quitter ce compte - par exemple pour en prendre un autre.
    */
   protected async sortir(): Promise<void> {
     if (!this.bloque()) {

@@ -3,7 +3,7 @@ import { ThemeService } from './theme';
 
 /**
  * Ce que ce test protège : la persistance elle-même, et le contrat
- * « système par défaut, choix explicite qui l'emporte toujours » — même
+ * « système par défaut, choix explicite qui l'emporte toujours » - même
  * raisonnement que `ThemeModeNotifier` côté Flutter.
  */
 describe('ThemeService', () => {

@@ -19,7 +19,7 @@ export interface ActionListSheetData {
 }
 
 /**
- * Liste d'actions en feuille — traduction de `FeuilleAction.choisir`
+ * Liste d'actions en feuille - traduction de `FeuilleAction.choisir`
  * (`feuille_action.dart`). Chaque ligne ferme la feuille avec sa valeur ;
  * un retour haptique léger confirme le choix.
  */

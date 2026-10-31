@@ -8,7 +8,7 @@ import { SecureStorageService } from '../storage/secure-storage.service';
 import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../models/user.model';
 
 /**
- * Accès réseau au profil — traduction de
+ * Accès réseau au profil - traduction de
  * `ProfilRemoteRepository` (`lib/domains/profil/infrastructure/repositories/profil_remote_repository.dart`).
  */
 @Injectable({ providedIn: 'root' })

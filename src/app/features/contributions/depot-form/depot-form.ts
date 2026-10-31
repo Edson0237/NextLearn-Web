@@ -23,17 +23,17 @@ import { AppRoutes } from '../../../core/router/app-routes';
 const TAILLE_MAX_PAR_DEFAUT_MO = 50;
 
 /**
- * Proposer un document — traduction de `DepotFormPage`
+ * Proposer un document - traduction de `DepotFormPage`
  * (`lib/domains/contributions/presentation/pages/depot_form_page.dart`).
  *
  * **Non repris** : le scanner caméra. La source elle-même dégrade
  * silencieusement sur le web (`ScannerService.instance.disponible`
- * vaut déjà faux) — ce n'est pas un renoncement de ce portage, c'est le
+ * vaut déjà faux) - ce n'est pas un renoncement de ce portage, c'est le
  * comportement documenté par la source pour cette même plateforme.
  *
  * **Simplifié** : la liste de matières proposées retombe toujours sur le
  * catalogue général filtré par niveau, jamais sur « le programme de
- * l'étudiant » (`contexteCourantProvider`) — ce domaine (contexte
+ * l'étudiant » (`contexteCourantProvider`) - ce domaine (contexte
  * académique) n'existe pas encore côté Angular, et c'est exactement le
  * repli que la source elle-même emploie tant qu'aucune matière n'est
  * rattachée à la filière.

@@ -34,7 +34,7 @@ const CLE = 'nl_langue';
  *
  * C'est le pendant de `Traductions.courantes` côté Flutter, et il existe pour
  * la même raison : une bonne part des textes destinés à l'utilisateur naît là
- * où l'injection de dépendances n'a pas cours — un dépôt qui lève « ce code a
+ * où l'injection de dépendances n'a pas cours - un dépôt qui lève « ce code a
  * expiré », une règle de validation du PIN, le libellé d'une licence. Les
  * remonter tous jusqu'à un composant reviendrait à faire voyager un code
  * d'erreur à travers toute l'application pour refaire le libellé à l'arrivée.
@@ -114,7 +114,7 @@ export class TraductionService {
   /**
    * Le message d'une clé, avec ses paramètres.
    *
-   * `secours` est le texte à afficher si la clé est absente — c'est ce qui
+   * `secours` est le texte à afficher si la clé est absente - c'est ce qui
    * permet de migrer les écrans un par un sans qu'aucun n'affiche jamais un
    * identifiant technique à l'utilisateur.
    */
@@ -139,20 +139,20 @@ export class TraductionService {
 
   /**
    * Remplace les paramètres, y compris les formes plurielles ICU simples
-   * (`{n, plural, =0{…} =1{…} other{…}}`) — les 64 messages du catalogue qui
+   * (`{n, plural, =0{…} =1{…} other{…}}`) - les 64 messages du catalogue qui
    * en contiennent sont tous de cette forme. Une bibliothèque ICU complète
    * pèserait plus lourd que le catalogue lui-même.
    */
   /**
    * Remplace les paramètres, formes plurielles ICU simples comprises
-   * (`{n, plural, =0{…} =1{…} other{…}}`) — les 64 messages du catalogue qui
+   * (`{n, plural, =0{…} =1{…} other{…}}`) - les 64 messages du catalogue qui
    * en contiennent sont tous de cette forme. Une bibliothèque ICU complète
    * pèserait plus lourd que le catalogue lui-même.
    *
    * Les accolades sont appariées par comptage plutôt que par expression
    * régulière : une branche contient elle-même `{nombre}`, et un motif qui
    * s'arrête à la première accolade fermante découpe le message au mauvais
-   * endroit — ce que le test de pluriel a montré du premier coup.
+   * endroit - ce que le test de pluriel a montré du premier coup.
    */
   private interpoler(message: string, params: Record<string, string | number>): string {
     const resolu = this.resoudrePluriels(message, params);

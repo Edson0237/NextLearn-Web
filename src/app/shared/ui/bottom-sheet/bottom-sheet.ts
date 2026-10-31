@@ -3,13 +3,13 @@ import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
 import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
 import { ThemeService } from '../../services/theme';
 
-/** Ce que reçoit le contenu ouvert dans une feuille — sa façon de se fermer. */
+/** Ce que reçoit le contenu ouvert dans une feuille - sa façon de se fermer. */
 export abstract class BottomSheetRef<R = unknown> {
   abstract close(result?: R): void;
 }
 
 /**
- * Service de feuilles glissantes — traduction de `FeuilleAction.ouvrir`
+ * Service de feuilles glissantes - traduction de `FeuilleAction.ouvrir`
  * (`feuille_action.dart`), bâtie sur `@angular/cdk/overlay`.
  *
  * ## Le piège du Navigator, traduit en piège du routeur
@@ -17,9 +17,9 @@ export abstract class BottomSheetRef<R = unknown> {
  * Le commentaire Flutter prévient : une feuille ouverte depuis le
  * `Navigator` d'une route enfant (un `ShellRoute`) ne se referme pas si on
  * la ferme avec le contexte de la *page* plutôt qu'avec celui de la
- * feuille. L'équivalent CDK est plus simple à bien faire — l'overlay vit
+ * feuille. L'équivalent CDK est plus simple à bien faire - l'overlay vit
  * dans son propre conteneur, attaché à `<body>`, hors de l'arbre de
- * routage — mais la même règle vaut en esprit : c'est `BottomSheetRef`,
+ * routage - mais la même règle vaut en esprit : c'est `BottomSheetRef`,
  * reçu par le contenu ouvert, qui ferme la feuille, jamais une référence
  * prise ailleurs.
  */
@@ -41,8 +41,8 @@ export class BottomSheetService {
       // Un overlay CDK est attaché à `<body>`, donc **hors** du sous-arbre
       // `.nl-app` qui porte les jetons de la charte. Sans cette classe,
       // `var(--bg-primary)`, `var(--radius-feuille)` et le reste ne
-      // résolvaient pas : la feuille s'affichait sans fond — transparente,
-      // par-dessus la page — sans coins arrondis et dans la police de la
+      // résolvaient pas : la feuille s'affichait sans fond - transparente,
+      // par-dessus la page - sans coins arrondis et dans la police de la
       // vitrine.
       //
       // `nl-overlay`, et non `nl-app` : cette dernière porte aussi les règles
@@ -57,7 +57,7 @@ export class BottomSheetService {
 
     // Le thème choisi doit suivre la feuille : les jetons sombres sont posés
     // sous `[data-theme='dark']`, attribut que seule la coque applicative
-    // porte — et dont l'overlay, détaché, n'hérite pas.
+    // porte - et dont l'overlay, détaché, n'hérite pas.
     const theme = this.theme.attribute();
     if (theme) overlayRef.overlayElement.setAttribute('data-theme', theme);
 
@@ -83,7 +83,7 @@ export class BottomSheetService {
     const instanceRef = overlayRef.attach(portail);
 
     // Glisser le fond fait exactement ce que fermer d'un geste fait côté
-    // Flutter : la feuille se referme sans valeur — un refus, pas un choix.
+    // Flutter : la feuille se referme sans valeur - un refus, pas un choix.
     overlayRef.backdropClick().subscribe(() => refFermeture.close(undefined));
 
     return { instance: instanceRef.instance, result: resultat, close: refFermeture.close };

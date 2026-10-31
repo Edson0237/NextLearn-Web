@@ -11,7 +11,7 @@ export interface FiltresSheetData {
   readonly matieres: readonly { id: string; nom: string }[];
   readonly type: DocumentType | null;
   readonly matiere: string | null;
-  /** Combien de documents donnerait cette combinaison — pour le bouton et les puces. */
+  /** Combien de documents donnerait cette combinaison - pour le bouton et les puces. */
   readonly compter: (type: DocumentType | null, matiere: string | null) => number;
 }
 

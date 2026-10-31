@@ -21,14 +21,14 @@ interface Etape {
 /**
  * La page d'accueil publique : un seul but, mener le visiteur dans la PWA.
  *
- * NextLearn n'est sur aucun magasin d'applications — l'application *est* ce
+ * NextLearn n'est sur aucun magasin d'applications - l'application *est* ce
  * site. La page ne propose donc pas de « télécharger » : un grand bouton
  * ouvre l'application (`/app`), et, quand le navigateur sait installer la PWA,
  * un second la pose sur l'écran d'accueil. Tout le reste (trois atouts, trois
  * étapes) n'est là que pour lever le doute avant ce clic, pas pour retenir.
  *
  * Elle ne charge aucune ressource externe : ni police ni feuille d'icônes
- * tierces — la police est auto-hébergée, les icônes sont celles de
+ * tierces - la police est auto-hébergée, les icônes sont celles de
  * l'application. Une page publique ne doit pas faire fuiter l'adresse IP du
  * visiteur vers un CDN que la politique de confidentialité ne mentionne pas.
  */

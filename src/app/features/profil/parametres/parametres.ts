@@ -5,7 +5,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { SettingsList } from '../settings-list/settings-list';
 
 /**
- * Page de réglages dédiée — traduction de `ParametresPage`
+ * Page de réglages dédiée - traduction de `ParametresPage`
  * (`lib/domains/profil/presentation/pages/parametres/parametres_page.dart`).
  *
  * L'onglet Profil affiche déjà la même liste sous l'en-tête ; cet écran

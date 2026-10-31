@@ -11,7 +11,7 @@ import { assemblerPdf } from '../../../core/scan/pdf-assembleur';
 import { ReferencesRepository } from '../../../core/references/references-repository';
 
 /**
- * Numériser un document — traduction de `ScannerService` / `_scanner` de
+ * Numériser un document - traduction de `ScannerService` / `_scanner` de
  * l'application (`lib/core/scan/`, `depot_form_page.dart`).
  *
  * On photographie les pages une à une (ou on les prend dans la galerie), on les

@@ -22,7 +22,7 @@ function geste(hote: HTMLElement, sequence: Array<{ type: string; y?: number }>)
 
 /**
  * Ce que ce test protège : le seuil de déclenchement. `ListeRafraichissable`
- * n'a pas d'équivalent natif sur le web (pas de `RefreshIndicator`) — toute
+ * n'a pas d'équivalent natif sur le web (pas de `RefreshIndicator`) - toute
  * la logique du geste est écrite ici, donc entièrement à la charge de ce
  * test pour ne pas régresser silencieusement.
  */

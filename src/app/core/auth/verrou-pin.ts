@@ -4,7 +4,7 @@ import { SecureStorageService } from '../storage/secure-storage.service';
 /**
  * Le blocage temporaire après des PIN erronés, sur cet appareil.
  *
- * Quatre essais sont libres ; au-delà, le délai double à chaque échec — 30 s,
+ * Quatre essais sont libres ; au-delà, le délai double à chaque échec - 30 s,
  * 1 min, 2 min, 4 min… plafonné à 15 minutes. Le décompte et l'échéance sont
  * rangés dans le stockage local : fermer l'application ne remet rien à zéro.
  *

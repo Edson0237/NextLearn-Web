@@ -1,4 +1,4 @@
-# QA_CORRECTIONS.md — ce qui a été corrigé, et comment on le sait
+# QA_CORRECTIONS.md - ce qui a été corrigé, et comment on le sait
 
 **Date** : 22 octobre 2026 · Suite donnée à [QA_REPORT.md](QA_REPORT.md).
 Le rapport d'audit n'a pas été réécrit : il reste le constat daté du 21 octobre.
@@ -13,7 +13,7 @@ et lu : 22 modules, les montages de routes, les modèles Mongo, l'enveloppe de
 réponse (`{ data, meta }` / `{ error: { code, message } }`), la liste blanche
 CORS, le service d'envoi push.
 
-Deux constats du rapport sont **annulés** — c'étaient des artefacts de mon
+Deux constats du rapport sont **annulés** - c'étaient des artefacts de mon
 extraction d'endpoints, pas des défauts :
 
 | Dit dans le rapport | Réalité |
@@ -41,7 +41,7 @@ Autres points confirmés sur le code du serveur :
   modèle d'écran de la PWA attendait `verifie`, que l'API n'envoie jamais.
 - **M-12** : `CORS_ORIGINS` doit contenir l'origine de la PWA. Le
   rafraîchissement de jeton était le **seul** appel à sortir de l'origine : un
-  domaine oublié et c'était la seule requête qui échouait — donc toutes les
+  domaine oublié et c'était la seule requête qui échouait - donc toutes les
   sessions qui expiraient au bout d'un quart d'heure, sans rien casser d'autre.
   Il passe désormais par la même réécriture que le reste.
 - **M-16** : `/d/:id` est servi par l'API avec une page de secours « Obtenir
@@ -79,12 +79,12 @@ Autres points confirmés sur le code du serveur :
 | M-06 | Deux modèles de vérification incompatibles | ✅ un seul modèle ; l'écran d'attente nomme les cinq statuts, affiche le motif de rejet et les resoumissions restantes |
 | M-07 | Aucune détection de mise à jour | ✅ `SwUpdate` + bandeau « Mettre à jour » ; jamais de rechargement imposé |
 | M-08 | Pas de bouton d'installation | ✅ `beforeinstallprompt` capté, refus mémorisé, guide iOS affiché à qui n'a pas installé |
-| M-09 | Push absent | ⚠️ **tout est câblé, il manque deux valeurs** : `PushService` (permission, jeton FCM, enregistrement, message au premier plan), service worker dédié, clic qui ouvre la bonne fiche, interrupteur réel. `public/firebase-config.json` attend `appId` et `vapidKey` — ils s'obtiennent en déclarant une application **Web** dans la console Firebase du projet `nextlearn-91195`, qui n'a aujourd'hui qu'un client Android. Sans eux, le service se déclare « pas encore disponible » et ne tente rien — le même parti que le service d'envoi côté API sans sa clé |
+| M-09 | Push absent | ⚠️ **tout est câblé, il manque deux valeurs** : `PushService` (permission, jeton FCM, enregistrement, message au premier plan), service worker dédié, clic qui ouvre la bonne fiche, interrupteur réel. `public/firebase-config.json` attend `appId` et `vapidKey` - ils s'obtiennent en déclarant une application **Web** dans la console Firebase du projet `nextlearn-91195`, qui n'a aujourd'hui qu'un client Android. Sans eux, le service se déclare « pas encore disponible » et ne tente rien - le même parti que le service d'envoi côté API sans sa clé |
 | M-10 | Manifeste et balises iOS | ✅ `id`, `theme_color`, `background_color`, `description`, `lang`, `orientation`, `categories`, **2 icônes maskable générées** ; balises `apple-*`, `theme-color` clair/sombre, `viewport-fit=cover` |
 | M-11 | 820 Kio de JavaScript inutile | ✅ `loadComponent` par écran : le morceau d'entrée de l'application passe de **856 Ko à 20 Ko**, le lecteur PDF est isolé dans son propre morceau |
 | M-12 | Aucun délai d'expiration HTTP | ✅ 20 s, comme Dio ; présenté comme un statut 0, que `Failure` sait déjà nommer |
-| M-13 | Cibles tactiles sous le seuil | ✅ **cause trouvée** : `_native.scss` était inclus depuis une feuille de composant, donc réécrit avec l'attribut d'encapsulation — la règle des 48 px ne touchait aucun écran. Déplacé en feuille globale. Audit `target-size` de Lighthouse : **échec → succès** |
-| M-14 | Typographie | ✅ `--font-family-heading`, appelé par 10 règles, n'était défini nulle part. (Le rapport parlait aussi d'un corps en Poppins : c'était le `body` de la vitrine, mesuré hors de `.nl-app` — constat retiré) |
+| M-13 | Cibles tactiles sous le seuil | ✅ **cause trouvée** : `_native.scss` était inclus depuis une feuille de composant, donc réécrit avec l'attribut d'encapsulation - la règle des 48 px ne touchait aucun écran. Déplacé en feuille globale. Audit `target-size` de Lighthouse : **échec → succès** |
+| M-14 | Typographie | ✅ `--font-family-heading`, appelé par 10 règles, n'était défini nulle part. (Le rapport parlait aussi d'un corps en Poppins : c'était le `body` de la vitrine, mesuré hors de `.nl-app` - constat retiré) |
 | M-15 | Débordements horizontaux | ✅ la barre d'actions visait `nl-button`, un élément qui n'existe pas (`nlButton` est une directive) : aucune largeur n'était partagée. Corrigé et mis sur deux rangées |
 | M-16 | Liens de partage incompatibles | ✅ `LienProfond` porté ; la PWA émet `…/d/<id>` et résout `/d/:id` |
 | M-17 | Bandeau hors-ligne jamais câblé | ✅ `ReseauService` + bandeau dans la coque |
@@ -107,7 +107,7 @@ l'accueil sur deux rangées.
 
 Non traités, et assumés : **c-02 à c-05** (libellés externes plutôt
 qu'internes aux champs, sous-titre d'inscription, flèche de retour, icônes des
-puces d'onboarding) — des choix de formulation et d'iconographie qui relèvent
+puces d'onboarding) - des choix de formulation et d'iconographie qui relèvent
 d'un arbitrage de design, pas d'un défaut.
 
 ---
@@ -116,10 +116,10 @@ d'un arbitrage de design, pas d'un défaut.
 
 | Mesure | Avant | Après |
 |---|---|---|
-| Lighthouse mobile — Performance | **49** | **80** |
-| Lighthouse mobile — Accessibilité | 95 | **100** |
-| Lighthouse mobile — Bonnes pratiques | 100 | 100 |
-| Lighthouse mobile — SEO | 100 | 100 |
+| Lighthouse mobile - Performance | **49** | **80** |
+| Lighthouse mobile - Accessibilité | 95 | **100** |
+| Lighthouse mobile - Bonnes pratiques | 100 | 100 |
+| Lighthouse mobile - SEO | 100 | 100 |
 | Premier affichage (FCP) | 6,3 s | **0,7 s** |
 | Plus grand élément affiché (LCP) | 10,8 s | **4,5 s** |
 | Blocage du fil principal (TBT) | 420 ms | **160 ms** |
@@ -135,7 +135,7 @@ Trois leviers expliquent l'essentiel du gain de performance : le chargement
 paresseux par écran, un écran de démarrage en HTML et CSS seuls dans
 `index.html` (le premier affichage ne dépend plus du JavaScript), et le fait
 de ne plus attendre le catalogue de traductions quand la langue est le
-français — les gabarits portent déjà ce texte en secours.
+français - les gabarits portent déjà ce texte en secours.
 
 **Mesure honnête** : les scores sont relevés sur le build de production servi
 localement **avec compression gzip**, comme le fait Vercel. Sans elle, le même
@@ -152,7 +152,7 @@ mesure.
 | Ajouter l'origine de la PWA à `CORS_ORIGINS` côté API | vous | Variable d'environnement du serveur |
 | Décider si `GET /api/documents` doit rester **public** | vous | Le catalogue complet, `uploadedBy` et `fichierHash` compris, répond sans jeton. Hors périmètre d'un client, mais à trancher |
 | Comparer écran par écran sur appareil réel | vous | Aucune référence Flutter automatisable pour les 27 écrans authentifiés (le stockage de session de Flutter web est chiffré) ; la checklist du §9 du rapport reste valable |
-| Rangées de documents horizontales sur l'accueil | à arbitrer | Flutter les fait défiler horizontalement ; la PWA les empile. L'empilement évite du contenu caché sur petit écran — divergence délibérée, à confirmer ou à annuler |
+| Rangées de documents horizontales sur l'accueil | à arbitrer | Flutter les fait défiler horizontalement ; la PWA les empile. L'empilement évite du contenu caché sur petit écran - divergence délibérée, à confirmer ou à annuler |
 
 ---
 

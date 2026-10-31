@@ -28,7 +28,7 @@
   overflow-x: auto;
   // Pas de marge négative ici, contrairement au rail de l'accueil : celui-ci
   // vit dans `.home__corps`, qui porte la marge de page, et la marge négative
-  // l'annule pour la rendre au rembourrage. `.nl-biblio` n'en a aucune — la
+  // l'annule pour la rendre au rembourrage. `.nl-biblio` n'en a aucune - la
   // marge négative tirait donc la première puce à 0, collée au bord, pendant
   // que les cartes en dessous commençaient à 16.
   padding: var(--space-md) var(--space-page) 0;
@@ -64,7 +64,7 @@
   }
 
   // Actif : la teinte du type prend le fond. C'est le seul endroit où la
-  // couleur du format sert de surface — ailleurs elle n'est qu'un accent.
+  // couleur du format sert de surface - ailleurs elle n'est qu'un accent.
   &--actif {
     border-color: transparent;
     background: var(--teinte);

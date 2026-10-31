@@ -28,7 +28,7 @@ registerLocaleData(localeFr, 'fr');
 /**
  * La langue appliquée, pour les tubes de formatage.
  *
- * `TraductionService` la résout déjà — préférence enregistrée, puis langue
+ * `TraductionService` la résout déjà - préférence enregistrée, puis langue
  * du navigateur. On la relit ici plutôt que de la recalculer : deux logiques
  * de détection finiraient par diverger. Elle est lue une fois au démarrage,
  * ce que suppose `LOCALE_ID` ; changer de langue depuis les réglages
@@ -45,7 +45,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     // Les textes avant le premier écran : sans cette attente, l'application
     // afficherait brièvement ses libellés de secours puis basculerait, ce qui
-    // se voit surtout sur les écrans d'authentification — les premiers
+    // se voit surtout sur les écrans d'authentification - les premiers
     // montrés, et les plus courts.
     provideAppInitializer(() => inject(TraductionService).demarrage()),
     { provide: LOCALE_ID, useFactory: localeActive },

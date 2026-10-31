@@ -4,7 +4,7 @@ import { ContexteEtudiant, CONTEXTE_OUVERT, typeVisible, fonctionnaliteOuverte, 
 import { DocumentType } from '../bibliotheque/document.model';
 
 /**
- * État réactif du contexte étudiant — traduction de `contexteCourantProvider`.
+ * État réactif du contexte étudiant - traduction de `contexteCourantProvider`.
  */
 @Injectable({ providedIn: 'root' })
 export class ContexteService {

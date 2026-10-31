@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * L'habillage commun à toute feuille — traduction de `_Coque`
+ * L'habillage commun à toute feuille - traduction de `_Coque`
  * (`feuille_action.dart`) : coins arrondis en haut, poignée décorative,
  * marge basse pour l'indicateur d'accueil iOS, et place laissée au
  * clavier quand il s'ouvre sur un champ de la feuille.

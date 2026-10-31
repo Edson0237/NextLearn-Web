@@ -1,6 +1,6 @@
 import { tr } from '../../core/i18n/traduction.service';
 /**
- * Un document proposé par un étudiant, et son sort — traduction de
+ * Un document proposé par un étudiant, et son sort - traduction de
  * `lib/domains/contributions/domain/models/depot_model.dart`.
  */
 export enum DepotStatut {
@@ -17,7 +17,7 @@ export function depotStatutDepuisApi(valeur: unknown): DepotStatut {
     case 'refuse': return DepotStatut.refuse;
     // Un statut inconnu (ajouté côté serveur après cette version) ne doit
     // pas casser l'écran : on le traite comme « en attente », le plus
-    // prudent — on n'annonce ni publication ni refus.
+    // prudent - on n'annonce ni publication ni refus.
     default: return DepotStatut.enAttente;
   }
 }
@@ -32,7 +32,7 @@ export function libelleDepotStatut(s: DepotStatut): string {
 }
 
 /**
- * Régime de droits déclaré par le déposant — la seule information qui
+ * Régime de droits déclaré par le déposant - la seule information qui
  * permette de répondre à un ayant droit qui réclame le retrait d'un
  * document. Sans valeur par défaut : cocher à sa place reviendrait à
  * faire signer quelque chose que personne n'a lu.
@@ -81,7 +81,7 @@ export function depotDepuisJson(json: Record<string, unknown>): Depot {
   };
 }
 
-/** Première année académique couverte par la bibliothèque — une borne
+/** Première année académique couverte par la bibliothèque - une borne
  * fixe, pas une fenêtre glissante : le fonds contient des épreuves plus
  * anciennes que cinq ans. */
 const PREMIERE_ANNEE_ACADEMIQUE = 2016;

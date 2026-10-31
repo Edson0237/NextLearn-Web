@@ -15,8 +15,8 @@ class Hote {
 
 /**
  * Ce que ce test protège : les deux garde-fous de `PinInputWidget` qu'un
- * clic ne devrait jamais pouvoir contourner — pas de cinquième chiffre, pas
- * d'effacement sur un code déjà vide — et l'annonce comptée pour les
+ * clic ne devrait jamais pouvoir contourner - pas de cinquième chiffre, pas
+ * d'effacement sur un code déjà vide - et l'annonce comptée pour les
  * lecteurs d'écran, puisque les points eux-mêmes ne disent rien.
  */
 describe('PinInput', () => {

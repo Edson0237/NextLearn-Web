@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 /**
- * La route à ouvrir une fois la voie libre — traduction de
+ * La route à ouvrir une fois la voie libre - traduction de
  * `_destinationEnAttente`/`_consommerDestination` (`app_router.dart`).
  *
  * Conservée en mémoire seulement, comme côté Flutter : la faire survivre

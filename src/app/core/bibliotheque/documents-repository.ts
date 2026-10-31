@@ -6,7 +6,7 @@ import { DocumentModel, documentDepuisApi, DocumentPage, pageDocumentsDepuisApi,
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Accès réseau au catalogue de documents — traduction de
+ * Accès réseau au catalogue de documents - traduction de
  * `DocumentRemoteRepository` (`lib/domains/bibliotheque/infrastructure/repositories/document_remote_repository.dart`).
  */
 @Injectable({ providedIn: 'root' })

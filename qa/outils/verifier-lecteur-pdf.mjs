@@ -15,7 +15,7 @@ mkdirSync('qa/screenshots/refonte', { recursive: true });
 
 // Le document est recopié dans `dist/` à chaque passage : `ng build` vide ce
 // dossier, et un PDF absent fait échouer la sonde pour une raison qui n'a
-// rien à voir avec le lecteur — ce qui m'a déjà fait accuser le code à tort.
+// rien à voir avec le lecteur - ce qui m'a déjà fait accuser le code à tort.
 const PDF = `${base}/cours-12-pages.pdf`;
 copyFileSync('qa/fixtures/cours-12-pages.pdf', 'dist/nextLearn-web/browser/cours-12-pages.pdf');
 
@@ -88,7 +88,7 @@ await page.screenshot({ path: 'qa/screenshots/refonte/lecteur-pdf_390x844_light.
 
 // Le compteur de page suit-il le défilement ? C'est lui qui alimente la
 // reprise de lecture : s'il reste bloqué, « Reprendre » ramène toujours à la
-// page 1. On défile le conteneur de pdf.js lui-même — la molette, en
+// page 1. On défile le conteneur de pdf.js lui-même - la molette, en
 // navigateur sans tête, n'atteint pas un défileur imbriqué.
 const titreAvant = (await page.locator('.pdf-reader__titre').innerText()).trim();
 await page.evaluate(() => {
@@ -109,7 +109,7 @@ const debordement = await page.evaluate(
   () => document.documentElement.scrollHeight - document.documentElement.clientHeight,
 );
 
-console.log('— Lecteur PDF —');
+console.log('- Lecteur PDF -');
 console.log(`  toile peinte           : ${rendu ? 'oui' : 'NON'}`);
 console.log(`  conteneur              : ${mesures.largeurConteneur}×${mesures.hauteurConteneur} px`);
 console.log(`  pages dans le document : ${mesures.pages}`);

@@ -41,7 +41,7 @@ describe('Button', () => {
     (variante) => {
       // Une fixture neuve par cas plutôt qu'une boucle sur une fixture
       // partagée : réutiliser la même déclenche un faux
-      // ExpressionChangedAfterItHasBeenCheckedError — la valeur change bel et
+      // ExpressionChangedAfterItHasBeenCheckedError - la valeur change bel et
       // bien d'une itération à l'autre, par construction du test, pas par un
       // effet de bord du composant.
       const h = TestBed.configureTestingModule({ imports: [Hote] }).createComponent(Hote);

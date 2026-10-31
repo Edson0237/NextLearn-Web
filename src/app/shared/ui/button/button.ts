@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Bouton — traduction directe de `ElevatedButtonTheme`/`OutlinedButtonTheme`/
+ * Bouton - traduction directe de `ElevatedButtonTheme`/`OutlinedButtonTheme`/
  * `TextButtonTheme` (`app_theme.dart`). Pleine largeur par défaut : c'est le
  * choix fait côté Flutter (`minimumSize: Size(double.infinity, 54)`), pas un
- * détail d'intégration — un bouton de connexion qui ne prend que la largeur
+ * détail d'intégration - un bouton de connexion qui ne prend que la largeur
  * de son texte se voit, dans l'autre sens, sur un écran conçu pour l'autre.
  */
 @Component({

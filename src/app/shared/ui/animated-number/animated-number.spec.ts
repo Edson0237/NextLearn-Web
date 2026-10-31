@@ -3,7 +3,7 @@ import { AnimatedNumber } from './animated-number';
 
 /**
  * Ce que ce test protège : le seul garde-fou de `NombreAnime` qui ne se
- * voit pas à l'œil — « il ne rejoue pas à chaque reconstruction ». Une
+ * voit pas à l'œil - « il ne rejoue pas à chaque reconstruction ». Une
  * page qui se reconstruit (thème, clavier) ne doit pas faire repartir le
  * chiffre de zéro ; seul un changement réel de `value` le doit.
  *
@@ -11,7 +11,7 @@ import { AnimatedNumber } from './animated-number';
  * propre propriété : muter une expression déjà vérifiée par un
  * `detectChanges()` précédent, puis la revérifier, déclenche un
  * `ExpressionChangedAfterItHasBeenCheckedError` sur ce projet (zoneless +
- * effects) — `setInput` est le chemin que Angular prévoit pour ce cas en
+ * effects) - `setInput` est le chemin que Angular prévoit pour ce cas en
  * test, et ne s'y heurte pas.
  *
  * `requestAnimationFrame` est remplacé par un appel synchrone immédiat :
@@ -25,7 +25,7 @@ describe('AnimatedNumber', () => {
   beforeEach(() => {
     appelsRaf = 0;
     // Toujours un horodatage largement au-delà de la durée de l'animation :
-    // `t` atteint 1 dès le premier appel, et la récursion s'arrête — sans
+    // `t` atteint 1 dès le premier appel, et la récursion s'arrête - sans
     // ça, `etape` se rappellerait indéfiniment puisque ce mock ne fait
     // jamais réellement avancer le temps entre deux images.
     vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {

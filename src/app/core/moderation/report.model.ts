@@ -1,5 +1,5 @@
 /**
- * Signalement de contenu — traduction de
+ * Signalement de contenu - traduction de
  * `lib/domains/moderation/domain/repositories/report_repository_interface.dart`.
  *
  * Le catalogue des motifs n'est **pas** redéclaré ici : il vient de

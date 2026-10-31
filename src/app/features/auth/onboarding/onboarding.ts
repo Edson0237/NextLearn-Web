@@ -23,17 +23,17 @@ interface Diapositive {
 }
 
 /**
- * Présentation initiale — traduction d'`OnboardingPage`
+ * Présentation initiale - traduction d'`OnboardingPage`
  * (`lib/domains/auth/presentation/pages/onboarding/onboarding_page.dart`).
  *
  * **Trois teintes qui racontent** : l'ambre du problème, le bleu NextLearn
  * de la solution, l'émeraude de l'arrivée. Elles étaient gelées en dur,
- * recopiées du Flutter — dont un `#1a6fbf` qui n'était le bleu de personne,
+ * recopiées du Flutter - dont un `#1a6fbf` qui n'était le bleu de personne,
  * ni celui du logo ni celui de l'application. Elles viennent désormais du
  * jeu de jetons (`--warning`, `--primary`, `--tertiary`), donc suivent le
  * thème et le bleu de la marque.
  *
- * **Non repris, délibérément** : le sélecteur de langue (`_ChoixLangue`) —
+ * **Non repris, délibérément** : le sélecteur de langue (`_ChoixLangue`) -
  * il pilote le `l10n` Flutter, qui n'a pas d'équivalent dans ce projet
  * Angular (vitrine et application sont toutes deux en français, sans
  * couche i18n). Les pastilles de badge perdent leur icône (`chat_bubble`,
@@ -75,7 +75,7 @@ export class Onboarding {
       titre: tr('onboardingTitre2', 'Une bibliothèque pour tout trouver'),
       corps: tr(
         'onboardingCorps2',
-        'Cours, TD, synthèses, annales — tout est là, classé, trouvable en 2 secondes. Même sans connexion internet.',
+        'Cours, TD, synthèses, annales - tout est là, classé, trouvable en 2 secondes. Même sans connexion internet.',
       ),
       accent: 'var(--primary)',
       accentFonce: 'var(--primary-deep)',

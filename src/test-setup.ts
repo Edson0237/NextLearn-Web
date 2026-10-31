@@ -1,9 +1,9 @@
 // Chargé avant chaque fichier de test (voir angular.json, `test.options.setupFiles`).
 //
 // jsdom, l'environnement DOM des tests, n'implémente ni `IntersectionObserver`
-// ni `window.matchMedia`. Les deux manquent pour la même raison — jsdom
+// ni `window.matchMedia`. Les deux manquent pour la même raison - jsdom
 // simule le DOM, pas le moteur de rendu qui calculerait un vrai résultat de
-// défilement ou de media query — et les deux cassaient la simple
+// défilement ou de media query - et les deux cassaient la simple
 // instanciation de composants qui n'ont rien à voir avec le portage PWA :
 // cinq composants de la vitrine (about, accueil, contact, equipe,
 // fonctionnalite) observent le défilement pour leur animation de révélation,

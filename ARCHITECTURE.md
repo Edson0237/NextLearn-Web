@@ -36,7 +36,7 @@ Chaque fonctionnalité s'appuie sur des couches basses qui ne savent rien d'elle
 |---|---|---|
 | `core/` | Modèles de domaine, dépôts de données (HTTP), état applicatif, réseau, stockage, i18n, garde de routage | rien d'autre que `core/` |
 | `shared/` | Composants d'interface réutilisables, directives, services qui ont un effet à l'écran (thème, toast, favoris) | `core/` |
-| `features/<nom>/` | Les écrans d'une fonctionnalité et leur logique de présentation | `core/`, `shared/` — jamais une autre feature |
+| `features/<nom>/` | Les écrans d'une fonctionnalité et leur logique de présentation | `core/`, `shared/` - jamais une autre feature |
 | `layout/` | L'enveloppe : routes de l'application, barre de navigation, coque | tout ; **rien ne dépend de lui** |
 
 ## 2. Arborescence
@@ -55,7 +55,7 @@ src/app/
 │   ├── pwa/             installation et mise à jour de la PWA
 │   ├── preferences/     verrouillage de l'application, accessibilité
 │   ├── error-handling/  gestion globale des erreurs
-│   └── <domaine>/       un dossier par domaine métier — modèle + dépôt (+ service d'état si besoin) :
+│   └── <domaine>/       un dossier par domaine métier - modèle + dépôt (+ service d'état si besoin) :
 │       auth · bibliotheque · epreuves · contributions · profil · progression · quiz · recherche ·
 │       recours · references · moderation · notifications · partage · scan · verification · contexte
 │
@@ -87,7 +87,7 @@ Hors de `src/app/` : `public/` (manifeste, service worker Firebase, `i18n/*.json
 ### Accès aux données (`core/<domaine>/*-repository.ts`)
 - **Seuls** les dépôts parlent à `HttpClient` (règle R4, vérifiée).
 - Un dépôt convertit la réponse JSON en **modèle typé** (`xxxDepuisApi`) et traduit les erreurs avec
-  `enFailure` (`core/network/erreur-api.ts`) — un écran ne manipule jamais du JSON brut ni une erreur HTTP.
+  `enFailure` (`core/network/erreur-api.ts`) - un écran ne manipule jamais du JSON brut ni une erreur HTTP.
 - Les réponses sont enveloppées `{ data, meta? }` : utiliser `donnees()` (`core/network/enveloppe-api.ts`).
 
 ### Modèles (`core/**/*.model.ts`)
@@ -110,12 +110,12 @@ Hors de `src/app/` : `public/` (manifeste, service worker Firebase, `i18n/*.json
 ### Navigation
 - Les routes sont déclarées **une fois** dans `core/router/app-routes.ts`. Une route à plusieurs segments se
   navigue par `navigateByUrl('/app/' + AppRoutes.x)`, jamais par `navigate(['/app', 'a/b'])` (le `/` serait
-  encodé) — contrôlé par `tools/verifier-design.mjs`.
+  encodé) - contrôlé par `tools/verifier-design.mjs`.
 - Les écrans sont chargés **à la demande** (`loadComponent`).
 
 ### Interface
 - Couleurs, rayons, espacements : **uniquement** via les jetons CSS (`shared/styles/_tokens.scss`).
-- Icônes : composant `nl-icon` (Lucide, extraites par `tools/extraire-icones.mjs`) — jamais un caractère.
+- Icônes : composant `nl-icon` (Lucide, extraites par `tools/extraire-icones.mjs`) - jamais un caractère.
 - Textes : `public/i18n/{fr,en}.json`, clés lues par le tube `t` ou `tr('clé', 'repli')`. Les deux
   catalogues doivent rester en phase (contrôlé).
 - Nommage : domaine et identifiants en **français** (`dossier`, `signalement`, `favoris`), cohérent avec
@@ -125,7 +125,7 @@ Hors de `src/app/` : `public/` (manifeste, service worker Firebase, `i18n/*.json
 - `ngsw-config.json` : fichiers de l'application mis en cache à l'installation ; groupe de données
   `api-lecture` (stratégie *freshness*, 7 jours) pour les lectures de l'API.
 - `core/bibliotheque/stockage-hors-ligne.ts` : documents téléchargés sur l'appareil.
-- `core/storage/secure-storage.service.ts` : jetons, PIN haché, état local — clés inchangées.
+- `core/storage/secure-storage.service.ts` : jetons, PIN haché, état local - clés inchangées.
 - `public/firebase-messaging-sw.js` : notifications poussées.
 
 ### Page d'accueil publique (`features/vitrine`)
@@ -166,7 +166,7 @@ modifications locales sauvegardées hors du dépôt) : 148 tests, build de 381,9
 
 | # | Changement | Pourquoi (problème réel) |
 |---|---|---|
-| 1 | `enFailure` — `core/network/erreur-api.ts` remplace **12 copies** identiques de la traduction d'erreurs HTTP | Duplication ; une correction devait être faite 12 fois. Testé (3 tests). |
+| 1 | `enFailure` - `core/network/erreur-api.ts` remplace **12 copies** identiques de la traduction d'erreurs HTTP | Duplication ; une correction devait être faite 12 fois. Testé (3 tests). |
 | 2 | Présentation d'un type de document déplacée du modèle vers `shared/ui/type-document/` (+ tube `typeDoc`) ; **8 écrans** perdent leurs 4 méthodes d'enrobage recopiées | Le modèle de données importait les noms d'icônes de l'interface (inversion de dépendance). 6 tests. |
 | 3 | `FavorisEtat` passe de `core/` à `shared/services/` | Il pilotait un toast : un service d'application, pas du noyau. |
 | 4 | `features/shell` + `features/app-shell` → `layout/` ; `Components/` (ancien site, depuis remplacé par la nouvelle page d'accueil) | L'enveloppe n'est pas une fonctionnalité ; un dossier à majuscule hors convention. |
@@ -181,12 +181,12 @@ modifications locales sauvegardées hors du dépôt) : 148 tests, build de 381,9
 |---|---|---|
 | Entorses de dépendance (R1–R5) | 3 | **0** |
 | Tests unitaires | 148 | **170** (47 fichiers, tous au vert ; +26 nouveaux, −4 déplacés vers `verrou-pin.spec.ts`) |
-| Build de production | 381,90 kB initial (107,88 kB transféré) | 381,90 kB (107,89 kB) — **inchangé** |
+| Build de production | 381,90 kB initial (107,88 kB transféré) | 381,90 kB (107,89 kB) - **inchangé** |
 | Copies de la gestion d'erreurs HTTP | 12 | **1** |
 | Écrans recopiant la présentation des types | 8 | **0** |
 | `auth-repository.ts` | 658 lignes | 564 lignes |
 | `settings-list.ts` | 594 lignes | 499 lignes |
-| Fichiers du service worker, du cache, du stockage, de l'intercepteur, de la garde, de la configuration | — | **inchangés** (comparés octet à octet à la sauvegarde) |
+| Fichiers du service worker, du cache, du stockage, de l'intercepteur, de la garde, de la configuration | - | **inchangés** (comparés octet à octet à la sauvegarde) |
 
 Sondes de navigateur après refonte : cartes, fiche ressource, catalogue et favoris, réglages, feuilles
 (clair et sombre), filtres (24/24), « Mes signalements » (6/6), Google non institutionnel (6/6),
@@ -201,7 +201,7 @@ vérification académique (11/11), fenêtres PIN et support (11/11).
   Les migrer un dépôt à la fois, avec son test, vers `donnees()`.
 - `core/quiz/quiz-repository.ts` garde sa propre gestion d'erreur : elle teste `instanceof Response` (jamais
   vrai pour une erreur d'`HttpClient`), donc ses erreurs HTTP deviennent toutes le message générique. La
-  basculer sur `enFailure` donnerait de vrais messages — un changement visible, à décider à part.
+  basculer sur `enFailure` donnerait de vrais messages - un changement visible, à décider à part.
 - `settings-list` reste la plus grosse page (499 lignes) : thème, langue, accessibilité, notifications,
   cache pourraient devenir des groupes de réglages indépendants.
 - `src/styles.scss` est l'ancienne feuille globale de l'ancien site vitrine (variables Poppins, `.btn`, `.container`,

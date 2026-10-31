@@ -1,7 +1,7 @@
 import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 
 /**
- * État de la connexion — traduction de `ConnectivityService`
+ * État de la connexion - traduction de `ConnectivityService`
  * (`lib/core/network/connectivity_service.dart`).
  *
  * Rien ne surveillait le réseau côté PWA : `OfflineBanner` et `OfflineScreen`
@@ -9,8 +9,8 @@ import { DestroyRef, Injectable, inject, signal } from '@angular/core';
  * L'utilisateur perdait sa connexion et ne voyait que des écrans d'erreur
  * génériques, sans jamais apprendre que c'était son réseau et non le serveur.
  *
- * `navigator.onLine` est moins fiable qu'un plugin natif — il dit « une
- * interface est active », pas « Internet répond » — et le code Flutter le
+ * `navigator.onLine` est moins fiable qu'un plugin natif - il dit « une
+ * interface est active », pas « Internet répond » - et le code Flutter le
  * notait déjà comme la limite assumée du portage. Il suffit pour ce qu'on en
  * fait : prévenir, pas décider.
  */

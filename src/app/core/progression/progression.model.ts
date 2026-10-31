@@ -1,5 +1,5 @@
 /**
- * Progression — aligné sur ce que l'API renvoie réellement
+ * Progression - aligné sur ce que l'API renvoie réellement
  * (`/api/progression/*`) et sur les modèles Flutter
  * (`progression_repository_interface.dart`, `badge_model.dart`).
  *
@@ -24,7 +24,7 @@ export interface ProgressionStats {
 }
 
 export interface DayActivity {
-  /** Jour, au format ISO (`2026-10-21`) — clé `day` côté API. */
+  /** Jour, au format ISO (`2026-10-21`) - clé `day` côté API. */
   readonly day: string;
   readonly minutes: number;
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Squelette de chargement — traduction de `ShimmerCard`
+ * Squelette de chargement - traduction de `ShimmerCard`
  * (`lib/core/ux/shimmer_card.dart`), balayage diagonal de `bg-secondary`
  * vers `bg-primary`. Hauteur/largeur en valeur CSS libre (`'120px'`,
  * `'100%'`...), comme les `double height`/`double? width` Flutter.

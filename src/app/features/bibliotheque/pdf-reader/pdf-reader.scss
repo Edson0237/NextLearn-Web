@@ -2,7 +2,7 @@
 // a pas : la coque applicative est un simple `div` qui grandit avec son
 // contenu. Resultat, le lecteur se reduisait a sa barre d'outils (390x65) et
 // le PDF, pourtant charge et analyse par pdf.js, n'etait jamais peint.
-// `100dvh` donne la hauteur definie qui manquait — et `dvh` plutot que `vh`
+// `100dvh` donne la hauteur definie qui manquait - et `dvh` plutot que `vh`
 // pour que la barre d'adresse mobile, qui se retracte au defilement, ne
 // decoupe pas le bas de la page.
 :host {

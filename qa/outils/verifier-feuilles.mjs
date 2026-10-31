@@ -7,7 +7,7 @@
  *  1. la feuille de style de l'overlay CDK n'était chargée nulle part, donc
  *     rien ne positionnait le panneau ni n'affichait le fond ;
  *  2. le panneau est attaché à `<body>`, hors du sous-arbre `.nl-app` qui
- *     porte les jetons de la charte — `var(--bg-primary)` ne résolvait pas ;
+ *     porte les jetons de la charte - `var(--bg-primary)` ne résolvait pas ;
  *  3. le thème choisi ne le suivait pas davantage.
  *
  * La sonde vérifie ce qui se voit : un fond opaque, des coins arrondis, la
@@ -74,7 +74,7 @@ for (const theme of ['light', 'dark']) {
     await page.waitForTimeout(1500);
 
     if (cas.modale) {
-      // Une modale centrée : on vérifie ce qui se voit — un fond opaque, des
+      // Une modale centrée : on vérifie ce qui se voit - un fond opaque, des
       // coins arrondis, un panneau entièrement dans la fenêtre.
       const mm = await page.evaluate((sel) => {
         const el = document.querySelector(sel);
@@ -106,7 +106,7 @@ for (const theme of ['light', 'dark']) {
       const cs = getComputedStyle(coque);
       // On mesure la FEUILLE, pas son panneau : le panneau pouvait occuper
       // tout l'écran pendant que la feuille, elle, restait étroite dans un
-      // coin — ce que la première version de cette sonde laissait passer.
+      // coin - ce que la première version de cette sonde laissait passer.
       const r = coque.getBoundingClientRect();
       const fond = document.querySelector('.nl-sheet-backdrop');
       return {

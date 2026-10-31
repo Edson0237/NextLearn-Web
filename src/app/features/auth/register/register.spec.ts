@@ -12,7 +12,7 @@ import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille
  * Niveau → Filière. Une école « à ossature » (le cycle porte un `id`)
  * déroule Niveau puis Filière ; une école de secours (le cycle n'a pas
  * d'`id`) charge la Filière dès le cycle connu, et c'est elle qui débloque
- * Niveau. Les deux chemins partagent le même code de remise à zéro —
+ * Niveau. Les deux chemins partagent le même code de remise à zéro -
  * confondre les deux enverrait une requête au mauvais étage, silencieusement
  * (aucune erreur réseau, juste la liste qu'il ne fallait pas).
  */
@@ -22,7 +22,7 @@ function tick(): Promise<void> {
   return new Promise((r) => setTimeout(r, 0));
 }
 
-describe('Register — cascade académique', () => {
+describe('Register - cascade académique', () => {
   function creer(reponses: Record<string, unknown>) {
     const ouvrir = vi.fn((data: { title: string }) => Promise.resolve(reponses[data.title]));
     TestBed.configureTestingModule({

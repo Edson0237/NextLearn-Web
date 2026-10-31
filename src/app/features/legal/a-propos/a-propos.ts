@@ -34,7 +34,7 @@ interface Coordonnee {
 }
 
 /**
- * La page « À propos » — traduction d'`APropos`
+ * La page « À propos » - traduction d'`APropos`
  * (`lib/domains/legal/presentation/pages/a_propos_page.dart`).
  *
  * ## Ce qui était faux dans la version précédente
@@ -42,15 +42,15 @@ interface Coordonnee {
  * Elle écrivait en dur, en français, des textes que l'application possède
  * déjà **traduits** (`aproposValeur*`, `aproposRole*`, `aproposCompetences*`) :
  * en anglais, la page restait donc à moitié française. Elle omettait aussi
- * trois sections que la version mobile porte — l'origine du projet, la
- * mission, l'avenir — et, surtout, deux mentions que les contrôles de
+ * trois sections que la version mobile porte - l'origine du projet, la
+ * mission, l'avenir - et, surtout, deux mentions que les contrôles de
  * publication regardent de près :
  *
  *  - **l'éditeur**, tel que le nomment les conditions d'utilisation : une
  *    personne physique, pas une structure. Afficher un nom de collectif ici
  *    donnerait deux éditeurs différents dans la même application ;
  *  - **le contact légal**, l'adresse par laquelle s'exercent les droits
- *    d'accès et d'effacement — distincte de l'adresse générale, et celle que
+ *    d'accès et d'effacement - distincte de l'adresse générale, et celle que
  *    désigne la politique de confidentialité.
  */
 @Component({
@@ -126,7 +126,7 @@ export class APropos {
     },
   ];
 
-  // Les valeurs — adresses, nom de l'éditeur — ne se traduisent pas ; seuls
+  // Les valeurs - adresses, nom de l'éditeur - ne se traduisent pas ; seuls
   // les libellés qui les désignent le sont.
   protected readonly coordonnees: readonly Coordonnee[] = [
     { icone: 'language', libelle: 'aproposLigneSite', valeur: 'nextlearn.cm', lien: 'https://nextlearn.cm' },

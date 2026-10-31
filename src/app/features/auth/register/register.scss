@@ -86,7 +86,7 @@
   .nl-reg__champ {
     // `min-width: 0` est le tout : un élément flex vaut `min-width: auto`
     // par défaut, et refuse donc de descendre sous la largeur intrinsèque
-    // de son contenu. Un `<input>` nu mesure une vingtaine de caractères —
+    // de son contenu. Un `<input>` nu mesure une vingtaine de caractères -
     // deux côte à côte dépassaient l'écran, et « Nom » sortait à droite.
     min-width: 0;
     flex: 1;

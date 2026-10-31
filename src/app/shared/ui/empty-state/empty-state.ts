@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { Button } from '../button/button';
 
 /**
- * Écran sans contenu, mais jamais sans issue — traduction de `EmptyState`
+ * Écran sans contenu, mais jamais sans issue - traduction de `EmptyState`
  * (`lib/shared/widgets/empty_state.dart`). Badge circulaire à 10 % de la
  * couleur (icône au centre), titre, sous-titre, bouton d'action optionnel.
  *

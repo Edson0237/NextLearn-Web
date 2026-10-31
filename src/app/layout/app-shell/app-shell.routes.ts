@@ -5,7 +5,7 @@ import { MainShell } from '../main-shell/main-shell';
 import { AppShellRoot } from './app-shell-root';
 
 /**
- * L'arbre de routes de l'application — traduction du `GoRouter` complet
+ * L'arbre de routes de l'application - traduction du `GoRouter` complet
  * (`lib/app/router/app_router.dart`). `canActivateChild: [authGuard]` posé
  * une fois ici couvre toute navigation sous `/app`, exactement comme le
  * `redirect` unique de go_router s'applique à chaque route déclarée.
@@ -13,7 +13,7 @@ import { AppShellRoot } from './app-shell-root';
  * ## Pourquoi `loadComponent` et non `component`
  *
  * Les trente-cinq écrans étaient importés en haut de ce fichier, donc
- * rassemblés dans un seul morceau de code de 856 Ko — téléchargé en entier
+ * rassemblés dans un seul morceau de code de 856 Ko - téléchargé en entier
  * pour afficher l'écran de connexion, lecteur PDF compris. Lighthouse le
  * chiffrait à 820 Kio de JavaScript jamais exécuté, et la performance mobile
  * tombait à 49/100 pour un objectif de 80.

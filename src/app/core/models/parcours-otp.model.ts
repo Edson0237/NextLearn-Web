@@ -1,9 +1,9 @@
 /**
- * L'étape d'authentification laissée en plan — traduction de
+ * L'étape d'authentification laissée en plan - traduction de
  * `lib/domains/auth/domain/models/parcours_otp.dart`.
  *
- * Trois démarches passent par un code reçu par e-mail — s'inscrire, ouvrir
- * une session, récupérer un PIN oublié — et toutes trois obligent à
+ * Trois démarches passent par un code reçu par e-mail - s'inscrire, ouvrir
+ * une session, récupérer un PIN oublié - et toutes trois obligent à
  * quitter l'application pour le relever. Sans mémoriser *laquelle* est en
  * cours, le retour perdait la démarche et forçait à redemander un code,
  * pris sur un quota quotidien.
@@ -20,7 +20,7 @@ export enum ParcoursOtp {
 }
 
 /**
- * Combien de temps une démarche reste reprenable — quinze minutes, la
+ * Combien de temps une démarche reste reprenable - quinze minutes, la
  * durée de vie du jeton temporaire côté serveur. Passé ce délai, le jeton
  * est refusé avant même que le code ne soit regardé.
  */

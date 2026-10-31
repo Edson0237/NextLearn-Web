@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 const base = process.argv[2] ?? 'http://localhost:4200';
 const mats = ['Algorithmique', 'Bases de données', 'Réseaux', 'Mathématiques', 'Génie logiciel', 'Programmation Java', 'Systèmes d’information'];
-const docs = mats.flatMap((nom, i) => Array.from({ length: i % 4 + 1 }, (_, k) => ({ _id: `d${i}${k}`, id: `d${i}${k}`, titre: `${nom} — cours ${k + 1}`, type: ['COURS', 'TD', 'SYNTHESE'][k % 3], matiereId: { _id: `m${i}`, nom }, niveau: 'N2', pages: 10 + k, tailleMb: 1.5, vues: k, noteMoyenne: k ? 4 : 0 })));
+const docs = mats.flatMap((nom, i) => Array.from({ length: i % 4 + 1 }, (_, k) => ({ _id: `d${i}${k}`, id: `d${i}${k}`, titre: `${nom} - cours ${k + 1}`, type: ['COURS', 'TD', 'SYNTHESE'][k % 3], matiereId: { _id: `m${i}`, nom }, niveau: 'N2', pages: 10 + k, tailleMb: 1.5, vues: k, noteMoyenne: k ? 4 : 0 })));
 const resultats = {};
 for (const theme of ['light', 'dark']) {
   // Un navigateur par thème : le mode mono-processus plante au second contexte.

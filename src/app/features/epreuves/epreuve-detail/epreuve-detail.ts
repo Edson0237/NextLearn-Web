@@ -14,17 +14,17 @@ import { CibleSignalement } from '../../../core/moderation/report.model';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 /**
- * Détail d'une épreuve — traduction d'`EpreuveDetailPage`
+ * Détail d'une épreuve - traduction d'`EpreuveDetailPage`
  * (`lib/domains/epreuves/presentation/pages/epreuve_detail/epreuve_detail_page.dart`).
  *
  * **Le PDF s'ouvre dans un nouvel onglet (`window.open`), pas dans un
  * lecteur intégré** : le lecteur embarqué (suivi de progression de
  * lecture, zoom, pagination) est un morceau d'architecture partagé avec
- * la fiche document de la bibliothèque — PARITY_MATRIX §3 le signale
+ * la fiche document de la bibliothèque - PARITY_MATRIX §3 le signale
  * déjà comme le risque le plus notable du portage, sans équivalent direct
  * à Syncfusion. Le construire pour cette seule page, avant la décision
  * prise pour la bibliothèque, serait le construire deux fois. Le
- * navigateur rend déjà un PDF nativement dans un nouvel onglet — ce que
+ * navigateur rend déjà un PDF nativement dans un nouvel onglet - ce que
  * cet écran demande vraiment : voir le sujet, pas le lire en place.
  */
 @Component({

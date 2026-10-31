@@ -13,7 +13,7 @@ class Hote {
 
 /**
  * Ce que ce test protège : la navigation au clavier d'un `<div
- * role="button">`, qui n'a — à la différence d'un `<button>` natif — rien
+ * role="button">`, qui n'a - à la différence d'un `<button>` natif - rien
  * nativement. Sans la directive, Entrée et Espace ne font rien du tout.
  */
 describe('Pressable', () => {

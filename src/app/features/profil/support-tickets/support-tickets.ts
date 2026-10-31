@@ -11,7 +11,7 @@ import { tr } from '../../../core/i18n/traduction.service';
 import { Failure } from '../../../core/models/failure.model';
 
 /**
- * Historique des tickets support — traduction de `SupportTicketsPage`
+ * Historique des tickets support - traduction de `SupportTicketsPage`
  * (`lib/domains/profil/presentation/pages/support_tickets/support_tickets_page.dart`).
  */
 @Component({

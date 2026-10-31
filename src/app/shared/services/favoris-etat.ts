@@ -8,7 +8,7 @@ import { tr } from '../../core/i18n/traduction.service';
  *
  * Le favori ne se gérait que depuis la fiche d'une ressource : pour en
  * ajouter un depuis une liste, il fallait ouvrir la fiche. Les cartes ont
- * maintenant leur bouton, et il leur faut un état commun — sinon le cœur
+ * maintenant leur bouton, et il leur faut un état commun - sinon le cœur
  * d'une carte resterait vide pendant que la fiche, ouverte juste après, le
  * montre plein.
  *

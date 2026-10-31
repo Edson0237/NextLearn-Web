@@ -5,8 +5,8 @@
  * Deux conditions sont testées séparément, parce qu'elles tombent pour des
  * raisons différentes :
  *
- *  1. **serveur disponible** — la progression part à l'API et en revient ;
- *  2. **serveur muet** — c'est le cas qui compte vraiment, puisqu'on lit
+ *  1. **serveur disponible** - la progression part à l'API et en revient ;
+ *  2. **serveur muet** - c'est le cas qui compte vraiment, puisqu'on lit
  *     justement hors ligne les documents qu'on a téléchargés.
  */
 import { chromium } from 'playwright';
@@ -73,7 +73,7 @@ async function essai({ nom, serveurRepond }) {
       }
       // Deux ressources distinctes : la liste rend un tableau, la fiche d'un
       // document rend un objet. Les confondre faisait lire n'importe quoi au
-      // client — et m'a fait croire un instant que le défaut venait de lui.
+      // client - et m'a fait croire un instant que le défaut venait de lui.
       const parDocument = /progress\/lecture\/[^/?]+/.test(url);
       if (parDocument) {
         return route.fulfill({
@@ -116,7 +116,7 @@ async function essai({ nom, serveurRepond }) {
   return ok;
 }
 
-console.log('— Reprise de lecture —');
+console.log('- Reprise de lecture -');
 const avecServeur = await essai({ nom: 'serveur-ok', serveurRepond: true });
 const sansServeur = await essai({ nom: 'serveur-muet', serveurRepond: false });
 await navigateur.close();

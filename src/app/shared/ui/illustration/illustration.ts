@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ILLUSTRATION_PATHS, IllustrationName } from './illustration-paths';
 
 /**
- * Une illustration d'écran vide — voir `illustration-paths.ts`.
+ * Une illustration d'écran vide - voir `illustration-paths.ts`.
  *
  * `bypassSecurityTrustHtml` est sûr ici précisément parce que le contenu
  * n'a rien d'externe : il vient d'un fichier TypeScript écrit à la

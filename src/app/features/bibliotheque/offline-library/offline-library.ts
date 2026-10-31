@@ -117,7 +117,7 @@ export class OfflineLibrary implements OnInit {
     this.error.set(null);
     // L'inventaire local d'abord, et sans réseau : c'est la seule chose dont
     // cet écran a réellement besoin pour exister. Le serveur complète ensuite
-    // la liste — et son échec n'est plus fatal, là où il laissait « Impossible
+    // la liste - et son échec n'est plus fatal, là où il laissait « Impossible
     // de charger les documents hors-ligne » sur un écran dont c'est
     // précisément la raison d'être.
     await this.stockage.rafraichir();
@@ -233,9 +233,9 @@ export class OfflineLibrary implements OnInit {
     return noteDocument(doc);
   }
 
-  /** 482 Mo, 1,4 Go — l'unité qui se lit, pas l'octet brut. */
+  /** 482 Mo, 1,4 Go - l'unité qui se lit, pas l'octet brut. */
   protected lisible(octets: number | null): string {
-    if (octets == null) return '—';
+    if (octets == null) return '-';
     const mo = octets / (1024 * 1024);
     if (mo < 1024) return `${Math.round(mo)} Mo`;
     return `${(mo / 1024).toFixed(1).replace('.', ',')} Go`;

@@ -1,5 +1,5 @@
 /**
- * Une épreuve — traduction de
+ * Une épreuve - traduction de
  * `lib/domains/epreuves/domain/models/epreuve_model.dart`.
  */
 export enum TypeEpreuve {
@@ -44,7 +44,7 @@ export interface EpreuveModel {
   readonly matiereId?: string;
   readonly universiteId?: string;
   readonly typeEpreuve?: TypeEpreuve;
-  /** L'institution qui a proposé le sujet — distincte de `universite`, qui
+  /** L'institution qui a proposé le sujet - distincte de `universite`, qui
    * ne fait que le diffuser (une école publie couramment des sujets venus
    * d'ailleurs : concours, université partenaire, annales nationales). */
   readonly enseigne?: string;

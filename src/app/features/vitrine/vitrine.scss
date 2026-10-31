@@ -51,7 +51,7 @@ button:focus-visible {
   padding: clamp(40px, 7vw, 88px) var(--vit-marge);
   overflow: hidden;
 
-  // Deux halos bleus très doux, comme le dégradé de la référence — dans la teinte de la marque.
+  // Deux halos bleus très doux, comme le dégradé de la référence - dans la teinte de la marque.
   &::before {
     content: '';
     position: absolute;

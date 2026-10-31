@@ -1,6 +1,6 @@
 /**
  * Les listes dont vivent les formulaires (inscription, dépôt, vérification)
- * — traduction de `lib/domains/references/domain/models/` et de
+ * - traduction de `lib/domains/references/domain/models/` et de
  * `IReferencesRepository`. Toutes viennent du back-office : rien n'est
  * déclaré en dur ici, une liste écrite dans le code serait une décision
  * soustraite à l'administration.
@@ -22,7 +22,7 @@ export interface MatiereOption {
   readonly nom: string;
 }
 
-/** Option `{value, label}` à laquelle le backend ajoute parfois `id` — le
+/** Option `{value, label}` à laquelle le backend ajoute parfois `id` - le
  * code est ce qui circule (comptes, documents), le libellé se renomme
  * librement depuis le back-office. */
 export interface OptionReference {

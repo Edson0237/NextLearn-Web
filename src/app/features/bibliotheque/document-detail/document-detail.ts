@@ -97,7 +97,7 @@ export class DocumentDetail implements OnInit {
   protected goBack(): void {
     // La pile des écrans visités, et non `Location.back()` : on arrive ici
     // depuis l'accueil, la bibliothèque, une matière, les favoris ou un lien
-    // partagé, et chacun mérite qu'on y revienne — sans repasser par le
+    // partagé, et chacun mérite qu'on y revienne - sans repasser par le
     // lecteur dont on vient peut-être (voir `HistoriqueNavigation`).
     this.historique.retour('/app/' + AppRoutes.bibliotheque, (url) => url.endsWith('/read'));
   }
@@ -206,7 +206,7 @@ export class DocumentDetail implements OnInit {
    * Télécharge le document.
    *
    * L'action manquait entièrement : `recordDownload` existait dans le dépôt
-   * mais aucun écran ne l'appelait. Le fichier passe par une URL signée —
+   * mais aucun écran ne l'appelait. Le fichier passe par une URL signée -
    * jamais par l'URL brute de stockage, qui serait réutilisable sans compte.
    */
   protected async telecharger(): Promise<void> {
@@ -238,7 +238,7 @@ export class DocumentDetail implements OnInit {
    *
    * Les cinq étoiles étaient cinq lignes dans une feuille de sélection, parce
    * qu'une étoile de 20 px est sous le seuil tactile. Elles sont revenues en
-   * rangée, mais avec une cible de 44 px chacune et une icône dessinée —
+   * rangée, mais avec une cible de 44 px chacune et une icône dessinée -
    * `★`/`☆` étaient des caractères, dont le rendu change d'un appareil à
    * l'autre et que les lecteurs d'écran épellent.
    */

@@ -9,7 +9,7 @@ import { SwUpdate } from '@angular/service-worker';
  * ses onglets. Deux conséquences, et la seconde est la plus désagréable : un
  * correctif mis en ligne n'atteignait pas ceux qui ouvrent l'application tous
  * les jours, et un `index.html` resté en cache pouvait réclamer un morceau de
- * code que le déploiement suivant avait renommé — une page blanche, sans rien
+ * code que le déploiement suivant avait renommé - une page blanche, sans rien
  * à l'écran pour l'expliquer.
  *
  * Le rechargement n'est jamais imposé : on signale, l'utilisateur décide. Une
@@ -47,7 +47,7 @@ export class MiseAJourService {
     });
   }
 
-  /** Active la nouvelle version et recharge — sur geste explicite seulement. */
+  /** Active la nouvelle version et recharge - sur geste explicite seulement. */
   async appliquer(): Promise<void> {
     try {
       await this.updates?.activateUpdate();

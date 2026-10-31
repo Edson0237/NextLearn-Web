@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 
 /**
- * Écran de marque — traduction de `SplashPage`
+ * Écran de marque - traduction de `SplashPage`
  * (`lib/domains/auth/presentation/pages/splash/splash_page.dart`). Le
  * routeur applicatif (`authGuard`) gère seul la redirection pendant que
  * `AuthService.init()` restaure la session ; cet écran n'est que
@@ -11,7 +11,7 @@ import { TraductionPipe } from '../../../core/i18n/t.pipe';
  * L'entrée (350 ms, logo qui dépasse légèrement l'échelle avant de se
  * poser) est en CSS pur plutôt qu'un `AnimationController` : une
  * `@keyframes` suffit, et `prefers-reduced-motion` la coupe déjà via les
- * variables de `_motion.scss` — aucune détection à écrire côté TypeScript.
+ * variables de `_motion.scss` - aucune détection à écrire côté TypeScript.
  */
 @Component({
   selector: 'app-splash',

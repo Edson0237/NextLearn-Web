@@ -4,16 +4,16 @@ import { LienProfond } from './core/partage/lien-profond';
 
 /**
  * Un seul projet, un seul domaine : la vitrine et l'application PWA
- * partagent ce routeur (voir docs/pwa-migration/AUDIT_PHASE1.md, §0 — la
+ * partagent ce routeur (voir docs/pwa-migration/AUDIT_PHASE1.md, §0 - la
  * décision d'architecture et ce qu'elle implique).
  *
  * `/` est la page d'accueil publique : un seul but, mener le visiteur dans
  * l'application. Tout ce qui relève de l'application vit sous `/app` :
- * authentification, shell à cinq onglets, gardes de routage — voir
+ * authentification, shell à cinq onglets, gardes de routage - voir
  * `app-shell.routes.ts` pour l'arbre complet (Phase 3).
  *
  * `loadChildren`, et non un import statique : quelqu'un qui ne visite
- * jamais l'application (la vitrine seule) ne doit pas payer son code —
+ * jamais l'application (la vitrine seule) ne doit pas payer son code -
  * Phase 3, point 2 du portage (« routes lazy-loadées »), et Phase 5
  * (budget de performance) le demandent tout autant.
  *
@@ -44,8 +44,8 @@ export const routes: Routes = [
     : []),
   { path: 'app/', pathMatch: 'full', redirectTo: 'app' },
   // Lien partagé : `/d/<id>`, la forme exacte qu'émet l'application mobile
-  // (`LienProfond.document`). La PWA ne la reconnaissait pas — un lien reçu
-  // d'un camarade ne menait nulle part — et partageait de son côté une URL que
+  // (`LienProfond.document`). La PWA ne la reconnaissait pas - un lien reçu
+  // d'un camarade ne menait nulle part - et partageait de son côté une URL que
   // le téléphone, lui, ne savait pas ouvrir. Les deux plateformes émettent et
   // comprennent désormais le même lien.
   {
@@ -60,7 +60,7 @@ export const routes: Routes = [
   },
   // Dernière de la liste, et c'est tout l'intérêt : sans elle, une navigation
   // vers un chemin non déclaré lève `NG04002` dans la console et n'affiche
-  // rien — l'utilisateur reste sur l'écran précédent sans comprendre pourquoi
+  // rien - l'utilisateur reste sur l'écran précédent sans comprendre pourquoi
   // son clic n'a rien fait. Une erreur qu'on voit est une erreur qu'on corrige.
   {
     path: '**',

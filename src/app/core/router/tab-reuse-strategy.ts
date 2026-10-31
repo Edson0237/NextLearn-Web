@@ -1,20 +1,20 @@
 import { ActivatedRouteSnapshot, BaseRouteReuseStrategy, DetachedRouteHandle } from '@angular/router';
 
 /**
- * Garde les cinq onglets montés — traduction de l'intention derrière
+ * Garde les cinq onglets montés - traduction de l'intention derrière
  * `StatefulShellRoute.indexedStack` (`app_router.dart`) : revenir sur un
  * onglet après un détour par un autre ne doit pas le ramener en haut ni
  * perdre sa sélection.
  *
  * Angular Router détruit et recrée un composant à chaque navigation par
- * défaut — il n'a pas d'équivalent intégré à l'arbre à onglets
+ * défaut - il n'a pas d'équivalent intégré à l'arbre à onglets
  * `IndexedStack` de Flutter. Cette stratégie dit au routeur de **détacher**
  * la vue d'un onglet plutôt que de la détruire quand on le quitte, et de
  * la **réattacher** telle quelle quand on y revient.
  *
  * Portée aux cinq routes des onglets uniquement (`shouldDetach`) : le
  * reste de l'application (fiche document, lecteur, recherche…) garde le
- * comportement standard — une nouvelle fiche doit se reconstruire, pas
+ * comportement standard - une nouvelle fiche doit se reconstruire, pas
  * réafficher celle d'avant.
  */
 const ROUTES_ONGLETS = new Set(['home', 'bibliotheque', 'epreuves', 'progression', 'depots', 'profil']);

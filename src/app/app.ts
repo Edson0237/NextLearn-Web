@@ -7,7 +7,7 @@ import { GlobalErrorService } from './core/error-handling/global-error.service';
 
 /**
  * Coque racine, réduite au routage depuis que la vitrine et l'application
- * partagent le même projet (un seul domaine — voir
+ * partagent le même projet (un seul domaine - voir
  * docs/pwa-migration/AUDIT_PHASE1.md, §0). Tout le contenu qui vivait ici
  * est passé dans `features/vitrine/`, qui n'est plus que l'une des routes.
  *

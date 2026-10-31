@@ -3,7 +3,7 @@ import { Icon } from '../icon/icon';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 
 /**
- * Barre de progression de lecture — traduction de `ReadingProgressBar`
+ * Barre de progression de lecture - traduction de `ReadingProgressBar`
  * (`lib/shared/widgets/reading_progress_bar.dart`). Vire au vert et son
  * étiquette passe à « Lu », coche à l'appui, une fois le document terminé.
  */

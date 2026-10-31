@@ -1,4 +1,4 @@
-# QA_CHECKLIST.md — recette avant mise en production
+# QA_CHECKLIST.md - recette avant mise en production
 
 Checklist réutilisable, à cocher intégralement avant chaque déploiement de la
 PWA NextLearn. Une case ne se coche que sur **preuve** : sortie de commande,
@@ -49,7 +49,7 @@ de parité.
 - [ ] Lecteur PDF : le document **s'affiche** (canevas visible, hauteur > 0), reprise à la page quittée
 - [ ] Épreuves : filtres CC/SN, détail, corrigé, notation
 - [ ] Quiz : enchaînement des questions, soumission, score **et correction par question**
-- [ ] Progression : stats, semaine, matières, badges, série — valeurs cohérentes avec l'usage
+- [ ] Progression : stats, semaine, matières, badges, série - valeurs cohérentes avec l'usage
 - [ ] Dépôt : import PDF, licence, suivi du statut, motif de refus affiché
 - [ ] Recours et tickets de support : envoi et historique
 - [ ] Profil : avatar, changement de niveau, appareils connectés (révocation), suppression de compte
@@ -124,5 +124,5 @@ de parité.
 ---
 
 **Règle de clôture** : s'il reste une case non cochée, le livrable est
-« GO AVEC RÉSERVES » au mieux — et la réserve doit être écrite, avec son
+« GO AVEC RÉSERVES » au mieux - et la réserve doit être écrite, avec son
 porteur et sa date.

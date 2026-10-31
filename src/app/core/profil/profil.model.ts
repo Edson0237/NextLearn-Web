@@ -1,12 +1,12 @@
 /**
- * Modèles du domaine Profil — traduction de
+ * Modèles du domaine Profil - traduction de
  * `lib/domains/profil/domain/repositories/profil_repository_interface.dart`.
  */
 
 /**
  * Statistiques affichées sur le profil. Le streak vient du domaine
  * Progression (`/api/progression/stats`) pour éviter la divergence entre
- * les deux écrans — la source elle-même a unifié ce compteur ici.
+ * les deux écrans - la source elle-même a unifié ce compteur ici.
  */
 export interface ProfilStats {
   readonly docsTelecharges: number;

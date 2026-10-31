@@ -67,7 +67,7 @@ export class Home implements OnInit {
   protected readonly recent = signal<DocumentModel[]>([]);
 
   protected readonly streak = signal(0);
-  /** Documents disponibles hors ligne et documents lus — les vrais chiffres.
+  /** Documents disponibles hors ligne et documents lus - les vrais chiffres.
    *  Ils étaient écrits en dur à zéro dans le gabarit. */
   protected readonly horsLigne = signal(0);
   protected readonly lus = signal(0);
@@ -98,7 +98,7 @@ export class Home implements OnInit {
    * Les types de document ouverts à cet étudiant.
    *
    * Chercher « toutes les épreuves de ma filière » n'est pas une recherche :
-   * il n'y a pas de mot à taper, c'est un filtre — donc un bouton.
+   * il n'y a pas de mot à taper, c'est un filtre - donc un bouton.
    */
   private readonly tousLesTypes = [
     DocumentType.epreuve,
@@ -231,7 +231,7 @@ export class Home implements OnInit {
   /**
    * Télécharge depuis la carte, sans passer par la fiche.
    *
-   * C'est le geste qu'on répète — et l'obliger à passer par un écran de plus
+   * C'est le geste qu'on répète - et l'obliger à passer par un écran de plus
    * était le reproche principal fait à l'ancienne liste.
    */
   protected async telecharger(doc: DocumentModel): Promise<void> {
@@ -290,7 +290,7 @@ export class Home implements OnInit {
 
   /**
    * Les étiquettes d'une carte : la matière, puis le niveau et le semestre
-   * s'ils sont connus. Trois au plus — au-delà, la rangée passe à la ligne et
+   * s'ils sont connus. Trois au plus - au-delà, la rangée passe à la ligne et
    * la carte perd l'alignement qu'elle partage avec ses voisines.
    */
   protected etiquettesDe(doc: DocumentModel): EtiquetteDocument[] {

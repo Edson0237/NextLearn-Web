@@ -5,7 +5,7 @@
 // Play exige une URL publique pour la politique de confidentialité et une
 // autre pour la demande de suppression de compte, toutes deux atteignables
 // sans installer l'application. Les textes existaient, mais seulement dans
-// l'application — ce qui ne compte pas.
+// l'application - ce qui ne compte pas.
 //
 // Deux choses peuvent casser silencieusement :
 //

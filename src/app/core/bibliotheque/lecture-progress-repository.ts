@@ -4,12 +4,12 @@ import { firstValueFrom } from 'rxjs';
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Progression de lecture — traduction de `LectureProgressRemoteRepository`.
+ * Progression de lecture - traduction de `LectureProgressRemoteRepository`.
  *
  * Tout un pan du produit manquait côté PWA : `/api/progress/lecture` n'était
  * appelé nulle part. Concrètement, rouvrir un document le rouvrait page 1,
  * l'accueil ne pouvait pas proposer « Reprendre », et le tableau de bord
- * comptait zéro document lu — les trois reposent sur cette seule ressource.
+ * comptait zéro document lu - les trois reposent sur cette seule ressource.
  */
 export interface LectureProgress {
   readonly documentId: string;
@@ -50,7 +50,7 @@ export class LectureProgressRepository {
   // ── Miroir local ─────────────────────────────────────────────────────────
   //
   // La progression ne vivait que sur le serveur. Rouvrir un document sans
-  // réseau le rouvrait donc page 1 — précisément dans le cas où l'on vient
+  // réseau le rouvrait donc page 1 - précisément dans le cas où l'on vient
   // lire ce qu'on a téléchargé pour s'en passer. Et une requête perdue
   // effaçait la position sans que rien ne le dise.
   //

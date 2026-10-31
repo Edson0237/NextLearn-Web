@@ -179,7 +179,7 @@
   padding: 2px 8px;
   border-radius: var(--radius-pilule);
   // Pas de blanc translucide : en sombre le cobalt s'éclaircit et le texte
-  // du bouton devient foncé — la pastille suit la couleur du texte.
+  // du bouton devient foncé - la pastille suit la couleur du texte.
   background: color-mix(in srgb, var(--text-on-primary) 16%, transparent);
   font: 600 0.75rem/1.4 var(--font-family-body);
 }

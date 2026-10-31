@@ -17,7 +17,7 @@ import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sh
 import { AppRoutes } from '../../../core/router/app-routes';
 
 /**
- * Onglet Profil — traduction de `ProfilHomePage`
+ * Onglet Profil - traduction de `ProfilHomePage`
  * (`lib/domains/profil/presentation/pages/profil_home/profil_home_page.dart`).
  *
  * Comme dans la source récente, la liste des réglages est affichée

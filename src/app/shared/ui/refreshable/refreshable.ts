@@ -10,13 +10,13 @@ import {
 } from '@angular/core';
 
 /**
- * Une liste que l'on rafraîchit en tirant vers le bas — traduction de
+ * Une liste que l'on rafraîchit en tirant vers le bas - traduction de
  * `ListeRafraichissable` (`liste_rafraichissable.dart`).
  *
  * ## Une simplification réelle, pas un oubli
  *
  * Côté Flutter, `RefreshIndicator` exige un enfant défilable pour
- * reconnaître le geste — d'où `estVide`, qui enveloppe un état vide dans
+ * reconnaître le geste - d'où `estVide`, qui enveloppe un état vide dans
  * un défilement forcé pour que tirer reste possible sur une liste sans
  * rien à faire défiler.
  *
@@ -24,12 +24,12 @@ import {
  * Pointer Events sur l'hôte lui-même (démarre au bord haut, mesure le
  * déplacement vertical), pas par la physique native du défilement. Un
  * contenu vide peut donc être tiré exactement comme un contenu plein,
- * sans artifice — `estVide` n'a pas d'équivalent ici parce que le
+ * sans artifice - `estVide` n'a pas d'équivalent ici parce que le
  * problème qu'il résolvait ne se pose pas.
  *
  * `refreshing` est une entrée, pilotée par l'appelant : comme pour
  * `OfflineScreen`, un `output()` ne se « attend » pas comme le
- * `Future<void> Function()` Flutter — l'indicateur reste donc affiché
+ * `Future<void> Function()` Flutter - l'indicateur reste donc affiché
  * tant que l'appelant garde `refreshing` à vrai, pas tant qu'une promesse
  * que ce composant ne reçoit jamais n'est pas résolue.
  */
@@ -77,7 +77,7 @@ export class Refreshable {
   @HostListener('pointerdown', ['$event'])
   onPointerDown(event: PointerEvent): void {
     if (this.refreshing() || this.depart) return;
-    // Le geste ne s'arme qu'au bord haut — sinon tirer vers le bas au
+    // Le geste ne s'arme qu'au bord haut - sinon tirer vers le bas au
     // milieu d'une liste déclencherait un rafraîchissement à chaque
     // défilement remonté trop vite.
     if (this.element.nativeElement.scrollTop > 0) return;
@@ -95,7 +95,7 @@ export class Refreshable {
     }
     this.tire.set(true);
     // Résistance croissante : les cent premiers pixels tirés comptent
-    // pleinement, au-delà l'indicateur ralentit — ce qui évite qu'un
+    // pleinement, au-delà l'indicateur ralentit - ce qui évite qu'un
     // tiré très long ne paraisse infini ou désynchronisé du doigt.
     this.distance.set(delta <= 100 ? delta : 100 + (delta - 100) * 0.4);
   }

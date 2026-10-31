@@ -14,18 +14,18 @@ import { ParcoursOtp } from '../../../core/models/parcours-otp.model';
 const PERIODE_SONDAGE_MS = 30_000;
 
 /**
- * Code de vérification — traduction d'`OtpPage`
+ * Code de vérification - traduction d'`OtpPage`
  * (`lib/domains/auth/presentation/pages/register/otp_page.dart`), à la
  * fois pour l'inscription et pour le second facteur d'une connexion.
  *
  * **Ce que la démarche mémorisée décide, pas la route** : `estConnexion()`
- * lit `auth.state().parcoursOtp`, pas le `isLogin2fa` de la route — la
+ * lit `auth.state().parcoursOtp`, pas le `isLogin2fa` de la route - la
  * source documente l'incident précis que cet ordre évite (un jeton de
  * connexion envoyé à `verify-otp`, le serveur refusant sur le type du
  * jeton sans jamais lire les six chiffres).
  *
  * Deux vues : la saisie à six cases quand un code est parti, la file
- * d'attente quand il ne l'est pas encore — jamais les deux à la fois, un
+ * d'attente quand il ne l'est pas encore - jamais les deux à la fois, un
  * compte à rebours y serait un mensonge (voir `FileAttenteOtp`, source).
  */
 @Component({

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Surface de carte générique — le fond, le rayon (`AppRadius.md`, 14px) et
+ * Surface de carte générique - le fond, le rayon (`AppRadius.md`, 14px) et
  * l'ombre douce (`AppColors.shadowCard`) que presque tous les écrans de
  * contenu utilisent (document, épreuve, notification...). Le contenu
  * propre à chaque métier reste hors de ce composant, par projection.

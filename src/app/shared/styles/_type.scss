@@ -1,7 +1,7 @@
-// Échelle typographique — système « Academic Clarity ».
+// Échelle typographique - système « Academic Clarity ».
 //
 // Des mixins, pas des classes : une règle de classe partagée (`.nl-h3 {...}`)
-// ne traverserait pas l'encapsulation de vues d'Angular — chaque composant
+// ne traverserait pas l'encapsulation de vues d'Angular - chaque composant
 // compile son propre CSS, scopé par un attribut que seul CE composant pose
 // sur ses propres éléments. Un mixin, lui, copie les propriétés au point
 // d'inclusion : aucune dépendance à un sélecteur partagé.
@@ -14,7 +14,7 @@
 // C'est l'essentiel de ce qui donnait son air générique à l'interface.
 //
 // Les trois libellés (`label-lg/md/sm`) sont la nouveauté utile : ce sont
-// eux qui portent les micro-badges — « L3 », « CORRIGÉ », « TD/TP » — dont la
+// eux qui portent les micro-badges - « L3 », « CORRIGÉ », « TD/TP » - dont la
 // lecture doit être instantanée au pouce.
 
 // ── Titres ──────────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@
   letter-spacing: -0.015em;
   color: var(--text-primary);
 }
-/** Titre de carte — le plus employé de tous. */
+/** Titre de carte - le plus employé de tous. */
 @mixin nl-h3 {
   font: 600 1rem/1.5rem var(--font-family);
   letter-spacing: -0.01em;

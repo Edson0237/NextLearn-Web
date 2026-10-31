@@ -13,14 +13,14 @@ import { bloqueAcces, demandeAction } from '../models/verification.model';
 import { AppRoutes } from './app-routes';
 
 /**
- * Garde de routage applicatif — traduction de `RouterNotifier.redirect`
+ * Garde de routage applicatif - traduction de `RouterNotifier.redirect`
  * (`lib/app/router/app_router.dart`), posé une fois sur la route `/app`
  * via `canActivateChild` : Angular l'évalue alors à chaque navigation
  * sous `/app`, exactement comme go_router réévalue son unique callback
  * `redirect` à chaque changement d'état auth (`refreshListenable`).
  *
  * **Non porté ici, délibérément** : la résolution des liens profonds
- * (`LienProfond.documentDepuisChemin`) — elle suppose le module
+ * (`LienProfond.documentDepuisChemin`) - elle suppose le module
  * bibliothèque et son schéma d'URL de partage, Phase 4. Le reste de la
  * précédence (authentification, verrouillage, parcours OTP en cours,
  * blocage par vérification académique) est traduit à l'identique.
@@ -73,7 +73,7 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
     // Traduction de `routesToujoursAccessibles` (`app_router.dart`), et placée
     // au même endroit : après le verrou, avant les routes publiques. Ces deux
     // textes n'appartiennent à aucune des deux catégories, et c'est
-    // précisément ce qui les rendait inatteignables — déconnecté, on était
+    // précisément ce qui les rendait inatteignables - déconnecté, on était
     // renvoyé vers l'onboarding, alors que ce sont les textes qu'il faut
     // pouvoir lire *avant* de consentir. Apple exige par ailleurs que la
     // politique de confidentialité soit consultable sans compte.

@@ -1,4 +1,4 @@
-// Contrat d'accessibilité du mouvement — copie du raisonnement de
+// Contrat d'accessibilité du mouvement - copie du raisonnement de
 // `AppMotion.reduireLeMouvement` : le choix explicite fait dans
 // l'application l'emporte sur le réglage du système ; à défaut, le système
 // décide. `prefers-reduced-motion: reduce` est la version web de
@@ -15,7 +15,7 @@
 // dans les réglages de l'application l'emporte sur celui du téléphone.
 // Avec une règle `@media (prefers-reduced-motion: reduce)` ici, un système qui
 // réclame moins de mouvement l'imposerait quoi qu'on coche dans
-// l'application — l'inverse du contrat. `PreferencesAccessibilite` résout les
+// l'application - l'inverse du contrat. `PreferencesAccessibilite` résout les
 // deux (choix explicite, sinon système) et pose la classe sur `<html>`.
 html.nl-motion-reduced .nl-app,
 .nl-app.nl-motion-reduced {
@@ -29,7 +29,7 @@ html.nl-motion-reduced .nl-app,
 // Traduction d'`ApparitionCascade` : fondu + remontée de 16px, décalées de
 // 40ms par élément (plafonné à 8 via `--cascade-index`, posé par la
 // directive). Sous mouvement réduit, l'élément apparaît à sa place, sans
-// transition — pas de fondu coupé à mi-course.
+// transition - pas de fondu coupé à mi-course.
 .nl-cascade-enter {
   --cascade-pas: 40ms;
   animation: nl-cascade-in var(--motion-standard, 250ms) var(--ease-entree, ease-out) both;

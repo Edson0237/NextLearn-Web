@@ -23,7 +23,7 @@ const REPARTITION = { m1: 9, m2: 4, m3: 7, m4: 2, m5: 5, m6: 1 };
 const DOCS = Object.entries(REPARTITION).flatMap(([mid, n]) => {
   const m = MATIERES.find((x) => x.id === mid);
   return Array.from({ length: n }, (_, i) => ({
-    _id: `d-${mid}-${i}`, titre: `${m.name} — séance ${i + 1}`, description: '', type: ['COURS', 'TD', 'EPREUVE'][i % 3],
+    _id: `d-${mid}-${i}`, titre: `${m.name} - séance ${i + 1}`, description: '', type: ['COURS', 'TD', 'EPREUVE'][i % 3],
     matiereId: { _id: mid, nom: m.name }, enseignantId: { _id: 'e1', nom: 'Dr. A. Mbarga' },
     universiteId: { _id: 'u1', nom: 'UY1' }, niveau: 'L2', semestre: 'S1', anneeAcademique: '2023-2024',
     tailleMb: 2, pages: 20, urlPdf: 'https://exemple.test/x.pdf', dateAjout: new Date().toISOString(),

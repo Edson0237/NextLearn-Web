@@ -1,4 +1,4 @@
-# QA_INVENTORY.md — inventaire indépendant de l'application Flutter
+# QA_INVENTORY.md - inventaire indépendant de l'application Flutter
 
 **Auditeur** : recette externe, aucune participation au développement.
 **Source de vérité** : le code Flutter de `C:\Users\USER\StudioProjects\nextlearn`
@@ -40,52 +40,52 @@ métadonnées `@` → 808 identiques dans `app_fr.arb` et `app_en.arb`.
 
 | Route Flutter | Écran | Paramètres | Transition |
 |---|---|---|---|
-| `/` | `SplashPage` | — | — |
-| `/onboarding` | `OnboardingPage` | — | — |
-| `/register` | `RegisterPage` | — | — |
-| `/register/otp` | `OtpPage` | — | — |
-| `/register/pin-setup` | `PinSetupPage` | — | — |
-| `/login` | `LoginPinPage` | — | — |
-| `/login/otp` | `OtpPage(isLogin2fa: true)` | — | — |
-| `/login/reset-pin` | `ResetPinPage` | — | — |
-| `/unlock` | `UnlockPage` | — | — |
-| `/notifications` | `NotificationsPage` | — | push |
-| `/verification` | `VerificationFormPage` | — | push |
-| `/verification/attente` | `VerificationPendingPage` | — | push |
-| `/support/tickets` | `SupportTicketsPage` | — | push |
-| `/profil/supprimer-compte` | `DeleteAccountPage` | — | push |
-| `/profil/parametres` | `ParametresPage` | — | push |
-| `/profil/appareils` | `SessionsPage` | — | push |
-| `/legal/confidentialite` | `LegalDocumentPage` | — | **toujours accessible, sans compte** |
-| `/legal/conditions` | `LegalDocumentPage` | — | **toujours accessible, sans compte** |
-| `/legal/a-propos` | `AProposPage` | — | push |
-| `/depots/nouveau` | `DepotFormPage` | — | **modale (montée par le bas)** |
-| `/recours` | `RecoursPage` | — | push, **échappe au blocage de vérification** |
+| `/` | `SplashPage` | - | - |
+| `/onboarding` | `OnboardingPage` | - | - |
+| `/register` | `RegisterPage` | - | - |
+| `/register/otp` | `OtpPage` | - | - |
+| `/register/pin-setup` | `PinSetupPage` | - | - |
+| `/login` | `LoginPinPage` | - | - |
+| `/login/otp` | `OtpPage(isLogin2fa: true)` | - | - |
+| `/login/reset-pin` | `ResetPinPage` | - | - |
+| `/unlock` | `UnlockPage` | - | - |
+| `/notifications` | `NotificationsPage` | - | push |
+| `/verification` | `VerificationFormPage` | - | push |
+| `/verification/attente` | `VerificationPendingPage` | - | push |
+| `/support/tickets` | `SupportTicketsPage` | - | push |
+| `/profil/supprimer-compte` | `DeleteAccountPage` | - | push |
+| `/profil/parametres` | `ParametresPage` | - | push |
+| `/profil/appareils` | `SessionsPage` | - | push |
+| `/legal/confidentialite` | `LegalDocumentPage` | - | **toujours accessible, sans compte** |
+| `/legal/conditions` | `LegalDocumentPage` | - | **toujours accessible, sans compte** |
+| `/legal/a-propos` | `AProposPage` | - | push |
+| `/depots/nouveau` | `DepotFormPage` | - | **modale (montée par le bas)** |
+| `/recours` | `RecoursPage` | - | push, **échappe au blocage de vérification** |
 | `/bibliotheque/matiere/:id` | `MatierePage` | `id` | push |
-| `/favoris` | `FavorisPage` | — | push |
-| `/offline` | `OfflineLibraryPage` | — | push |
-| `/recherche` | `RecherchePage` | — | **modale (montée par le bas)** |
+| `/favoris` | `FavorisPage` | - | push |
+| `/offline` | `OfflineLibraryPage` | - | push |
+| `/recherche` | `RecherchePage` | - | **modale (montée par le bas)** |
 | `/bibliotheque/doc/:id` | `DocumentDetailPage` | `id` | push |
 | `/bibliotheque/doc/:id/read` | `PdfReaderPage` | `id` | push |
 | `/epreuves/:id` | `EpreuveDetailPage` | `id` | push |
 | `/quiz/:id` | `QuizSessionPage` | `id` | push |
 
-### 2.2 Coque à onglets — `StatefulShellRoute.indexedStack`, 5 branches
+### 2.2 Coque à onglets - `StatefulShellRoute.indexedStack`, 5 branches
 
 | # | Onglet | Route | Sous-routes |
 |---|---|---|---|
-| 1 | Accueil | `/home` | — |
+| 1 | Accueil | `/home` | - |
 | 2 | Bibliothèque | `/bibliotheque` | `/bibliotheque/matieres` (catalogue), `/epreuves` **dans la même branche** |
-| 3 | Progression | `/progression` | — |
-| 4 | Contribuer | `/depots` | — |
-| 5 | Profil | `/profil` | — |
+| 3 | Progression | `/progression` | - |
+| 4 | Contribuer | `/depots` | - |
+| 5 | Profil | `/profil` | - |
 
 Point de vigilance pour l'audit : **`/epreuves` appartient à la branche
 « Bibliothèque »** côté Flutter (commentaire explicite dans `app_router.dart`,
 lignes ~430) ; ce n'est pas un onglet. L'état de chaque branche (défilement,
 filtre de type sélectionné) est conservé par `IndexedStack`.
 
-### 2.3 Règles de redirection (`RouterNotifier.redirect`) — ordre exact
+### 2.3 Règles de redirection (`RouterNotifier.redirect`) - ordre exact
 
 1. Lien profond `/d/:id` → mémorise `destinationEnAttente`, renvoie au splash si
    l'app démarre (`lien_profond.dart`).
@@ -165,12 +165,12 @@ Base : `ApiConfig.baseUrl` = `https://api-nextlearn.duckdns.org`, surchargée pa
 - Timeouts : `connectTimeout` **20 s**, `receiveTimeout` **20 s** (`dio_client.dart`).
 - En-têtes : `Authorization: Bearer` sauf sur les 9 chemins pré-auth
   (`_cheminsSansJeton`) ; `X-Device-Platform` + `X-App-Version` sur mobile,
-  **rien sur le web** (préflight CORS — décision documentée).
+  **rien sur le web** (préflight CORS - décision documentée).
 - 401 : refresh dédupliqué (une seule requête concurrente), rejeu une fois
   (`extra['retried']`), `onSessionExpired` **seulement s'il existe un refresh
   token** ; les chemins de `_chemins401Identifiant` (dont `/auth/change-pin`)
   ne déclenchent jamais de refresh.
-- Erreurs : `Failure` ne laisse fuiter le message serveur que dans deux cas —
+- Erreurs : `Failure` ne laisse fuiter le message serveur que dans deux cas -
   `ACCOUNT_NOT_VALIDATED` (≤ 240 car.) et 401/422 sur chemin pré-auth (≤ 200 car.).
   Messages par défaut : 400/401/403/404/409/422/429/500-502-503 + générique,
   tous traduits.
@@ -218,17 +218,17 @@ reinitialisation), `DomaineInstitutionnel`, `NiveauDisponible`,
 |---|---|
 | Primaires clair | `#1A4A7E`, `#0F2E4D`, `#0F2E4D`, `#3D6FA3` |
 | Primaires sombre | `#74AAE0`, `#12314F`, `#0F2E4D`, `#9AC4EC` |
-| Corail | clair `#FF7A59`/`#FFB39E` — sombre `#FF9478`/`#FFBBA6` |
-| Vert | clair `#2E9E5B`/`#7FC89D` — sombre `#5CBE86`/`#8FD6AE` |
+| Corail | clair `#FF7A59`/`#FFB39E` - sombre `#FF9478`/`#FFBBA6` |
+| Vert | clair `#2E9E5B`/`#7FC89D` - sombre `#5CBE86`/`#8FD6AE` |
 | Sémantiques clair | danger `#D14343`, warning `#ED8B22`, neutral `#8AA1B6` |
 | Sémantiques sombre | danger `#F2796A`, warning `#E3A648`, neutral `#728799` |
 | Fonds clair | `#FFFFFF`, `#EEF4F9`, `#F5F9FC`, `#E1EBF5` |
 | Fonds sombre | `#11212F`, `#0A1620`, `#17293A`, `#1F3648` |
 | Texte clair | `#10202E`, `#4D6072`, `#8AA1B6`, `#FFFFFF` |
 | Texte sombre | `#E7EFF6`, `#A6B8C7`, `#728799`, `#08131C` |
-| Bordures | clair `#D6E1EA`/`#F5F9FC` — sombre `#22394E`/`#1A2C3D` |
+| Bordures | clair `#D6E1EA`/`#F5F9FC` - sombre `#22394E`/`#1A2C3D` |
 | Ombres | couleur `#0F2E4D` α .06/.08 (clair), `#000000` α .32/.42 (sombre) ; `blur 16 offset 0,6` et `blur 24 offset 0,10` |
-| Couleurs par type (9 slugs) | cours, td, epreuve, synthese, annales, corrige, rapport, expose, tp — **paire clair/sombre pour chacun** |
+| Couleurs par type (9 slugs) | cours, td, epreuve, synthese, annales, corrige, rapport, expose, tp - **paire clair/sombre pour chacun** |
 | Palette matières | **10 teintes**, choisies par hash du nom, identiques dans les deux thèmes |
 | Espacement | 4, 8, 12, 16, 20, 24, 32 ; page 20 ; entre-éléments 12 ; entre-sections 20 |
 | Rayons | 8, 12, 14, 16, feuille 20, pilule 999 |
@@ -255,18 +255,18 @@ plafond 99+).
 | Service | Rôle | Contrainte |
 |---|---|---|
 | `SecureStorageService` | 12 clés (jeton, expiration, refresh, user, hash PIN, 1er lancement, dernier OTP, tentatives PIN, verrou, jeton temporaire, parcours OTP + échéance) | Keystore/Keychain |
-| `HiveService` | **9 boîtes chiffrées** : documents, offline_docs, lecture_progress, favoris, study_sessions, notifications, prefs, references, epreuves — avec horodatage d'écriture et migration depuis les boîtes non chiffrées | clé issue du coffre système |
+| `HiveService` | **9 boîtes chiffrées** : documents, offline_docs, lecture_progress, favoris, study_sessions, notifications, prefs, references, epreuves - avec horodatage d'écriture et migration depuis les boîtes non chiffrées | clé issue du coffre système |
 | `ConnectivityService` + `demarrage_reseau.dart` | état réseau, vérification au démarrage | plugin natif |
-| `TelechargementService` | téléchargement avec progression (fraction) | — |
-| `CacheCleanerService` | vidage réel du cache | — |
+| `TelechargementService` | téléchargement avec progression (fraction) | - |
+| `CacheCleanerService` | vidage réel du cache | - |
 | `PushService` (natif/web) | FCM : permission, jeton → `POST /api/notifications/device`, `onMessage`, `onMessageOpenedApp` ; **la version web est un stub inerte** | iOS ≥ 16.4 + PWA installée |
-| `BiometricService` | déverrouillage biométrique, dégradation silencieuse | — |
+| `BiometricService` | déverrouillage biométrique, dégradation silencieuse | - |
 | `ScannerService` (natif/web) | scan de document ; **`disponible = false` sur le web**, le bouton n'est alors pas affiché | 🚫 web |
 | `RetourHaptique` | retours tactiles | 🚫 iOS Safari |
-| `PreferencesAccessibilite` | échelle de texte + réduction d'animations | — |
-| `HistoriqueRecherches` | historique local des recherches | — |
-| `StudySessionQueue` | file d'attente des sessions d'étude hors-ligne | — |
-| `SessionExpiredNotifier` | notification globale de session expirée | — |
+| `PreferencesAccessibilite` | échelle de texte + réduction d'animations | - |
+| `HistoriqueRecherches` | historique local des recherches | - |
+| `StudySessionQueue` | file d'attente des sessions d'étude hors-ligne | - |
+| `SessionExpiredNotifier` | notification globale de session expirée | - |
 | `LienProfond` | émission/reconnaissance des liens `/d/:id` | App Links / Universal Links |
 
 ---
@@ -277,7 +277,7 @@ Chaque liste distingue **4** états, pas 3 : squelette (`AsyncValue.loading`),
 vide (`EmptyState` + illustration), erreur (`EtatErreur` avec réessai), rempli.
 Les rangées de l'accueil **disparaissent** si elles sont vides mais montrent un
 squelette si elles chargent (commentaire explicite `home_page.dart` §« Le défaut
-qu'elle corrige »), et **n'affichent jamais d'erreur** — une suggestion qui
+qu'elle corrige »), et **n'affichent jamais d'erreur** - une suggestion qui
 échoue s'efface.
 
 ---

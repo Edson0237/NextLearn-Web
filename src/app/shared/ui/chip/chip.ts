@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 /**
- * Puce de filtre — traduction de `DocumentTypeChip`/`FilterChipRow`
+ * Puce de filtre - traduction de `DocumentTypeChip`/`FilterChipRow`
  * (`lib/shared/widgets/category_chip.dart`). Sélectionnée : remplie de sa
  * couleur, texte blanc. Non sélectionnée : la même couleur à 10 %, texte
- * coloré — exactement `_color.withAlpha(25)` côté Flutter (25/255 ≈ 0.10).
+ * coloré - exactement `_color.withAlpha(25)` côté Flutter (25/255 ≈ 0.10).
  *
  * La couleur se passe en valeur CSS (`color="var(--type-cours)"` ou tout
  * hex), pas en nom de type : ce composant ne connaît pas le vocabulaire

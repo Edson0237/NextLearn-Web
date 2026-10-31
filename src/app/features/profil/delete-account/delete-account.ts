@@ -13,7 +13,7 @@ import { AppRoutes } from '../../../core/router/app-routes';
 import { Failure } from '../../../core/models/failure.model';
 
 /**
- * Suppression du compte en deux étapes — traduction de `DeleteAccountPage`
+ * Suppression du compte en deux étapes - traduction de `DeleteAccountPage`
  * (`lib/domains/profil/presentation/pages/delete_account/delete_account_page.dart`).
  */
 @Component({

@@ -4,12 +4,12 @@ import { EtatPush, PushService } from './push.service';
 const CLE = 'nl_notifications_actives';
 
 /**
- * L'utilisateur veut-il recevoir les notifications ? — traduction de
+ * L'utilisateur veut-il recevoir les notifications ? - traduction de
  * `PreferenceNotificationsNotifier` (`preference_notifications.dart`).
  *
  * Le réglage existait dans l'écran de la PWA et affichait « bientôt
  * disponible » : un interrupteur qui ne commande rien. Côté Flutter, la
- * remarque était la même avant correction — « un réglage qui mentait ».
+ * remarque était la même avant correction - « un réglage qui mentait ».
  *
  * Désactiver retire le jeton **côté serveur** plutôt que d'ignorer les
  * messages à l'arrivée : le serveur cesse d'envoyer, ce qui épargne la

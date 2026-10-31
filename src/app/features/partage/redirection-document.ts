@@ -6,13 +6,13 @@ import { AppRoutes } from '../../core/router/app-routes';
  * Point d'arrivée d'un lien partagé `/d/<id>`.
  *
  * Il ne fait que traduire l'adresse publique en route interne et s'efface :
- * la garde d'authentification prend le relais — elle mémorise la fiche
+ * la garde d'authentification prend le relais - elle mémorise la fiche
  * demandée si personne n'est connecté, et y revient une fois la session
  * ouverte (`PendingDestinationService`), exactement comme
  * `_destinationEnAttente` côté Flutter.
  *
  * `replaceUrl` : sans lui, revenir en arrière depuis la fiche repasserait par
- * cette redirection et rouvrirait la fiche — une impasse dont on ne sort
+ * cette redirection et rouvrirait la fiche - une impasse dont on ne sort
  * qu'en fermant l'onglet.
  */
 @Component({

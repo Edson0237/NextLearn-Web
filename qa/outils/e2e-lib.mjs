@@ -11,7 +11,7 @@ export async function ouvrir(options = {}) {
   const navigateur = await chromium.launch({ channel: 'chromium', args: ['--no-sandbox', '--disable-dev-shm-usage', '--single-process', '--disable-gpu'] });
   const contexte = await navigateur.newContext({ viewport: { width: 390, height: 844 }, locale: 'fr-FR', serviceWorkers: options.sw ? 'allow' : 'block' });
   await contexte.grantPermissions(['clipboard-read', 'clipboard-write']);
-  // `neuf` : un téléphone qui ouvre l'application pour la première fois — ni
+  // `neuf` : un téléphone qui ouvre l'application pour la première fois - ni
   // appareil connu, ni « déjà lancé ».
   if (!options.neuf) {
     await contexte.addInitScript((d) => {
@@ -48,7 +48,7 @@ export function echecs(journal, depuis = 0) {
   return journal.api.slice(depuis).filter((a) => a.s >= 400);
 }
 
-/** Appelle l'API avec la session de la page — pour vérifier l'état côté serveur. */
+/** Appelle l'API avec la session de la page - pour vérifier l'état côté serveur. */
 export async function api(page, methode, chemin, corps) {
   return page.evaluate(async ([m, c, b]) => {
     const r = await fetch(`/api${c}`, {
@@ -64,7 +64,7 @@ export async function api(page, methode, chemin, corps) {
 export const verdicts = [];
 export function verifier(nom, ok, detail = '') {
   verdicts.push({ nom, ok });
-  console.log(`${ok ? '  ✔' : '  ✘'} ${nom}${detail ? ' — ' + detail : ''}`);
+  console.log(`${ok ? '  ✔' : '  ✘'} ${nom}${detail ? ' - ' + detail : ''}`);
 }
 export function bilan() {
   const ko = verdicts.filter((v) => !v.ok);

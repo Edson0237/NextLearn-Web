@@ -59,7 +59,7 @@ for (const [chemin, avecSession] of ECRANS) {
       /**
        * Le bord gauche que l'œil suit.
        *
-       * Sur un bloc peint — carte, pilule, segment — c'est l'arête de la
+       * Sur un bloc peint - carte, pilule, segment - c'est l'arête de la
        * forme, et son rembourrage intérieur ne se voit pas. Sur une boîte
        * transparente, il n'y a que le texte à suivre, et c'est alors le
        * bord du contenu qui compte.

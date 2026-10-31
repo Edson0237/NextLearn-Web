@@ -18,15 +18,15 @@ interface Onglet {
 }
 
 /**
- * La coque à cinq onglets — traduction de `MainShell`/`NextLearnBottomNavBar`
+ * La coque à cinq onglets - traduction de `MainShell`/`NextLearnBottomNavBar`
  * (`lib/layout/main_shell/`). L'état de chaque onglet est préservé par
  * `TabReuseStrategy` (Phase 3), pas par ce composant : revenir sur la
  * bibliothèque après un détour par le profil retrouve son défilement.
- * `routerLinkActive` fait ce que `currentIndex` faisait côté Flutter —
+ * `routerLinkActive` fait ce que `currentIndex` faisait côté Flutter -
  * dire quel onglet est actif, sans qu'il faille le traquer à la main.
  *
  * **Le geste de retour qui ramène au premier onglet puis demande
- * confirmation avant de fermer l'application n'a pas d'équivalent ici** —
+ * confirmation avant de fermer l'application n'a pas d'équivalent ici** -
  * voir `AUDIT_PHASE1.md`, §6 : le bouton retour du navigateur gère
  * l'historique, pas la fermeture d'une application. Le reproduire
  * piégerait l'utilisateur sur un geste qui, sur le web, veut juste dire
@@ -52,7 +52,7 @@ export class MainShell {
     void this.stockage.rafraichir();
   }
 
-  /** L'ordre suit celui des branches du routeur — un décalage ici
+  /** L'ordre suit celui des branches du routeur - un décalage ici
    * enverrait l'onglet « Profil » sur la page des dépôts. */
   private readonly toutesLesOnglets: readonly (Onglet & { fonction?: string })[] = [
     { route: 'home', label: tr('navAccueil', 'Accueil'), icon: 'home_outline', iconActif: 'home' },

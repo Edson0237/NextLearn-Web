@@ -57,7 +57,7 @@ export class BibliothequeHome implements OnInit {
     return [u.universite, libelleNiveau(u.niveau, u.cycle)].filter(Boolean).join(' • ');
   });
 
-  /** Combien de filtres sont posés — la pastille du bouton « Filtres ». */
+  /** Combien de filtres sont posés - la pastille du bouton « Filtres ». */
   protected readonly nombreFiltres = computed(
     () =>
       (this.selectedType() ? 1 : 0) +
@@ -65,7 +65,7 @@ export class BibliothequeHome implements OnInit {
       (this.texteRecherche().length >= SEUIL_TEXTE ? 1 : 0),
   );
 
-  /** Le texte saisi, nettoyé — le même que celui qui filtre la liste. */
+  /** Le texte saisi, nettoyé - le même que celui qui filtre la liste. */
   private readonly texteRecherche = computed(() => this.searchQuery().toLowerCase().trim());
 
   protected readonly loading = signal(false);
@@ -229,7 +229,7 @@ export class BibliothequeHome implements OnInit {
 
   /**
    * Combien de documents donnerait ce format, compte tenu de la matière et du
-   * texte déjà posés — jamais plus que ce que la liste affichera vraiment.
+   * texte déjà posés - jamais plus que ce que la liste affichera vraiment.
    */
   protected compteType(type: DocumentType | null): number {
     return this.nombreCorrespondants(type, this.selectedMatiere());

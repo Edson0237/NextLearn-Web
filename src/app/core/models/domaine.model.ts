@@ -1,5 +1,5 @@
 /**
- * Ce que le serveur répond quand on lui soumet un domaine e-mail —
+ * Ce que le serveur répond quand on lui soumet un domaine e-mail -
  * traduction de `lib/domains/auth/domain/models/domaine_institutionnel.dart`.
  *
  * La réponse n'autorise rien : elle rend le formulaire agréable à remplir
@@ -12,7 +12,7 @@ export enum EtatDomaine {
   verification = 'verification',
   refuse = 'refuse',
   reconnu = 'reconnu',
-  /** Le serveur n'a pas répondu — on ne bloque pas pour autant. */
+  /** Le serveur n'a pas répondu - on ne bloque pas pour autant. */
   indisponible = 'indisponible',
 }
 

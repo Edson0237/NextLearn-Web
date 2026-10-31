@@ -6,11 +6,11 @@ import { App } from './app';
 
 /**
  * Ce que ce test protège : la coexistence vitrine + PWA sur un seul
- * domaine (voir docs/pwa-migration/AUDIT_PHASE1.md, §0 — la décision
+ * domaine (voir docs/pwa-migration/AUDIT_PHASE1.md, §0 - la décision
  * d'architecture). `App` a été réduit à une coque de routage et la vitrine
  * déplacée dans `features/vitrine/` ; une régression de ce découpage
  * laisserait soit `/` vide, soit `/app/design-system` introuvable, sans
- * qu'aucune erreur de compilation ne le signale — Angular résout les routes
+ * qu'aucune erreur de compilation ne le signale - Angular résout les routes
  * à l'exécution.
  */
 describe('Routage racine', () => {
@@ -37,7 +37,7 @@ describe('Routage racine', () => {
     const navigation = await router.navigateByUrl('/app/design-system');
     harness.detectChanges();
 
-    // `navigateByUrl` renvoie `false` si aucune route ne correspond — c'est
+    // `navigateByUrl` renvoie `false` si aucune route ne correspond - c'est
     // précisément ce qu'une route mal câblée produirait, silencieusement.
     expect(navigation).toBe(true);
   });
