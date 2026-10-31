@@ -253,11 +253,11 @@ export class SettingsList implements OnInit {
           },
           {
             icone: 'privacy_tip', titre: tr('pwaConfidentialite', 'Confidentialité'), sousTitre: tr('legalConfidentialite', 'Politique de confidentialité'),
-            action: () => window.open('/confidentialite/', '_blank'),
+            action: () => void this.router.navigateByUrl('/app/legal/document/confidentialite'),
           },
           {
             icone: 'gavel', titre: tr('pwaConditions', 'Conditions'), sousTitre: tr('legalConditions', 'Conditions d\'utilisation'),
-            action: () => window.open('/conditions/', '_blank'),
+            action: () => void this.router.navigateByUrl('/app/legal/document/conditions'),
           },
         ],
       },
