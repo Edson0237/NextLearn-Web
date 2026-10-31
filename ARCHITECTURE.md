@@ -72,7 +72,7 @@ src/app/
 │   ├── contributions/ · recours/ · verification/ · notifications/
 │   ├── profil/ (profil-home, settings-list, sessions, support-tickets, dialogues/…)
 │   ├── legal/ · not-found/ · design-system/
-│   └── vitrine/ (site public ; sections/ = ses blocs d'accueil)
+│   └── vitrine/ (page d'accueil publique : mène à /app, installe la PWA)
 │
 └── layout/
     ├── app-shell/       routes de l'application (`/app/*`) et sa racine
@@ -128,6 +128,15 @@ Hors de `src/app/` : `public/` (manifeste, service worker Firebase, `i18n/*.json
 - `core/storage/secure-storage.service.ts` : jetons, PIN haché, état local — clés inchangées.
 - `public/firebase-messaging-sw.js` : notifications poussées.
 
+### Page d'accueil publique (`features/vitrine`)
+- Un seul but : mener le visiteur dans l'application. NextLearn n'est sur aucun magasin d'applications, donc la page ne
+  propose pas de « télécharger » : un bouton ouvre `/app`, un second installe la PWA quand le navigateur le permet
+  (invitation native sur Android/Chrome, explication du geste sur iPhone).
+- Aucune ressource externe (police auto-hébergée, icônes de l'application) : une page publique n'envoie pas l'adresse IP du
+  visiteur à un CDN. Le script de connexion Google n'est lui aussi chargé que sur les écrans qui l'utilisent.
+- L'aperçu du téléphone est une vraie capture de l'application : `node qa/outils/capturer-apercu-accueil.mjs`
+  la régénère (données d'exemple simulées) vers `public/images/apercu-accueil.jpg`.
+
 ### Authentification
 - `core/auth/auth.service.ts` (état et orchestration) → `auth-repository.ts` (appels `/api/auth/*`),
   `verrou-pin.ts` (blocage local après échecs de PIN), `google-identite.ts` (script Google).
@@ -160,7 +169,7 @@ modifications locales sauvegardées hors du dépôt) : 148 tests, build de 381,9
 | 1 | `enFailure` — `core/network/erreur-api.ts` remplace **12 copies** identiques de la traduction d'erreurs HTTP | Duplication ; une correction devait être faite 12 fois. Testé (3 tests). |
 | 2 | Présentation d'un type de document déplacée du modèle vers `shared/ui/type-document/` (+ tube `typeDoc`) ; **8 écrans** perdent leurs 4 méthodes d'enrobage recopiées | Le modèle de données importait les noms d'icônes de l'interface (inversion de dépendance). 6 tests. |
 | 3 | `FavorisEtat` passe de `core/` à `shared/services/` | Il pilotait un toast : un service d'application, pas du noyau. |
-| 4 | `features/shell` + `features/app-shell` → `layout/` ; `Components/` → `features/vitrine/sections/` | L'enveloppe n'est pas une fonctionnalité ; un dossier à majuscule hors convention. |
+| 4 | `features/shell` + `features/app-shell` → `layout/` ; `Components/` (ancien site, depuis remplacé par la nouvelle page d'accueil) | L'enveloppe n'est pas une fonctionnalité ; un dossier à majuscule hors convention. |
 | 5 | `settings-list` (594 → 499 lignes) : fenêtres **PIN** et **support** extraites en composants (`features/profil/dialogues/`) | Un écran portait 5 responsabilités ; les règles de saisie du PIN n'étaient pas testables. 7 tests. |
 | 6 | `AuthRepository` (658 → 564 lignes) : blocage après échecs de PIN → `VerrouPin` ; avatar et niveau → `ProfilRepository` ; `donnees()` partagé | Un dépôt d'authentification qui gérait aussi le profil et la politique de blocage. 6 + 4 tests. |
 | 7 | Doublon mort retiré : `core/verification/verification.model.ts` (un 2ᵉ `JustificatifType`) | Deux modèles pour la même réponse, dont un erroné. |
@@ -195,4 +204,6 @@ vérification académique (11/11), fenêtres PIN et support (11/11).
   basculer sur `enFailure` donnerait de vrais messages — un changement visible, à décider à part.
 - `settings-list` reste la plus grosse page (499 lignes) : thème, langue, accessibilité, notifications,
   cache pourraient devenir des groupes de réglages indépendants.
-- Les composants de la vitrine n'ont pas été retouchés (hors périmètre de l'application).
+- `src/styles.scss` est l'ancienne feuille globale de l'ancien site vitrine (variables Poppins, `.btn`, `.container`,
+  réinitialisation, `a`/`ul`/`img` globaux). La nouvelle page d'accueil n'en dépend plus ; l'application, elle, hérite encore
+  de ses règles de base. À élaguer règle par règle, en contrôlant les écrans, plutôt que d'un coup.

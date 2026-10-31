@@ -1,20 +1,146 @@
-    <div class="cursor-glow" id="cursorGlow"></div>
+<a class="nl-vit__evitement" href="#contenu">{{ 'vitrineAllerAuContenu' | t }}</a>
 
-    <!-- Barre de progression scroll -->
-    <div class="scroll-progress" id="scrollProgress"></div>
+<main id="contenu" class="nl-vit">
+  <!-- ── Accroche ─────────────────────────────────────────────────────────── -->
+  <section class="nl-vit__hero" aria-labelledby="vit-titre">
+    <div class="nl-vit__hero-texte">
+      <img class="nl-vit__logo" src="images/logo-marque.png" alt="NextLearn" width="80" height="80" />
 
-    <!-- Header/Navbar -->
-    <app-header></app-header>
+      <h1 id="vit-titre" class="nl-vit__titre">
+        {{ 'vitrineTitreLigne1' | t }}<br />
+        {{ 'vitrineTitreLigne2' | t }}<span class="nl-vit__point">.</span>
+      </h1>
 
-    <!-- Sections principales -->
-    <app-accueil></app-accueil>
+      <p class="nl-vit__sous-titre">{{ 'vitrineSousTitre' | t }}</p>
 
-    <app-fonctionnalite></app-fonctionnalite>
+      <div class="nl-vit__actions">
+        <a class="nl-vit__bouton nl-vit__bouton--plein" routerLink="/app">
+          {{ 'vitrineOuvrir' | t }}
+          <nl-icon name="arrow_forward" [size]="20" />
+        </a>
+        @if (peutInstaller()) {
+          <button
+            type="button"
+            class="nl-vit__bouton nl-vit__bouton--contour"
+            [attr.aria-expanded]="guideIosOuvert()"
+            (click)="installer()">
+            <nl-icon name="download" [size]="20" />
+            {{ 'vitrineInstaller' | t }}
+          </button>
+        }
+      </div>
 
-    <app-about></app-about>
+      @if (guideIosOuvert() && !installation.peutProposer()) {
+        <p class="nl-vit__guide" role="note">{{ 'vitrineGuideIos' | t }}</p>
+      }
 
-    <app-equipe></app-equipe>
+      <ul class="nl-vit__garanties">
+        <li><nl-icon name="check" [size]="16" />{{ 'vitrineGarantie1' | t }}</li>
+        <li><nl-icon name="check" [size]="16" />{{ 'vitrineGarantie2' | t }}</li>
+        <li><nl-icon name="check" [size]="16" />{{ 'vitrineGarantie3' | t }}</li>
+      </ul>
+    </div>
 
-    <app-contact></app-contact>
+    <div class="nl-vit__hero-visuel">
+      <div class="nl-vit__telephone">
+        <div class="nl-vit__barre" aria-hidden="true"><span class="nl-vit__ilot"></span></div>
+        <img
+          class="nl-vit__ecran"
+          src="images/apercu-accueil.jpg"
+          [attr.alt]="'vitrineApercuAlt' | t"
+          width="390"
+          height="844"
+          fetchpriority="high" />
+      </div>
+      <span class="nl-vit__puce nl-vit__puce--haut" aria-hidden="true">
+        <nl-icon name="cloud_off" [size]="18" />{{ 'vitrinePuceHorsLigne' | t }}
+      </span>
+      <span class="nl-vit__puce nl-vit__puce--bas" aria-hidden="true">
+        <nl-icon name="task_alt" [size]="18" />{{ 'vitrinePuceCorriges' | t }}
+      </span>
+    </div>
+  </section>
 
-    <app-footer></app-footer>
+  <!-- ── Pourquoi NextLearn ──────────────────────────────────────────────── -->
+  <section class="nl-vit__section nl-vit__section--gris" aria-labelledby="vit-pourquoi">
+    <h2 id="vit-pourquoi" class="nl-vit__h2">
+      {{ 'vitrinePourquoiAvant' | t }} <span class="nl-vit__marque">NextLearn</span> ?
+    </h2>
+    <p class="nl-vit__lede">{{ 'vitrinePourquoiSous' | t }}</p>
+
+    <ul class="nl-vit__cartes">
+      @for (atout of atouts; track atout.titre) {
+        <li class="nl-vit__carte">
+          <span class="nl-vit__pastille"><nl-icon [name]="atout.icone" [size]="26" /></span>
+          <h3>{{ atout.titre | t }}</h3>
+          <p>{{ atout.texte | t }}</p>
+        </li>
+      }
+    </ul>
+  </section>
+
+  @if (sectionsFinalesVisibles) {
+    <!-- ── Comment ça marche ───────────────────────────────────────────────── -->
+    <section class="nl-vit__section" aria-labelledby="vit-etapes">
+      <h2 id="vit-etapes" class="nl-vit__h2">{{ 'vitrineEtapesTitre' | t }}</h2>
+
+      <ol class="nl-vit__etapes">
+        @for (etape of etapes; track etape.titre; let i = $index) {
+          <li class="nl-vit__etape">
+            <span class="nl-vit__numero" aria-hidden="true">{{ i + 1 }}</span>
+            <div>
+              <h3>{{ etape.titre | t }}</h3>
+              <p>{{ etape.texte | t }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <!-- ── Dernier appel ───────────────────────────────────────────────────── -->
+    <section class="nl-vit__section nl-vit__final" aria-labelledby="vit-final">
+      <h2 id="vit-final" class="nl-vit__h2">
+        {{ 'vitrineFinalAvant' | t }} <span class="nl-vit__marque">{{ 'vitrineFinalMarque' | t }}</span> ?
+      </h2>
+      <p class="nl-vit__lede">{{ 'vitrineFinalSous' | t }}</p>
+      <div class="nl-vit__actions nl-vit__actions--centre">
+        <a class="nl-vit__bouton nl-vit__bouton--plein" routerLink="/app">
+          {{ 'vitrineOuvrir' | t }}
+          <nl-icon name="arrow_forward" [size]="20" />
+        </a>
+      </div>
+    </section>
+  }
+</main>
+
+<!-- ── Pied de page ───────────────────────────────────────────────────────── -->
+<footer class="nl-vit__pied">
+  <div class="nl-vit__pied-grille">
+    <div class="nl-vit__pied-marque">
+      <div class="nl-vit__pied-nom">
+        <img src="images/logo-marque.png" alt="" width="32" height="32" />
+        NextLearn
+      </div>
+      <p>{{ 'vitrinePiedBaseline' | t }}</p>
+    </div>
+
+    <nav [attr.aria-label]="'vitrinePiedLegal' | t">
+      <h2>{{ 'vitrinePiedLegal' | t }}</h2>
+      <ul>
+        <li><a href="/confidentialite/">{{ 'vitrineLienConfidentialite' | t }}</a></li>
+        <li><a href="/conditions/">{{ 'vitrineLienConditions' | t }}</a></li>
+        <li><a href="/suppression-compte/">{{ 'vitrineLienSuppression' | t }}</a></li>
+      </ul>
+    </nav>
+
+    <nav [attr.aria-label]="'vitrinePiedSupport' | t">
+      <h2>{{ 'vitrinePiedSupport' | t }}</h2>
+      <ul>
+        <li><a [href]="'mailto:' + contact">{{ 'vitrineLienContact' | t }}</a></li>
+        <li><a [href]="'mailto:' + contact">{{ contact }}</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <p class="nl-vit__copyright">© {{ annee }} NextLearn. {{ 'vitrineDroits' | t }}</p>
+</footer>
