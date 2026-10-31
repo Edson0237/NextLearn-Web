@@ -41,13 +41,13 @@ describe('Vitrine', () => {
     expect(liens[0].getAttribute('href')).toBe('/app');
   });
 
-  it('masque pour l’instant « Comment ça marche » et l’appel final', () => {
+  it('masque pour l’instant « Pourquoi choisir », « Comment ça marche » et l’appel final', () => {
     const el: HTMLElement = creer().nativeElement;
+    expect(el.querySelector('.nl-vit__cartes')).toBeNull();
     expect(el.querySelector('.nl-vit__etapes')).toBeNull();
     expect(el.querySelector('.nl-vit__final')).toBeNull();
-    // Les sections qui restent : accroche, atouts, pied de page.
+    // Ce qui reste : l'accroche et le pied de page.
     expect(el.querySelector('.nl-vit__hero')).not.toBeNull();
-    expect(el.querySelector('.nl-vit__cartes')).not.toBeNull();
     expect(el.querySelector('footer')).not.toBeNull();
   });
 
@@ -99,10 +99,10 @@ describe('Vitrine', () => {
     expect(externes).toEqual([]);
   });
 
-  it('expose les liens légaux et le contact', () => {
+  it('expose les liens légaux, sans bloc Support', () => {
     const el: HTMLElement = creer().nativeElement;
     const hrefs = [...el.querySelectorAll('footer a')].map((a) => a.getAttribute('href'));
     expect(hrefs).toEqual(expect.arrayContaining(['/confidentialite/', '/conditions/', '/suppression-compte/']));
-    expect(hrefs.some((h) => h?.startsWith('mailto:'))).toBe(true);
+    expect(hrefs.some((h) => h?.startsWith('mailto:'))).toBe(false);
   });
 });

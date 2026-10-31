@@ -1150,8 +1150,7 @@
   "vitrineInstaller": "Install on my phone",
   "vitrineGuideIos": "On iPhone: tap Safari’s Share button, then “Add to Home Screen”.",
   "vitrineGarantie1": "Free",
-  "vitrineGarantie2": "No Play Store or App Store",
-  "vitrineGarantie3": "Works offline",
+  "vitrineGarantie2": "Works offline",
   "vitrineApercuAlt": "Preview of the NextLearn home screen: document formats, recommended documents and progress.",
   "vitrinePuceHorsLigne": "Available offline",
   "vitrinePuceCorriges": "Exams and answer keys",
@@ -1175,10 +1174,8 @@
   "vitrineFinalSous": "Join the students who already find their lectures, exams and answer keys in one place.",
   "vitrinePiedBaseline": "Your programme’s academic library, in your pocket.",
   "vitrinePiedLegal": "Legal",
-  "vitrinePiedSupport": "Support",
   "vitrineLienConfidentialite": "Privacy policy",
   "vitrineLienConditions": "Terms of use",
   "vitrineLienSuppression": "Delete my account",
-  "vitrineLienContact": "Contact us",
   "vitrineDroits": "All rights reserved."
 }

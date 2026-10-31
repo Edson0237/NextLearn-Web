@@ -37,7 +37,6 @@
       <ul class="nl-vit__garanties">
         <li><nl-icon name="check" [size]="16" />{{ 'vitrineGarantie1' | t }}</li>
         <li><nl-icon name="check" [size]="16" />{{ 'vitrineGarantie2' | t }}</li>
-        <li><nl-icon name="check" [size]="16" />{{ 'vitrineGarantie3' | t }}</li>
       </ul>
     </div>
 
@@ -61,23 +60,25 @@
     </div>
   </section>
 
-  <!-- ── Pourquoi NextLearn ──────────────────────────────────────────────── -->
-  <section class="nl-vit__section nl-vit__section--gris" aria-labelledby="vit-pourquoi">
-    <h2 id="vit-pourquoi" class="nl-vit__h2">
-      {{ 'vitrinePourquoiAvant' | t }} <span class="nl-vit__marque">NextLearn</span> ?
-    </h2>
-    <p class="nl-vit__lede">{{ 'vitrinePourquoiSous' | t }}</p>
+  @if (atoutsVisibles) {
+    <!-- ── Pourquoi NextLearn ──────────────────────────────────────────────── -->
+    <section class="nl-vit__section nl-vit__section--gris" aria-labelledby="vit-pourquoi">
+      <h2 id="vit-pourquoi" class="nl-vit__h2">
+        {{ 'vitrinePourquoiAvant' | t }} <span class="nl-vit__marque">NextLearn</span> ?
+      </h2>
+      <p class="nl-vit__lede">{{ 'vitrinePourquoiSous' | t }}</p>
 
-    <ul class="nl-vit__cartes">
-      @for (atout of atouts; track atout.titre) {
-        <li class="nl-vit__carte">
-          <span class="nl-vit__pastille"><nl-icon [name]="atout.icone" [size]="26" /></span>
-          <h3>{{ atout.titre | t }}</h3>
-          <p>{{ atout.texte | t }}</p>
-        </li>
-      }
-    </ul>
-  </section>
+      <ul class="nl-vit__cartes">
+        @for (atout of atouts; track atout.titre) {
+          <li class="nl-vit__carte">
+            <span class="nl-vit__pastille"><nl-icon [name]="atout.icone" [size]="26" /></span>
+            <h3>{{ atout.titre | t }}</h3>
+            <p>{{ atout.texte | t }}</p>
+          </li>
+        }
+      </ul>
+    </section>
+  }
 
   @if (sectionsFinalesVisibles) {
     <!-- ── Comment ça marche ───────────────────────────────────────────────── -->
@@ -130,14 +131,6 @@
         <li><a href="/confidentialite/">{{ 'vitrineLienConfidentialite' | t }}</a></li>
         <li><a href="/conditions/">{{ 'vitrineLienConditions' | t }}</a></li>
         <li><a href="/suppression-compte/">{{ 'vitrineLienSuppression' | t }}</a></li>
-      </ul>
-    </nav>
-
-    <nav [attr.aria-label]="'vitrinePiedSupport' | t">
-      <h2>{{ 'vitrinePiedSupport' | t }}</h2>
-      <ul>
-        <li><a [href]="'mailto:' + contact">{{ 'vitrineLienContact' | t }}</a></li>
-        <li><a [href]="'mailto:' + contact">{{ contact }}</a></li>
       </ul>
     </nav>
   </div>

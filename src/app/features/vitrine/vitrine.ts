@@ -54,8 +54,10 @@ export class Vitrine implements OnInit {
    */
   protected readonly sectionsFinalesVisibles = false;
 
+  /** « Pourquoi choisir NextLearn ? » : écrite, masquée pour l'instant, rendue en passant à `true`. */
+  protected readonly atoutsVisibles = false;
+
   protected readonly annee = new Date().getFullYear();
-  protected readonly contact = 'nextlearncm@gmail.com';
 
   protected readonly atouts: readonly Atout[] = [
     { icone: 'menu_book', titre: 'vitrineAtout1Titre', texte: 'vitrineAtout1Texte' },
