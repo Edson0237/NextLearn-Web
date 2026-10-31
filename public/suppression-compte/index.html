@@ -1,11 +1,21 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Supprimer votre compte - NextLearn</title>
+<title>Supprimer votre compte / Delete your account - NextLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Supprimer votre compte de l'application NextLearn.">
+<meta name="description" content="Supprimer votre compte / Delete your account - NextLearn.">
 <link rel="icon" href="/images/Logo.png" type="image/png">
+<script>(function () {
+  var d = document.documentElement, l = null;
+  try {
+    var q = /[?&]lang=(fr|en)/.exec(location.search); if (q) l = q[1];
+    if (!l) { var p = localStorage.getItem('nl_langue'); if (p === 'fr' || p === 'en') l = p; }
+  } catch (e) {}
+  if (!l) l = /^en/i.test(navigator.language || '') ? 'en' : 'fr';
+  d.setAttribute('data-lang', l); d.lang = l;
+  window.nlLangue = function (x) { d.setAttribute('data-lang', x); d.lang = x; };
+})();</script>
 <style>
   :root {
     --primary: #1a497d; --primary-dark: #0d2844; --accent: #7db8ff;
@@ -50,6 +60,15 @@
     font-size: 0.9rem; color: var(--doux);
   }
   footer a { margin-right: 18px; white-space: nowrap; }
+  .langues { margin-left: auto; display: flex; gap: 6px; }
+  .langues button {
+    font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; padding: 4px 12px;
+  }
+  html[data-lang="fr"] .langues [data-l="fr"],
+  html[data-lang="en"] .langues [data-l="en"] { background: #fff; color: var(--primary-dark); }
+  html[data-lang="fr"] [lang="en"].version, html[data-lang="en"] [lang="fr"].version { display: none; }
   @media (max-width: 600px) {
     article { padding: 24px 20px; border-radius: 12px; }
     h1 { font-size: 1.5rem; }
@@ -60,10 +79,15 @@
 <header>
   <div class="bande">
     <a href="/"><img src="/images/Logo.png" alt="">Next<span>Learn</span></a>
+    <div class="langues" role="group" aria-label="Langue / Language">
+      <button type="button" data-l="fr" onclick="nlLangue('fr')">FR</button>
+      <button type="button" data-l="en" onclick="nlLangue('en')">EN</button>
+    </div>
   </div>
 </header>
 <main>
   <article>
+<div class="version" lang="fr">
 <h1>Supprimer votre compte NextLearn</h1>
 <p>Dernière mise à jour : 8 octobre 2026</p>
 <p>Cette page décrit comment obtenir la suppression de votre compte NextLearn et
@@ -136,12 +160,89 @@ exposés à l&#39;article 10 de notre
 <p><strong>Tientcheu Siani Joel Marvin</strong> - promoteur du projet NextLearn
 Yaoundé, Cameroun
 <strong><a href="mailto:tientcheumarvin@gmail.com">tientcheumarvin@gmail.com</a></strong></p>
-    <footer>
+<footer>
       <a href="/confidentialite/">Politique de confidentialité</a>
       <a href="/conditions/">Conditions d'utilisation</a>
       <a href="/suppression-compte/">Supprimer mon compte</a>
       <a href="mailto:tientcheumarvin@gmail.com">Nous écrire</a>
     </footer>
+</div>
+<div class="version" lang="en">
+<h1>Delete your NextLearn account</h1>
+<p>Last updated: 8 October 2026</p>
+<p>This page describes how to have your NextLearn account and the data attached to
+it deleted. It is accessible without being logged in and without installing the
+application, in accordance with Google Play requirements.</p>
+<h2>The fastest way: from the application</h2>
+<p>If you still have access to your account, deletion is immediate and requires no
+action on our side:</p>
+<ol>
+<li>Open NextLearn and go to the <strong>Profile</strong> tab.</li>
+<li>Tap <strong>Delete my account</strong>.</li>
+<li>Confirm with your four-digit PIN.</li>
+</ol>
+<p>Deletion takes effect immediately. There is no cooling-off period and no email
+confirmation is needed.</p>
+<h2>If you no longer have access to the application</h2>
+<p>Write to <strong><a href="mailto:tientcheumarvin@gmail.com">tientcheumarvin@gmail.com</a></strong> stating:</p>
+<ul>
+<li>the email address associated with your account;</li>
+<li>your last name and first name as they appear on the account;</li>
+<li>the subject &quot;Account deletion&quot;.</li>
+</ul>
+<p>Write from the account&#39;s email address when possible: it saves us from asking
+you for additional proof.</p>
+<p>A reasonable doubt about your identity may lead us to ask you for a supporting
+document. This check has a single purpose: to prevent a third party from having
+your account deleted in your place.</p>
+<h3>Timeframe</h3>
+<p>We acknowledge receipt of your request within <strong>seven (7) days</strong>, and deletion
+is carried out within a maximum of <strong>thirty (30) days</strong> from receipt, a period
+set by Law No. 2024/017 of 23 December 2024 on the protection of personal data
+in Cameroon.</p>
+<h2>What is deleted</h2>
+<p>Deletion is final. It removes:</p>
+<ul>
+<li>your account, your last name, first name and email address;</li>
+<li>your PIN;</li>
+<li>your profile photo;</li>
+<li>your institution, field of study and level;</li>
+<li>your identity or enrolment document, where applicable;</li>
+<li>your favourites and your offline downloads;</li>
+<li>your reading progress and your study sessions;</li>
+<li>your results and your answers to self-assessment exercises;</li>
+<li>your ratings, your reports and your messages to support;</li>
+<li>your session tokens and the technical identifier of your devices;</li>
+<li>your notification token.</li>
+</ul>
+<h2>What is kept, and why</h2>
+<p>Only two categories remain after deletion:</p>
+<ul>
+<li><strong>Records of administration decisions concerning you</strong>, kept in <strong>anonymised</strong>
+form - they no longer allow you to be identified. They meet the obligation to
+be able to establish after the fact who decided what.</li>
+<li><strong>Documents you proposed to the catalogue</strong>, where applicable, if they were
+admitted. They stay online detached from your account: they are no longer
+linked to you, and nothing indicates that you are their author. If you want
+them removed and not merely detached, say so in your request.</li>
+</ul>
+<p>No backup copy of your account is kept beyond deletion.</p>
+<h2>Other rights over your data</h2>
+<p>Deletion is not your only right. You can also request access to your data,
+their rectification, their portability, or object to a processing operation.
+These rights, how to exercise them and the complaint routes are set out in
+Article 10 of our <a href="/confidentialite/">data protection policy</a>.</p>
+<h2>Contact</h2>
+<p><strong>Tientcheu Siani Joel Marvin</strong> - promoter of the NextLearn project
+Yaoundé, Cameroon
+<strong><a href="mailto:tientcheumarvin@gmail.com">tientcheumarvin@gmail.com</a></strong></p>
+<footer>
+      <a href="/confidentialite/">Privacy policy</a>
+      <a href="/conditions/">Terms of use</a>
+      <a href="/suppression-compte/">Delete my account</a>
+      <a href="mailto:tientcheumarvin@gmail.com">Contact us</a>
+    </footer>
+</div>
   </article>
 </main>
 </body>
