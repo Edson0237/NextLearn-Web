@@ -105,6 +105,11 @@ export const APP_SHELL_ROUTES: Routes = [
         loadComponent: () => import('../../features/legal/a-propos/a-propos').then((m) => m.APropos),
       },
       {
+        path: AppRoutes.installer,
+        loadComponent: () =>
+          import('../../features/installation/installation-page/installation-page').then((m) => m.InstallationPage),
+      },
+      {
         path: AppRoutes.legalDocument,
         loadComponent: () =>
           import('../../features/legal/legal-document/legal-document').then((m) => m.LegalDocument),

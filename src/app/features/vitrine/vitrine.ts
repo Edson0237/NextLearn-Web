@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { Router, RouterLink } from '@angular/router';
 import { TraductionPipe } from '../../core/i18n/t.pipe';
 import { InstallationService } from '../../core/pwa/installation.service';
+import { GuideInstallation } from '../../shared/ui/guide-installation/guide-installation';
 import { Icon } from '../../shared/ui/icon/icon';
 import { IconName } from '../../shared/ui/icon/icon-paths';
 
@@ -35,7 +36,7 @@ interface Etape {
 @Component({
   selector: 'app-vitrine',
   standalone: true,
-  imports: [RouterLink, Icon, TraductionPipe],
+  imports: [RouterLink, Icon, TraductionPipe, GuideInstallation],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'nl-overlay' },
   templateUrl: './vitrine.html',
@@ -45,8 +46,8 @@ export class Vitrine implements OnInit {
   private readonly router = inject(Router);
   protected readonly installation = inject(InstallationService);
 
-  /** Le guide d'installation d'iOS, qui n'a pas d'invitation native à déclencher. */
-  protected readonly guideIosOuvert = signal(false);
+  /** Le guide d'installation, ouvert quand le navigateur n'a pas d'invitation native à déclencher. */
+  protected readonly guideOuvert = signal(false);
 
   /**
    * « Comment ça marche » et l'appel final sont écrits mais masqués pour l'instant.
@@ -80,17 +81,12 @@ export class Vitrine implements OnInit {
     }
   }
 
-  /** Installer : l'invitation native quand elle existe, sinon le geste d'iOS expliqué. */
+  /** Installer : l'invitation native quand elle existe, sinon le guide qui explique le geste. */
   protected async installer(): Promise<void> {
-    if (this.installation.peutProposer()) {
+    if (this.installation.invitationDisponible()) {
       await this.installation.proposer();
     } else {
-      this.guideIosOuvert.update((ouvert) => !ouvert);
+      this.guideOuvert.update((ouvert) => !ouvert);
     }
-  }
-
-  /** Le bouton d'installation n'a de sens que si le navigateur sait installer. */
-  protected peutInstaller(): boolean {
-    return this.installation.peutProposer() || this.installation.besoinGuideIos();
   }
 }

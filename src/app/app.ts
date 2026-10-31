@@ -4,6 +4,7 @@ import { HistoriqueNavigation } from './core/router/historique-navigation';
 import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
 import { GlobalErrorService } from './core/error-handling/global-error.service';
+import { InstallationService } from './core/pwa/installation.service';
 
 /**
  * Coque racine, réduite au routage depuis que la vitrine et l'application
@@ -27,6 +28,8 @@ export class App {
   private readonly global = inject(GlobalErrorService);
   /** Instancié dès le démarrage : la pile doit connaître le tout premier écran. */
   private readonly historique = inject(HistoriqueNavigation);
+  /** Instancié dès le démarrage : `beforeinstallprompt` peut partir avant le premier écran. */
+  private readonly installation = inject(InstallationService);
   protected readonly erreurFatale = this.global.fatal;
   protected readonly modeDebug = isDevMode();
 }

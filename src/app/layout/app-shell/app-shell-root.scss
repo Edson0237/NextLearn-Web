@@ -56,3 +56,35 @@
     cursor: pointer;
   }
 }
+
+// ── Guide d'installation, ouvert depuis le bandeau ──────────────────────────
+//
+// Une feuille par-dessus l'écran en cours : le bandeau est affiché sur tous les
+// écrans, y compris la connexion, où la route du guide (sous /app, derrière la
+// garde) renverrait ailleurs.
+.nl-feuille-guide {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: color-mix(in srgb, #000 45%, transparent);
+
+  &__corps {
+    position: relative;
+    width: min(100%, 560px);
+    max-height: 88dvh;
+    overflow-y: auto;
+    padding: var(--space-lg) var(--space-page) calc(var(--space-lg) + env(safe-area-inset-bottom));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  &__fermer {
+    position: absolute;
+    top: var(--space-xs);
+    right: var(--space-xs);
+  }
+}

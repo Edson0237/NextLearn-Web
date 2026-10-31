@@ -207,3 +207,18 @@ vérification académique (11/11), fenêtres PIN et support (11/11).
 - `src/styles.scss` est l'ancienne feuille globale de l'ancien site vitrine (variables Poppins, `.btn`, `.container`,
   réinitialisation, `a`/`ul`/`img` globaux). La nouvelle page d'accueil n'en dépend plus ; l'application, elle, hérite encore
   de ses règles de base. À élaguer règle par règle, en contrôlant les écrans, plutôt que d'un coup.
+
+## 8. Guide d'installation de la PWA
+
+**Un seul mécanisme** : `core/pwa/installation.service.ts` (déjà présent, étendu). Il est instancié au démarrage par `App`, pour ne pas manquer un `beforeinstallprompt` émis avant le premier écran.
+
+- **Détection** : `core/pwa/environnement.ts` (fonctions pures, sources injectées) croise `userAgent`, Client Hints (`userAgentData`) et `maxTouchPoints` (iPadOS se présente comme un Mac). Rend `'inconnu'` plutôt que de deviner ; les vues web intégrées (Instagram, `; wv)`) ne sont pas prises pour un navigateur. `core/pwa/cas-installation.ts` réduit l'environnement à 13 procédures.
+- **Bouton natif** : l'événement est retenu et `preventDefault()` ; `prompt()` n'est appelé qu'au clic. L'état `installee` ne passe à `true` que sur `appinstalled` ou en mode autonome, jamais sur la seule acceptation. Écouteurs retirés à la destruction du service.
+- **Interface** : `shared/ui/guide-installation` (composant partagé, à cause de R3), utilisé par la page `/app/installer` (Réglages > À propos), la feuille ouverte depuis le bandeau, et la vitrine. Le sélecteur manuel d'appareil retire le bouton natif : l'invitation installe l'appareil courant, pas celui qu'on consulte.
+- **Bandeau** : un seul, refermable, mémorisé (`nl_install_refuse`) ; il n'apparaît que si l'installation est possible (invitation native, ou iOS).
+
+### Ce qui est testé automatiquement (Vitest, Chromium simulé)
+Détection de 16 userAgent, choix de procédure, service (invitation, acceptation, refus, erreur, `appinstalled`, nettoyage), guide (états), vitrine. Un contrôle Playwright a aussi vérifié le rendu et l'événement simulé sur Chromium avec userAgent émulés.
+
+### Reste à vérifier sur de vrais appareils (non fait)
+Installation réelle sur Android/Chrome (bouton natif), Chrome et Edge de bureau, iPhone/iPad Safari (« Sur l'écran d'accueil »), Safari macOS 17+ (« Ajouter au Dock »), Samsung Internet, Firefox Android. Les intitulés de menu sont ceux connus à la date de rédaction et peuvent différer selon la version ; Chrome n'émet `beforeinstallprompt` qu'une fois ses critères d'installabilité remplis, et le service worker n'est actif qu'en build de production.

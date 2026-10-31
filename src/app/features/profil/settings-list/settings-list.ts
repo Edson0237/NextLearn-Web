@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { InstallationService } from '../../../core/pwa/installation.service';
 import { FavorisEtat } from '../../../shared/services/favoris-etat';
 import { ThemeService, ThemeMode } from '../../../shared/services/theme';
 import {
@@ -60,6 +61,7 @@ interface GroupeReglages {
 export class SettingsList implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly installation = inject(InstallationService);
   private readonly verrouillage = inject(VerrouillageApp);
   private readonly theme = inject(ThemeService);
   private readonly acces = inject(PreferencesAccessibilite);
@@ -247,6 +249,13 @@ export class SettingsList implements OnInit {
       {
         titre: tr('legalAPropos', 'À propos'),
         lignes: [
+          ...(this.installation.dejaInstallee()
+            ? []
+            : [{
+                icone: 'download' as const, titre: tr('installReglageTitre', 'Installer l\'application'),
+                sousTitre: tr('installReglageSousTitre', 'Ajouter NextLearn à l\'écran d\'accueil'),
+                action: () => void this.router.navigateByUrl('/app/' + AppRoutes.installer),
+              }]),
           {
             icone: 'info', titre: tr('legalAPropos', 'À propos'), sousTitre: tr('pwaVersionEtInfos', 'Version et informations'),
             valeur: VERSION_APP, action: () => void this.router.navigateByUrl('/app/' + AppRoutes.aPropos),

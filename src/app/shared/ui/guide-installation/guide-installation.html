@@ -1,0 +1,120 @@
+<section class="guide" aria-live="polite">
+  @if (installation.dejaInstallee()) {
+    <div class="guide__installee" role="status">
+      <nl-icon name="task_alt" [size]="24" />
+      <div>
+        <h3 class="guide__titre">{{ 'installDejaTitre' | t }}</h3>
+        <p class="guide__texte">{{ 'installDejaTexte' | t }}</p>
+      </div>
+    </div>
+  } @else {
+    <p class="guide__detection">
+      @if (modifie()) {
+        {{ 'installChoixManuel' | t }}
+      } @else if (reconnu()) {
+        {{ 'installDetecte' | t }}
+      } @else {
+        {{ 'installNonReconnu' | t }}
+      }
+      @if (modifie() || reconnu()) {
+        <strong>{{ libelleSysteme(choisi().systeme) | t }}, {{ libelleNavigateur(choisi().navigateur) | t }}</strong>
+      }
+    </p>
+
+    @if (boutonNatif()) {
+      <div class="guide__natif">
+        <button type="button" class="guide__bouton" (click)="installer()">
+          <nl-icon name="download" [size]="20" />
+          {{ 'installBoutonNatif' | t }}
+        </button>
+        @switch (installation.dernierResultat()) {
+          @case ('refuse') {
+            <p class="guide__etat" role="status">{{ 'installRefusee' | t }}</p>
+          }
+          @case ('echec') {
+            <p class="guide__etat" role="status">{{ 'installEchec' | t }}</p>
+          }
+          @case ('accepte') {
+            <p class="guide__etat" role="status">{{ 'installEnCours' | t }}</p>
+          }
+        }
+      </div>
+    } @else if (installation.dernierResultat() === 'accepte' && !modifie()) {
+      <!-- L'invitation a été acceptée mais « appinstalled » n'est pas encore
+           arrivé : on ne déclare pas l'installation faite avant que le
+           navigateur le confirme. -->
+      <p class="guide__etat" role="status">{{ 'installEnCours' | t }}</p>
+    }
+
+    <h3 class="guide__titre">
+      {{ (boutonNatif() ? 'installSinonManuel' : procedure().titre) | t }}
+    </h3>
+
+    @if (boutonNatif()) {
+      <p class="guide__sous-titre">{{ procedure().titre | t }}</p>
+    }
+
+    <ol class="guide__etapes">
+      @for (etape of procedure().etapes; track etape.cle) {
+        <li class="guide__etape">
+          <span class="guide__texte">
+            {{ etape.cle | t }}
+          </span>
+          @if (etape.icone; as icone) {
+            <nl-icon class="guide__icone" [name]="icone" [size]="20" />
+          }
+        </li>
+      }
+    </ol>
+
+    <p class="guide__note">{{ 'installNoteLibelles' | t }}</p>
+
+    <div class="guide__selecteur">
+      <button
+        type="button"
+        class="guide__lien"
+        [attr.aria-expanded]="selecteurOuvert()"
+        (click)="basculerSelecteur()">
+        {{ 'installAutreAppareil' | t }}
+      </button>
+
+      @if (selecteurOuvert()) {
+        <div class="guide__choix" role="group" [attr.aria-label]="'installAppareil' | t">
+          <p class="guide__choix-titre">{{ 'installAppareil' | t }}</p>
+          <div class="guide__puces">
+            @for (s of systemes; track s.valeur) {
+              <button
+                type="button"
+                class="guide__puce"
+                [class.guide__puce--actif]="choisi().systeme === s.valeur"
+                [attr.aria-pressed]="choisi().systeme === s.valeur"
+                (click)="choisirSysteme(s.valeur)">
+                {{ s.libelle | t }}
+              </button>
+            }
+          </div>
+
+          <p class="guide__choix-titre">{{ 'installNavigateur' | t }}</p>
+          <div class="guide__puces">
+            @for (n of navigateursChoisis(); track n) {
+              <button
+                type="button"
+                class="guide__puce"
+                [class.guide__puce--actif]="choisi().navigateur === n"
+                [attr.aria-pressed]="choisi().navigateur === n"
+                (click)="choisirNavigateur(n)">
+                {{ libelleNavigateur(n) | t }}
+              </button>
+            }
+          </div>
+
+          @if (modifie()) {
+            <button type="button" class="guide__lien" (click)="reinitialiser()">
+              {{ 'installRevenirDetection' | t }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>
