@@ -10,7 +10,7 @@ import { ParcoursOtp } from '../models/parcours-otp.model';
  * que quand le serveur le dit, ne garde rien d'une première visite qui n'a pas
  * abouti, et n'envoie jamais l'identité autrement que par le jeton du serveur.
  */
-describe('AuthRepository — connexion Google', () => {
+describe('AuthRepository - connexion Google', () => {
   let repo: AuthRepository;
   let http: HttpTestingController;
   let storage: SecureStorageService;

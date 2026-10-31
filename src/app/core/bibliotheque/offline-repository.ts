@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Gestion des documents hors-ligne — traduction de `OfflineRemoteRepository`.
+ * Gestion des documents hors-ligne - traduction de `OfflineRemoteRepository`.
  * Côté PWA, on suit les IDs marqués hors-ligne sans stockage local de fichiers.
  */
 @Injectable({ providedIn: 'root' })

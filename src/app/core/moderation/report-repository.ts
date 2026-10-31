@@ -12,7 +12,7 @@ import {
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Signalement de contenu — traduction de `ReportRemoteRepository`
+ * Signalement de contenu - traduction de `ReportRemoteRepository`
  * (`lib/domains/moderation/infrastructure/repositories/`).
  *
  * Le domaine entier manquait côté PWA : un étudiant qui tombait sur un

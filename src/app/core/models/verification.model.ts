@@ -1,5 +1,5 @@
 /**
- * Statut du dossier de vérification académique — traduction de
+ * Statut du dossier de vérification académique - traduction de
  * `lib/domains/verification/domain/models/verification_model.dart`.
  */
 export enum VerificationStatut {

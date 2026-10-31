@@ -24,7 +24,7 @@ await ctx.route('**/api/**', (r) => {
 });
 const page = await ctx.newPage();
 const res = [];
-const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' — ' + d : ''}`); };
+const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' - ' + d : ''}`); };
 await page.goto(`${base}/app/support/tickets`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(2000);
 await page.waitForTimeout(1500);

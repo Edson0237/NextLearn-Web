@@ -6,7 +6,7 @@ import { EpreuveModel, epreuveDepuisJson } from './epreuve.model';
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Accès réseau aux épreuves — traduction d'`EpreuveRemoteRepository`
+ * Accès réseau aux épreuves - traduction d'`EpreuveRemoteRepository`
  * (`lib/domains/epreuves/infrastructure/repositories/epreuve_remote_repository.dart`).
  *
  * **Non repris** : le repli sur le cache Hive hors ligne. La bibliothèque
@@ -27,7 +27,7 @@ export class EpreuvesRepository {
    * Toutes les épreuves du périmètre de l'étudiant.
    *
    * Le serveur plafonne une page à 50 : l'écran ne chargeait que la première, et
-   * ses filtres — qui travaillent sur la liste chargée — ne voyaient donc jamais
+   * ses filtres - qui travaillent sur la liste chargée - ne voyaient donc jamais
    * la 51ᵉ épreuve. On parcourt maintenant toutes les pages, avec un garde-fou
    * (`MAX_PAGES`) pour ne pas boucler si le serveur annonçait un total absurde.
    */

@@ -11,14 +11,14 @@ import { AppRoutes } from '../../../core/router/app-routes';
 import { initiales } from '../../../core/models/user.model';
 
 /**
- * Connexion par PIN, étape 1 — traduction de `LoginPinPage`
+ * Connexion par PIN, étape 1 - traduction de `LoginPinPage`
  * (`lib/domains/auth/presentation/pages/login_pin/login_pin_page.dart`).
  * Le PIN valide n'ouvre pas la session : le backend exige encore le
  * second facteur (`AppRoutes.loginOtp`) avant d'établir quoi que ce soit.
  *
  * L'e-mail se pré-remplit depuis l'utilisateur en cache (dernier compte
  * connecté sur cet appareil, même après une déconnexion qui n'a effacé
- * que le jeton) — une seule fois, pour ne pas écraser une saisie en cours
+ * que le jeton) - une seule fois, pour ne pas écraser une saisie en cours
  * si quelqu'un change d'adresse.
  */
 @Component({
@@ -40,8 +40,8 @@ export class LoginPin {
   protected readonly pin = signal('');
 
   /**
-   * Où en est la connexion : l'adresse d'abord, puis — si le compte a un PIN
-   * — le PIN. Un compte sans PIN reçoit un code par e-mail et ne voit jamais
+   * Où en est la connexion : l'adresse d'abord, puis - si le compte a un PIN
+   * - le PIN. Un compte sans PIN reçoit un code par e-mail et ne voit jamais
    * le pavé : le PIN est facultatif.
    */
   protected readonly etape = signal<'email' | 'pin'>('email');
@@ -168,7 +168,7 @@ export class LoginPin {
       });
     } else if (issue === 'session') {
       // Appareil déjà connu : aucun code à saisir. La garde de routage voit
-      // la session et conduit à l'accueil — ou à la vérification académique
+      // la session et conduit à l'accueil - ou à la vérification académique
       // si elle est en attente, ce qu'on ne décide pas ici.
       const prenom = this.auth.state().user?.prenom;
       this.pin.set('');

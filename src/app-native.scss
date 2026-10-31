@@ -4,7 +4,7 @@
 // c'est-à-dire depuis la feuille d'un composant Angular. L'encapsulation de
 // vues réécrit alors chaque sélecteur avec l'attribut propre à ce composant :
 // `.nl-app button` devenait `.nl-app[_ngcontent-abc] button[_ngcontent-abc]`,
-// et ne désignait donc que les boutons écrits dans le gabarit de la coque —
+// et ne désignait donc que les boutons écrits dans le gabarit de la coque -
 // c'est-à-dire aucun écran. Toutes les règles qui visent un descendant
 // n'avaient aucun effet : la taille minimale des cibles tactiles (48 px, le
 // `AppTouch.minimum` de Flutter), le retour `:active`, la neutralisation du
@@ -19,7 +19,7 @@
 // n'a pas changé : la vitrine, qui ne porte jamais cette classe, reste une
 // page web ordinaire.
 // Les jetons eux-mêmes, déclarés une seule fois pour toute l'application.
-// Ils vivaient dans la feuille de chaque composant qui en avait besoin —
+// Ils vivaient dans la feuille de chaque composant qui en avait besoin -
 // quatre kilo-octets recopiés à chaque fois, et deux composants au-dessus du
 // budget dès que la palette s'est étoffée.
 @use 'app/shared/styles/tokens';
@@ -29,7 +29,7 @@
 // `app-root` n'a pas de `display` par défaut : c'est donc un élément en
 // ligne, et la `line-height: 1.7` que `styles.scss` pose sur `body` lui
 // ajoute une boîte de ligne de 27 px en dessous. La page dépassait d'autant
-// la fenêtre sur tous les écrans — invisible là où l'on défile déjà, mais
+// la fenêtre sur tous les écrans - invisible là où l'on défile déjà, mais
 // pas dans le lecteur PDF, dont la barre de titre s'échappait vers le haut
 // au premier geste.
 app-root {
@@ -37,10 +37,10 @@ app-root {
 }
 
 // pdf.js ajoute un `<canvas>` de mesure directement dans `<body>`, hors de
-// l'application. Il est invisible — hauteur nulle — mais reste un élément en
+// l'application. Il est invisible - hauteur nulle - mais reste un élément en
 // ligne, et la `line-height: 1.7` du corps lui donne quand même une boîte de
 // ligne de 27 px. La page dépassait d'autant la fenêtre dès qu'un document
-// était ouvert, et la barre du lecteur — calée sur `100dvh` — s'échappait
+// était ouvert, et la barre du lecteur - calée sur `100dvh` - s'échappait
 // vers le haut au premier geste, avec l'effet élastique qui va avec.
 //
 // `position: absolute` le sort du flux sans toucher à ses dimensions : pdf.js
@@ -57,8 +57,8 @@ body > canvas {
   // Redéfinir `--font-family` ne suffit pas : une police s'hérite par sa
   // valeur calculée, et `body` l'avait déjà résolue avec la Poppins de la
   // vitrine (`styles.scss`). Les écrans qui passent par les mixins
-  // typographiques s'en sortaient ; ceux qui s'en remettaient à l'héritage —
-  // la page « introuvable », les états vides — s'affichaient en Poppins au
+  // typographiques s'en sortaient ; ceux qui s'en remettaient à l'héritage -
+  // la page « introuvable », les états vides - s'affichaient en Poppins au
   // milieu d'une application en Plus Jakarta Sans.
   font-family: var(--font-family);
 }
@@ -67,7 +67,7 @@ body > canvas {
 //
 // Un overlay CDK est attaché à `<body>`, hors du sous-arbre `.nl-app`, donc
 // hors de portée des jetons de la charte. Lui coller la classe `nl-app` les
-// donne — mais avec elle toutes les règles de **page entière** : `min-height:
+// donne - mais avec elle toutes les règles de **page entière** : `min-height:
 // 100dvh`, les marges de zone sûre, `display: flex`. Le panneau occupait alors
 // l'écran entier et la feuille, posée dans son coin, s'affichait étroite et en
 // haut à gauche au lieu de s'étaler en bas.
@@ -97,8 +97,8 @@ body > canvas {
   max-height: 100dvh;
 
   // Le panneau de l'overlay est un conteneur flex **en ligne** : l'hôte du
-  // contenu — `nl-selection-sheet`, `nl-confirm-sheet`, `nl-action-list-sheet`,
-  // ou toute feuille à venir — y est un enfant flex, donc réduit à la largeur
+  // contenu - `nl-selection-sheet`, `nl-confirm-sheet`, `nl-action-list-sheet`,
+  // ou toute feuille à venir - y est un enfant flex, donc réduit à la largeur
   // de son contenu. La feuille s'affichait étroite, calée à gauche.
   //
   // Une règle ici, sur `> *`, plutôt qu'un `:host { width: 100% }` à recopier

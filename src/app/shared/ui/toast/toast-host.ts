@@ -3,7 +3,7 @@ import { Icon } from '../icon/icon';
 import { ToastService } from './toast';
 
 /**
- * L'affichage du message courant — un seul exemplaire, posé une fois à la
+ * L'affichage du message courant - un seul exemplaire, posé une fois à la
  * racine applicative (comme le `ScaffoldMessenger` de Flutter couvre
  * toute l'app, pas chaque écran séparément).
  */

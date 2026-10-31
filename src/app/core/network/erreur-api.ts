@@ -8,7 +8,7 @@ import { Failure } from '../models/failure.model';
  *
  * Une réponse HTTP en erreur garde son statut et son code ; tout autre échec
  * (réseau coupé avant réponse, bug) devient un message générique. Les
- * messages bruts du serveur ne sont pas exposés en production — voir
+ * messages bruts du serveur ne sont pas exposés en production - voir
  * `Failure.depuisErreurHttp`.
  *
  * Une seule définition, utilisée par tous les dépôts de données : ils en

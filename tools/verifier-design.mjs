@@ -35,7 +35,7 @@ for (const f of fichiers) {
 }
 for (const [nom, cat] of [['fr.json', fr], ['en.json', en]]) {
   const absentes = [...cles].filter((k) => !(k in cat)).sort();
-  if (absentes.length) problemes.push(`${nom} : ${absentes.length} clé(s) employée(s) mais absente(s) — ${absentes.join(', ')}`);
+  if (absentes.length) problemes.push(`${nom} : ${absentes.length} clé(s) employée(s) mais absente(s) - ${absentes.join(', ')}`);
 }
 const desync = [
   ...Object.keys(fr).filter((k) => !(k in en)),
@@ -67,7 +67,7 @@ for (const f of fichiers) {
   }
 }
 for (const [v, ou] of orphelines) {
-  problemes.push(`${v} : utilisée sans définition — ${[...ou].join(', ')}`);
+  problemes.push(`${v} : utilisée sans définition - ${[...ou].join(', ')}`);
 }
 
 // ── 3. Les routes à plusieurs segments ─────────────────────────────────────
@@ -75,7 +75,7 @@ for (const [v, ou] of orphelines) {
 // `router.navigate(['/app', AppRoutes.loginOtp])` traite la constante comme
 // **un seul** segment et encode son « / » en %2F. L'URL obtenue
 // (`/app/login%2Fotp`) ne correspond à aucune route, et l'écran affiche
-// « Page introuvable ». Treize appels étaient dans ce cas — dont la saisie du
+// « Page introuvable ». Treize appels étaient dans ce cas - dont la saisie du
 // code après connexion, qui rendait l'application inutilisable.
 //
 // `navigateByUrl('/app/' + AppRoutes.X)` prend le chemin tel quel.
@@ -86,10 +86,10 @@ const valeurs = new Map(
 const plusieursSegments = new Set(
   [...valeurs].filter(([, v]) => v.includes('/')).map(([k]) => k),
 );
-// Tout `navigate([...])` dont le tableau contient une de ces constantes — y
+// Tout `navigate([...])` dont le tableau contient une de ces constantes - y
 // compris dans un ternaire (`cond ? AppRoutes.home : AppRoutes.pinSetup`, qui
 // avait échappé à la première version de cette garde et menait l'étudiant,
-// juste après le code reçu par e-mail, sur une page introuvable) — ou un
+// juste après le code reçu par e-mail, sur une page introuvable) - ou un
 // constructeur de chemin (`AppRoutes.epreuveDetailPath(id)`).
 for (const f of fichiers.filter((f) => f.endsWith('.ts') && !f.endsWith('.spec.ts'))) {
   const source = lire(f);
@@ -98,7 +98,7 @@ for (const f of fichiers.filter((f) => f.endsWith('.ts') && !f.endsWith('.spec.t
     for (const r of m[1].matchAll(/AppRoutes\.(\w+)(\()?/g)) {
       if (r[2] ? /Path$/.test(r[1]) : plusieursSegments.has(r[1])) {
         problemes.push(
-          `${f}:${ligne} : AppRoutes.${r[1]} est un chemin à plusieurs segments — ` +
+          `${f}:${ligne} : AppRoutes.${r[1]} est un chemin à plusieurs segments - ` +
           `son « / » sera encodé. Utiliser navigateByUrl('/app/' + AppRoutes.${r[1]}${r[2] ? '(…)' : ''}).`,
         );
       }
@@ -109,8 +109,8 @@ for (const f of fichiers.filter((f) => f.endsWith('.ts') && !f.endsWith('.spec.t
 // ── 4. Les icônes en caractère ─────────────────────────────────────────────
 //
 // Emoji, étoiles, flèches, chevrons typographiques : tout ce qui dessine une
-// icône sans passer par `nl-icon`. Les commentaires sont hors sujet — les
-// guillemets français y sont légitimes — donc seuls les gabarits et les
+// icône sans passer par `nl-icon`. Les commentaires sont hors sujet - les
+// guillemets français y sont légitimes - donc seuls les gabarits et les
 // catalogues sont fouillés.
 const GLYPHES = /[\u{1F300}-\u{1FAFF}\u{2190}-\u{21FF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2605}\u{2606}\u{2713}\u{2714}\u{2717}\u{25B6}\u{25C0}\u{2039}\u{203A}]/u;
 for (const f of [...fichiers.filter((f) => f.endsWith('.html')), 'public/i18n/fr.json', 'public/i18n/en.json']) {
@@ -119,7 +119,7 @@ for (const f of [...fichiers.filter((f) => f.endsWith('.html')), 'public/i18n/fr
   // chose. Une flèche dans un commentaire n'est pas une icône.
   const sansCommentaires = lire(f).replace(/<!--[\s\S]*?-->/g, (c) => c.replace(/[^\n]/g, ' '));
   sansCommentaires.split('\n').forEach((ligne, i) => {
-    if (GLYPHES.test(ligne)) problemes.push(`${f}:${i + 1} : icône en caractère — ${ligne.trim().slice(0, 60)}`);
+    if (GLYPHES.test(ligne)) problemes.push(`${f}:${i + 1} : icône en caractère - ${ligne.trim().slice(0, 60)}`);
   });
 }
 

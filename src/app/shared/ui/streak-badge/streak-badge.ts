@@ -3,7 +3,7 @@ import { Icon } from '../icon/icon';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 
 /**
- * Badge de série — traduction de `StreakBadge` (`streak_badge.dart`).
+ * Badge de série - traduction de `StreakBadge` (`streak_badge.dart`).
  * Invisible si `streak` vaut 0. L'animation d'entrée (mise à l'échelle,
  * rebond) vit dans `streak-badge.scss`, appliquée une fois au montage.
  */

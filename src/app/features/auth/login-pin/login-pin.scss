@@ -13,7 +13,7 @@
 
 // Le contenu était enveloppé dans ce conteneur, sans règle d'alignement :
 // `align-items: center` sur l'hôte centrait donc le bloc entier, mais le logo
-// — un bloc de largeur fixe — restait collé au bord gauche de ce bloc. Côté
+// - un bloc de largeur fixe - restait collé au bord gauche de ce bloc. Côté
 // Flutter il est centré, et c'est le premier élément que l'œil rencontre sur
 // l'écran de connexion.
 .nl-loginpin {
@@ -26,7 +26,7 @@
 
 .nl-loginpin__avatar {
   // Le rond est dessiné par `nl-identite` : ne reste ici que ce qui relève
-  // de la page — sa place dans la colonne et le halo qui le décolle du fond.
+  // de la page - sa place dans la colonne et le halo qui le décolle du fond.
   margin-bottom: var(--space-lg);
   border-radius: 50%;
   box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 28%, transparent);

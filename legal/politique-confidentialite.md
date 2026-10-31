@@ -63,7 +63,7 @@ et une réponse vous est due dans le délai fixé à l'article 10.
   facultative : l'application fonctionne à l'identique sans elle, et vous
   pouvez la retirer à tout moment depuis l'écran Profil. Une photographie de
   visage est une donnée qui vous identifie directement, et elle est traitée
-  comme telle. Elle n'est utilisée qu'à une seule fin — vous représenter dans
+  comme telle. Elle n'est utilisée qu'à une seule fin - vous représenter dans
   votre propre application. Elle n'est jamais montrée aux autres utilisateurs,
   jamais utilisée pour vous reconnaître automatiquement, et ne fait l'objet
   d'aucun traitement biométrique : aucun gabarit de visage n'est calculé, aucune

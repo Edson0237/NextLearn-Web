@@ -2,8 +2,8 @@
  * Captures de la refonte « Academic Clarity ».
  *
  * Les écrans visés sont derrière la garde d'authentification et vivent de
- * données serveur. Plutôt que de dépendre d'un compte réel — dont le contenu
- * change et qui ferait des captures une cible mouvante — la session est semée
+ * données serveur. Plutôt que de dépendre d'un compte réel - dont le contenu
+ * change et qui ferait des captures une cible mouvante - la session est semée
  * dans `localStorage` et l'API est jouée localement, avec un jeu de données
  * fixe. Deux captures identiques signifient alors que rien n'a bougé dans le
  * rendu, et rien d'autre.
@@ -28,7 +28,7 @@ const documents = Array.from({ length: 12 }, (_, i) => {
   const types = ['EPREUVE', 'COURS', 'SYNTHESE', 'TD', 'CORRIGE', 'TP'];
   const titres = [
     'Examen Terminal INF201', 'Polycopié Cours INF202', 'Fiche Mémo MAT201',
-    'TD3 & Corrigé', 'Travaux Pratiques Réseaux', 'Annales 2023 — Analyse',
+    'TD3 & Corrigé', 'Travaux Pratiques Réseaux', 'Annales 2023 - Analyse',
   ];
   const m = MATIERES[i % MATIERES.length];
   return {

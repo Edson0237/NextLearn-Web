@@ -16,10 +16,10 @@ import { TraductionPipe } from '../../../core/i18n/t.pipe';
  *
  * Il porte trois informations, dans cet ordre de lecture :
  *
- * 1. **où l'on est** — le nom du produit, puis la section en capitales ;
- * 2. **ce qui a changé** — la cloche, avec un point tant qu'il reste des
+ * 1. **où l'on est** - le nom du produit, puis la section en capitales ;
+ * 2. **ce qui a changé** - la cloche, avec un point tant qu'il reste des
  *    notifications non lues ;
- * 3. **qui l'on est** — l'avatar, et juste en dessous le cursus actif, qui
+ * 3. **qui l'on est** - l'avatar, et juste en dessous le cursus actif, qui
  *    détermine tout ce que l'écran affiche.
  *
  * ## Le fond translucide
@@ -27,7 +27,7 @@ import { TraductionPipe } from '../../../core/i18n/t.pipe';
  * L'en-tête reste au-dessus du contenu qui défile dessous. Sans fond, les
  * cartes lui passeraient au travers ; opaque, il ferait un bloc posé sur la
  * page. Le flou d'arrière-plan laisse deviner le défilement sans gêner la
- * lecture — et retombe sur un fond plein là où il n'est pas pris en charge.
+ * lecture - et retombe sur un fond plein là où il n'est pas pris en charge.
  */
 @Component({
   selector: 'nl-app-header',

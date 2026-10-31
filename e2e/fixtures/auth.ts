@@ -64,13 +64,13 @@ export async function clearSession(page: Page): Promise<void> {
  * Fait répondre l'API au lieu de la laisser pendre.
  *
  * Le serveur de développement relaie `/api` vers le backend de recette
- * (`proxy.conf.json`). Quand celui-ci est injoignable — machine hors ligne,
- * tunnel fermé, backend arrêté — la requête ne tombe jamais en erreur :
+ * (`proxy.conf.json`). Quand celui-ci est injoignable - machine hors ligne,
+ * tunnel fermé, backend arrêté - la requête ne tombe jamais en erreur :
  * elle reste en suspens. La restauration de session l'attend, la garde de
  * routage attend la restauration, et l'application ne peint rien du tout.
  *
  * Les tests échouaient alors sur un écran vide, en accusant l'écran testé.
- * Cinq d'entre eux — les trois de déverrouillage et les deux du lecteur —
+ * Cinq d'entre eux - les trois de déverrouillage et les deux du lecteur -
  * sont les seuls à ouvrir une session, donc les seuls à appeler l'API au
  * démarrage, et les seuls à tomber.
  *

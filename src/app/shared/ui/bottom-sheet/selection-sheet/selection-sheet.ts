@@ -17,7 +17,7 @@ export interface ChoixSelection<T = unknown> {
    * Une icône dessinée, à gauche du libellé.
    *
    * Facultative : une liste d'écoles ou d'années n'en a pas besoin, chaque
-   * ligne s'y distingue par son texte. Une liste d'actions, si — c'est
+   * ligne s'y distingue par son texte. Une liste d'actions, si - c'est
    * l'icône qu'on reconnaît avant d'avoir lu.
    */
   readonly icone?: IconName;
@@ -35,9 +35,9 @@ export interface SelectionSheetData<T = unknown> {
 }
 
 /**
- * Le choix d'une valeur dans une liste, en feuille — traduction de
+ * Le choix d'une valeur dans une liste, en feuille - traduction de
  * `FeuilleSelection` (`feuille_selection.dart`). Le champ de recherche
- * n'apparaît qu'au-delà de [SEUIL_RECHERCHE] entrées — posé au-dessus de
+ * n'apparaît qu'au-delà de [SEUIL_RECHERCHE] entrées - posé au-dessus de
  * trois écoles, il n'aiderait personne.
  *
  * Un tapotement suffit à valider : pas de bouton « Confirmer » sur une

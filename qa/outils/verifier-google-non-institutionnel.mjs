@@ -35,7 +35,7 @@ await ctx.route('**/api/**', async (r) => {
 });
 const page = await ctx.newPage();
 const res = [];
-const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' — ' + d : ''}`); };
+const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' - ' + d : ''}`); };
 const chemin = () => new URL(page.url()).pathname;
 
 await page.goto(`${base}/app/register`, { waitUntil: 'networkidle' });

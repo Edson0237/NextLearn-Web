@@ -15,7 +15,7 @@ class Hote {
 
 /**
  * Ce que ce test protège : la seule chose qui distingue une puce « active »
- * d'une puce « au repos » — traduction de `DocumentTypeChip`
+ * d'une puce « au repos » - traduction de `DocumentTypeChip`
  * (`lib/shared/widgets/category_chip.dart`), où le fond et le texte
  * s'inversent exactement à la sélection.
  */

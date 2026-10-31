@@ -72,13 +72,13 @@
         </span>
       </div>
 
-      <!-- Ce que pèse le document, puis — seulement quand ils existent —
+      <!-- Ce que pèse le document, puis - seulement quand ils existent -
            combien l'ont consulté et ce qu'ils en ont dit : « 0 vue » et
-           « — / 5 » n'apprennent rien, et font croire à un document délaissé. -->
+           « - / 5 » n'apprennent rien, et font croire à un document délaissé. -->
       <div class="doc-detail__chiffres">
         <div class="doc-detail__chiffre">
           <span class="doc-detail__chiffre-libelle">{{ 'docPages' | t }}</span>
-          <span class="doc-detail__chiffre-valeur">{{ doc.pages || '—' }}</span>
+          <span class="doc-detail__chiffre-valeur">{{ doc.pages || '-' }}</span>
           <span class="doc-detail__chiffre-aide">
             {{ doc.tailleMb > 0 ? (doc.tailleMb | number: '1.1-1') + ' Mo' : '' }}
           </span>

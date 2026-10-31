@@ -61,7 +61,7 @@ export class Badge {
   readonly couleurFond = input<string>();
   /** Version pleine : fond saturé, texte renversé. Pour un état actif. */
   readonly pleine = input(false);
-  /** Capitales et interlettrage ouvert — pour « CORRIGÉ », « L3 », « S1 ». */
+  /** Capitales et interlettrage ouvert - pour « CORRIGÉ », « L3 », « S1 ». */
   readonly capitales = input(false);
 
   protected readonly classes = computed(() => {

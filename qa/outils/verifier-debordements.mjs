@@ -62,8 +62,8 @@ for (const [chemin, avecSession] of ECRANS) {
         // fait défiler exprès (`overflow-x: auto`).
         const deborde = r.right > largeur + 2 || r.left < -2;
         if (!deborde) continue;
-        // Un rail qu'on fait défiler exprès — le carrousel d'accueil, les
-        // segments de type — déborde par construction. Il faut remonter
+        // Un rail qu'on fait défiler exprès - le carrousel d'accueil, les
+        // segments de type - déborde par construction. Il faut remonter
         // toute la lignée : le coupable apparent est souvent un petit-fils.
         let rail = false;
         for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {

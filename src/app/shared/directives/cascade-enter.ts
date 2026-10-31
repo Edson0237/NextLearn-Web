@@ -1,12 +1,12 @@
 import { Directive, ElementRef, inject, input, OnInit } from '@angular/core';
 
 /**
- * L'entrée décalée d'un élément dans une liste qui vient de se remplir —
+ * L'entrée décalée d'un élément dans une liste qui vient de se remplir -
  * traduction d'`ApparitionCascade` (`lib/shared/widgets/apparition_cascade.dart`).
  *
  * `[nlCascadeEnter]="index"` plutôt qu'un composant enveloppant : la
  * directive pose les propriétés CSS sur l'hôte lui-même, sans ajouter de
- * nœud DOM — `@keyframes` et `prefers-reduced-motion` sont dans
+ * nœud DOM - `@keyframes` et `prefers-reduced-motion` sont dans
  * `_motion.scss`.
  *
  * Même plafond que côté Flutter : au-delà de 8 éléments, le délai cesse de

@@ -6,11 +6,11 @@ import { Depot, DepotLicence, depotDepuisJson } from './depot.model';
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Accès réseau aux dépôts — traduction de `DepotRemoteRepository`
+ * Accès réseau aux dépôts - traduction de `DepotRemoteRepository`
  * (`lib/domains/contributions/infrastructure/repositories/depot_remote_repository.dart`).
  *
  * Le fichier part en `multipart` (`FormData`), pas en base64 dans du JSON
- * — ce dernier gonflerait son poids d'un tiers, sur un PDF qui pèse
+ * - ce dernier gonflerait son poids d'un tiers, sur un PDF qui pèse
  * parfois plusieurs mégaoctets.
  *
  * École, filière et niveau ne sont **jamais** envoyés à `deposer()` : le

@@ -29,7 +29,7 @@ export class LegalDocument {
    * L'URL du document, marquée sûre pour un contexte de ressource.
    *
    * Angular refuse une chaîne brute sur le `src` d'une `iframe` et lève
-   * `NG0904` : le cadre restait vide et seul le titre s'affichait — sur les
+   * `NG0904` : le cadre restait vide et seul le titre s'affichait - sur les
    * deux textes que les magasins exigent de rendre lisibles dans
    * l'application.
    *

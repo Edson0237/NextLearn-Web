@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { estCheminPreAuth } from '../network/api-config';
 
 /**
- * Erreur unifiée exposée par les services au reste de l'application —
+ * Erreur unifiée exposée par les services au reste de l'application -
  * traduction de `lib/core/network/failure.dart`.
  *
  * **Sécurité** : `message` ne contient jamais le texte brut renvoyé par le
@@ -31,7 +31,7 @@ export class Failure extends Error {
    * Le compte existe mais son dossier n'est pas approuvé. Reconnu par le
    * code du serveur, pas par le statut : un 403 ordinaire veut dire « cette
    * ressource n'est pas pour toi », celui-ci veut dire « reviens quand ton
-   * dossier sera validé » — deux écrans différents.
+   * dossier sera validé » - deux écrans différents.
    */
   get compteNonValide(): boolean {
     return this.code === 'ACCOUNT_NOT_VALIDATED';
@@ -41,7 +41,7 @@ export class Failure extends Error {
     logDebug(e, estProd);
 
     if (e.status === 0) {
-      // Pas de réponse du tout : coupure réseau, CORS, timeout — HttpClient
+      // Pas de réponse du tout : coupure réseau, CORS, timeout - HttpClient
       // ne distingue pas ces cas, à la différence de Dio côté Flutter.
       return new Failure('Le serveur met du temps à répondre. Réessayez.');
     }

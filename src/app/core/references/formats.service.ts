@@ -11,7 +11,7 @@ export interface FormatPropose {
 /**
  * Les formats de ressource **actifs**, lus sur le serveur (`content_types`).
  *
- * Les écrans portaient chacun leur liste — huit tuiles à l'accueil, dix puces
+ * Les écrans portaient chacun leur liste - huit tuiles à l'accueil, dix puces
  * en bibliothèque, quatre dans le formulaire de contribution. Un format
  * désactivé ou ajouté dans l'administration n'y changeait rien, et le
  * formulaire en montrait moins que le catalogue. Ici une seule source ; les

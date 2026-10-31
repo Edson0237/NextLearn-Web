@@ -8,22 +8,22 @@ import {
   signal,
 } from '@angular/core';
 
-/** Décélération marquée — `Curves.easeOutExpo` côté Flutter. */
+/** Décélération marquée - `Curves.easeOutExpo` côté Flutter. */
 function easeOutExpo(t: number): number {
   return t >= 1 ? 1 : 1 - 2 ** (-10 * t);
 }
 
 /**
- * Un nombre qui monte jusqu'à sa valeur — traduction de `NombreAnime`
+ * Un nombre qui monte jusqu'à sa valeur - traduction de `NombreAnime`
  * (`lib/shared/widgets/nombre_anime.dart`).
  *
  * Ne recompte qu'au changement réel de `value` (un quiz refait, par
- * exemple) — jamais à une simple reconstruction du composant parent
+ * exemple) - jamais à une simple reconstruction du composant parent
  * (changement de thème, clavier qui s'ouvre). Et pas du tout si
  * `prefers-reduced-motion` est actif : la valeur s'affiche directement.
  *
  * `aria-label` porte toujours la valeur finale, jamais la valeur
- * intermédiaire en cours de décompte — un lecteur d'écran annoncerait
+ * intermédiaire en cours de décompte - un lecteur d'écran annoncerait
  * sinon une suite de nombres sans intérêt.
  */
 @Component({

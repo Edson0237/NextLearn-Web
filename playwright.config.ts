@@ -18,7 +18,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     // L'application suit désormais la langue du navigateur. Sans cette
     // valeur, le navigateur de test (en-US) la fait basculer en anglais et
-    // les assertions, écrites en français, échouent — sur une traduction qui
+    // les assertions, écrites en français, échouent - sur une traduction qui
     // fonctionne, c'est-à-dire pour la mauvaise raison.
     locale: 'fr-FR',
   },

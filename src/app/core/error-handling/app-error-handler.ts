@@ -2,7 +2,7 @@ import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { GlobalErrorService } from './global-error.service';
 
 /**
- * Filet de sécurité global — traduction d'`installerFiletErreurs`
+ * Filet de sécurité global - traduction d'`installerFiletErreurs`
  * (`lib/shared/widgets/ecran_erreur_fatale.dart`).
  *
  * ## Une différence de plateforme, pas un oubli
@@ -15,8 +15,8 @@ import { GlobalErrorService } from './global-error.service';
  * donc *toute* la page (voir `App`, qui lit `GlobalErrorService.fatal()`),
  * pas seulement l'écran en cause.
  *
- * Ce que Flutter réussissait en plus — préserver la navigation déjà en
- * place pendant qu'un seul écran s'effondre — demanderait des limites
+ * Ce que Flutter réussissait en plus - préserver la navigation déjà en
+ * place pendant qu'un seul écran s'effondre - demanderait des limites
  * d'erreur par route, hors de portée d'`ErrorHandler` seul ; à revisiter
  * si ce filet se révèle trop grossier à l'usage.
  *

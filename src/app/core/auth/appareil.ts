@@ -21,7 +21,7 @@ const CLE_ID = 'nl_device_id';
  *
  * Il vaut preuve de possession de cet appareil : qui le connaîtrait **et**
  * connaîtrait le PIN sauterait l'étape du code. Il est donc tiré au sort par
- * `crypto.getRandomValues`, jamais dérivé d'une empreinte de navigateur — une
+ * `crypto.getRandomValues`, jamais dérivé d'une empreinte de navigateur - une
  * empreinte se recalcule depuis l'extérieur, un tirage non. Le serveur ne le
  * range que haché.
  *
@@ -29,7 +29,7 @@ const CLE_ID = 'nl_device_id';
  *
  * Il survit à la déconnexion, et c'est voulu : se déconnecter puis se
  * reconnecter sur son propre téléphone ne devrait pas redemander un code.
- * Vider les données du site le perd, et l'appareil redevient inconnu — le
+ * Vider les données du site le perd, et l'appareil redevient inconnu - le
  * repli sûr.
  */
 @Injectable({ providedIn: 'root' })
@@ -37,7 +37,7 @@ export class Appareil {
   /**
    * L'identifiant de cet appareil, créé au premier appel.
    *
-   * Rend `undefined` si le stockage local est inaccessible — navigation
+   * Rend `undefined` si le stockage local est inaccessible - navigation
    * privée, cookies bloqués. L'appel d'authentification part alors sans
    * identifiant, et le serveur retombe sur le parcours avec code : moins
    * confortable, mais jamais bloquant.
@@ -88,7 +88,7 @@ export class Appareil {
     return deviceId ? { deviceId, label: this.libelle() } : {};
   }
 
-  /** Oublie cet appareil — utilisé par la suppression de compte. */
+  /** Oublie cet appareil - utilisé par la suppression de compte. */
   oublier(): void {
     try {
       localStorage.removeItem(CLE_ID);

@@ -16,10 +16,10 @@ import { validerPin } from '../../../core/auth/pin-policy';
 type Etape = 'email' | 'code' | 'nouveauPin';
 
 /**
- * Récupération d'un PIN oublié — traduction de `ResetPinPage`
+ * Récupération d'un PIN oublié - traduction de `ResetPinPage`
  * (`lib/domains/auth/presentation/pages/reset_pin/reset_pin_page.dart`),
  * en trois temps : adresse, code, nouveau PIN. Remplace l'ancienne
- * impasse qui aurait fait recréer un compte — perdant au passage
+ * impasse qui aurait fait recréer un compte - perdant au passage
  * bibliothèque et vérification académique.
  *
  * Reprend directement à l'étape « code » si une démarche de
@@ -172,7 +172,7 @@ export class ResetPin {
       return;
     }
 
-    // Le code est le suspect le plus probable — un PIN qui, lui, était
+    // Le code est le suspect le plus probable - un PIN qui, lui, était
     // valide ne devrait pas être redemandé.
     const message = this.auth.state().error ?? 'Le code saisi n’est pas valide.';
     this.erreur.set(message);

@@ -33,7 +33,7 @@ export function sessionDepuisApi(json: Record<string, unknown>): SessionAppareil
 }
 
 /**
- * Accès réseau aux sessions actives — traduction de
+ * Accès réseau aux sessions actives - traduction de
  * `SessionRemoteRepository` (`lib/domains/profil/infrastructure/repositories/session_remote_repository.dart`).
  */
 @Injectable({ providedIn: 'root' })

@@ -40,7 +40,7 @@ await page.waitForTimeout(1200);
 const r = {};
 r.surScanner = new URL(page.url()).pathname;
 mkdirSync('qa/fixtures', { recursive: true });
-const p1 = await png('#f3e9c6', 'Page 1 — Réseaux'); const p2 = await png('#dfe8f5', 'Page 2 — Modèle OSI');
+const p1 = await png('#f3e9c6', 'Page 1 - Réseaux'); const p2 = await png('#dfe8f5', 'Page 2 - Modèle OSI');
 writeFileSync('qa/fixtures/scan-page-1.jpg', p1); writeFileSync('qa/fixtures/scan-page-2.jpg', p2);
 await page.locator('input[type="file"][capture]').setInputFiles('qa/fixtures/scan-page-1.jpg');
 await page.waitForSelector('.nl-scan__page');

@@ -3,7 +3,7 @@ import { ToastService } from './toast';
 
 /**
  * Ce que ce test protège : les deux comportements non visibles à l'œil de
- * `MessageFlottant` — un seul message à la fois (le second chasse le
+ * `MessageFlottant` - un seul message à la fois (le second chasse le
  * premier, il n'attend pas la fin de son affichage), et une durée plus
  * longue quand une action est proposée (le temps de lire *et* décider).
  */

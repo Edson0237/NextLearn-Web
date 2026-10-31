@@ -3,9 +3,9 @@
 // Ce que ce test protège : le `<head>`.
 //
 // Le passage du site statique à Angular a emporté tout le `<head>` de
-// l'ancien `index.html` sauf la favicon. Les icônes ont disparu — une
+// l'ancien `index.html` sauf la favicon. Les icônes ont disparu - une
 // centaine de `<i class="fas …">` dans les gabarits, devenues autant
-// d'espaces vides — et avec elles la police Poppins, le titre et la
+// d'espaces vides - et avec elles la police Poppins, le titre et la
 // description.
 //
 // Rien dans la compilation ne le signale : le build réussit, les tests
@@ -25,7 +25,7 @@ const index = readFileSync(join(racine, 'src/index.html'), 'utf8');
  * Les deux feuilles externes ne sont plus dans le `<head>` : elles ne servent
  * qu'à la vitrine et sont désormais chargées par son composant, à son
  * affichage. Elles coûtaient sinon deux requêtes tierces bloquantes à
- * l'application — qui auto-héberge ses polices et inline ses icônes — y
+ * l'application - qui auto-héberge ses polices et inline ses icônes - y
  * compris lancée depuis l'écran d'accueil d'un téléphone.
  *
  * Ce que le test protège n'a pas changé : que quelque chose les charge. Il

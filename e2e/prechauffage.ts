@@ -11,7 +11,7 @@ import { chromium } from '@playwright/test';
  * puisqu'il accuse le code testé.
  *
  * **Une requête HTTP ne suffit pas** : sur une application à page unique,
- * `GET /app/unlock` rend `index.html` et rien d'autre — aucun morceau n'est
+ * `GET /app/unlock` rend `index.html` et rien d'autre - aucun morceau n'est
  * demandé, donc aucun n'est compilé. C'est ce que faisait la version
  * précédente de ce fichier, qui chauffait donc cinq fois la même page
  * d'accueil en croyant chauffer cinq routes.

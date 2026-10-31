@@ -6,7 +6,7 @@ import { IconName } from '../icon/icon-paths';
  * L'apparence d'un type de document : libellé, icône, teinte et fond.
  *
  * Elle vivait dans le modèle de données (`core`), qui importait pour cela les
- * noms d'icônes de l'interface — et sept écrans en recopiaient chacun quatre
+ * noms d'icônes de l'interface - et sept écrans en recopiaient chacun quatre
  * méthodes d'enrobage. Le modèle ne dit plus que ce qu'est un type ; ce qui
  * s'en voit se décide ici, une seule fois.
  */
@@ -47,7 +47,7 @@ export function fondTypeDocument(type: DocumentType): string {
 
 /**
  * La teinte d'un type de document, **dans le thème actif** : des variables CSS
- * (`_tokens.scss`) à paire clair/sombre, jamais des valeurs figées — celles-ci
+ * (`_tokens.scss`) à paire clair/sombre, jamais des valeurs figées - celles-ci
  * délavaient toute la bibliothèque en plein jour.
  */
 export function couleurTypeDocument(type: DocumentType): string {
@@ -73,7 +73,7 @@ export function presentationType(type: DocumentType | null): PresentationType {
   };
 }
 
-/** `{{ doc.type | typeDoc }}` — pour les gabarits ; pur, donc recalculé seulement si le type change. */
+/** `{{ doc.type | typeDoc }}` - pour les gabarits ; pur, donc recalculé seulement si le type change. */
 @Pipe({ name: 'typeDoc', standalone: true })
 export class TypeDocumentPipe implements PipeTransform {
   transform(type: DocumentType | null): PresentationType {

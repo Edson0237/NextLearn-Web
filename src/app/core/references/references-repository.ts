@@ -9,14 +9,14 @@ import {
 } from './references.model';
 
 /**
- * Accès réseau aux référentiels — traduction de `ReferencesRemoteRepository`
+ * Accès réseau aux référentiels - traduction de `ReferencesRemoteRepository`
  * (`lib/domains/references/infrastructure/repositories/`), pour la part qui
  * sert les formulaires (Phase 4) : inscription, dépôt, vérification.
  *
  * **Non repris** : le repli sur le cache Hive quand le réseau manque. Ces
  * listes servent des formulaires qu'on ne peut de toute façon pas valider
  * hors ligne (inscription, dépôt, vérification exigent tous une requête
- * serveur pour aboutir) — un repli hors ligne n'y change rien, seul
+ * serveur pour aboutir) - un repli hors ligne n'y change rien, seul
  * l'affichage du bouton « Réessayer » compte, et il existe déjà.
  */
 @Injectable({ providedIn: 'root' })

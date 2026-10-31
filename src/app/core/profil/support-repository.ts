@@ -63,7 +63,7 @@ export function ticketDepuisApi(json: Record<string, unknown>): SupportTicket {
 }
 
 /**
- * Signalements et tickets support — traduction de
+ * Signalements et tickets support - traduction de
  * `SupportRemoteRepository` (`lib/domains/profil/infrastructure/repositories/support_remote_repository.dart`).
  */
 @Injectable({ providedIn: 'root' })

@@ -240,6 +240,6 @@
   @include type.nl-label-lg;
   color: var(--text-primary);
   // Une adresse e-mail longue passe à la ligne plutôt que de sortir de la
-  // carte — c'est le défaut qui faisait déborder « Nom » à l'inscription.
+  // carte - c'est le défaut qui faisait déborder « Nom » à l'inscription.
   overflow-wrap: anywhere;
 }

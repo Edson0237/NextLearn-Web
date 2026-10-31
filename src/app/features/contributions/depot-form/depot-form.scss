@@ -49,7 +49,7 @@
 }
 
 // Les enfants d'une colonne qui défile ne doivent jamais rétrécir : les options
-// de provenance, des boutons à bordure, s'écrasaient jusqu'à se chevaucher —
+// de provenance, des boutons à bordure, s'écrasaient jusqu'à se chevaucher -
 // le texte d'une carte débordait sur la suivante, puis sur le titre « Le
 // fichier ». Chacune garde sa hauteur, la colonne défile.
 .nl-depf__corps > * {

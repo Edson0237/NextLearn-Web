@@ -13,7 +13,7 @@ import { ActionListSheet, ActionListSheetData, ActionOption } from './action-lis
 export class FeuilleActionService {
   private readonly sheets = inject(BottomSheetService);
 
-  /** Rend `true` si l'utilisateur a confirmé, `false` sinon — jamais `undefined`. */
+  /** Rend `true` si l'utilisateur a confirmé, `false` sinon - jamais `undefined`. */
   async confirmer(data: ConfirmSheetData): Promise<boolean> {
     const handle = this.sheets.open<ConfirmSheet, boolean>(ConfirmSheet, data);
     return (await handle.result) ?? false;

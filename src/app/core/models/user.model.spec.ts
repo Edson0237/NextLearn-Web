@@ -3,7 +3,7 @@ import { Cycle, NiveauEtude, libelleNiveau, niveauDepuisTexte, utilisateurDepuis
 /**
  * Ce que ce test protège : la tolérance à l'ancienne notation (L1..M2),
  * sans laquelle un compte créé avant la migration du référentiel niveau
- * ne pourrait plus se reconnaître — et le libellé par cycle, qui désambiguïse
+ * ne pourrait plus se reconnaître - et le libellé par cycle, qui désambiguïse
  * un niveau par ailleurs muet (« N4 » seul ne dit rien).
  */
 describe('niveauDepuisTexte', () => {

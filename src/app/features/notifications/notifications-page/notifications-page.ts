@@ -73,7 +73,7 @@ export class NotificationsPage implements OnInit {
       }
     }
     // La destination vit dans `metadata`, pas dans un champ `cibleRoute` que
-    // le serveur n'a jamais envoyé — et elle est relative à `/app`, comme
+    // le serveur n'a jamais envoyé - et elle est relative à `/app`, comme
     // toute route de cette application.
     const route = routeDeNotification(n);
     if (route) {

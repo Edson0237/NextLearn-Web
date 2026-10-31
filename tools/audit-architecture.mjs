@@ -1,5 +1,5 @@
 /**
- * Audit des dépendances entre couches de `src/app` — lecture seule.
+ * Audit des dépendances entre couches de `src/app` - lecture seule.
  *
  *   node tools/audit-architecture.mjs            # rapport
  *   node tools/audit-architecture.mjs --verifier # code de sortie 1 s'il y a des entorses
@@ -9,7 +9,7 @@
  *   R2  shared ne dépend pas de features
  *   R3  une feature ne dépend pas d'une autre feature
  *   R4  seul core/ (accès aux données) parle à HttpClient
- *   R5  rien ne dépend de layout/ (l'enveloppe) — c'est elle qui compose les features
+ *   R5  rien ne dépend de layout/ (l'enveloppe) - c'est elle qui compose les features
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, dirname, resolve, relative } from 'node:path';

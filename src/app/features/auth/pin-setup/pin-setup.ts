@@ -11,7 +11,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 /**
- * Création du PIN — traduction de `PinSetupPage`
+ * Création du PIN - traduction de `PinSetupPage`
  * (`lib/domains/auth/presentation/pages/register/pin_setup_page.dart`).
  * Un refus de `validerPin` tombe à la fin de la PREMIÈRE saisie, avant la
  * confirmation : faire taper deux fois un code qu'on s'apprête à rejeter
@@ -131,7 +131,7 @@ export class PinSetup {
     }
   }
 
-  /** Partir d'ici laisse un compte vérifié mais sans PIN — reprendre
+  /** Partir d'ici laisse un compte vérifié mais sans PIN - reprendre
    * l'inscription avec la même adresse permet d'y revenir, le serveur
    * sait la reprendre. */
   protected async demanderAbandon(): Promise<void> {

@@ -22,7 +22,7 @@ function attendre(ms: number): Promise<void> {
 }
 
 /**
- * État et logique d'authentification — traduction d'`AuthNotifier`
+ * État et logique d'authentification - traduction d'`AuthNotifier`
  * (`lib/domains/auth/presentation/providers/auth_provider.dart`). C'est le
  * cœur de l'architecture de la Phase 3 : le routeur applicatif (Phase 3,
  * voir `app.routes.ts`) lit `state()` pour décider où rediriger, exactement
@@ -83,7 +83,7 @@ export class AuthService {
       // qu'un PIN existait, c'est-à-dire toujours : rouvrir ses cours
       // demandait quatre chiffres, plusieurs fois par jour, derrière le code
       // de l'appareil qui les protégeait déjà. Il ne vaut désormais que si
-      // l'étudiant l'a demandé — téléphone partagé, poste de salle info.
+      // l'étudiant l'a demandé - téléphone partagé, poste de salle info.
       const locked = !!user && this.repo.hasLocalPin() && this.verrouillage.actif();
       if (user) void this.verification.refresh();
       await minSplash;
@@ -115,7 +115,7 @@ export class AuthService {
     try {
       await this.repo.verifyOtp(code);
       // L'adresse est vérifiée : le compte est prêt, la session s'ouvre. Le PIN
-      // n'est plus une étape obligatoire — on peut en créer un plus tard, dans
+      // n'est plus une étape obligatoire - on peut en créer un plus tard, dans
       // les réglages.
       await this.repo.setupPin(undefined);
       const user = this.repo.getCurrentUser() ?? undefined;
@@ -132,7 +132,7 @@ export class AuthService {
     try {
       await this.repo.resendOtp();
       this.patch({ demandeOtp: this.repo.derniereDemandeOtp ?? undefined });
-      // Un renvoi peut n'avoir rien envoyé (quota, délai) — c'est le
+      // Un renvoi peut n'avoir rien envoyé (quota, délai) - c'est le
       // serveur qui le dit, pas nous.
       return this.repo.derniereDemandeOtp
         ? this.repo.derniereDemandeOtp.statut !== StatutDemandeOtp.refuse
@@ -210,7 +210,7 @@ export class AuthService {
       await this.repo.setupPin(pin);
       const user = this.repo.getCurrentUser() ?? undefined;
       // Le dépôt du justificatif retenu depuis l'inscription est Phase 4
-      // (nécessite le module de vérification) — non câblé ici.
+      // (nécessite le module de vérification) - non câblé ici.
       void this.verification.refresh();
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
@@ -226,17 +226,17 @@ export class AuthService {
    *
    * Trois issues, là où il n'y en avait que deux :
    *
-   * - `'session'` — l'appareil est déjà connu du serveur, la session est
+   * - `'session'` - l'appareil est déjà connu du serveur, la session est
    *   ouverte, il n'y a plus rien à saisir ;
-   * - `'otp'` — appareil inconnu, un code est parti par e-mail ;
-   * - `'echec'` — identifiants refusés ou réseau absent.
+   * - `'otp'` - appareil inconnu, un code est parti par e-mail ;
+   * - `'echec'` - identifiants refusés ou réseau absent.
    *
    * Un booléen ne suffisait plus : « réussi » ne dit pas si l'écran suivant
    * est la saisie du code ou l'accueil.
    */
   /**
    * « Se connecter avec Google » : envoie le jeton d'identité remis par Google
-   * et applique la réponse — **depuis n'importe quel écran** (inscription,
+   * et applique la réponse - **depuis n'importe quel écran** (inscription,
    * connexion, confirmation d'un appareil nouveau). Rend `null`, ou le refus à
    * montrer (code et message du serveur : `domain_not_allowed`,
    * `account_banned`…).
@@ -255,7 +255,7 @@ export class AuthService {
 
   /**
    * **Le** gestionnaire des réponses de `POST /auth/google` : il route sur le
-   * seul champ `status`. Aucun écran ne duplique cette logique — ils appellent
+   * seul champ `status`. Aucun écran ne duplique cette logique - ils appellent
    * `connexionGoogle` et c'est tout.
    *
    *  - `new_profile_incomplete` → l'écran « Plus qu'une étape » (parcours scolaire),
@@ -299,7 +299,7 @@ export class AuthService {
    * L'identité Google en attente d'un parcours académique, s'il y en a une.
    *
    * Un signal, et non une lecture du dépôt : le bouton Google peut être touché
-   * **depuis la page d'inscription elle-même**, qui ne se recrée pas — elle doit
+   * **depuis la page d'inscription elle-même**, qui ne se recrée pas - elle doit
    * réagir à l'arrivée de l'identité, pas la lire une seule fois à sa création.
    */
   readonly profilGoogle = signal<ProfilGoogle | null>(null);
@@ -326,7 +326,7 @@ export class AuthService {
   }
 
   /**
-   * Première étape de la connexion : l'e-mail seul. Dit comment poursuivre —
+   * Première étape de la connexion : l'e-mail seul. Dit comment poursuivre -
    * saisir son PIN, saisir le code reçu par e-mail, ou passer par Google.
    */
   async identifierConnexion(email: string): Promise<'pin' | 'otp' | 'google' | 'echec'> {
@@ -363,7 +363,7 @@ export class AuthService {
 
       if (!otpAttendu) {
         // Appareil connu : la session existe déjà côté dépôt, l'état doit la
-        // refléter — sans quoi la garde de routage renverrait au login.
+        // refléter - sans quoi la garde de routage renverrait au login.
         const user = this.repo.getCurrentUser() ?? undefined;
         void this.verification.refresh();
         this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
@@ -424,7 +424,7 @@ export class AuthService {
     return this.verrouPin.bloqueJusqua() !== null;
   }
 
-  /** Le système d'exploitation a déjà prouvé l'identité du porteur — ou, sur
+  /** Le système d'exploitation a déjà prouvé l'identité du porteur - ou, sur
    * le web, WebAuthn l'a fait ; le PIN n'est pas revérifié ici. */
   unlockWithBiometrics(): void {
     this.patch({ isLocked: false, error: undefined });
@@ -527,7 +527,7 @@ export class AuthService {
     }
   }
 
-  /** Seule sortie des écrans de code — efface le jeton temporaire et rend
+  /** Seule sortie des écrans de code - efface le jeton temporaire et rend
    * la navigation libre. */
   abandonnerParcoursOtp(): void {
     this.repo.abandonnerParcoursOtp();

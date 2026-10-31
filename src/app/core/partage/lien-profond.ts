@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../network/api-config';
 
 /**
- * Les liens partageables vers un contenu — traduction de `LienProfond`
+ * Les liens partageables vers un contenu - traduction de `LienProfond`
  * (`lib/core/partage/lien_profond.dart`).
  *
  * La PWA partageait `window.location.href`, c'est-à-dire une URL qui lui est
@@ -11,7 +11,7 @@ import { API_BASE_URL } from '../network/api-config';
  * un même geste : le lien ne survivait pas au passage d'une plateforme à
  * l'autre.
  *
- * Le format est donc repris tel quel, hôte compris — l'API sert déjà
+ * Le format est donc repris tel quel, hôte compris - l'API sert déjà
  * `/.well-known/assetlinks.json` et une page de secours sur `/d/:id`, ce qui
  * fait de cet hôte le seul que les systèmes associent à l'application.
  *

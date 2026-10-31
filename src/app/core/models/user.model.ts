@@ -1,5 +1,5 @@
 /**
- * Modèle utilisateur et référentiels académiques — traduction de
+ * Modèle utilisateur et référentiels académiques - traduction de
  * `lib/core/models/user_model.dart`.
  */
 
@@ -44,7 +44,7 @@ export function niveauCourt(n: NiveauEtude): string {
 }
 
 /**
- * Libellé contextualisé par le cycle — un niveau seul ne veut rien dire :
+ * Libellé contextualisé par le cycle - un niveau seul ne veut rien dire :
  * « N4 » est la quatrième année d'ingénieur chez l'un et le Master 1 chez
  * l'autre.
  */
@@ -127,7 +127,7 @@ export function initiales(u: UserModel): string {
   return `${p}${n}`;
 }
 
-/** Depuis la réponse du backend — tolérant aux champs manquants. */
+/** Depuis la réponse du backend - tolérant aux champs manquants. */
 export function utilisateurDepuisApi(json: Record<string, unknown>): UserModel {
   const texte = (v: unknown, defaut = ''): string => (v == null ? defaut : String(v));
   return {
@@ -163,7 +163,7 @@ export function utilisateurVersCache(u: UserModel): Record<string, unknown> {
 }
 
 /**
- * Un niveau que ce compte peut occuper — traduction de
+ * Un niveau que ce compte peut occuper - traduction de
  * `NiveauDisponible` (`lib/domains/auth/domain/models/niveau_disponible.dart`).
  */
 export interface NiveauDisponible {
@@ -178,7 +178,7 @@ export function niveauDisponibleDepuisApi(json: Record<string, unknown>): Niveau
 }
 
 /**
- * Réponse du serveur pour les niveaux du cycle courant — traduction de
+ * Réponse du serveur pour les niveaux du cycle courant - traduction de
  * `NiveauxDuCycle` (`lib/domains/auth/domain/models/niveau_disponible.dart`).
  */
 export interface NiveauxDuCycle {

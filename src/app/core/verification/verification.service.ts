@@ -4,11 +4,11 @@ import { firstValueFrom } from 'rxjs';
 import { VERIFICATION_AUCUNE, VerificationState, verificationDepuisJson } from '../models/verification.model';
 
 /**
- * État du dossier de vérification académique — traduction minimale de
+ * État du dossier de vérification académique - traduction minimale de
  * `VerificationNotifier`
  * (`lib/domains/verification/presentation/providers/verification_provider.dart`),
  * pour ce que le garde de routage (Phase 3) a besoin de lire de façon
- * synchrone — exactement `_ref.read(verificationStateProvider)` côté
+ * synchrone - exactement `_ref.read(verificationStateProvider)` côté
  * Flutter.
  *
  * Le formulaire de dépôt, la liste des types de justificatifs et le

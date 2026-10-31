@@ -1,6 +1,6 @@
 // Auto-suffisant plutôt que dépendant d'un ancêtre `.nl-app` : ce filet
 // peut remplacer la page entière à la racine de `App`, qui sert aussi la
-// vitrine — il ne peut donc pas compter sur une coque applicative pour
+// vitrine - il ne peut donc pas compter sur une coque applicative pour
 // lui fournir ses jetons. Voir `_tokens.scss`.
 @use '../../styles/fonts';
 

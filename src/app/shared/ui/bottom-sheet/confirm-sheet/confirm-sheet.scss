@@ -34,7 +34,7 @@
 }
 
 // `!important` : `Button` fixe déjà `background` sur `.nl-btn--primary`
-// dans sa propre feuille encapsulée, avec la même spécificité qu'ici —
+// dans sa propre feuille encapsulée, avec la même spécificité qu'ici -
 // sans ce poids, le résultat dépendrait de l'ordre de chargement des deux
 // bundles plutôt que de cette règle.
 .nl-confirm__bouton--destructif {

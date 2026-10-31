@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 /**
- * Retour vibratoire — traduction de `RetourHaptique`
+ * Retour vibratoire - traduction de `RetourHaptique`
  * (`lib/core/ux/retour_haptique.dart`).
  *
  * ## Une différence délibérée avec le web Flutter
@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
  * Côté Flutter, `RetourHaptique` est un no-op complet sur le web : `succes()`
  * et `echec()` testent `kIsWeb` et sortent immédiatement, et les trois autres
  * méthodes ne font jamais rien hors iOS natif. C'est la source de vérité,
- * mais ce n'est pas ce que le portage doit reproduire ici — c'est
+ * mais ce n'est pas ce que le portage doit reproduire ici - c'est
  * exactement le cas que la Phase 2 du prompt de portage demande de traiter
  * autrement : « Si une fonctionnalité native est impossible sur le web, [...]
  * implémente la meilleure alternative web ».
@@ -17,8 +17,8 @@ import { Injectable } from '@angular/core';
  * La meilleure alternative existe : l'API Vibration (`navigator.vibrate`),
  * disponible sur Chrome/Android, absente par conception sur Safari/iOS (qui
  * n'a jamais implémenté cette API, politique d'Apple, pas une lacune de
- * Safari). Le résultat est l'inverse de la répartition Flutter — iOS
- * favorisé côté natif, Android seul capable de vibrer côté web — et c'est
+ * Safari). Le résultat est l'inverse de la répartition Flutter - iOS
+ * favorisé côté natif, Android seul capable de vibrer côté web - et c'est
  * documenté ici pour qu'on ne s'attende pas à retrouver le même partage.
  *
  * Silence total si l'API est absente : jamais d'erreur, jamais de détection
@@ -45,12 +45,12 @@ export class HapticService {
     this.vibrer(8);
   }
 
-  /** Réussite — une vibration brève mais distincte d'un simple effleurement. */
+  /** Réussite - une vibration brève mais distincte d'un simple effleurement. */
   succes(): void {
     this.vibrer([15, 40, 15]);
   }
 
-  /** Échec — plus appuyé, pour qu'on ne le confonde pas avec une réussite. */
+  /** Échec - plus appuyé, pour qu'on ne le confonde pas avec une réussite. */
   echec(): void {
     this.vibrer([30, 50, 30, 50, 30]);
   }

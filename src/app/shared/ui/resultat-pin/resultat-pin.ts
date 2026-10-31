@@ -10,7 +10,7 @@ import { Icon } from '../icon/icon';
  * avait échoué.
  *
  * - **succès** : une coche, un mot, et on continue seul après un court instant
- *   (touchable pour passer tout de suite) — assez long pour être lu, assez
+ *   (touchable pour passer tout de suite) - assez long pour être lu, assez
  *   court pour ne pas retarder l'étudiant ;
  * - **échec** : le motif, et un bouton pour recommencer. Pas de disparition
  *   automatique : un message d'erreur qu'on n'a pas le temps de lire est pire

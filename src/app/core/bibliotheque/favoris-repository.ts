@@ -5,7 +5,7 @@ import { DocumentModel, documentDepuisApi } from './document.model';
 import { enFailure } from '../network/erreur-api';
 
 /**
- * Gestion des favoris — traduction de `FavorisRemoteRepository`.
+ * Gestion des favoris - traduction de `FavorisRemoteRepository`.
  */
 @Injectable({ providedIn: 'root' })
 export class FavorisRepository {

@@ -80,7 +80,7 @@ export class ProgressionDashboard implements OnInit {
     }
   }
 
-  /** Les heures d'étude, arrondies au dixième — l'API compte en minutes. */
+  /** Les heures d'étude, arrondies au dixième - l'API compte en minutes. */
   protected heures(totalMinutes: number): number {
     return Math.round((totalMinutes / 60) * 10) / 10;
   }

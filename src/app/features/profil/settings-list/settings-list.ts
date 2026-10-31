@@ -45,7 +45,7 @@ interface GroupeReglages {
 }
 
 /**
- * Liste unique des réglages — utilisée à la fois dans l'onglet Profil
+ * Liste unique des réglages - utilisée à la fois dans l'onglet Profil
  * (sous l'en-tête) et dans l'écran Paramètres dédié. Traduction de
  * `ListeReglages` (`parametres_page.dart`).
  */
@@ -102,7 +102,7 @@ export class SettingsList implements OnInit {
   protected readonly modalSupportVisible = signal(false);
 
   /**
-   * « Mes ressources » : bibliothèque, téléchargés, favoris — rendus par les
+   * « Mes ressources » : bibliothèque, téléchargés, favoris - rendus par les
    * mêmes lignes que « Compte » et « Apparence », pour ne faire qu'une seule
    * liste de réglages. Réservé au profil : la page des réglages n'en a pas
    * l'usage.
@@ -468,7 +468,7 @@ export class SettingsList implements OnInit {
     });
     if (!confirme) return;
     // Purge réelle : les réponses d'API mises en cache par le service worker
-    // et les images, mais **pas** le cache des documents hors ligne — c'est
+    // et les images, mais **pas** le cache des documents hors ligne - c'est
     // ce que la boîte de confirmation promet, et c'est ce qu'elle fait
     // désormais. L'action se contentait d'un message de succès.
     try {

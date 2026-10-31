@@ -9,10 +9,10 @@ import { DepotLicence } from '../../../core/contributions/depot.model';
  * Ce que ce test protège : un dépôt incomplet ne doit jamais partir en
  * requête réseau (chaque garde bloque avant l'envoi), et un dépôt complet
  * doit effectivement produire un `multipart/form-data` avec le fichier
- * sous le nom de champ exact qu'attend le serveur (`file`) — un autre nom
+ * sous le nom de champ exact qu'attend le serveur (`file`) - un autre nom
  * y produit un 400 sans jamais dire que c'est le nom qui est en cause.
  */
-describe('DepotForm — envoi', () => {
+describe('DepotForm - envoi', () => {
   function creer() {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: 'app/depots', children: [] }])],

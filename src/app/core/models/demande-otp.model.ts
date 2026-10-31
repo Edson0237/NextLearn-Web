@@ -1,5 +1,5 @@
 /**
- * État d'une demande de code OTP, tel que le serveur le décrit —
+ * État d'une demande de code OTP, tel que le serveur le décrit -
  * traduction de `lib/domains/auth/domain/models/demande_otp.dart`.
  *
  * Rien n'est calculé côté client : ni la position, ni le quota restant.
@@ -11,7 +11,7 @@ export enum StatutDemandeOtp {
   envoye = 'envoye',
   /** La demande attend son tour. Aucun code n'existe encore. */
   enAttente = 'en_attente',
-  /** Refusée — plafond individuel atteint, ou file fermée. */
+  /** Refusée - plafond individuel atteint, ou file fermée. */
   refuse = 'refuse',
   /** Aucune demande en cours pour ce compte. */
   aucune = 'aucune',
@@ -51,7 +51,7 @@ function statutDepuis(brut: unknown): StatutDemandeOtp {
   }
 }
 
-/** `null` quand il n'y a rien à montrer — pas de demande, pas de message. */
+/** `null` quand il n'y a rien à montrer - pas de demande, pas de message. */
 export function demandeOtpDepuisJson(brut: unknown): DemandeOtp | null {
   if (typeof brut !== 'object' || brut === null) return null;
   const json = brut as Record<string, unknown>;

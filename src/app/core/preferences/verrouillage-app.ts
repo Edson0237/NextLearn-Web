@@ -9,8 +9,8 @@ const CLE = 'nl_verrouillage_app';
  * ## Pourquoi ce réglage existe
  *
  * Le PIN était réclamé à **chaque** ouverture, sans que personne ne l'ait
- * demandé. Sur un téléphone personnel — déjà protégé par le code de
- * l'appareil — cela ajoutait une serrure derrière une porte fermée, quatre
+ * demandé. Sur un téléphone personnel - déjà protégé par le code de
+ * l'appareil - cela ajoutait une serrure derrière une porte fermée, quatre
  * ou cinq fois par jour.
  *
  * Il reste pourtant des cas où la serrure a un sens : un téléphone qui passe
@@ -22,7 +22,7 @@ const CLE = 'nl_verrouillage_app';
  *
  * Il protège l'affichage, pas les données : quelqu'un qui tient l'appareil
  * déverrouillé peut lire le stockage local. C'est une gêne volontaire à
- * hauteur du risque — un camarade curieux —, pas une mesure contre un
+ * hauteur du risque - un camarade curieux -, pas une mesure contre un
  * adversaire outillé.
  */
 @Injectable({ providedIn: 'root' })

@@ -12,11 +12,11 @@ import { AppRoutes } from '../../../core/router/app-routes';
 import { initiales } from '../../../core/models/user.model';
 
 /**
- * Déverrouillage d'une session active — traduction d'`UnlockPage`
+ * Déverrouillage d'une session active - traduction d'`UnlockPage`
  * (`lib/domains/auth/presentation/pages/unlock/unlock_page.dart`). Ni
  * e-mail à ressaisir ni OTP à attendre : la session tient encore, seul
  * le PIN local le confirme. Le routeur bascule seul vers l'accueil une
- * fois `isLocked` retombé — aucune navigation à faire ici au succès.
+ * fois `isLocked` retombé - aucune navigation à faire ici au succès.
  */
 @Component({
   selector: 'app-unlock',

@@ -11,7 +11,7 @@ import { ParcoursOtp } from '../models/parcours-otp.model';
  * coup, et l'écran doit savoir s'il enchaîne sur la saisie du code ou sur
  * l'accueil.
  */
-/** `google` : l'appareil est nouveau et l'adresse est gérée par Google — la preuve passe par le bouton Google, aucun code ne part. */
+/** `google` : l'appareil est nouveau et l'adresse est gérée par Google - la preuve passe par le bouton Google, aucun code ne part. */
 export type ResultatConnexion = 'session' | 'otp' | 'google' | 'echec';
 
 export interface PendingJustificatif {
@@ -21,13 +21,13 @@ export interface PendingJustificatif {
   readonly matricule?: string;
 }
 
-/** État d'authentification — traduction d'`AuthState` (`auth_provider.dart`). */
+/** État d'authentification - traduction d'`AuthState` (`auth_provider.dart`). */
 export interface AuthState {
   readonly user?: UserModel;
-  /** Opération en cours (login, OTP, register…) — pour les spinners de boutons.
+  /** Opération en cours (login, OTP, register…) - pour les spinners de boutons.
    * NE déclenche PAS de redirection vers le splash. */
   readonly isLoading: boolean;
-  /** Démarrage de l'app uniquement — restaure la session. Le routeur reste
+  /** Démarrage de l'app uniquement - restaure la session. Le routeur reste
    * sur le splash tant que ce drapeau est vrai. */
   readonly isInitializing: boolean;
   /** Session valide mais verrouillée : juste retaper le PIN pour rouvrir. */

@@ -13,10 +13,10 @@ declare global {
 }
 
 /**
- * « Se connecter avec Google » — côté navigateur.
+ * « Se connecter avec Google » - côté navigateur.
  *
- * Le script de Google n'est chargé qu'à la demande — quand un écran qui propose
- * Google (connexion, inscription) l'utilise — et non par `index.html` : la page
+ * Le script de Google n'est chargé qu'à la demande - quand un écran qui propose
+ * Google (connexion, inscription) l'utilise - et non par `index.html` : la page
  * publique et les pages légales n'ont pas à envoyer l'adresse IP du visiteur à
  * Google. Ce service l'injecte, attend qu'il soit là, puis initialise le client **une seule fois** : l'appel
  * à `initialize` remplace le précédent, et plusieurs boutons sur des écrans
@@ -27,7 +27,7 @@ declare global {
  * demandé au serveur (`GET /api/auth/google/config`, qui le lit dans
  * `GOOGLE_CLIENT_ID`). Une seule variable, un seul endroit à changer.
  *
- * Rien n'est affiché tant que ce n'est pas utilisable — serveur non configuré,
+ * Rien n'est affiché tant que ce n'est pas utilisable - serveur non configuré,
  * hors ligne, script bloqué : l'étudiant garde le parcours par code.
  */
 @Injectable({ providedIn: 'root' })
@@ -80,7 +80,7 @@ export class GoogleIdentite {
     return true;
   }
 
-  /** Ajoute le script de Google à la page, une seule fois — et pas du tout s'il est déjà là. */
+  /** Ajoute le script de Google à la page, une seule fois - et pas du tout s'il est déjà là. */
   private injecterScript(): void {
     if (window.google?.accounts?.id) return;
     const src = 'https://accounts.google.com/gsi/client';

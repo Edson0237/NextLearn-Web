@@ -11,7 +11,7 @@ import { SessionAppareil, SessionRepository } from '../../../core/profil/session
 import { Failure } from '../../../core/models/failure.model';
 
 /**
- * Sessions / appareils connectés — traduction de `SessionsPage`
+ * Sessions / appareils connectés - traduction de `SessionsPage`
  * (`lib/domains/profil/presentation/pages/sessions/sessions_page.dart`).
  */
 @Component({

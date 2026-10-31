@@ -1,7 +1,7 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
 
 /**
- * Échelle de texte — mêmes clés et mêmes facteurs que `EchelleTexte`
+ * Échelle de texte - mêmes clés et mêmes facteurs que `EchelleTexte`
  * (`lib/app/theme/preferences_accessibilite.dart`).
  *
  * Le facteur multiplie celui du système plutôt que de le remplacer : quelqu'un
@@ -40,7 +40,7 @@ const DEFAUT: EtatAccessibilite = {
 };
 
 /**
- * Réglages d'accessibilité — traduction de `PreferencesAccessibilite`.
+ * Réglages d'accessibilité - traduction de `PreferencesAccessibilite`.
  *
  * Les deux lignes existaient dans les réglages de la PWA mais affichaient
  * « bientôt » : une personne qui a activé « réduire les animations » sur son
@@ -74,8 +74,8 @@ export class PreferencesAccessibilite {
       const racine = document.documentElement;
       racine.classList.toggle('nl-motion-reduced', this.mouvementReduit());
       // L'échelle agit sur la taille de base du document : toute la
-      // typographie est exprimée en `rem`, donc tout suit — titres, corps,
-      // puces — sans qu'aucun composant n'ait à s'en occuper.
+      // typographie est exprimée en `rem`, donc tout suit - titres, corps,
+      // puces - sans qu'aucun composant n'ait à s'en occuper.
       const facteur = FACTEURS[this.echelleTexte()];
       racine.style.fontSize = facteur === 1 ? '' : `${Math.round(facteur * 100)}%`;
     });

@@ -5,7 +5,7 @@ import { Langue, NiveauEtude } from '../models/user.model';
 /**
  * Ce que ce test protège : les comparaisons de date (jeton valide tant
  * qu'on n'a pas dépassé son échéance) et les effets de cascade
- * (`clearTempToken` efface aussi l'étape du parcours — en garder une sans
+ * (`clearTempToken` efface aussi l'étape du parcours - en garder une sans
  * jeton enfermerait sur un écran de code devenu inutilisable).
  */
 describe('SecureStorageService', () => {

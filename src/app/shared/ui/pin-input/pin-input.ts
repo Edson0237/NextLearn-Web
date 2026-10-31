@@ -9,13 +9,13 @@ const RANGEES = [
 ] as const;
 
 /**
- * Saisie du code à 4 chiffres — traduction de `PinInputWidget`
+ * Saisie du code à 4 chiffres - traduction de `PinInputWidget`
  * (`pin_input_widget.dart`). Points de progression, clavier numérique,
  * biométrie optionnelle, erreur annoncée en direct.
  *
  * `aria-live="polite"` sur le compteur de points : sans lui, quelqu'un qui
  * n'y voit pas saisit son code à l'aveugle, sans savoir combien de
- * chiffres sont déjà entrés — même raison que le `Semantics(liveRegion:)`
+ * chiffres sont déjà entrés - même raison que le `Semantics(liveRegion:)`
  * côté Flutter.
  */
 @Component({

@@ -39,7 +39,7 @@ const page = await ctx.newPage();
 const cartes = () => page.locator('nl-document-card').count();
 const titres = () => page.locator('nl-document-card .nl-doc-card__titre').allInnerTexts();
 const resultats = [];
-const verifier = (nom, ok, detail = '') => { resultats.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${nom}${detail ? ' — ' + detail : ''}`); };
+const verifier = (nom, ok, detail = '') => { resultats.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${nom}${detail ? ' - ' + detail : ''}`); };
 
 // ── Bibliothèque ──
 await page.goto(`${base}/app/bibliotheque`, { waitUntil: 'networkidle' }); await page.waitForTimeout(2500);

@@ -11,7 +11,7 @@ import { Avatar } from '../avatar/avatar';
  * Le repli était « NL » en toutes lettres sur `unlock` comme sur
  * `login-pin` : deux lettres qui ne disaient rien à quelqu'un qui venait de
  * voir la toque du splash, et qui masquaient la photo même lorsqu'elle
- * existait — les deux écrans dessinaient leur rond à la main et ne
+ * existait - les deux écrans dessinaient leur rond à la main et ne
  * regardaient jamais `avatarUrl`.
  *
  * `nl-avatar` porte déjà le repli photo → initiales, y compris le retour aux

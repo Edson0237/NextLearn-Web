@@ -1,4 +1,4 @@
-// Règles « application native » — Phase 2, point 5 du portage.
+// Règles « application native » - Phase 2, point 5 du portage.
 //
 // Chacune corrige un détail qui, laissé au comportement par défaut d'une
 // page web, trahit immédiatement qu'on n'est pas dans une application :
@@ -7,7 +7,7 @@
 // recouvre le champ qu'on est en train de remplir.
 //
 // Portée : `.nl-app` uniquement. La vitrine garde son comportement de page
-// web ordinaire — sélection de texte autorisée, pas de contrainte de
+// web ordinaire - sélection de texte autorisée, pas de contrainte de
 // safe-area puisqu'elle n'a pas de barre de navigation fixe à cet endroit.
 
 .nl-app {
@@ -18,7 +18,7 @@
 
   // La zone visible contourne l'encoche et la barre d'accueil. Sans
   // `viewport-fit=cover` dans `index.html`, ces variables restent à 0 et ce
-  // padding est sans effet — inoffensif, pas une dépendance cachée.
+  // padding est sans effet - inoffensif, pas une dépendance cachée.
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
@@ -30,19 +30,19 @@
   touch-action: manipulation;
 
   // Retire le halo gris que certains navigateurs mobiles posent sur tout
-  // élément tapé — le retour visuel passe par `:active` (voir plus bas),
+  // élément tapé - le retour visuel passe par `:active` (voir plus bas),
   // pas par ce halo générique qui ne suit pas la forme du composant.
   -webkit-tap-highlight-color: transparent;
 
   // Empêche le rebond du document entier (iOS Safari) : seules les zones de
   // défilement explicitement désignées (listes, feuilles) rebondissent,
-  // jamais la page comme un tout — c'est la différence entre « une liste
+  // jamais la page comme un tout - c'est la différence entre « une liste
   // qu'on tire » et « l'application entière qui glisse ».
   overscroll-behavior-y: none;
 
   // Rien n'est sélectionnable par défaut : icônes, boutons, barres. Le texte
   // de lecture (contenu d'un document, réponse d'un formulaire) redonne
-  // explicitement `user-select: text` dans son propre composant — c'est
+  // explicitement `user-select: text` dans son propre composant - c'est
   // l'exception qui se déclare, pas la règle.
   user-select: none;
   -webkit-user-select: none;
@@ -81,7 +81,7 @@
   // Le survol n'existe pas au doigt : aucun état ne doit dépendre
   // uniquement de `:hover` pour être atteignable. Les styles `:hover`
   // écrits par composant doivent donc être couplés à `:focus-visible` ou
-  // `:active` — cette règle documente l'exigence, chaque composant
+  // `:active` - cette règle documente l'exigence, chaque composant
   // l'applique lui-même.
   @media (hover: none) {
     *:hover {
@@ -95,6 +95,6 @@
 // widget=resizes-content` dans le viewport (index.html) fait rétrécir la
 // fenêtre visuelle plutôt que de la laisser sous le clavier ; côté CSS, tout
 // conteneur de formulaire doit rester défilable jusqu'à son dernier champ :
-// voir `.nl-form-scroll` dans les composants de formulaire, pas ici — il n'y
+// voir `.nl-form-scroll` dans les composants de formulaire, pas ici - il n'y
 // a rien de générique à poser globalement sans connaître la mise en page du
 // formulaire.

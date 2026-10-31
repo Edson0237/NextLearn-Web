@@ -17,9 +17,9 @@ await ctx.addInitScript(() => {
 const doc = (i, titre, type, mat, extra = {}) => ({ _id: `d${i}`, id: `d${i}`, enseignantId: { _id: 'e1', nom: 'Dr Nkoulou' }, titre, type, matiereId: { _id: mat[0], nom: mat[1] }, niveau: 'N3', semestre: 'S1', pages: 24 + i * 6, tailleMb: 2.4, vues: 120 + i * 17, noteMoyenne: 4.5, anneeAcademique: '2025-2026', ...extra });
 const docs = [
   doc(1, 'Algorithmique avancée : graphes et arbres', 'COURS', ['m1', 'Algorithmique']),
-  doc(2, 'Bases de données relationnelles — TD 3', 'TD', ['m2', 'Bases de données']),
+  doc(2, 'Bases de données relationnelles - TD 3', 'TD', ['m2', 'Bases de données']),
   doc(3, 'Réseaux : sujet de session normale 2025', 'EPREUVE', ['m3', 'Réseaux'], { avecCorrige: true }),
-  doc(4, 'Systèmes d’exploitation — synthèse du chapitre 4', 'SYNTHESE', ['m4', 'Systèmes']),
+  doc(4, 'Systèmes d’exploitation - synthèse du chapitre 4', 'SYNTHESE', ['m4', 'Systèmes']),
 ];
 await ctx.route('**/api/**', (r) => {
   const u = r.request().url(); let data = [];

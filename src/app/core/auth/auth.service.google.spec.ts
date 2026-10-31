@@ -6,10 +6,10 @@ import { AuthService } from './auth.service';
 
 /**
  * Ce que ces tests protègent : `handleGoogleAuthResponse` est le **seul**
- * endroit qui route sur la réponse de `POST /auth/google` — quel que soit
- * l'écran d'où part l'appel —, et il ne route que sur `status`.
+ * endroit qui route sur la réponse de `POST /auth/google` - quel que soit
+ * l'écran d'où part l'appel -, et il ne route que sur `status`.
  */
-describe('AuthService — réponses de /auth/google', () => {
+describe('AuthService - réponses de /auth/google', () => {
   let service: AuthService;
   let http: HttpTestingController;
   let aller: ReturnType<typeof vi.fn>;

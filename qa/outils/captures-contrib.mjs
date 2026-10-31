@@ -1,7 +1,7 @@
 /**
  * Captures des écrans repris dans cette passe : contribution, accueil et
  * bibliothèque. L'API est jouée avec des dépôts à plusieurs statuts et
- * étalés sur six mois — sans cela, la barre de répartition et
+ * étalés sur six mois - sans cela, la barre de répartition et
  * l'histogramme n'auraient rien à montrer.
  */
 import { chromium } from 'playwright';
@@ -19,13 +19,13 @@ const ilYaMois = (n) => {
 };
 
 const DEPOTS = [
-  { _id: 'd1', titre: 'Fiche de révision — Algorithmique L2', description: 'Résumé complet du semestre, avec les corrigés des TD 1 à 6.', type: 'synthese', status: 'publie', licence: 'auteur', createdAt: ilYaMois(0) },
+  { _id: 'd1', titre: 'Fiche de révision - Algorithmique L2', description: 'Résumé complet du semestre, avec les corrigés des TD 1 à 6.', type: 'synthese', status: 'publie', licence: 'auteur', createdAt: ilYaMois(0) },
   { _id: 'd2', titre: 'Examen Terminal INF201 (2024)', description: 'Sujet scanné, remis par le département.', type: 'epreuve', status: 'publie', licence: 'institutionnel', createdAt: ilYaMois(0) },
-  { _id: 'd3', titre: 'TD3 Arbres binaires — corrigé manuscrit', description: 'Mes notes de TD, relues avec le chargé de TD.', type: 'td', status: 'en_revue', licence: 'auteur', createdAt: ilYaMois(1) },
+  { _id: 'd3', titre: 'TD3 Arbres binaires - corrigé manuscrit', description: 'Mes notes de TD, relues avec le chargé de TD.', type: 'td', status: 'en_revue', licence: 'auteur', createdAt: ilYaMois(1) },
   { _id: 'd4', titre: 'Polycopié Architecture Matérielle', description: 'Support distribué en amphi au premier semestre.', type: 'cours', status: 'en_attente', licence: 'institutionnel', createdAt: ilYaMois(1) },
   { _id: 'd5', titre: 'Annales Analyse 2022', description: '', type: 'annales', status: 'publie', licence: 'inconnue', createdAt: ilYaMois(2) },
   { _id: 'd6', titre: 'Résumé Séries de Fourier', description: 'Deux pages de formules, écrites à la main.', type: 'synthese', status: 'refuse', motifRefus: 'La qualité du scan ne permet pas de lire les formules de la page 2.', licence: 'auteur', createdAt: ilYaMois(3) },
-  { _id: 'd7', titre: 'TP Réseaux — compte rendu', description: 'Compte rendu du TP de métrologie réseau.', type: 'tp', status: 'publie', licence: 'auteur', createdAt: ilYaMois(4) },
+  { _id: 'd7', titre: 'TP Réseaux - compte rendu', description: 'Compte rendu du TP de métrologie réseau.', type: 'tp', status: 'publie', licence: 'auteur', createdAt: ilYaMois(4) },
 ];
 
 const DOCUMENTS = Array.from({ length: 8 }, (_, i) => ({

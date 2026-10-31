@@ -1,7 +1,7 @@
 /**
  * L'enveloppe des réponses de l'API : `{ data: … }`.
  *
- * Rend le contenu utile d'une réponse, tolérant — une réponse déjà « à plat »
+ * Rend le contenu utile d'une réponse, tolérant - une réponse déjà « à plat »
  * (sans `data`) est rendue telle quelle, une réponse vide donne un objet vide.
  * Une seule définition pour tous les dépôts de données.
  */

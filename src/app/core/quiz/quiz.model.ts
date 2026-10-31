@@ -17,7 +17,7 @@ export interface QuizModel {
  * C'est la seule source de la bonne réponse : elle est retirée des questions
  * envoyées avant la soumission, et ne revient qu'une fois le quiz rendu. Les
  * ignorer, comme le faisait la PWA, revenait à annoncer un score sans jamais
- * dire ce qui était faux — la partie qui fait apprendre.
+ * dire ce qui était faux - la partie qui fait apprendre.
  */
 export interface QuizAnswerDetail {
   readonly questionId: string;

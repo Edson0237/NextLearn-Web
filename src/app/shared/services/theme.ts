@@ -5,11 +5,11 @@ export type ThemeMode = 'light' | 'dark' | 'system';
 const CLE_STOCKAGE = 'nl_theme_mode';
 
 /**
- * Préférence d'apparence, conservée entre deux visites — traduction de
+ * Préférence d'apparence, conservée entre deux visites - traduction de
  * `ThemeModeNotifier` (`lib/app/theme/theme_mode_provider.dart`).
  *
  * `localStorage` et non un cookie : ce n'est pas une donnée sensible comme
- * un jeton (voir `AUDIT_PHASE1.md`, §2, où ce choix est refusé) — un
+ * un jeton (voir `AUDIT_PHASE1.md`, §2, où ce choix est refusé) - un
  * réglage d'apparence ne vaut rien à voler.
  *
  * Lue de façon synchrone à la construction, comme côté Flutter (« lire la
@@ -42,7 +42,7 @@ export class ThemeService {
     }
   }
 
-  /** `null` pour "système" — l'absence de l'attribut `data-theme` laisse
+  /** `null` pour "système" - l'absence de l'attribut `data-theme` laisse
    * `prefers-color-scheme` décider, exactement le contrat de `_tokens.scss`. */
   attribute(): 'light' | 'dark' | null {
     const m = this.mode();

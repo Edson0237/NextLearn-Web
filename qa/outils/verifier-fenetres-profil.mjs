@@ -17,7 +17,7 @@ await ctx.route('**/api/**', (r) => {
   r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data }) });
 });
 const page = await ctx.newPage();
-const res = []; const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' — ' + d : ''}`); };
+const res = []; const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' - ' + d : ''}`); };
 await page.goto(`${base}/app/profil/parametres`, { waitUntil: 'networkidle' }); await page.waitForTimeout(1500);
 
 // ── PIN ──

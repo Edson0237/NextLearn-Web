@@ -11,7 +11,7 @@ import { SecureStorageService } from '../storage/secure-storage.service';
 import { SessionExpiredService } from './session-expired.service';
 
 /**
- * Injection du jeton, rafraîchissement silencieux + nouvel essai sur 401 —
+ * Injection du jeton, rafraîchissement silencieux + nouvel essai sur 401 -
  * traduction du `InterceptorsWrapper` de `DioClient`
  * (`lib/core/network/dio_client.dart`).
  *
@@ -19,11 +19,11 @@ import { SessionExpiredService } from './session-expired.service';
  * pas depuis le web (`device_headers.dart`, `if (web) return {}`) : un
  * en-tête non standard déclenche une vérification CORS préalable, et le
  * navigateur refuse la requête entière si le serveur ne l'a pas
- * explicitement autorisée. Ce n'est donc pas une omission du portage —
+ * explicitement autorisée. Ce n'est donc pas une omission du portage -
  * c'est la même décision, pour la même raison, déjà prise côté source.
  */
 
-/** Rafraîchissement en cours, partagé entre requêtes concurrentes — pour
+/** Rafraîchissement en cours, partagé entre requêtes concurrentes - pour
  * qu'un lot de 401 simultanés ne consomme pas chacun le refresh token
  * (le backend le fait tourner à chaque appel). */
 let rafraichissementEnCours: Promise<boolean> | null = null;
@@ -37,7 +37,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(requete).pipe(
     // Même délai que `connectTimeout`/`receiveTimeout` de Dio
     // (`dio_client.dart`). `HttpClient` n'en a aucun par défaut : sur un
-    // réseau lent — le cas d'usage visé — la requête restait pendante
+    // réseau lent - le cas d'usage visé - la requête restait pendante
     // indéfiniment et l'écran tournait sans fin, sans message ni issue.
     //
     // L'expiration est présentée comme une réponse de statut 0, celle que
@@ -107,8 +107,8 @@ function rafraichir(storage: SecureStorageService): Promise<boolean> {
 
 // `fetch` et non `HttpClient` : cet appel vit *dans* l'intercepteur de
 // `HttpClient`. L'utiliser ici le ferait traverser son propre intercepteur
-// une seconde fois — sans en tirer rien, puisque `/auth/refresh` n'attend
-// pas de jeton — pour un simple risque de cycle de dépendances en plus.
+// une seconde fois - sans en tirer rien, puisque `/auth/refresh` n'attend
+// pas de jeton - pour un simple risque de cycle de dépendances en plus.
 async function doRafraichir(storage: SecureStorageService): Promise<boolean> {
   const refreshToken = storage.getRefreshToken();
   if (!refreshToken) return false;
@@ -121,7 +121,7 @@ async function doRafraichir(storage: SecureStorageService): Promise<boolean> {
     // production, tout le reste passe par la réécriture `/api/:path*` de
     // Vercel et reste donc same-origin. Le rafraîchissement, lui, dépendait de
     // la liste blanche CORS du serveur (`CORS_ORIGINS`) : un domaine oublié et
-    // c'est la seule requête qui échoue — donc toutes les sessions qui
+    // c'est la seule requête qui échoue - donc toutes les sessions qui
     // expirent au bout d'un quart d'heure, sans que rien d'autre ne casse.
     const reponse = await fetch(`${AUTH_PATH}/refresh`, {
       method: 'POST',

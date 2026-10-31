@@ -2,7 +2,7 @@
  * Éprouve la bibliothèque hors ligne d'une session à l'autre.
  *
  * Le scénario est celui d'un étudiant : il télécharge un document, ferme
- * l'application, se reconnecte plus tard, et doit retrouver son document —
+ * l'application, se reconnecte plus tard, et doit retrouver son document -
  * y compris sans réseau, puisque c'est pour cela qu'il l'a téléchargé.
  *
  * Ce que la sonde vérifie, dans l'ordre où cela peut tomber :
@@ -71,9 +71,9 @@ await contexte.route('**/api/**', async (route) => {
 const page = await contexte.newPage();
 const resultats = [];
 const noter = (quoi, ok, detail = '') =>
-  resultats.push({ quoi, ok, detail }) && console.log(`  ${ok ? 'ok  ' : 'ÉCHEC'} ${quoi}${detail ? ' — ' + detail : ''}`);
+  resultats.push({ quoi, ok, detail }) && console.log(`  ${ok ? 'ok  ' : 'ÉCHEC'} ${quoi}${detail ? ' - ' + detail : ''}`);
 
-console.log('— Bibliothèque hors ligne, d’une session à l’autre —');
+console.log('- Bibliothèque hors ligne, d’une session à l’autre -');
 
 // 1. Télécharger pour la lecture hors ligne.
 await page.goto(`${base}/app/bibliotheque/doc/doc1`, { waitUntil: 'networkidle' });
@@ -92,7 +92,7 @@ const enCache = await page.evaluate(async () => {
 });
 noter('le fichier est copié dans le cache', enCache);
 
-// 2. Déconnexion puis reconnexion — nouvelle session, même appareil.
+// 2. Déconnexion puis reconnexion - nouvelle session, même appareil.
 await page.evaluate(() => {
   for (const c of ['nl_jwt_token', 'nl_jwt_expiry', 'nl_refresh_token', 'nl_user_data']) {
     localStorage.removeItem(c);

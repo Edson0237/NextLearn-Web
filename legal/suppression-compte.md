@@ -61,7 +61,7 @@ La suppression est définitive. Elle emporte l'effacement de :
 Deux catégories seulement subsistent après la suppression :
 
 - **Les traces des décisions d'administration vous concernant**, conservées
-  sous forme **anonymisée** — elles ne permettent plus de vous identifier.
+  sous forme **anonymisée** - elles ne permettent plus de vous identifier.
   Elles répondent à l'obligation de pouvoir établir a posteriori qui a décidé
   quoi.
 - **Les documents que vous avez proposés au catalogue**, le cas échéant, s'ils
@@ -83,6 +83,6 @@ exposés à l'article 10 de notre
 
 ## Contact
 
-**Tientcheu Siani Joel Marvin** — promoteur du projet NextLearn
+**Tientcheu Siani Joel Marvin** - promoteur du projet NextLearn
 Yaoundé, Cameroun
 **tientcheumarvin@gmail.com**

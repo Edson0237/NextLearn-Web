@@ -26,7 +26,7 @@ export interface TrancheStatut {
 }
 
 /**
- * Suivi des dépôts — traduction de `MesDepotsPage`
+ * Suivi des dépôts - traduction de `MesDepotsPage`
  * (`lib/domains/contributions/presentation/pages/mes_depots_page.dart`).
  * Existe pour une raison précise : un dépôt met du temps à être relu ;
  * sans cet écran, impossible de distinguer « en attente » de « perdu ».
@@ -96,7 +96,7 @@ export class MesDepots {
 
   protected readonly total = computed(() => this.depots().length);
 
-  /** La part des dépôts publiés, arrondie — le chiffre qui résume l'écran. */
+  /** La part des dépôts publiés, arrondie - le chiffre qui résume l'écran. */
   protected readonly tauxPublies = computed(() => {
     const total = this.total();
     if (total === 0) return 0;

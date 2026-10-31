@@ -16,7 +16,7 @@ export interface ConfirmSheetData {
 }
 
 /**
- * Demande de confirmation en feuille — traduction de
+ * Demande de confirmation en feuille - traduction de
  * `FeuilleAction.confirmer` (`feuille_action.dart`). `destructive` teinte
  * le bouton en rouge et n'est pas qu'une couleur : il dit que ce qui va
  * se passer ne se reprend pas.

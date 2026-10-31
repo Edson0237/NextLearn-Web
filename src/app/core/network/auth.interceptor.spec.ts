@@ -7,7 +7,7 @@ import { SessionExpiredService } from './session-expired.service';
 
 /**
  * Ce que ce test protège : les deux comportements les plus faciles à
- * casser par accident — ne jamais joindre de jeton sur les routes
+ * casser par accident - ne jamais joindre de jeton sur les routes
  * pré-auth (`/auth/login`, etc., qui portent le leur dans le corps), et ne
  * jamais déclarer une session expirée pour quelqu'un qui n'en a jamais
  * ouvert une (pas de refresh token = rien à expirer).

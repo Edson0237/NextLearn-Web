@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { NotificationsRepository } from './notifications-repository';
 
 /**
- * Le nombre de notifications non lues — **une seule source**, lue par toutes
+ * Le nombre de notifications non lues - **une seule source**, lue par toutes
  * les cloches de l'application.
  *
  * ## Le défaut corrigé
@@ -10,7 +10,7 @@ import { NotificationsRepository } from './notifications-repository';
  * Le compteur vivait dans l'accueil, récupéré une fois dans `ngOnInit`. Or
  * l'accueil est un onglet que le routeur garde monté (`TabReuseStrategy`) :
  * son `ngOnInit` ne se rejoue jamais. On lisait ses notifications, on
- * revenait, et la cloche affichait toujours l'ancien chiffre — la pastille ne
+ * revenait, et la cloche affichait toujours l'ancien chiffre - la pastille ne
  * disparaissait qu'en rechargeant la page.
  *
  * Et seul l'accueil la portait : les cloches des quatre autres onglets
@@ -23,7 +23,7 @@ import { NotificationsRepository } from './notifications-repository';
  * - la page des notifications le met à jour **dès** qu'une lecture réussit
  *   (`retirer`, `toutLu`), au lieu d'attendre une nouvelle requête ;
  * - il se resynchronise avec le serveur quand l'application revient au
- *   premier plan — de nouvelles notifications ont pu arriver pendant qu'on
+ *   premier plan - de nouvelles notifications ont pu arriver pendant qu'on
  *   regardait ailleurs.
  */
 @Injectable({ providedIn: 'root' })

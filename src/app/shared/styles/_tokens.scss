@@ -1,10 +1,10 @@
-// Jetons de design — système « Academic Clarity ».
+// Jetons de design - système « Academic Clarity ».
 //
 // ## D'où ils viennent
 //
 // De `qa/Inspiration/.../academic_clarity/DESIGN.md`, la direction retenue
 // pour la PWA : un fond ardoise immaculé, des cartes blanches posées dessus,
-// une typographie à hiérarchie serrée, et un cobalt employé avec parcimonie —
+// une typographie à hiérarchie serrée, et un cobalt employé avec parcimonie -
 // actions, onglet courant, anneaux de progression. Les jetons précédents
 // traduisaient `lib/app/theme/` (Flutter) hexadécimal par hexadécimal ; ils
 // restent la référence du **contrat de comportement** (échelle de 4,
@@ -13,8 +13,8 @@
 // ## La conséquence, dite ici plutôt que découverte plus tard
 //
 // La PWA n'a plus les couleurs de l'application mobile. Le bleu
-// institutionnel (#1A4A7E) reste la couleur de **marque** — écran de
-// démarrage, icône, dégradé d'en-tête — mais l'interface agit en cobalt.
+// institutionnel (#1A4A7E) reste la couleur de **marque** - écran de
+// démarrage, icône, dégradé d'en-tête - mais l'interface agit en cobalt.
 // Repeindre Flutter de la même façon est un chantier à part.
 //
 // ## Portée
@@ -44,7 +44,7 @@
   //
   // `#1a4a7e` n'est pas un bleu choisi dans une charte : c'est celui du logo,
   // échantillonné sur `images/Logo.png`, et celui que porte déjà le splash.
-  // Le cobalt de l'inspiration lui a cédé la place — une application ne
+  // Le cobalt de l'inspiration lui a cédé la place - une application ne
   // devrait pas changer de bleu entre son écran d'ouverture et le reste.
   --primary: #1a4a7e;
   --primary-dark: #143c66;
@@ -72,7 +72,7 @@
   --warning-deep: #b45309;
   --warning-soft: #fffbeb;
   // Le jaune d'accueil : un or franc et chaud, loin de l'ambre brunâtre des
-  // alertes. Le texte posé dessus est foncé — du blanc sur un jaune clair ne se
+  // alertes. Le texte posé dessus est foncé - du blanc sur un jaune clair ne se
   // lit pas.
   --soleil: #f6b93b;
   --soleil-deep: #eba20c;
@@ -100,7 +100,7 @@
   // le badge, et elle doit rester lisible sur une carte blanche.
   // Une seule teinte pour tous les formats : le bleu de l'application. Huit
   // couleurs d'icône côte à côte (bleu, cyan, ambre, vert, violet, rose,
-  // orange) faisaient un écran bariolé, sans hiérarchie — le format se lit sur
+  // orange) faisaient un écran bariolé, sans hiérarchie - le format se lit sur
   // son libellé et son icône, pas sur sa couleur. Les variables restent une par
   // format pour que l'on puisse en redistinguer un sans toucher aux écrans.
   --type-cours: var(--primary);
@@ -221,7 +221,7 @@
 
   // ── Rayons ──────────────────────────────────────────────────────────────
   // Plus serrés qu'avant : la rondeur excessive est ce qui donnait son air
-  // générique à l'interface. Les badges, eux, restent des stades complets —
+  // générique à l'interface. Les badges, eux, restent des stades complets -
   // c'est ce contraste qui les détache de la carte qui les porte.
   --radius-xs: 6px;
   --radius-sm: 8px; // boutons, champs
@@ -243,13 +243,13 @@
   // ── La barre d'onglets ──────────────────────────────────────────────────
   //
   // Déclarées hors des deux palettes, et c'est voulu : la barre est un objet
-  // **posé sur** la page, pas une de ses surfaces — comme la barre d'un
+  // **posé sur** la page, pas une de ses surfaces - comme la barre d'un
   // lecteur vidéo. Elle garde donc la même teinte dans les deux thèmes, sinon
   // elle changerait d'identité en même temps que le fond.
   //
   // Les valeurs viennent de la charte : le bleu profond de la marque pour la
   // pilule, le bleu clair de la même famille pour l'onglet courant. Elles
-  // étaient écrites en dur, reprises telles quelles d'une maquette — un
+  // étaient écrites en dur, reprises telles quelles d'une maquette - un
   // violet et un bleu vif qui n'appartenaient à aucune palette du produit.
   --nav-surface: #0f2e4d;
   --nav-actif: #3d7ab8;
@@ -258,7 +258,7 @@
   --nav-pastille: #e2574c;
 
   // ── Typographie ─────────────────────────────────────────────────────────
-  // Une seule famille pour tout — titres, corps, métadonnées. Sa
+  // Une seule famille pour tout - titres, corps, métadonnées. Sa
   // construction géométrique et sa grande hauteur d'x tiennent sur un écran
   // de téléphone sans perdre en autorité. Les trois familles précédentes
   // (Poppins, Inter, JetBrains Mono) se répartissaient les rôles sans que
@@ -298,7 +298,7 @@
 // ── Utilitaires d'élévation ────────────────────────────────────────────────
 //
 // Deux niveaux, pas plus. Le premier porte les cartes, le second ce qui
-// flotte au-dessus d'elles — feuilles, menus, barre d'onglets.
+// flotte au-dessus d'elles - feuilles, menus, barre d'onglets.
 
 @mixin ombre-carte {
   box-shadow:
@@ -313,7 +313,7 @@
 }
 
 // La carte de base : fond, bordure, rayon, ombre. Une seule inclusion plutôt
-// que quatre déclarations recopiées dans chaque écran — c'est la recopie qui
+// que quatre déclarations recopiées dans chaque écran - c'est la recopie qui
 // faisait diverger les cartes d'un écran à l'autre.
 @mixin carte {
   background: var(--bg-primary);
@@ -325,7 +325,7 @@
 /**
  * Étend la zone tapable d'un élément visuellement plus petit que le seuil.
  *
- * Certaines commandes doivent rester fines — une puce de filtre, un chip de
+ * Certaines commandes doivent rester fines - une puce de filtre, un chip de
  * contexte, un onglet de segment. Les grossir à 48 px casserait la mise en
  * page ; les laisser à 30 px casserait l'accessibilité. Un pseudo-élément
  * déborde donc au-dessus et au-dessous, invisible, et rattrape la différence.

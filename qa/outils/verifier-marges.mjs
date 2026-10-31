@@ -60,7 +60,7 @@ for (const [chemin, avecSession] of ECRANS) {
        *
        * Un écran bien réglé n'en a qu'une : tout ce qui est de premier
        * niveau commence sur la même verticale. Plusieurs valeurs proches
-       * — 16, 20, 24 — trahissent des rembourrages posés à la main, écran
+       * - 16, 20, 24 - trahissent des rembourrages posés à la main, écran
        * par écran, et c'est ce qui donne l'impression de flottement.
        */
       const compte = new Map();

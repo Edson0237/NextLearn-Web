@@ -23,7 +23,7 @@
 
   // ── Tailles ──────────────────────────────────────────────────────────────
   &.nl-btn--md {
-    min-height: var(--touch-min); // 48px rendu, 54px Flutter — l'un des deux
+    min-height: var(--touch-min); // 48px rendu, 54px Flutter - l'un des deux
     // seuils d'accessibilité web (48px WCAG) l'emporte quand les deux
     // diffèrent légèrement ; l'écart de 6px est invisible à l'usage.
     height: 54px;

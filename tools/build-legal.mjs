@@ -3,7 +3,7 @@
 // Pourquoi des fichiers statiques et pas des routes Angular : Google Play
 // ouvre ces URL directement, sans passer par la page d'accueil. Une route
 // Angular ne survit à un chargement direct que si l'hébergeur réécrit vers
-// `index.html` — et l'hébergeur de ce site n'est déclaré nulle part. Un
+// `index.html` - et l'hébergeur de ce site n'est déclaré nulle part. Un
 // `public/<slug>/index.html` est un vrai fichier : il répond sur n'importe
 // quel hébergeur statique, sans règle de réécriture, et sans JavaScript.
 //
@@ -25,7 +25,7 @@ const PAGES = [
     titre: 'Supprimer votre compte' },
 ];
 
-// Les fichiers source portent des notes internes en commentaire HTML — dont
+// Les fichiers source portent des notes internes en commentaire HTML - dont
 // « À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION ». marked les
 // laisse passer tels quels dans la sortie : elles seraient lisibles par
 // quiconque affiche le source de la page. On les retire avant la conversion.
@@ -38,7 +38,7 @@ const gabarit = (titre, corps) => `<!doctype html>
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>${echapper(titre)} — NextLearn</title>
+<title>${echapper(titre)} - NextLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="${echapper(titre)} de l'application NextLearn.">
 <link rel="icon" href="/images/Logo.png" type="image/png">

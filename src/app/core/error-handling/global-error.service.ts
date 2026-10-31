@@ -5,7 +5,7 @@ export interface ErreurFatale {
 }
 
 /**
- * Détient l'erreur fatale courante, s'il y en a une — lue par `App` pour
+ * Détient l'erreur fatale courante, s'il y en a une - lue par `App` pour
  * remplacer tout le contenu par `FatalError`. Voir `AppErrorHandler`.
  */
 @Injectable({ providedIn: 'root' })

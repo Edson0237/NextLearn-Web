@@ -5,7 +5,7 @@ import { ElementIcone, ICON_PATHS, IconName } from './icon-paths';
  * Une icône du registre (`icon-paths.ts`, Lucide).
  *
  * Dessinée au trait : 24 px de repère, épaisseur 1,75, extrémités arrondies,
- * `currentColor` — elle prend donc la couleur du texte qui l'entoure, et c'est
+ * `currentColor` - elle prend donc la couleur du texte qui l'entoure, et c'est
  * l'écran qui décide de sa teinte. Selon la définition, un remplissage `plein`
  * (marque-page, étoile, cœur, dossier) ou `doux` (teinte translucide sous le
  * trait, pour l'onglet courant).

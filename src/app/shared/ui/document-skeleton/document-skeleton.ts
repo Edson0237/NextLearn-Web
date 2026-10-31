@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { Skeleton } from '../skeleton/skeleton';
 
 /**
- * Le squelette d'une carte document — calque de `DocumentCard`, traduction
+ * Le squelette d'une carte document - calque de `DocumentCard`, traduction
  * de `SqueletteDocumentCard` (`squelette_document.dart`).
  *
  * Reprend la disposition réelle (même tuile, mêmes lignes de titre, même

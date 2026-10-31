@@ -7,7 +7,7 @@ import { TypeEpreuve } from '../../../core/epreuves/epreuve.model';
 
 /**
  * Ce que ce test protège : un sujet de nature inconnue (`typeEpreuve`
- * absent — tout le fonds publié avant l'introduction du champ) ne doit
+ * absent - tout le fonds publié avant l'introduction du champ) ne doit
  * ressortir sous aucun des filtres CC/SN, seulement sous « Tous ». Une
  * égalité non stricte (`!=` au lieu de `===`) ferait disparaître ce fonds
  * dès qu'un filtre de nature est actif.
@@ -18,7 +18,7 @@ function tick(): Promise<void> {
   return new Promise((r) => setTimeout(r, 0));
 }
 
-describe('EpreuvesList — filtrage', () => {
+describe('EpreuvesList - filtrage', () => {
   async function creer(brut: Record<string, unknown>[]) {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],

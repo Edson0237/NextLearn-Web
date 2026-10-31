@@ -6,7 +6,7 @@ const ctx = await nav.newContext({ viewport: { width: 390, height: 900 }, locale
 await ctx.addInitScript(() => {
   const dans = new Date(Date.now() + 86_400_000).toISOString();
   localStorage.setItem('nl_jwt_token', 'j'); localStorage.setItem('nl_jwt_expiry', dans); localStorage.setItem('nl_refresh_token', 'r');
-  localStorage.setItem('nl_user_data', JSON.stringify({ id: 'u', email: 'marvin@gmail.com', nom: 'Tientcheu', prenom: 'Marvin', universite: 'Saint Jean Ingénieur (SJI)', filiere: 'Master — Data Science', niveau: 'n4', cycle: 'master', langue: 'fr', verificationStatus: 'requis' }));
+  localStorage.setItem('nl_user_data', JSON.stringify({ id: 'u', email: 'marvin@gmail.com', nom: 'Tientcheu', prenom: 'Marvin', universite: 'Saint Jean Ingénieur (SJI)', filiere: 'Master - Data Science', niveau: 'n4', cycle: 'master', langue: 'fr', verificationStatus: 'requis' }));
   localStorage.setItem('nl_first_launch', '0'); localStorage.setItem('nl_last_otp_verified_at', dans);
 });
 const soumis = [];
@@ -22,7 +22,7 @@ await ctx.route('**/api/**', async (r) => {
   await r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data }) });
 });
 const page = await ctx.newPage();
-const res = []; const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' — ' + d : ''}`); };
+const res = []; const v = (n, ok, d = '') => { res.push(ok); console.log(`${ok ? '  ✔' : '  ✘'} ${n}${d ? ' - ' + d : ''}`); };
 await page.goto(`${base}/app/verification`, { waitUntil: 'networkidle' }); await page.waitForTimeout(2000);
 const t = await page.locator('body').innerText();
 v('la page s’ouvre sur le formulaire', /\/app\/verification$/.test(page.url()), page.url());
@@ -38,7 +38,7 @@ await page.screenshot({ path: '/tmp/claude-1001/verification.png', fullPage: tru
 await page.locator('.verif__fichier input').setInputFiles({ name: 'attestation.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 test') });
 v('le fichier choisi est nommé', /attestation\.pdf/.test(await page.locator('.verif__fichier').innerText()));
 await page.locator('.verif__cta').click(); await page.waitForTimeout(1500);
-v('l’envoi part avec l’école, la filière et le niveau du profil', soumis.length === 1 && /Saint Jean Ingénieur/.test(soumis[0]) && /Master — Data Science/.test(soumis[0]) && /N4/.test(soumis[0]));
+v('l’envoi part avec l’école, la filière et le niveau du profil', soumis.length === 1 && /Saint Jean Ingénieur/.test(soumis[0]) && /Master - Data Science/.test(soumis[0]) && /N4/.test(soumis[0]));
 v('juste après l’envoi, on arrive directement sur la page d’attente', /verification\/attente/.test(page.url()), page.url());
 await page.screenshot({ path: '/tmp/claude-1001/attente.png', fullPage: true });
 depose = false;

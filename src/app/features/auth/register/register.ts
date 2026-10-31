@@ -28,19 +28,19 @@ const VERROUILLE: Cascade<never> = { statut: 'verrouille', items: [], erreur: ''
 const CHARGEMENT: Cascade<never> = { statut: 'chargement', items: [], erreur: '' };
 
 /**
- * Inscription — traduction de `RegisterPage`
+ * Inscription - traduction de `RegisterPage`
  * (`lib/domains/auth/presentation/pages/register/register_page.dart`).
  *
  * Cascade École → Cycle → Niveau → Filière fidèle aux deux chemins de la
  * source : les écoles à « ossature » enregistrée (un `cycleId` existe)
  * déroulent Niveau puis Filière dans cet ordre ; les écoles sans ossature
  * (catalogue de secours) chargent la Filière dès École+Cycle connus, et
- * c'est elle qui débloque Niveau — un ordre visuel inchangé qui cache un
+ * c'est elle qui débloque Niveau - un ordre visuel inchangé qui cache un
  * second chemin de données, exactement comme dans la source.
  *
  * **Non repris** : le sélecteur de langue (pas de couche i18n ici) et la
  * reconnaissance de domaine en continu pendant la frappe au-delà du
- * nécessaire — le contrôle serveur à l'envoi (`register()`) reste
+ * nécessaire - le contrôle serveur à l'envoi (`register()`) reste
  * l'autorité ; cet écran n'est qu'une aide visuelle, fidèle sur ce point
  * précis à l'intention de la source elle-même.
  */
@@ -67,7 +67,7 @@ export class Register {
   /**
    * La procédure se déduit de l'adresse saisie : celle d'un établissement suit
    * le parcours normal ; une adresse que nous ne reconnaissons pas (Gmail,
-   * autre organisation) suit celui des personnes sans adresse institutionnelle —
+   * autre organisation) suit celui des personnes sans adresse institutionnelle -
    * justificatif à joindre. Plus de case à cocher : l'étudiant n'a pas à savoir
    * dans quelle catégorie il se trouve.
    */
@@ -138,7 +138,7 @@ export class Register {
   }
 
   /** Angular n'autorise pas les assertions de type (`as`) dans un gabarit
-   * — ce petit détour les déplace là où elles sont permises. */
+   * - ce petit détour les déplace là où elles sont permises. */
   protected val(e: Event): string {
     return (e.target as HTMLInputElement).value;
   }
@@ -282,7 +282,7 @@ export class Register {
     this.levelId.set(option.id);
 
     if (this.cycleId()) {
-      // Ossature : la filière est l'étage terminal, propre à ce niveau — on
+      // Ossature : la filière est l'étage terminal, propre à ce niveau - on
       // la redemande, l'ancienne n'est plus forcément proposée.
       this.filiereId.set(undefined);
       this.filiereNom.set(undefined);

@@ -38,8 +38,8 @@ test.describe('Auth / Unlock', () => {
 
   test('un PIN enregistré ne verrouille plus de lui-même', async ({ page }) => {
     // Le changement demandé : le code n'est plus réclamé à chaque ouverture.
-    // On sème un PIN *sans* la préférence de verrouillage — l'état d'un
-    // compte existant après mise à jour — et l'application doit s'ouvrir.
+    // On sème un PIN *sans* la préférence de verrouillage - l'état d'un
+    // compte existant après mise à jour - et l'application doit s'ouvrir.
     await stubApi(page);
     await page.goto('/');
     await clearSession(page);

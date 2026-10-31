@@ -138,7 +138,7 @@
 }
 
 // Bouton d'action rapide : rond, plein, à droite. C'est le geste qu'on
-// répète — télécharger — et il ne doit pas obliger à ouvrir la fiche.
+// répète - télécharger - et il ne doit pas obliger à ouvrir la fiche.
 .nl-doc-card__action {
   flex: none;
   display: grid;
@@ -156,7 +156,7 @@
   cursor: pointer;
 
   // Retirer n'est pas télécharger : le rond cobalt est réservé à ce qui
-  // ajoute. Le fond teinté plutôt que plein garde le geste discret — c'est
+  // ajoute. Le fond teinté plutôt que plein garde le geste discret - c'est
   // une action de ménage, pas l'action principale de la carte.
   &--destructive {
     background: var(--danger-soft);

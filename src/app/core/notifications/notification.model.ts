@@ -1,11 +1,11 @@
 /**
- * Notification — aligné sur le modèle servi par l'API (`Notification.model.ts`
+ * Notification - aligné sur le modèle servi par l'API (`Notification.model.ts`
  * côté backend) et sur `NotificationModel` (`lib/domains/notifications/`).
  *
  * Le corps était lu sous la clé `message`, qui n'existe nulle part dans la
  * réponse : le champ s'appelle `corps`. Toutes les notifications
  * s'affichaient donc avec un titre et un corps vide. De même, `cibleRoute`
- * n'est pas un champ du serveur — la destination d'une notification voyage
+ * n'est pas un champ du serveur - la destination d'une notification voyage
  * dans `metadata`.
  */
 export interface NotificationModel {

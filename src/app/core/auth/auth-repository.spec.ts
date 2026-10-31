@@ -12,7 +12,7 @@ import { ParcoursOtp } from '../models/parcours-otp.model';
  * qui le ferait fonctionner est déjà mort. (Le blocage après échecs de PIN a
  * son propre test : `verrou-pin.spec.ts`.)
  */
-describe('AuthRepository — reprise d’une démarche OTP', () => {
+describe('AuthRepository - reprise d’une démarche OTP', () => {
   let storage: SecureStorageService;
 
   beforeEach(() => {

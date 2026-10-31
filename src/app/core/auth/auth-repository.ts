@@ -15,7 +15,7 @@ import { donnees } from '../network/enveloppe-api';
 /** Durée de repli hors ligne quand aucune échéance n'a encore été mise en cache. */
 const OTP_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
 
-/** `sha256(pin + '_nextlearn_salt')`, en hexadécimal — même sel que côté backend. */
+/** `sha256(pin + '_nextlearn_salt')`, en hexadécimal - même sel que côté backend. */
 async function hashPin(pin: string): Promise<string> {
   const octets = new TextEncoder().encode(`${pin}_nextlearn_salt`);
   const empreinte = await crypto.subtle.digest('SHA-256', octets);
@@ -30,7 +30,7 @@ async function hashPin(pin: string): Promise<string> {
  *
  * `PUT /api/profile` et les routes d'avatar enveloppent le compte dans
  * `{ user }`, alors que la connexion le rend à plat. Lire l'enveloppe comme un
- * compte donnait un profil vide — identifiant et nom compris — qui était
+ * compte donnait un profil vide - identifiant et nom compris - qui était
  * ensuite enregistré en local : changer de niveau effaçait le compte affiché.
  */
 /**
@@ -55,7 +55,7 @@ export interface ProfilGoogle {
 }
 
 /**
- * Accès réseau + orchestration du stockage pour l'authentification —
+ * Accès réseau + orchestration du stockage pour l'authentification -
  * traduction d'`AuthRemoteRepository`
  * (`lib/domains/auth/infrastructure/repositories/auth_remote_repository.dart`).
  *
@@ -94,7 +94,7 @@ export class AuthRepository {
   // ── Étape en cours ───────────────────────────────────────────────────────
   /**
    * L'étape d'authentification laissée en plan, s'il y en a une.
-   * L'échéance décide, pas la seule présence du jeton temporaire — sans
+   * L'échéance décide, pas la seule présence du jeton temporaire - sans
    * elle, l'écran de saisie serait repris indéfiniment pour un code mort.
    */
   parcoursOtpEnCours(): ParcoursOtp | null {
@@ -141,7 +141,7 @@ export class AuthRepository {
    * `etatVerification` confondait les deux : une coupure réseau rendait
    * `null`, exactement comme un compte sans dossier de vérification. En aval,
    * `isOtpStillFresh` retombait alors sur l'échéance mise en cache, et si
-   * celle-ci était dépassée, l'application **déconnectait** — au moment
+   * celle-ci était dépassée, l'application **déconnectait** - au moment
    * précis où la personne ne peut pas se reconnecter, puisqu'elle est hors
    * ligne. Les documents téléchargés devenaient inatteignables pour cette
    * raison.
@@ -153,7 +153,7 @@ export class AuthRepository {
       const reponse = await firstValueFrom(this.http.get(`${AUTH_PATH}/verification-status`));
       return cycleVerificationDepuisJson(donnees(reponse));
     } catch (e) {
-      // 4xx : le serveur a répondu, et sa réponse fait foi — pas de dossier.
+      // 4xx : le serveur a répondu, et sa réponse fait foi - pas de dossier.
       // Tout le reste (0 : hors ligne, 5xx : serveur en panne, délai
       // dépassé) signifie qu'on n'a pas pu demander.
       const statut = e instanceof HttpErrorResponse ? e.status : 0;
@@ -164,7 +164,7 @@ export class AuthRepository {
 
   /**
    * Le serveur reconnaît-il ce domaine e-mail comme institutionnel ? Ne
-   * lève jamais — une coupure réseau rend `indisponible`, pas une erreur à
+   * lève jamais - une coupure réseau rend `indisponible`, pas une erreur à
    * afficher : le formulaire d'inscription ne doit pas bloquer pour un
    * contrôle qui n'est qu'indicatif (`register()` retranche de toute façon).
    */
@@ -230,10 +230,10 @@ export class AuthRepository {
    * Première étape de la connexion : on donne son e-mail, le serveur dit
    * comment ce compte se connecte.
    *
-   *  - `'pin'`    — le compte a un PIN (ou l'adresse est inconnue : le serveur ne
+   *  - `'pin'`    - le compte a un PIN (ou l'adresse est inconnue : le serveur ne
    *                 distingue pas, pour ne pas révéler quelles adresses existent) ;
-   *  - `'otp'`    — pas de PIN : un code vient de partir par e-mail ;
-   *  - `'google'` — pas de PIN, adresse gérée par Google : la preuve se fait là-bas.
+   *  - `'otp'`    - pas de PIN : un code vient de partir par e-mail ;
+   *  - `'google'` - pas de PIN, adresse gérée par Google : la preuve se fait là-bas.
    */
   async identifierConnexion(email: string): Promise<'pin' | 'otp' | 'google'> {
     const data = await this.poster('/login', { email, ...this.appareil.pourLAPI() });
@@ -255,9 +255,9 @@ export class AuthRepository {
    *
    * Deux issues désormais, selon que le serveur connaît déjà cet appareil :
    *
-   * - **appareil connu** — la session est ouverte sur-le-champ, sans code. Le
+   * - **appareil connu** - la session est ouverte sur-le-champ, sans code. Le
    *   serveur le signale par `otpRequis: false` ;
-   * - **appareil inconnu** — un code part par e-mail, et l'écran suivant
+   * - **appareil inconnu** - un code part par e-mail, et l'écran suivant
    *   l'attend, comme avant.
    *
    * L'aiguillage se fait sur `otpRequis` et non sur la présence d'un champ :
@@ -283,7 +283,7 @@ export class AuthRepository {
     }
 
     // Adresse gérée par Google : aucun code n'est parti, la preuve se fait par
-    // le bouton Google. Rien à mémoriser — le jeton d'identité fait foi.
+    // le bouton Google. Rien à mémoriser - le jeton d'identité fait foi.
     if (data['methode'] === 'google') return 'google';
 
     const tempToken = data['tempToken'];
@@ -458,7 +458,7 @@ export class AuthRepository {
 
     // Serveur injoignable : on garde la session. Conclure à l'expiration
     // faute d'avoir pu demander reviendrait à déconnecter quiconque ouvre
-    // l'application dans le train — et à lui fermer la bibliothèque qu'il a
+    // l'application dans le train - et à lui fermer la bibliothèque qu'il a
     // précisément téléchargée pour ce trajet. La session tombera d'elle-même
     // au premier échange avec un serveur qui la refuse.
     if (issue === 'injoignable') return true;
@@ -486,7 +486,7 @@ export class AuthRepository {
       // L'access token a expiré depuis la dernière ouverture : on tente un
       // rafraîchissement silencieux avant de forcer une reconnexion. Ce
       // rafraîchissement passe par l'intercepteur HTTP lui-même (toute
-      // requête authentifiée le déclenche) — ici, on se contente de vérifier
+      // requête authentifiée le déclenche) - ici, on se contente de vérifier
       // qu'un refresh token existe encore, et on laisse la requête suivante
       // (vérification de l'OTP ci-après) le déclencher au besoin.
       if (!this.storage.getRefreshToken()) return null;

@@ -24,7 +24,7 @@ export interface PageNumerisee {
  *
  * L'application mobile passe par ML Kit (détection des bords, redressement).
  * Le navigateur n'en a pas l'équivalent : on prend donc la photo avec la
- * caméra du téléphone (`<input capture>`), puis on la **traite** ici — mise à
+ * caméra du téléphone (`<input capture>`), puis on la **traite** ici - mise à
  * l'échelle, rotation, et un traitement « document » (niveaux de gris,
  * contraste relevé) qui rend un cahier photographié lisible et léger.
  */

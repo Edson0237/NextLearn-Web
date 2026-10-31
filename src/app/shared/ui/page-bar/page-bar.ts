@@ -12,7 +12,7 @@ import { TraductionPipe } from '../../../core/i18n/t.pipe';
  * profil et la fiche épreuve, une barre plate de 40 px sur les sessions, un
  * libellé en capitales sur la fiche ressource et un titre normal sur la
  * bibliothèque hors-ligne. Le bouton retour lui-même changeait de taille
- * d'un écran à l'autre — 40 px ici, 48 px là.
+ * d'un écran à l'autre - 40 px ici, 48 px là.
  *
  * Le bandeau dégradé a été abandonné sur la fiche ressource pour une raison
  * qui vaut pour tous : il coûtait un tiers de la hauteur utile pour répéter

@@ -22,11 +22,11 @@ const ICONES: Readonly<Record<ToastTone, IconName>> = {
 };
 
 /**
- * Messages brefs affichés en bas d'écran — traduction de `MessageFlottant`
+ * Messages brefs affichés en bas d'écran - traduction de `MessageFlottant`
  * (`message_flottant.dart`).
  *
  * Chaque message chasse le précédent (même `clearSnackBars()` +
- * `showSnackBar()` côté Flutter) : un seul slot, jamais d'empilement — le
+ * `showSnackBar()` côté Flutter) : un seul slot, jamais d'empilement - le
  * second d'une paire rapprochée n'attend pas la fin du premier pour
  * paraître, ce qui serait trop tard pour se rapporter à quoi que ce soit.
  */
@@ -43,19 +43,19 @@ export class ToastService {
     this.montrer(message, 'info');
   }
 
-  /** Réussite — vibre discrètement : on regarde souvent ailleurs à la fin d'une opération. */
+  /** Réussite - vibre discrètement : on regarde souvent ailleurs à la fin d'une opération. */
   succes(message: string): void {
     this.haptic.succes();
     this.montrer(message, 'succes');
   }
 
-  /** Échec — réservé à ce qui n'empêche pas de continuer. */
+  /** Échec - réservé à ce qui n'empêche pas de continuer. */
   erreur(message: string): void {
     this.haptic.echec();
     this.montrer(message, 'erreur');
   }
 
-  /** Un message assorti d'un retour en arrière — le bon patron pour une suppression. */
+  /** Un message assorti d'un retour en arrière - le bon patron pour une suppression. */
   avecAnnulation(message: string, actionLabel: string, onAction: () => void): void {
     this.montrer(message, 'info', actionLabel, onAction);
   }

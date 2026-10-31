@@ -11,13 +11,13 @@ import { PreferenceNotifications } from '../../core/notifications/preference-not
 import { estAuthentifie } from '../../core/auth/auth.model';
 
 /**
- * Racine de toute l'application sous `/app` — le point d'entrée des styles
+ * Racine de toute l'application sous `/app` - le point d'entrée des styles
  * d'application que `design-catalog.ts` annonçait devoir déplacer ici une
  * fois la coque existante (Phase 2 → Phase 3). Posée comme `component` de
  * la route wrapper dans `app-shell.routes.ts` : tout écran (splash,
  * onboarding, `MainShell`…) rend à l'intérieur de son `<router-outlet>` et
  * hérite donc de `.nl-app` par ascendance DOM, qu'il porte ou non la classe
- * lui-même — exactement ce que `App` ne pouvait pas garantir à sa propre
+ * lui-même - exactement ce que `App` ne pouvait pas garantir à sa propre
  * racine, puisqu'il sert aussi la vitrine (voir `fatal-error.ts`).
  *
  * C'est aussi le seul endroit qui voit tous les écrans à la fois : les trois
@@ -93,7 +93,7 @@ export class AppShellRoot {
 
   constructor() {
     // Le canal push se rebranche une fois la session ouverte, et une seule
-    // fois : la permission n'est jamais redemandée ici — seul l'interrupteur
+    // fois : la permission n'est jamais redemandée ici - seul l'interrupteur
     // des réglages la réclame, parce qu'une autorisation demandée à
     // l'ouverture est une autorisation refusée.
     effect(() => {

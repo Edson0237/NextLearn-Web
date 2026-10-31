@@ -9,12 +9,12 @@ import { ParcoursOtp } from '../../../core/models/parcours-otp.model';
 /**
  * Ce que ce test protège : `estConnexion()` doit lire la démarche
  * mémorisée (`AuthState.parcoursOtp`), jamais le drapeau de la route. La
- * source documente l'incident précis que cet ordre évite — un jeton de
+ * source documente l'incident précis que cet ordre évite - un jeton de
  * connexion envoyé à la vérification d'inscription, refusé par le serveur
  * sur le type du jeton sans jamais lire les six chiffres, affichant « code
  * incorrect » à quelqu'un qui avait saisi le bon code.
  */
-describe('Otp — estConnexion', () => {
+describe('Otp - estConnexion', () => {
   function creer(isLogin2faParRoute: boolean) {
     TestBed.configureTestingModule({
       providers: [

@@ -22,7 +22,7 @@ type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';
 
 /**
  * Où en est le dossier de vérification : une carte qui dit l'état, la frise de
- * ce qui reste à passer, et — quand l'étudiant doit agir — le bouton pour le faire.
+ * ce qui reste à passer, et - quand l'étudiant doit agir - le bouton pour le faire.
  */
 @Component({
   selector: 'nl-verification-pending',

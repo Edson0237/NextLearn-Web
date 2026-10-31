@@ -9,7 +9,7 @@ import { App } from './app/app';
  * Durée minimale d'affichage de l'écran de démarrage.
  *
  * Sur un serveur local, l'application démarre si vite que l'écran de marque
- * n'apparaissait qu'un dixième de seconde — un clignotement, pas un écran de
+ * n'apparaissait qu'un dixième de seconde - un clignotement, pas un écran de
  * lancement. Une seconde laisse le temps de le lire.
  */
 const DUREE_MINIMALE_MS = 1000;
@@ -46,17 +46,17 @@ function retirerEcranDeDemarrage(): void {
  * la main ne veut pas dire avoir peint quelque chose : la garde de routage
  * attend la restauration de session, et l'écran qu'elle désigne est chargé à
  * la demande. Entre les deux, **l'écran de marque disparaissait sur du
- * blanc** — deux secondes de page vide mesurées en développement, avant que
+ * blanc** - deux secondes de page vide mesurées en développement, avant que
  * l'onboarding n'apparaisse.
  *
  * L'écran de démarrage tient donc jusqu'à la première navigation réellement
  * terminée. C'est lui, et non le composant `Splash`, qui fait l'écran de
  * lancement : ce dernier est chargé à la demande et son morceau arrive après
- * la fin de l'initialisation — il n'avait jamais le temps d'être peint.
+ * la fin de l'initialisation - il n'avait jamais le temps d'être peint.
  *
  * ## Le délai de sécurité
  *
- * Si aucune navigation n'aboutit — garde bloquée, morceau introuvable —,
+ * Si aucune navigation n'aboutit - garde bloquée, morceau introuvable -,
  * l'écran de marque resterait indéfiniment par-dessus l'erreur qu'il faudrait
  * justement lire. Il tombe alors de lui-même.
  */

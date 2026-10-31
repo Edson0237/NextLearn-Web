@@ -7,8 +7,8 @@ import { ToastService } from '../../../../shared/ui/toast/toast';
 /**
  * La fenêtre « créer / changer mon code PIN ».
  *
- * Elle porte seule ce qui la concerne — les trois champs, les règles de saisie,
- * l'appel au serveur — et ne dit à la page que deux choses : qu'elle se ferme
+ * Elle porte seule ce qui la concerne - les trois champs, les règles de saisie,
+ * l'appel au serveur - et ne dit à la page que deux choses : qu'elle se ferme
  * (`ferme`), et, par le message affiché, que le code est enregistré. Le PIN est
  * facultatif : sans PIN, on le crée sans « code actuel ».
  */

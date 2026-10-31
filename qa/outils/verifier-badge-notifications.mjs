@@ -2,7 +2,7 @@
  * Éprouve la pastille de notifications de la cloche.
  *
  * Le scénario est celui de l'étudiant : trois notifications non lues, il les
- * ouvre toutes, il revient — et la pastille doit avoir disparu **sans qu'il
+ * ouvre toutes, il revient - et la pastille doit avoir disparu **sans qu'il
  * recharge la page**. L'accueil est un onglet gardé monté : il ne se
  * recréait jamais, et gardait l'ancien chiffre.
  *
@@ -40,14 +40,14 @@ await ctx.route('**/api/**', async (route) => {
 const page = await ctx.newPage();
 const pastille = async () => (await page.locator('.nl-entete__pastille').first().innerText().catch(() => '')).trim() || 'aucune';
 const resultats = [];
-const noter = (quoi, ok, detail) => { resultats.push(ok); console.log(`  ${ok ? 'ok   ' : 'ÉCHEC'} ${quoi} — ${detail}`); };
+const noter = (quoi, ok, detail) => { resultats.push(ok); console.log(`  ${ok ? 'ok   ' : 'ÉCHEC'} ${quoi} - ${detail}`); };
 
-console.log('— Pastille de notifications —');
+console.log('- Pastille de notifications -');
 await page.goto(base + '/app/home', { waitUntil: 'domcontentloaded' });
 await page.waitForTimeout(6000);
 noter('accueil : 3 non lues', (await pastille()) === '3', `pastille = ${await pastille()}`);
 
-// Un autre onglet doit porter la même pastille — il n'en avait jamais.
+// Un autre onglet doit porter la même pastille - il n'en avait jamais.
 await page.locator('a[href="/app/progression"]').click();
 await page.waitForTimeout(2500);
 noter('progression : même pastille', (await pastille()) === '3', `pastille = ${await pastille()}`);

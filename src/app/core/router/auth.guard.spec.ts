@@ -10,7 +10,7 @@ import { PendingDestinationService } from './pending-destination.service';
 
 /**
  * Ce que ce test protège : la précédence exacte de `RouterNotifier.redirect`
- * (`app_router.dart`) — le point que l'audit Phase 1 avait lui-même signalé
+ * (`app_router.dart`) - le point que l'audit Phase 1 avait lui-même signalé
  * comme « la logique de routage la plus fine à porter fonction par
  * fonction, pas en esprit ». Un ordre de conditions inversé laisserait
  * passer un lien profond pendant l'initialisation, ou enverrait un
@@ -54,7 +54,7 @@ describe('authGuard', () => {
     };
   }
 
-  /** Force l'état directement — plus rapide et plus sûr que d'attendre
+  /** Force l'état directement - plus rapide et plus sûr que d'attendre
    * `init()` (délai de 1,5 s, appel réseau) pour chaque cas. */
   function forcerEtat(auth: AuthService, partiel: Record<string, unknown>): void {
     const prive = auth as unknown as { patch: (p: Record<string, unknown>) => void };

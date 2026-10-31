@@ -7,8 +7,8 @@
  *
  * Il lit la même configuration que l'application (`/firebase-config.json`) :
  * une seule source, et rien à recompiler pour changer de projet Firebase.
- * Sans `appId` ni `vapidKey` — l'état tant qu'aucune application web n'est
- * déclarée dans la console — ce fichier ne fait rien, et c'est voulu.
+ * Sans `appId` ni `vapidKey` - l'état tant qu'aucune application web n'est
+ * déclarée dans la console - ce fichier ne fait rien, et c'est voulu.
  */
 importScripts('https://www.gstatic.com/firebasejs/11.10.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/11.10.0/firebase-messaging-compat.js');

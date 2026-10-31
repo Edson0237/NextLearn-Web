@@ -14,7 +14,7 @@ ci-dessous restent entieres et aucune n'est levee.
 
 *Source : `politique-confidentialite.md`*
 
-PROJET — À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION.
+PROJET - À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION.
 
 Ce texte décrit fidèlement ce que le code fait aujourd'hui : il a été rédigé
 à partir des modèles de données, des prestataires et des durées de rétention
@@ -23,7 +23,7 @@ réellement en place, et non d'un modèle générique.
 ÉDITEUR PERSONNE PHYSIQUE. NextLearn est exploité par un promoteur
 individuel, sans société constituée : il n'y a donc ni dénomination sociale,
 ni capital, ni immatriculation au RCCM, et il ne faut surtout pas en
-inventer — une mention d'immatriculation fausse est une infraction en
+inventer - une mention d'immatriculation fausse est une infraction en
 elle-même, et elle rendrait attaquable l'ensemble du document. La loi
 camerounaise n'impose pas d'être immatriculé au registre du commerce pour
 être responsable d'un traitement : elle impose d'être identifiable. Le
@@ -60,7 +60,7 @@ l'affichage dans l'application.
 
 *Source : `conditions-utilisation.md`*
 
-PROJET — À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION.
+PROJET - À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION.
 
 Cadre retenu : loi n° 2010/021 du 21 décembre 2010 régissant le commerce
 électronique, loi n° 2010/012 du 21 décembre 2010 relative à la cybersécurité
@@ -72,7 +72,7 @@ la protection des données à caractère personnel.
 ÉDITEUR PERSONNE PHYSIQUE. NextLearn est exploité par un promoteur
 individuel, sans société constituée : ni dénomination sociale, ni capital, ni
 immatriculation au RCCM, ni directeur de la publication distinct de l'éditeur
-lui-même. Il ne faut surtout pas en inventer — une mention d'immatriculation
+lui-même. Il ne faut surtout pas en inventer - une mention d'immatriculation
 fausse est une infraction en elle-même. La loi sur le commerce électronique
 impose que l'éditeur soit identifiable, non qu'il soit immatriculé au
 registre du commerce ; le NIU porté à l'article 3 y pourvoit.
@@ -91,7 +91,7 @@ exige une adresse postale à la publication.
 Les numéros d'articles des lois citées n'ont volontairement pas été repris :
 ils doivent être vérifiés au Journal officiel par le conseil.
 
-ARBITRAGE À TRANCHER PAR L'ÉDITEUR — article 8. Le catalogue est aujourd'hui
+ARBITRAGE À TRANCHER PAR L'ÉDITEUR - article 8. Le catalogue est aujourd'hui
 alimenté par l'équipe seule. Le texte est écrit pour couvrir également le
 dépôt par les étudiants, prévu à terme. Si cette ouverture est abandonnée,
 les alinéas correspondants doivent être retirés plutôt que laissés sans objet.

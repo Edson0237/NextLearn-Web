@@ -1,8 +1,8 @@
 /**
- * Illustrations d'écran vide — copiées de `assets/illustrations/*.svg`
+ * Illustrations d'écran vide - copiées de `assets/illustrations/*.svg`
  * (projet Flutter), dessinées en `currentColor` pour se teinter à
  * l'affichage : la même image sert en thème clair et en thème sombre, et
- * un état d'erreur peut emprunter le rouge sans fichier séparé — même
+ * un état d'erreur peut emprunter le rouge sans fichier séparé - même
  * principe que côté Flutter (voir `empty_state.dart`).
  *
  * Inlinées en TypeScript plutôt que chargées en `<img>` : un `<img>` ne

@@ -1,6 +1,6 @@
 import { tr } from '../i18n/traduction.service';
 /**
- * Modèle Document — traduction de `DocumentModel`
+ * Modèle Document - traduction de `DocumentModel`
  * (`lib/domains/bibliotheque/domain/models/document_model.dart`).
  */
 
@@ -32,7 +32,7 @@ export function typeDocumentDepuisApi(valeur: string): DocumentType {
   const connu = apiVersType[valeur?.toUpperCase()];
   if (connu) return connu;
   // Un format créé dans l'administration, que l'application ne nomme pas :
-  // on garde son identifiant plutôt que de le noyer dans « Document » — son
+  // on garde son identifiant plutôt que de le noyer dans « Document » - son
   // libellé et sa couleur viennent du serveur (`enregistrerFormatsServeur`).
   const slug = String(valeur ?? '').trim().toLowerCase();
   return (slug === '' ? DocumentType.autre : slug) as DocumentType;
@@ -81,7 +81,7 @@ export function labelTypeDocument(type: DocumentType): string {
 
 /**
  * Ce que le serveur déclare pour un format que l'application ne connaît pas
- * (libellé, couleur d'administration). Lu par la présentation — qui décide
+ * (libellé, couleur d'administration). Lu par la présentation - qui décide
  * seule de l'icône et des teintes ; ce modèle ne sait rien de l'interface.
  */
 export function formatServeur(type: string): { label: string; couleur?: string } | undefined {
@@ -206,15 +206,15 @@ export function pageDocumentsDepuisApi(json: Record<string, unknown>): DocumentP
 /**
  * Les métadonnées d'une carte de ressource : pages, poids, et vues.
  *
- * Pages et poids sont toujours là (« — » tant qu'ils sont inconnus), pour que
+ * Pages et poids sont toujours là (« - » tant qu'ils sont inconnus), pour que
  * deux cartes voisines aient la même forme. Les **vues** n'apparaissent qu'à
  * partir de la première : « 0 vue » n'apprend rien et fait croire à un
  * document délaissé. Même règle pour la note, voir `noteDocument`.
  */
 export function metaDocument(doc: Pick<DocumentModel, 'pages' | 'tailleMb' | 'vues'>): { icon: 'description' | 'attach_file' | 'visibility'; label: string }[] {
   const meta: { icon: 'description' | 'attach_file' | 'visibility'; label: string }[] = [
-    { icon: 'description', label: doc.pages > 0 ? `${doc.pages} p.` : '— p.' },
-    { icon: 'attach_file', label: doc.tailleMb > 0 ? `${doc.tailleMb.toFixed(1)} Mo` : '— Mo' },
+    { icon: 'description', label: doc.pages > 0 ? `${doc.pages} p.` : '- p.' },
+    { icon: 'attach_file', label: doc.tailleMb > 0 ? `${doc.tailleMb.toFixed(1)} Mo` : '- Mo' },
   ];
   if ((doc.vues ?? 0) > 0) meta.push({ icon: 'visibility', label: String(doc.vues) });
   return meta;

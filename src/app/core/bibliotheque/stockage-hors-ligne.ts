@@ -10,14 +10,14 @@ const PREFIXE_FICHE = '/__nl-offline-fiche__/';
  * Les documents réellement disponibles hors ligne.
  *
  * `OfflineRepository` ne fait que marquer des identifiants **côté serveur** :
- * utile pour retrouver sa liste d'un appareil à l'autre, inutile sans réseau —
+ * utile pour retrouver sa liste d'un appareil à l'autre, inutile sans réseau -
  * et c'est précisément là qu'on en a besoin. Côté Flutter, le fichier est
  * téléchargé puis rangé dans une boîte Hive ; ici il va dans le Cache Storage,
  * le seul stockage du navigateur fait pour des réponses HTTP entières.
  *
  * Pourquoi le Cache Storage et pas IndexedDB : on y range une **réponse**, pas
  * une donnée. Elle se relit telle quelle, garde son type MIME, et se sert
- * directement à pdf.js via une URL d'objet — sans sérialisation intermédiaire.
+ * directement à pdf.js via une URL d'objet - sans sérialisation intermédiaire.
  *
  * Limite assumée : le navigateur peut évincer ce cache sous pression de
  * stockage, et iOS Safari le fait plus volontiers qu'Android. L'application
@@ -60,7 +60,7 @@ export class StockageHorsLigne {
 
   /**
    * Télécharge le document et le range. Rend `false` si le navigateur ne sait
-   * pas faire ou si le fichier n'a pas pu être récupéré — l'appelant décide
+   * pas faire ou si le fichier n'a pas pu être récupéré - l'appelant décide
    * alors quoi dire, plutôt que de laisser croire à une réussite.
    */
   async enregistrer(documentId: string, url: string): Promise<boolean> {
@@ -103,7 +103,7 @@ export class StockageHorsLigne {
 
   /**
    * Toutes les fiches rangées localement, telles qu'elles ont été
-   * enregistrées — c'est-à-dire **déjà analysées**. Les repasser dans le
+   * enregistrées - c'est-à-dire **déjà analysées**. Les repasser dans le
    * parseur d'API les déformerait : `matiereId` y est redevenu une simple
    * chaîne, et la matière s'afficherait « Matière ».
    */
@@ -157,7 +157,7 @@ export class StockageHorsLigne {
     }
   }
 
-  /** Vide tout — l'action « Libérer de l'espace » des réglages. */
+  /** Vide tout - l'action « Libérer de l'espace » des réglages. */
   async viderTout(): Promise<void> {
     if (!this.disponible) return;
     try {
@@ -171,7 +171,7 @@ export class StockageHorsLigne {
 
   /**
    * Place occupée et place totale, en octets, telles que le navigateur les
-   * estime. `null` quand il ne sait pas — Safari ne répond pas toujours, et
+   * estime. `null` quand il ne sait pas - Safari ne répond pas toujours, et
    * une jauge vaut mieux absente qu'inventée.
    */
   async estimation(): Promise<{ utilise: number; total: number } | null> {

@@ -1,7 +1,7 @@
 /**
- * Chemins de l'application — traduction d'`AppRoutes`
+ * Chemins de l'application - traduction d'`AppRoutes`
  * (`lib/app/router/app_routes.dart`). Relatifs à `/app`, où toute
- * l'application vit dans ce projet (voir `AUDIT_PHASE1.md`, §0 — la
+ * l'application vit dans ce projet (voir `AUDIT_PHASE1.md`, §0 - la
  * vitrine occupe `/`).
  */
 export abstract class AppRoutes {
@@ -46,11 +46,11 @@ export abstract class AppRoutes {
 
   // ── Signalements ─────────────────────────────────────────────────────────
   static readonly supportTickets = 'support/tickets';
-  /** Écran dédié, pas une modale — exigence Apple 5.1.1(v). */
+  /** Écran dédié, pas une modale - exigence Apple 5.1.1(v). */
   static readonly deleteAccount = 'profil/supprimer-compte';
   static readonly parametres = 'profil/parametres';
 
-  // ── Textes légaux (dans l'application — les pages publiques statiques
+  // ── Textes légaux (dans l'application - les pages publiques statiques
   // vivent hors du routage, voir public/confidentialite, public/conditions) ─
   static readonly aPropos = 'legal/a-propos';
   static readonly legalDocument = 'legal/document/:doc';
