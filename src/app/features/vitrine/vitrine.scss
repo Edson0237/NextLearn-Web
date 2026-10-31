@@ -1,0 +1,492 @@
+@use '../../shared/styles/fonts';
+
+// La page d'accueil publique. Elle vit hors de `.nl-app` ; les jetons de la
+// charte lui viennent de la classe globale `.nl-overlay` posée sur l'hôte (voir
+// `app-native.scss`) : mêmes couleurs, mêmes rayons, même police auto-hébergée,
+// sans recopier toute la charte dans le style de ce composant.
+:host {
+  display: block;
+  color-scheme: light;
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  line-height: 1.6;
+  // La marge latérale commune : 24 px sur mobile, puis le contenu se centre à 1200 px.
+  --vit-marge: max(24px, calc((100% - 1200px) / 2));
+}
+
+// ── Accessibilité ──────────────────────────────────────────────────────────
+.nl-vit__evitement {
+  position: absolute;
+  left: 16px;
+  top: -64px;
+  z-index: 10;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  transition: top 0.15s ease;
+
+  &:focus-visible {
+    top: 16px;
+  }
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--soleil);
+  outline-offset: 3px;
+}
+
+// ── Accroche ───────────────────────────────────────────────────────────────
+.nl-vit__hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: 40px;
+  min-height: min(100svh, 760px);
+  padding: clamp(40px, 7vw, 88px) var(--vit-marge);
+  overflow: hidden;
+
+  // Deux halos bleus très doux, comme le dégradé de la référence — dans la teinte de la marque.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(60% 55% at 4% 18%, color-mix(in srgb, var(--brand) 14%, transparent), transparent 70%),
+      radial-gradient(55% 60% at 100% 96%, color-mix(in srgb, #7db8ff 28%, transparent), transparent 70%);
+  }
+}
+
+.nl-vit__hero-texte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nl-vit__logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--brand) 35%, transparent);
+}
+
+.nl-vit__titre {
+  margin: 28px 0 0;
+  font-size: clamp(2.25rem, 5.2vw, 4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+}
+
+.nl-vit__point {
+  // Le point jaune est un élément à part : le crénage avec la lettre d'avant se perd à la frontière du <span>.
+  margin-left: -0.05em;
+  color: var(--soleil);
+}
+
+.nl-vit__sous-titre {
+  margin: 24px 0 0;
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  color: var(--text-secondary);
+}
+
+.nl-vit__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+
+  &--centre {
+    margin-top: 28px;
+  }
+}
+
+.nl-vit__bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 28px;
+  border: 2px solid var(--brand);
+  border-radius: 14px;
+  font: 700 1rem/1 var(--font-family);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+
+  &--plein {
+    background: var(--brand);
+    color: #fff;
+    box-shadow: 0 10px 24px color-mix(in srgb, var(--brand) 32%, transparent);
+
+    &:hover {
+      background: var(--primary-deep);
+      transform: translateY(-2px);
+    }
+  }
+
+  &--contour {
+    background: var(--bg-primary);
+    color: var(--brand);
+
+    &:hover {
+      background: var(--primary-soft);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.nl-vit__guide {
+  max-width: 44ch;
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+  font-size: 0.9rem;
+}
+
+.nl-vit__garanties {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  nl-icon {
+    color: var(--brand);
+  }
+}
+
+// ── Le téléphone ───────────────────────────────────────────────────────────
+.nl-vit__hero-visuel {
+  position: relative;
+  justify-self: center;
+  width: clamp(230px, 26vw, 300px);
+}
+
+.nl-vit__telephone {
+  padding: 10px;
+  border-radius: 46px;
+  background: var(--brand-deep);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--brand-deep) 70%, #fff),
+    0 40px 80px -20px color-mix(in srgb, var(--brand) 55%, transparent);
+  overflow: hidden;
+}
+
+.nl-vit__barre {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border-radius: 36px 36px 0 0;
+  background: var(--bg-canvas);
+}
+
+.nl-vit__ilot {
+  width: 74px;
+  height: 20px;
+  border-radius: 20px;
+  background: var(--brand-deep);
+}
+
+.nl-vit__ecran {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0 0 36px 36px;
+  // La capture est celle de l'écran d'accueil de l'application ; sa barre de
+  // navigation flottante est coupée par le bas du cadre, comme sur un vrai téléphone.
+  aspect-ratio: 390 / 760;
+  object-fit: cover;
+  object-position: top;
+}
+
+.nl-vit__puce {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-pilule);
+  background: var(--bg-primary);
+  box-shadow: 0 12px 30px -8px color-mix(in srgb, var(--brand) 40%, transparent);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  animation: nl-vit-flotte 5s ease-in-out infinite;
+
+  nl-icon {
+    color: var(--brand);
+  }
+
+  &--haut {
+    top: 18%;
+    left: -34%;
+  }
+
+  &--bas {
+    bottom: 14%;
+    right: -26%;
+    animation-delay: -2.5s;
+  }
+}
+
+@keyframes nl-vit-flotte {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+// ── Sections ───────────────────────────────────────────────────────────────
+.nl-vit__section {
+  padding: clamp(56px, 8vw, 96px) var(--vit-marge);
+  text-align: center;
+
+  &--gris {
+    background: var(--bg-canvas);
+  }
+}
+
+.nl-vit__h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.nl-vit__marque {
+  color: var(--brand);
+}
+
+.nl-vit__lede {
+  margin: 16px auto 0;
+  max-width: 56ch;
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  color: var(--text-secondary);
+}
+
+.nl-vit__cartes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.nl-vit__carte {
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-primary);
+  box-shadow: 0 4px 18px -8px color-mix(in srgb, var(--brand) 18%, transparent);
+
+  h3 {
+    margin: 24px 0 8px;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+}
+
+.nl-vit__pastille {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--primary-soft);
+  color: var(--brand);
+}
+
+.nl-vit__etapes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin: 48px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.nl-vit__etape {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+
+  h3 {
+    margin: 0 0 6px;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+  }
+}
+
+.nl-vit__numero {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 800;
+}
+
+.nl-vit__final {
+  background: var(--primary-soft);
+}
+
+// ── Pied de page ───────────────────────────────────────────────────────────
+.nl-vit__pied {
+  padding: 56px var(--vit-marge) 32px;
+  background: var(--brand-deep);
+  color: #cbd5e1;
+
+  h2 {
+    margin: 0 0 16px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  a {
+    color: #cbd5e1;
+    text-decoration: none;
+
+    &:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
+}
+
+.nl-vit__pied-grille {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+}
+
+.nl-vit__pied-nom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #fff;
+
+  img {
+    border-radius: 8px;
+  }
+}
+
+.nl-vit__pied-marque p {
+  max-width: 36ch;
+  margin: 16px 0 0;
+}
+
+.nl-vit__copyright {
+  margin: 40px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid color-mix(in srgb, #fff 14%, transparent);
+  text-align: center;
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+// ── Téléphone et petits écrans ─────────────────────────────────────────────
+@media (max-width: 900px) {
+  .nl-vit__hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .nl-vit__cartes,
+  .nl-vit__etapes {
+    grid-template-columns: 1fr;
+  }
+
+  .nl-vit__pied-grille {
+    grid-template-columns: 1fr 1fr;
+
+    .nl-vit__pied-marque {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .nl-vit__hero-visuel {
+    width: min(270px, 70%);
+  }
+
+  .nl-vit__puce--haut {
+    left: -8%;
+  }
+
+  .nl-vit__puce--bas {
+    right: -8%;
+  }
+}
+
+@media (max-width: 480px) {
+  .nl-vit__bouton {
+    width: 100%;
+  }
+
+  .nl-vit__carte {
+    padding: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nl-vit__puce {
+    animation: none;
+  }
+
+  .nl-vit__bouton:hover {
+    transform: none;
+  }
+}

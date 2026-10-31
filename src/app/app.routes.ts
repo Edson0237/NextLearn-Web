@@ -7,8 +7,8 @@ import { LienProfond } from './core/partage/lien-profond';
  * partagent ce routeur (voir docs/pwa-migration/AUDIT_PHASE1.md, §0 — la
  * décision d'architecture et ce qu'elle implique).
  *
- * `/` reste la page vitrine, défilement d'ancres, inchangée dans son
- * fonctionnement. Tout ce qui relève de l'application vit sous `/app` :
+ * `/` est la page d'accueil publique : un seul but, mener le visiteur dans
+ * l'application. Tout ce qui relève de l'application vit sous `/app` :
  * authentification, shell à cinq onglets, gardes de routage — voir
  * `app-shell.routes.ts` pour l'arbre complet (Phase 3).
  *

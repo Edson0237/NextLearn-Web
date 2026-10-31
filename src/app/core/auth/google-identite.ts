@@ -15,8 +15,10 @@ declare global {
 /**
  * « Se connecter avec Google » — côté navigateur.
  *
- * Le script de Google est chargé par `index.html` (`async defer`) ; ce service
- * attend qu'il soit là, puis initialise le client **une seule fois** : l'appel
+ * Le script de Google n'est chargé qu'à la demande — quand un écran qui propose
+ * Google (connexion, inscription) l'utilise — et non par `index.html` : la page
+ * publique et les pages légales n'ont pas à envoyer l'adresse IP du visiteur à
+ * Google. Ce service l'injecte, attend qu'il soit là, puis initialise le client **une seule fois** : l'appel
  * à `initialize` remplace le précédent, et plusieurs boutons sur des écrans
  * différents partageraient sinon le rappel du dernier monté. Le rappel est donc
  * un aiguilleur, et chaque bouton y inscrit sa propre réaction.
@@ -78,8 +80,21 @@ export class GoogleIdentite {
     return true;
   }
 
+  /** Ajoute le script de Google à la page, une seule fois — et pas du tout s'il est déjà là. */
+  private injecterScript(): void {
+    if (window.google?.accounts?.id) return;
+    const src = 'https://accounts.google.com/gsi/client';
+    if (document.querySelector(`script[src="${src}"]`)) return;
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
   /** Le script est `async` : il peut arriver après nous. On attend, mais pas indéfiniment. */
   private attendreScript(): Promise<boolean> {
+    this.injecterScript();
     return new Promise((ok) => {
       const debut = Date.now();
       const sonder = (): void => {
