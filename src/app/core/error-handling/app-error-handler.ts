@@ -1,5 +1,9 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { GlobalErrorService } from './global-error.service';
+import { estErreurBenigne } from './erreur-benigne';
+
+/** Après un retour sur la page, les requêtes coupées par la suspension échouent encore un instant. */
+const DELAI_RETOUR_MS = 2000;
 
 /**
  * Filet de sécurité global - traduction d'`installerFiletErreurs`
@@ -26,8 +30,25 @@ import { GlobalErrorService } from './global-error.service';
 @Injectable()
 export class AppErrorHandler implements ErrorHandler {
   private readonly global = inject(GlobalErrorService);
+  private retourLe = 0;
+
+  constructor() {
+    const retour = (): void => {
+      if (document.visibilityState === 'visible') this.retourLe = Date.now();
+    };
+    document.addEventListener('visibilitychange', retour);
+    window.addEventListener('pageshow', retour);
+  }
 
   handleError(error: unknown): void {
+    const pageVisible =
+      document.visibilityState === 'visible' && Date.now() - this.retourLe > DELAI_RETOUR_MS;
+
+    if (estErreurBenigne(error, pageVisible)) {
+      // eslint-disable-next-line no-console
+      console.warn('[ErrorHandler] erreur ignorée (réseau ou page en arrière-plan)', error);
+      return;
+    }
     // eslint-disable-next-line no-console
     console.error('[ErrorHandler]', error);
     this.global.signaler(error);
