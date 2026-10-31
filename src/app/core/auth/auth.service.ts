@@ -1,12 +1,18 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppRoutes } from '../router/app-routes';
 import { AuthRepository } from './auth-repository';
 import { SessionExpiredService } from '../network/session-expired.service';
 import { VerificationService } from '../verification/verification.service';
-import { AuthState, ETAT_INITIAL, PendingJustificatif } from './auth.model';
+import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from './auth.model';
+import { VerrouillageApp } from '../preferences/verrouillage-app';
 import { Cycle, NiveauEtude, NiveauxDuCycle } from '../models/user.model';
+import { ProfilGoogle, ReponseGoogle } from './auth-repository';
 import { ParcoursOtp } from '../models/parcours-otp.model';
 import { StatutDemandeOtp } from '../models/demande-otp.model';
 import { Failure } from '../models/failure.model';
+import { ProfilRepository } from '../profil/profil-repository';
+import { VerrouPin } from './verrou-pin';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
 const SPLASH_MIN_MS = 1500;
@@ -25,7 +31,11 @@ function attendre(ms: number): Promise<void> {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly repo = inject(AuthRepository);
+  private readonly profilRepo = inject(ProfilRepository);
+  private readonly verrouPin = inject(VerrouPin);
+  private readonly verrouillage = inject(VerrouillageApp);
   private readonly verification = inject(VerificationService);
+  private readonly router = inject(Router);
 
   private readonly _state = signal<AuthState>(ETAT_INITIAL);
   readonly state = this._state.asReadonly();
@@ -69,8 +79,12 @@ export class AuthService {
       }
 
       const user = this.repo.getCurrentUser() ?? undefined;
-      // Dans cette fenêtre : le PIN local suffit à rouvrir l'app.
-      const locked = !!user && this.repo.hasLocalPin();
+      // Le verrou local ne se referme plus de lui-même. Il était posé dès
+      // qu'un PIN existait, c'est-à-dire toujours : rouvrir ses cours
+      // demandait quatre chiffres, plusieurs fois par jour, derrière le code
+      // de l'appareil qui les protégeait déjà. Il ne vaut désormais que si
+      // l'étudiant l'a demandé — téléphone partagé, poste de salle info.
+      const locked = !!user && this.repo.hasLocalPin() && this.verrouillage.actif();
       if (user) void this.verification.refresh();
       await minSplash;
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user, isLocked: locked });
@@ -100,7 +114,13 @@ export class AuthService {
     this.patch({ isLoading: true, error: undefined });
     try {
       await this.repo.verifyOtp(code);
-      this.patch({ isLoading: false, parcoursOtp: ParcoursOtp.definitionPin });
+      // L'adresse est vérifiée : le compte est prêt, la session s'ouvre. Le PIN
+      // n'est plus une étape obligatoire — on peut en créer un plus tard, dans
+      // les réglages.
+      await this.repo.setupPin(undefined);
+      const user = this.repo.getCurrentUser() ?? undefined;
+      void this.verification.refresh();
+      this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e, 'Code incorrect.') });
@@ -143,7 +163,11 @@ export class AuthService {
   }
 
   // ── Inscription finale ────────────────────────────────────────────────────
+  /** Le code du dernier refus d'inscription (`use_google_auth`…), pour que l'écran réagisse autrement qu'en affichant un message. */
+  readonly codeErreurInscription = signal<string | undefined>(undefined);
+
   async register(sansEmailInstitutionnel = false): Promise<boolean> {
+    this.codeErreurInscription.set(undefined);
     const s = this._state();
     if (!s.pendingEmail || !s.pendingNom || !s.pendingPrenom || !s.pendingUniversite ||
         !s.pendingFiliere || !s.pendingNiveau) {
@@ -170,6 +194,7 @@ export class AuthService {
       // reprend les inscriptions laissées en cours. La bonne suite est de
       // se connecter, pas de recommencer.
       const conflit = e instanceof Failure && e.statusCode === 409;
+      this.codeErreurInscription.set(e instanceof Failure ? e.code : undefined);
       this.patch({
         isLoading: false,
         error: conflit ? 'Ce compte existe déjà. Connectez-vous.' : this.messageErreur(e),
@@ -196,25 +221,169 @@ export class AuthService {
   }
 
   // ── Login PIN (étape 1) ───────────────────────────────────────────────────
-  async loginWithPin(email: string, pin: string): Promise<boolean> {
+  /**
+   * Connexion par e-mail et PIN.
+   *
+   * Trois issues, là où il n'y en avait que deux :
+   *
+   * - `'session'` — l'appareil est déjà connu du serveur, la session est
+   *   ouverte, il n'y a plus rien à saisir ;
+   * - `'otp'` — appareil inconnu, un code est parti par e-mail ;
+   * - `'echec'` — identifiants refusés ou réseau absent.
+   *
+   * Un booléen ne suffisait plus : « réussi » ne dit pas si l'écran suivant
+   * est la saisie du code ou l'accueil.
+   */
+  /**
+   * « Se connecter avec Google » : envoie le jeton d'identité remis par Google
+   * et applique la réponse — **depuis n'importe quel écran** (inscription,
+   * connexion, confirmation d'un appareil nouveau). Rend `null`, ou le refus à
+   * montrer (code et message du serveur : `domain_not_allowed`,
+   * `account_banned`…).
+   */
+  async connexionGoogle(idToken: string): Promise<{ code?: string; message: string } | null> {
     this.patch({ isLoading: true, error: undefined });
     try {
-      await this.repo.loginWithPin(email, pin);
-      // Pas d'authentification ici : le backend exige encore le second
-      // facteur (verifyLoginOtp) avant une vraie session.
+      await this.handleGoogleAuthResponse(await this.repo.connexionGoogle(idToken));
+      return null;
+    } catch (e) {
+      const message = this.messageErreur(e, 'Connexion Google impossible. Réessaie.');
+      this.patch({ isLoading: false, error: message });
+      return { code: e instanceof Failure ? e.code : undefined, message };
+    }
+  }
+
+  /**
+   * **Le** gestionnaire des réponses de `POST /auth/google` : il route sur le
+   * seul champ `status`. Aucun écran ne duplique cette logique — ils appellent
+   * `connexionGoogle` et c'est tout.
+   *
+   *  - `new_profile_incomplete` → l'écran « Plus qu'une étape » (parcours scolaire),
+   *    l'identité Google gardée en mémoire pour l'appel suivant ;
+   *  - `pin_required`           → le choix du PIN ;
+   *  - `authenticated`          → session ouverte et appareil mémorisé (côté
+   *    serveur) ; l'accueil, ou la page d'attente si un justificatif attend.
+   */
+  async handleGoogleAuthResponse(reponse: ReponseGoogle): Promise<void> {
+    switch (reponse.status) {
+      case 'new_profile_incomplete':
+        this.profilGoogle.set(reponse.profil);
+        this.patch({ isLoading: false });
+        await this.router.navigate(['/app', AppRoutes.register]);
+        return;
+      case 'pin_required':
+        this.patch({ isLoading: false, parcoursOtp: ParcoursOtp.definitionPin });
+        await this.router.navigateByUrl('/app/' + AppRoutes.pinSetup);
+        return;
+      case 'authenticated': {
+        const user = this.repo.getCurrentUser() ?? undefined;
+        this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
+        if (reponse.verificationStatus === 'pending') {
+          // On attend l'état de vérification avant de naviguer : la garde de
+          // routage s'y fie, et le lire après renverrait vers l'accueil.
+          await this.verification.refresh();
+          await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending);
+        } else {
+          // L'état de vérification se lit AVANT de naviguer : un compte « requis »
+          // (adresse Google non institutionnelle) doit être aiguillé vers le
+          // dépôt du justificatif, et la garde de routage s'en remet à cet état.
+          await this.verification.refresh();
+          await this.router.navigate(['/app', AppRoutes.home]);
+        }
+        return;
+      }
+    }
+  }
+
+  /**
+   * L'identité Google en attente d'un parcours académique, s'il y en a une.
+   *
+   * Un signal, et non une lecture du dépôt : le bouton Google peut être touché
+   * **depuis la page d'inscription elle-même**, qui ne se recrée pas — elle doit
+   * réagir à l'arrivée de l'identité, pas la lire une seule fois à sa création.
+   */
+  readonly profilGoogle = signal<ProfilGoogle | null>(null);
+
+  abandonnerInscriptionGoogle(): void {
+    this.repo.profilGoogleEnAttente = null;
+    this.profilGoogle.set(null);
+  }
+
+  /** Crée le compte d'une première visite Google ; rend `true` quand il reste à choisir le PIN. */
+  async inscriptionGoogle(infos: { universite: string; filiere: string; niveau: string; cycle?: string }): Promise<string | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const reponse = await this.repo.inscriptionGoogle(infos);
+      this.profilGoogle.set(null);
+      // `pin_required` : le compte existe, il reste à choisir le PIN.
+      await this.handleGoogleAuthResponse(reponse);
+      return null;
+    } catch (e) {
+      const message = this.messageErreur(e, 'Inscription impossible. Réessaie.');
+      this.patch({ isLoading: false, error: message });
+      return message;
+    }
+  }
+
+  /**
+   * Première étape de la connexion : l'e-mail seul. Dit comment poursuivre —
+   * saisir son PIN, saisir le code reçu par e-mail, ou passer par Google.
+   */
+  async identifierConnexion(email: string): Promise<'pin' | 'otp' | 'google' | 'echec'> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const methode = await this.repo.identifierConnexion(email);
+      if (methode === 'otp') {
+        this.patch({
+          isLoading: false,
+          demandeOtp: this.repo.derniereDemandeOtp ?? undefined,
+          parcoursOtp: ParcoursOtp.connexion,
+        });
+      } else {
+        this.patch({ isLoading: false });
+      }
+      return methode;
+    } catch (e) {
+      this.patch({ isLoading: false, error: this.messageErreur(e, 'Connexion impossible. Réessaie.') });
+      return 'echec';
+    }
+  }
+
+  async loginWithPin(email: string, pin: string): Promise<ResultatConnexion> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const otpAttendu = await this.repo.loginWithPin(email, pin);
+
+      // Appareil nouveau, adresse gérée par Google : le PIN est bon, il reste à
+      // confirmer l'appareil avec le bouton Google. Aucun code n'est parti.
+      if (otpAttendu === 'google') {
+        this.patch({ isLoading: false });
+        return 'google';
+      }
+
+      if (!otpAttendu) {
+        // Appareil connu : la session existe déjà côté dépôt, l'état doit la
+        // refléter — sans quoi la garde de routage renverrait au login.
+        const user = this.repo.getCurrentUser() ?? undefined;
+        void this.verification.refresh();
+        this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
+        return 'session';
+      }
+
+      // Le backend exige encore le second facteur avant une vraie session.
       this.patch({
         isLoading: false,
         demandeOtp: this.repo.derniereDemandeOtp ?? undefined,
         parcoursOtp: ParcoursOtp.connexion,
       });
-      return true;
+      return 'otp';
     } catch (e) {
       const reseau = e instanceof Failure && e.estErreurReseau;
       this.patch({
         isLoading: false,
         error: reseau ? this.messageErreur(e) : 'Identifiants incorrects.',
       });
-      return false;
+      return 'echec';
     }
   }
 
@@ -224,7 +393,7 @@ export class AuthService {
     try {
       // Un verrou en cours prime sur toute vérification : sans ça, le
       // délai imposé après plusieurs échecs ne servirait à rien.
-      const verrou = this.repo.pinLockedUntil();
+      const verrou = this.verrouPin.bloqueJusqua();
       if (verrou) {
         this.patch({ isLoading: false, error: this.messageVerrou(verrou) });
         return false;
@@ -232,8 +401,8 @@ export class AuthService {
 
       const ok = await this.repo.verifyLocalPin(pin);
       if (!ok) {
-        this.repo.registerPinFailure();
-        const nouveauVerrou = this.repo.pinLockedUntil();
+        this.verrouPin.enregistrerEchec();
+        const nouveauVerrou = this.verrouPin.bloqueJusqua();
         this.patch({
           isLoading: false,
           error: nouveauVerrou ? this.messageVerrou(nouveauVerrou) : 'PIN incorrect.',
@@ -241,7 +410,7 @@ export class AuthService {
         return false;
       }
 
-      this.repo.clearPinFailures();
+      this.verrouPin.effacerEchecs();
       this.patch({ isLoading: false, isLocked: false });
       return true;
     } catch {
@@ -252,14 +421,14 @@ export class AuthService {
 
   /** Consulté par la biométrie, qui ne doit pas offrir un moyen de contourner le verrou. */
   isPinLocked(): boolean {
-    return this.repo.pinLockedUntil() !== null;
+    return this.verrouPin.bloqueJusqua() !== null;
   }
 
   /** Le système d'exploitation a déjà prouvé l'identité du porteur — ou, sur
    * le web, WebAuthn l'a fait ; le PIN n'est pas revérifié ici. */
   unlockWithBiometrics(): void {
     this.patch({ isLocked: false, error: undefined });
-    this.repo.clearPinFailures();
+    this.verrouPin.effacerEchecs();
   }
 
   private messageVerrou(until: Date): string {
@@ -302,11 +471,11 @@ export class AuthService {
   }
 
   /** Rend le nombre d'autres appareils déconnectés, ou `null` en cas d'échec. */
-  async changerPin(ancienPin: string, nouveauPin: string): Promise<number | null> {
+  async changerPin(ancienPin: string | undefined, nouveauPin: string): Promise<number | null> {
     this.patch({ isLoading: true, error: undefined });
     try {
       const fermees = await this.repo.changerPin(ancienPin, nouveauPin);
-      this.patch({ isLoading: false });
+      this.patch({ isLoading: false, user: this.repo.getCurrentUser() ?? this._state().user });
       return fermees;
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e, 'Changement impossible.') });
@@ -316,14 +485,14 @@ export class AuthService {
 
   /** Les niveaux entre lesquels ce compte peut changer. */
   async niveauxDuCycle(): Promise<NiveauxDuCycle> {
-    return this.repo.niveauxDuCycle();
+    return this.profilRepo.niveauxDuCycle();
   }
 
   /** Change le niveau et met le profil local à jour. */
   async changerNiveau(code: string): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });
     try {
-      const utilisateur = await this.repo.changerNiveau(code);
+      const utilisateur = await this.profilRepo.changerNiveau(code);
       this.patch({ isLoading: false, user: utilisateur });
       return null;
     } catch (e) {
@@ -336,7 +505,7 @@ export class AuthService {
   async changerAvatar(fichier: File): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });
     try {
-      const utilisateur = await this.repo.televerserAvatar(fichier);
+      const utilisateur = await this.profilRepo.televerserAvatar(fichier);
       this.patch({ isLoading: false, user: utilisateur });
       return null;
     } catch (e) {
@@ -349,7 +518,7 @@ export class AuthService {
   async supprimerAvatar(): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });
     try {
-      const utilisateur = await this.repo.supprimerAvatar();
+      const utilisateur = await this.profilRepo.supprimerAvatar();
       this.patch({ isLoading: false, user: utilisateur });
       return null;
     } catch (e) {

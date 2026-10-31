@@ -1,0 +1,48 @@
+{
+  "boites": {
+    "html": {
+      "w": 390,
+      "h": 844
+    },
+    "body": {
+      "w": 390,
+      "h": 844
+    },
+    "appRoot": {
+      "w": 390,
+      "h": 844
+    },
+    "nlApp": {
+      "w": 390,
+      "h": 844
+    },
+    "routerOutletParent": {
+      "w": 0,
+      "h": 0
+    },
+    "pdfReader": {
+      "w": 390,
+      "h": 65
+    },
+    "viewport": {
+      "w": 390,
+      "h": 0
+    },
+    "pdfViewer": {
+      "w": 390,
+      "h": 0
+    },
+    "canvas": null,
+    "iframe": null,
+    "nbCanvas": 0,
+    "htmlDeViewer": "<div _ngcontent-ng-c970008409=\"\" class=\"ng2-pdf-viewer-container\"><div id=\"hiddenCopyElement\"></div><div _ngcontent-ng-c970008409=\"\" class=\"pdfViewer removePageBorders\" style=\"--scale-factor: 1.3333333333333333;\"><div class=\"page\" data-page-number=\"1\" role=\"region\" data-l10n-id=\"pdfjs-page-landmark\""
+  },
+  "journal": [
+    "debug: [vite] connecting...",
+    "log: Angular is running in development mode.",
+    "debug: [vite] connected.",
+    "debug: [vite] connecting...",
+    "log: Angular is running in development mode.",
+    "debug: [vite] connected."
+  ]
+}

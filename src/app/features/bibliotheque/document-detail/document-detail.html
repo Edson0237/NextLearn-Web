@@ -1,81 +1,202 @@
 <div class="doc-detail">
-  @if (document(); as doc) {
-    <header class="doc-detail__hero" [style.--doc-color]="typeColor(doc.type)">
-      <button class="doc-detail__back" (click)="goBack()" aria-label="Retour">
-        <nl-icon name="arrow_back" />
-      </button>
-      <div class="doc-detail__hero-content">
-        <div class="doc-detail__type">
-          <nl-icon [name]="typeIcon(doc.type)" />
-          <span>{{ typeLabel(doc.type) }}</span>
-        </div>
-        <h1 class="doc-detail__title">{{ doc.titre }}</h1>
-        <p class="doc-detail__meta">{{ doc.matiere }} · {{ doc.enseignant }} · {{ doc.universite }}</p>
+  <nl-page-bar [titre]="'navRessource' | t" (retour)="goBack()">
+    <button type="button" (click)="share()" [attr.aria-label]="'docPartager' | t">
+      <nl-icon name="share" [size]="20" />
+    </button>
+    <button type="button" (click)="signaler()" [attr.aria-label]="'pwaSignaler' | t">
+      <nl-icon name="warning" [size]="20" />
+    </button>
+  </nl-page-bar>
+
+  @if (loading()) {
+    <div class="doc-detail__corps" aria-busy="true" aria-live="polite">
+      <div class="doc-detail__squelette doc-detail__squelette--titre"></div>
+      <div class="doc-detail__squelette doc-detail__squelette--bloc"></div>
+      <div class="doc-detail__squelette doc-detail__squelette--bloc"></div>
+    </div>
+  } @else if (error(); as message) {
+    <nl-empty-state
+      [title]="'erreurChargement' | t"
+      [subtitle]="message"
+      [ctaLabel]="'actionReessayer' | t"
+      (cta)="load()">
+      <nl-icon icon name="warning" [size]="28" />
+    </nl-empty-state>
+  } @else if (document(); as doc) {
+    <div class="doc-detail__corps">
+      <!-- Le fil d'ariane dit d'où sort ce document : sa matière, puis son
+           année. C'est par là qu'on remonte à la liste dont il vient. -->
+      <nav class="doc-detail__fil" [attr.aria-label]="'pwaFilAriane' | t">
+        <button type="button" class="doc-detail__fil-lien nl-cible-fine" (click)="openMatiere(doc)">
+          {{ doc.matiere }}
+        </button>
+        <nl-icon name="chevron_right" [size]="14" />
+        <span>{{ doc.anneeAcademique || (doc.type | typeDoc).label }}</span>
+      </nav>
+
+      <div class="doc-detail__etiquettes">
+        <nl-badge
+          [couleur]="(doc.type | typeDoc).couleur"
+          [couleurFond]="(doc.type | typeDoc).fond"
+          [icone]="(doc.type | typeDoc).icone"
+          [capitales]="true">
+          {{ (doc.type | typeDoc).label }}
+        </nl-badge>
+        @if (doc.niveau) {
+          <nl-badge [capitales]="true">{{ doc.niveau }}</nl-badge>
+        }
+        @if (doc.semestre) {
+          <nl-badge [capitales]="true">{{ doc.semestre }}</nl-badge>
+        }
+        @if (doc.avecCorrige) {
+          <nl-badge ton="primaire" icone="task_alt" [capitales]="true">
+            {{ 'epreuvesCorrige' | t }}
+          </nl-badge>
+        }
+        @if (isOffline()) {
+          <nl-badge ton="primaire" icone="cloud_done" [capitales]="true">
+            {{ 'biblioHorsLigne' | t }}
+          </nl-badge>
+        }
       </div>
-      <button class="doc-detail__share" (click)="share()" aria-label="Partager">
-        <nl-icon name="share" />
-      </button>
-    </header>
 
-    <div class="doc-detail__body">
-      <section class="doc-detail__section">
-        <h2 class="doc-detail__section-title">Description</h2>
-        <p class="doc-detail__description">{{ doc.description || 'Aucune description.' }}</p>
-      </section>
+      <h1 class="doc-detail__titre">{{ doc.titre }}</h1>
 
-      <section class="doc-detail__section">
-        <h2 class="doc-detail__section-title">Informations</h2>
-        <div class="doc-detail__infos">
-          <div class="doc-detail__info">
-            <span class="doc-detail__info-label">Année</span>
-            <span class="doc-detail__info-value">{{ doc.anneeAcademique || '—' }}</span>
-          </div>
-          <div class="doc-detail__info">
-            <span class="doc-detail__info-label">Pages</span>
-            <span class="doc-detail__info-value">{{ doc.pages || '—' }}</span>
-          </div>
-          <div class="doc-detail__info">
-            <span class="doc-detail__info-label">Taille</span>
-            <span class="doc-detail__info-value">{{ doc.tailleMb > 0 ? (doc.tailleMb | number:'1.1-1') + ' Mo' : '—' }}</span>
-          </div>
-          <div class="doc-detail__info">
-            <span class="doc-detail__info-label">Vues</span>
-            <span class="doc-detail__info-value">{{ doc.vues }}</span>
-          </div>
+      <div class="doc-detail__auteur">
+        <span class="doc-detail__auteur-vignette">
+          <nl-icon name="account_balance" [size]="18" />
+        </span>
+        <span class="doc-detail__auteur-textes">
+          <span class="doc-detail__auteur-nom">{{ doc.enseignant }}</span>
+          <span class="doc-detail__auteur-ecole">{{ doc.universite }}</span>
+        </span>
+      </div>
+
+      <!-- Ce que pèse le document, puis — seulement quand ils existent —
+           combien l'ont consulté et ce qu'ils en ont dit : « 0 vue » et
+           « — / 5 » n'apprennent rien, et font croire à un document délaissé. -->
+      <div class="doc-detail__chiffres">
+        <div class="doc-detail__chiffre">
+          <span class="doc-detail__chiffre-libelle">{{ 'docPages' | t }}</span>
+          <span class="doc-detail__chiffre-valeur">{{ doc.pages || '—' }}</span>
+          <span class="doc-detail__chiffre-aide">
+            {{ doc.tailleMb > 0 ? (doc.tailleMb | number: '1.1-1') + ' Mo' : '' }}
+          </span>
         </div>
+        @if (doc.vues > 0) {
+          <span class="doc-detail__chiffre-filet" aria-hidden="true"></span>
+          <div class="doc-detail__chiffre">
+            <span class="doc-detail__chiffre-libelle">{{ 'pwaVues' | t }}</span>
+            <span class="doc-detail__chiffre-valeur">{{ doc.vues }}</span>
+            <span class="doc-detail__chiffre-aide">
+              {{ 'docTelechargements' | t: { nombre: doc.telechargements } }}
+            </span>
+          </div>
+        }
+        @if (doc.noteMoyenne > 0) {
+          <span class="doc-detail__chiffre-filet" aria-hidden="true"></span>
+          <div class="doc-detail__chiffre">
+            <span class="doc-detail__chiffre-libelle">{{ 'pwaNote' | t }}</span>
+            <span class="doc-detail__chiffre-valeur doc-detail__chiffre-valeur--note">
+              <nl-icon name="star_fill" [size]="16" />
+              {{ doc.noteMoyenne | number: '1.1-1' }}
+            </span>
+            <span class="doc-detail__chiffre-aide">/ 5</span>
+          </div>
+        }
+      </div>
+
+      <!-- L'action principale occupe toute la largeur : c'est pour elle qu'on
+           ouvre cette fiche. -->
+      <button type="button" class="doc-detail__principal" (click)="openDocument()">
+        <nl-icon name="visibility" [size]="20" />
+        <span>{{ 'docLire' | t }}</span>
+        @if (doc.tailleMb > 0) {
+          <span class="doc-detail__principal-poids">{{ doc.tailleMb | number: '1.1-1' }} Mo</span>
+        }
+      </button>
+
+      <div class="doc-detail__secondaires">
+        <button
+          type="button"
+          class="doc-detail__secondaire"
+          [disabled]="telechargement()"
+          (click)="telecharger()">
+          <nl-icon name="download" [size]="18" />
+          <span>{{ telechargement() ? ('chargementEnCours' | t) : ('actionTelecharger' | t) }}</span>
+        </button>
+        <button
+          type="button"
+          class="doc-detail__secondaire"
+          [class.doc-detail__secondaire--actif]="isFavori()"
+          [attr.aria-label]="(isFavori() ? 'docRetirerFavoris' : 'docAjouterFavoris') | t"
+          (click)="toggleFavori()">
+          <nl-icon [name]="isFavori() ? 'bookmark' : 'bookmark_outline'" [size]="18" />
+          <span>{{ 'homeFavoris' | t }}</span>
+        </button>
+        @if (horsLigneOuvert()) {
+          <button
+            type="button"
+            class="doc-detail__secondaire"
+            [class.doc-detail__secondaire--actif]="isOffline()"
+            [disabled]="miseHorsLigne()"
+            (click)="toggleOffline()">
+            <nl-icon [name]="isOffline() ? 'cloud_done' : 'cloud_download'" [size]="18" />
+            <span>{{ isOffline() ? ('pwaRetirerHorsLigne' | t) : ('biblioHorsLigne' | t) }}</span>
+          </button>
+        }
+      </div>
+
+      @if (doc.description) {
+        <section class="doc-detail__bloc">
+          <h2 class="doc-detail__bloc-titre">{{ 'docDescription' | t }}</h2>
+          <p class="doc-detail__description">{{ doc.description }}</p>
+        </section>
+      }
+
+      <!-- La notation : cinq boutons, une icône chacun. Les étoiles étaient
+           des caractères typographiques, dont le dessin change d'un appareil
+           à l'autre et que les lecteurs d'écran épellent. -->
+      <section class="doc-detail__bloc">
+        <h2 class="doc-detail__bloc-titre">{{ 'pwaNoterCeDocument' | t }}</h2>
+        <div class="doc-detail__etoiles" role="radiogroup" [attr.aria-label]="'pwaNoterCeDocument' | t">
+          @for (valeur of [1, 2, 3, 4, 5]; track valeur) {
+            <button
+              type="button"
+              role="radio"
+              class="doc-detail__etoile"
+              [attr.aria-checked]="valeur === noteDonnee()"
+              [attr.aria-label]="'noterSurCinq' | t: { note: valeur }"
+              (click)="noter(valeur)">
+              <nl-icon [name]="valeur <= noteDonnee() ? 'star_fill' : 'star'" [size]="28" />
+            </button>
+          }
+        </div>
+        @if (noteDonnee() > 0) {
+          <p class="doc-detail__note-merci">{{ 'pwaNoteEnregistree' | t }}</p>
+        }
       </section>
 
       @if (doc.avecCorrige && doc.urlCorrigePdf) {
-        <section class="doc-detail__section">
-          <h2 class="doc-detail__section-title">Corrigé</h2>
-          <a class="doc-detail__link" [href]="doc.urlCorrigePdf" target="_blank" rel="noopener">
-            <nl-icon name="fact_check" />
-            <span>Ouvrir le corrigé</span>
-          </a>
-        </section>
+        <a class="doc-detail__corrige" [href]="doc.urlCorrigePdf" target="_blank" rel="noopener">
+          <span class="doc-detail__corrige-vignette">
+            <nl-icon name="task_alt" [size]="20" />
+          </span>
+          <span class="doc-detail__corrige-textes">
+            <span class="doc-detail__corrige-titre">{{ 'pwaOuvrirCorrige' | t }}</span>
+            <span class="doc-detail__corrige-aide">{{ 'epreuvesCorrige' | t }}</span>
+          </span>
+          <nl-icon name="open_in_new" [size]="18" />
+        </a>
       }
-    </div>
-
-    <div class="doc-detail__actions">
-      <button nlButton variant="primary" size="md" (click)="openDocument()">
-        <nl-icon name="visibility" />
-        <span>Lire</span>
-      </button>
-      <button nlButton variant="outline" size="md" (click)="toggleFavori()">
-        <nl-icon [name]="isFavori() ? 'bookmark' : 'bookmark_outline'" />
-        <span>{{ isFavori() ? 'Retirer' : 'Favori' }}</span>
-      </button>
-      <button nlButton variant="outline" size="md" (click)="toggleOffline()">
-        <nl-icon [name]="isOffline() ? 'cloud_done' : 'cloud_download'" />
-        <span>{{ isOffline() ? 'En ligne' : 'Hors ligne' }}</span>
-      </button>
     </div>
   } @else {
     <nl-empty-state
-      icon="description"
-      title="Document introuvable"
-      subtitle="Ce document n'existe pas ou a été supprimé."
-      ctaLabel="Retour à la bibliothèque"
-      (cta)="goBack()" />
+      [title]="'pwaDocumentIntrouvable' | t"
+      [subtitle]="'pwaDocumentSupprime' | t"
+      [ctaLabel]="'homeVoirBibliotheque' | t"
+      (cta)="goBack()">
+      <nl-icon icon name="description" [size]="28" />
+    </nl-empty-state>
   }
 </div>

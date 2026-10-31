@@ -1,21 +1,43 @@
+import { metaDocument, noteDocument } from '../../../core/bibliotheque/document.model';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
+import { CascadeEnter } from '../../../shared/directives/cascade-enter';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { DocumentCard } from '../../../shared/ui/document-card/document-card';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DocumentCard, EtiquetteDocument } from '../../../shared/ui/document-card/document-card';
+import { AppHeader } from '../../../shared/ui/app-header/app-header';
+import { SearchBar } from '../../../shared/ui/search-bar/search-bar';
+import { StockageHorsLigne } from '../../../core/bibliotheque/stockage-hors-ligne';
+import { libelleNiveau } from '../../../core/models/user.model';
+import { computed } from '@angular/core';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
+import { FormatsService } from '../../../core/references/formats.service';
 import { ContexteService } from '../../../core/contexte/contexte.service';
 import { AuthService } from '../../../core/auth/auth.service';
-import { DocumentModel, DocumentType, labelTypeDocument, couleurTypeDocument } from '../../../core/bibliotheque/document.model';
+import {
+  DocumentModel,
+  DocumentType,
+  } from '../../../core/bibliotheque/document.model';
+import { BottomSheetService } from '../../../shared/ui/bottom-sheet/bottom-sheet';
+import { FiltresSheet, FiltresSheetData, FiltresSheetResultat } from '../filtres-sheet/filtres-sheet';
 import { AppRoutes } from '../../../core/router/app-routes';
+import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
+
+/** En deçà, la saisie ne filtre pas encore (et ne compte donc pas comme filtre). */
+const SEUIL_TEXTE = 2;
 
 @Component({
   selector: 'nl-bibliotheque-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, DocumentCard, Icon, EmptyState, Button],
+  imports: [TypeDocumentPipe, 
+    CascadeEnter, TraductionPipe, CommonModule, FormsModule, DocumentCard, Icon,
+    EmptyState, Button, AppHeader, SearchBar,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './bibliotheque-home.html',
   styleUrl: './bibliotheque-home.scss',
@@ -25,6 +47,26 @@ export class BibliothequeHome implements OnInit {
   private readonly docsRepo = inject(DocumentsRepository);
   private readonly contexte = inject(ContexteService);
   private readonly auth = inject(AuthService);
+  private readonly stockage = inject(StockageHorsLigne);
+  private readonly sheets = inject(BottomSheetService);
+
+  protected readonly user = computed(() => this.auth.state().user);
+  protected readonly cursus = computed(() => {
+    const u = this.user();
+    if (!u) return undefined;
+    return [u.universite, libelleNiveau(u.niveau, u.cycle)].filter(Boolean).join(' • ');
+  });
+
+  /** Combien de filtres sont posés — la pastille du bouton « Filtres ». */
+  protected readonly nombreFiltres = computed(
+    () =>
+      (this.selectedType() ? 1 : 0) +
+      (this.selectedMatiere() ? 1 : 0) +
+      (this.texteRecherche().length >= SEUIL_TEXTE ? 1 : 0),
+  );
+
+  /** Le texte saisi, nettoyé — le même que celui qui filtre la liste. */
+  private readonly texteRecherche = computed(() => this.searchQuery().toLowerCase().trim());
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -34,36 +76,80 @@ export class BibliothequeHome implements OnInit {
   protected readonly searchActive = signal(false);
   protected readonly searchQuery = signal('');
 
-  protected readonly tabs = [
-    { type: null, label: 'Tous' },
-    { type: DocumentType.cours, label: 'Cours' },
+  /**
+   * Les types proposés en filtre.
+   *
+   * Quatre y figuraient quand le catalogue en compte neuf : un corrigé, une
+   * annale ou un TP n'étaient atteignables par aucune puce, alors qu'ils
+   * existent côté serveur et que l'accueil y mène désormais directement.
+   */
+  private readonly tabsDeRepli = [
+    { type: null, label: tr('epreuveTypeTous', 'Tous') },
+    { type: DocumentType.cours, label: tr('biblioFiltreCours', 'Cours') },
     { type: DocumentType.td, label: 'TD' },
+    { type: DocumentType.tp, label: 'TP' },
     { type: DocumentType.synthese, label: 'Synthèse' },
-    { type: DocumentType.epreuve, label: 'Épreuve' },
+    { type: DocumentType.epreuve, label: tr('epreuveTitre', 'Épreuve') },
+    { type: DocumentType.annales, label: tr('titreAnnales', 'Annales') },
+    { type: DocumentType.corrige, label: tr('epreuvesCorrige', 'Corrigé') },
+    { type: DocumentType.rapport, label: 'Rapport' },
+    { type: DocumentType.expose, label: 'Exposé' },
   ] as const;
+
+  private readonly formats = inject(FormatsService);
+
+  /**
+   * Les puces de format : celles que le serveur propose, dans son ordre et sous
+   * ses libellés. La liste ci-dessus ne sert que tant qu'il n'a pas répondu.
+   */
+  protected readonly tabs = computed(() => {
+    const serveur = this.formats.formats();
+    const tous = this.tabsDeRepli[0];
+    if (!serveur) return this.tabsDeRepli;
+    return [tous, ...serveur.map((f) => ({ type: f.type, label: f.label }))];
+  });
 
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
 
   constructor() {
+    // Le type demandé par l'accueil (« Accès rapide ») arrive en paramètre
+    // d'URL : il survit ainsi au rechargement et se partage, là où l'état de
+    // navigation d'Angular disparaît au premier F5.
+    const demande = inject(ActivatedRoute).snapshot.queryParamMap.get('type');
+    if (demande) {
+      const connu = Object.values(DocumentType).find((t) => t === demande);
+      if (connu) this.selectedType.set(connu as DocumentType);
+    }
+
     effect(() => {
-      const type = this.selectedType();
-      const matiereId = this.selectedMatiere();
-      const query = this.searchQuery().toLowerCase().trim();
-      let list = this.documents();
-      if (type) {
-        list = list.filter((d) => d.type === type);
-      }
-      if (matiereId) {
-        list = list.filter((d) => d.matiereId === matiereId);
-      }
-      if (query.length >= 2) {
-        list = list.filter((d) => d.titre.toLowerCase().includes(query) || d.matiere.toLowerCase().includes(query));
-      }
-      this.filteredDocuments.set(list);
-    }, { allowSignalWrites: true });
+      this.filteredDocuments.set(
+        this.documents().filter((d) =>
+          this.correspond(d, this.selectedType(), this.selectedMatiere(), true),
+        ),
+      );
+    });
+  }
+
+  /** Un document passe-t-il ces filtres ? Le texte saisi s'applique toujours si `avecTexte`. */
+  private correspond(
+    d: DocumentModel,
+    type: DocumentType | null,
+    matiereId: string | null,
+    avecTexte: boolean,
+  ): boolean {
+    if (type && d.type !== type) return false;
+    if (matiereId && d.matiereId !== matiereId) return false;
+    const q = this.texteRecherche();
+    if (avecTexte && q.length >= SEUIL_TEXTE) {
+      return d.titre.toLowerCase().includes(q) || d.matiere.toLowerCase().includes(q);
+    }
+    return true;
   }
 
   async ngOnInit(): Promise<void> {
+    // L'inventaire local dit quelles cartes porteront la marque « hors
+    // ligne » : il se lit sans réseau, donc avant la liste.
+    await this.stockage.rafraichir();
     await this.load();
   }
 
@@ -89,19 +175,42 @@ export class BibliothequeHome implements OnInit {
   }
 
   protected openSearch(): void {
-    void this.router.navigate(['/', AppRoutes.recherche]);
+    void this.router.navigate(['/app', AppRoutes.recherche]);
+  }
+
+  /** Ouvre le panneau de filtres ; le brouillon n'est appliqué qu'à la validation. */
+  protected async ouvrirFiltres(): Promise<void> {
+    const handle = this.sheets.open<FiltresSheet, FiltresSheetResultat>(FiltresSheet, {
+      formats: this.tabs(),
+      matieres: this.matiereOptions(),
+      type: this.selectedType(),
+      matiere: this.selectedMatiere(),
+      compter: (type, matiere) => this.nombreCorrespondants(type, matiere),
+    } satisfies FiltresSheetData);
+    const choix = await handle.result;
+    if (!choix) return;
+    if (choix === 'catalogue') {
+      this.openCatalogue();
+      return;
+    }
+    this.selectedType.set(choix.type);
+    this.selectedMatiere.set(choix.matiere);
+  }
+
+  private nombreCorrespondants(type: DocumentType | null, matiere: string | null): number {
+    return this.documents().filter((d) => this.correspond(d, type, matiere, true)).length;
   }
 
   protected openCatalogue(): void {
-    void this.router.navigate(['/', AppRoutes.matieres]);
+    void this.router.navigateByUrl('/app/' + AppRoutes.matieres);
   }
 
   protected openFavoris(): void {
-    void this.router.navigate(['/', AppRoutes.favoris]);
+    void this.router.navigate(['/app', AppRoutes.favoris]);
   }
 
   protected openOffline(): void {
-    void this.router.navigate(['/', AppRoutes.offlineLibrary]);
+    void this.router.navigate(['/app', AppRoutes.offlineLibrary]);
   }
 
   protected openDocument(doc: DocumentModel): void {
@@ -116,30 +225,68 @@ export class BibliothequeHome implements OnInit {
     return [...map.entries()].map(([id, nom]) => ({ id, nom })).sort((a, b) => a.nom.localeCompare(b.nom));
   }
 
-  protected typeIcon(type: DocumentType | null): string {
-    if (!type) return 'menu_book';
-    switch (type) {
-      case DocumentType.cours: return 'menu_book';
-      case DocumentType.td: return 'edit_note';
-      case DocumentType.synthese: return 'summarize';
-      case DocumentType.epreuve: return 'assignment';
-      default: return 'description';
+
+
+  /**
+   * Combien de documents donnerait ce format, compte tenu de la matière et du
+   * texte déjà posés — jamais plus que ce que la liste affichera vraiment.
+   */
+  protected compteType(type: DocumentType | null): number {
+    return this.nombreCorrespondants(type, this.selectedMatiere());
+  }
+
+  /** Idem pour une matière, le format choisi étant appliqué. */
+  protected compteMatiere(id: string | null): number {
+    return this.nombreCorrespondants(this.selectedType(), id);
+  }
+
+  protected etiquettesDe(doc: DocumentModel): EtiquetteDocument[] {
+    const etiquettes: EtiquetteDocument[] = [{ texte: doc.matiere, ton: 'primaire' }];
+    const parcours = [doc.niveau, doc.semestre].filter(Boolean).join(' • ');
+    if (parcours) etiquettes.push({ texte: parcours });
+    if (doc.avecCorrige) {
+      etiquettes.push({ texte: tr('epreuvesCorrige', 'Corrigé'), ton: 'emeraude', icone: 'task_alt' });
     }
+    return etiquettes;
   }
 
-  protected typeColor(type: DocumentType | null): string {
-    return type ? couleurTypeDocument(type) : 'var(--primary)';
+  protected estHorsLigne(doc: DocumentModel): boolean {
+    return this.stockage.ids().has(doc.id);
   }
 
-  protected typeLabel(type: DocumentType | null): string {
-    return type ? labelTypeDocument(type) : 'Document';
+  protected async telecharger(doc: DocumentModel): Promise<void> {
+    const url = (await this.docsRepo.urlLecture(doc.id).catch(() => null)) ?? doc.urlPdf;
+    if (!url) return;
+    void this.docsRepo.recordDownload(doc.id);
+    const lien = window.document.createElement('a');
+    lien.href = url;
+    lien.download = `${doc.titre}.pdf`;
+    lien.rel = 'noopener';
+    lien.target = '_blank';
+    lien.click();
   }
+
+  protected reinitialiser(): void {
+    this.selectedType.set(null);
+    this.selectedMatiere.set(null);
+    this.searchQuery.set('');
+  }
+
+  protected openProfil(): void {
+    void this.router.navigate(['/app', AppRoutes.profil]);
+  }
+
+  protected openNotifications(): void {
+    void this.router.navigate(['/app', AppRoutes.notifications]);
+  }
+
+
 
   protected metaFor(doc: DocumentModel) {
-    const meta = [];
-    if (doc.enseignant) meta.push({ icon: 'person' as const, label: doc.enseignant });
-    if (doc.pages > 0) meta.push({ icon: 'description' as const, label: `${doc.pages} p.` });
-    if (doc.tailleMb > 0) meta.push({ icon: 'download' as const, label: `${doc.tailleMb.toFixed(1)} Mo` });
-    return meta;
+    return metaDocument(doc);
+  }
+
+  protected noteFor(doc: DocumentModel): number | undefined {
+    return noteDocument(doc);
   }
 }

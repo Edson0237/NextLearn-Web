@@ -96,6 +96,25 @@
   color: var(--text-primary);
 }
 
+// La vignette de l'icône, quand le choix en porte une : même carré teinté
+// que les vignettes de type ailleurs dans l'application, pour qu'une action
+// se reconnaisse à sa couleur d'un écran à l'autre.
+.nl-select__vignette {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--teinte-fond);
+  color: var(--teinte);
+}
+
+.nl-select__texte {
+  flex: 1;
+  min-width: 0;
+}
+
 .nl-select__ligne--selectionne .nl-select__libelle {
   font-weight: 600;
   color: var(--primary);

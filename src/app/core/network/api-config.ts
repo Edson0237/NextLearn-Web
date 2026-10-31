@@ -14,6 +14,16 @@ export const API_BASE_URL = 'https://api-nextlearn.duckdns.org';
 export const AUTH_PATH = '/api/auth';
 
 /**
+ * Délai au-delà duquel une requête est abandonnée — même valeur que
+ * `connectTimeout`/`receiveTimeout` de Dio (`dio_client.dart`, 20 s).
+ *
+ * `HttpClient` n'en impose aucun : sans ce garde-fou, une requête partie sur
+ * un réseau coupé en cours de route ne revient jamais, et l'écran reste en
+ * chargement sans message ni bouton de reprise.
+ */
+export const DELAI_EXPIRATION_MS = 20_000;
+
+/**
  * Points d'entrée qui portent leur jeton dans le corps de la requête, et
  * n'attendent donc aucun en-tête `Authorization` — traduction de
  * `_cheminsSansJeton` (`dio_client.dart`).
@@ -28,6 +38,8 @@ const CHEMINS_SANS_JETON: readonly string[] = [
   '/auth/reset-pin',
   '/auth/confirm-reset-pin',
   '/auth/refresh',
+  // Connexion Google : le jeton d'identité est la preuve, il n'y a pas encore de session.
+  '/auth/google',
 ];
 
 /**

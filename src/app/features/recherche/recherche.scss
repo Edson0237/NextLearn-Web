@@ -27,7 +27,7 @@
     gap: var(--space-sm);
     padding: 0 var(--space-md);
     height: 44px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-pilule);
     background: var(--bg-primary);
     color: var(--text-secondary);
 
@@ -79,4 +79,67 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
+}
+
+// ── Dernières recherches ────────────────────────────────────────────────────
+.recherche {
+  &__historique {
+    padding: var(--space-md) 0;
+  }
+
+  &__historique-entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-page) var(--space-sm);
+  }
+
+  &__historique-titre {
+    margin: 0;
+    font: 600 0.8125rem/1.2 var(--font-family-body);
+    color: var(--text-secondary);
+  }
+
+  &__historique-vider {
+    min-height: var(--touch-min);
+    padding: 0 var(--space-sm);
+    border: none;
+    background: none;
+    color: var(--primary);
+    font: 600 0.8125rem/1 var(--font-family-body);
+    cursor: pointer;
+  }
+
+  &__recente {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    min-height: var(--touch-min);
+    padding: 0 var(--space-page);
+    border: none;
+    background: none;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &__recente-texte {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: 400 0.9375rem/1.4 var(--font-family-body);
+  }
+
+  &__recente-fermer {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-min);
+    height: var(--touch-min);
+    color: var(--text-muted);
+  }
 }

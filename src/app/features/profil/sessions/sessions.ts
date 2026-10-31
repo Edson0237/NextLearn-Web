@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Location } from '@angular/common';
+import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { SessionAppareil, SessionRepository } from '../../../core/profil/session-repository';
@@ -13,7 +17,7 @@ import { Failure } from '../../../core/models/failure.model';
 @Component({
   selector: 'app-sessions',
   standalone: true,
-  imports: [Icon],
+  imports: [TraductionPipe, Icon, PageBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sessions.html',
   styleUrl: './sessions.scss',
@@ -48,15 +52,15 @@ export class Sessions implements OnInit {
   protected async revoquer(session: SessionAppareil): Promise<void> {
     if (session.courante) return;
     const confirme = await this.actions.confirmer({
-      title: 'Déconnecter cet appareil ?',
+      title: tr('sessionsDeconnecterTitre', 'Déconnecter cet appareil ?'),
       description: `Tu vas fermer la session « ${session.appareil} ».`,
-      confirmLabel: 'Déconnecter',
+      confirmLabel: tr('profilDeconnecter', 'Déconnecter'),
       destructive: true,
     });
     if (!confirme) return;
     try {
       await this.repo.revoquer(session.sessionId);
-      this.toast.succes('Session fermée.');
+      this.toast.succes(tr('pwaSessionFermee', 'Session fermée.'));
       await this.charger();
     } catch (e) {
       this.toast.erreur(e instanceof Failure ? e.message : 'Action impossible.');
@@ -65,9 +69,9 @@ export class Sessions implements OnInit {
 
   protected async revoquerLesAutres(): Promise<void> {
     const confirme = await this.actions.confirmer({
-      title: 'Déconnecter les autres appareils ?',
-      description: 'Toutes les sessions actives, sauf celle-ci, seront fermées.',
-      confirmLabel: 'Déconnecter',
+      title: tr('sessionsAutresTitre', 'Déconnecter les autres appareils ?'),
+      description: tr('pwaToutesSessionsFermees', 'Toutes les sessions actives, sauf celle-ci, seront fermées.'),
+      confirmLabel: tr('profilDeconnecter', 'Déconnecter'),
       destructive: true,
     });
     if (!confirme) return;
@@ -80,7 +84,7 @@ export class Sessions implements OnInit {
     }
   }
 
-  protected iconePour(session: SessionAppareil): string {
+  protected iconePour(session: SessionAppareil): IconName {
     const app = session.appareil.toLowerCase();
     if (app.includes('iphone') || app.includes('ios')) return 'mobile';
     if (app.includes('android') || app.includes('mobile')) return 'mobile';

@@ -36,7 +36,7 @@ describe('ProfilRepository', () => {
     const repo = TestBed.inject(ProfilRepository);
     const http = TestBed.inject(HttpTestingController);
 
-    const promesse = repo.deleteAccount('1234');
+    const promesse = repo.deleteAccount({ pin: '1234' });
     const req = http.expectOne('/api/users/me');
     expect(req.request.method).toBe('DELETE');
     expect(req.request.body).toEqual({ pin: '1234' });

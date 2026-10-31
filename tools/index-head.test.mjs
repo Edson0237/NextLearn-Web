@@ -21,6 +21,20 @@ import { fileURLToPath } from 'node:url';
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..');
 const index = readFileSync(join(racine, 'src/index.html'), 'utf8');
 
+/**
+ * Les deux feuilles externes ne sont plus dans le `<head>` : elles ne servent
+ * qu'à la vitrine et sont désormais chargées par son composant, à son
+ * affichage. Elles coûtaient sinon deux requêtes tierces bloquantes à
+ * l'application — qui auto-héberge ses polices et inline ses icônes — y
+ * compris lancée depuis l'écran d'accueil d'un téléphone.
+ *
+ * Ce que le test protège n'a pas changé : que quelque chose les charge. Il
+ * regarde donc les deux endroits où cela peut légitimement se produire.
+ */
+const vitrine = readFileSync(join(racine, 'src/app/features/vitrine/vitrine.ts'), 'utf8');
+const chargeurs = `${index}
+${vitrine}`;
+
 /** Le contenu de tous les gabarits de composants, concaténé. */
 function gabarits() {
   const base = join(racine, 'src/app/Components');
@@ -35,20 +49,20 @@ function gabarits() {
 
 describe('Feuilles de style externes', () => {
   test('Font Awesome est chargé', () => {
-    assert.match(index, /font-awesome|fontawesome/i);
+    assert.match(chargeurs, /font-awesome|fontawesome/i);
   });
 
   test('Poppins est chargée', () => {
     // `--font-family` dans styles.scss la désigne en premier choix : sans le
     // lien, toute la page retombe sur la police système.
-    assert.match(index, /family=Poppins/);
+    assert.match(chargeurs, /family=Poppins/);
   });
 
   test('les icônes des gabarits ont bien une feuille qui les définit', () => {
     const utilisees = [...gabarits().matchAll(/class="(fa[sbr]|fa-solid|fa-brands)\s/g)];
     if (utilisees.length === 0) return; // plus aucune icône : rien à charger
     assert.match(
-      index, /font-awesome|fontawesome/i,
+      chargeurs, /font-awesome|fontawesome/i,
       `${utilisees.length} icônes dans les gabarits, aucune feuille pour les définir`,
     );
   });

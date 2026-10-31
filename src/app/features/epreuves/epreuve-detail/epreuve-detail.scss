@@ -36,47 +36,41 @@
 }
 
 .nl-epd__entete {
-  position: relative;
-  padding: 48px 20px 22px;
-  background: linear-gradient(135deg, var(--type-epreuve), color-mix(in srgb, var(--type-epreuve) 70%, transparent));
-  border-radius: 0 0 28px 28px;
-  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-page) 0;
 }
 
-.nl-epd__retour {
-  position: absolute;
-  top: max(12px, env(safe-area-inset-top));
-  left: 12px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border: none;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
-}
-
-.nl-epd__badge-annee {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.22);
-  font: 700 0.8rem/1 var(--font-family-body);
-  margin-bottom: 10px;
+.nl-epd__etiquettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .nl-epd__titre {
-  @include type.nl-h2;
-  color: #fff;
-  margin: 0 0 6px;
+  @include type.nl-display-md;
+  margin: 0;
 }
 
 .nl-epd__sous-titre {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.85);
-  font: 400 0.9rem/1 var(--font-family-body);
+  @include type.nl-body-sm;
+  color: var(--text-secondary);
+
+  nl-icon {
+    flex: none;
+    color: var(--text-muted);
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .nl-epd__corps {
@@ -193,4 +187,16 @@
   color: var(--primary);
   font: 600 0.85rem/1 var(--font-family-body);
   cursor: pointer;
+}
+
+// La note se lit comme une note : l'étoile d'abord, le chiffre ensuite,
+// alignés sur la même ligne de base.
+.nl-epd__stat--note {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  nl-icon {
+    color: var(--warning);
+  }
 }

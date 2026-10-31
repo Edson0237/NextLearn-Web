@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
+import { enFailure } from '../network/erreur-api';
 
 /**
  * Gestion des documents hors-ligne — traduction de `OfflineRemoteRepository`.
@@ -23,7 +23,7 @@ export class OfflineRepository {
       }
       return ids;
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -32,7 +32,7 @@ export class OfflineRepository {
       await firstValueFrom(this.http.post(`/api/offline/${documentId}`, {}));
     } catch (e) {
       if (e instanceof HttpErrorResponse && e.status === 409) return;
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -41,7 +41,7 @@ export class OfflineRepository {
       await firstValueFrom(this.http.delete(`/api/offline/${documentId}`));
     } catch (e) {
       if (e instanceof HttpErrorResponse && e.status === 404) return;
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -55,8 +55,4 @@ export class OfflineRepository {
     return String(documentId);
   }
 
-  private echec(e: unknown): Failure {
-    if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, true);
-    return new Failure('Une erreur est survenue.');
-  }
 }

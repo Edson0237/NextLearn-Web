@@ -1,62 +1,109 @@
+<nl-page-bar [titre]="'catalogueTitre' | t" (retour)="retour()">
+  <button type="button" (click)="openSearch()" [attr.aria-label]="'actionRechercher' | t">
+    <nl-icon name="search" [size]="20" />
+  </button>
+  <button type="button" (click)="openFavoris()" [attr.aria-label]="'homeFavoris' | t">
+    <nl-icon name="bookmark_outline" [size]="20" />
+  </button>
+  <button type="button" (click)="openOffline()" [attr.aria-label]="'biblioHorsLigne' | t">
+    <nl-icon name="cloud_download" [size]="20" />
+  </button>
+</nl-page-bar>
+
 <div class="catalogue">
-  <header class="catalogue__entete">
-    <div class="catalogue__titre-wrap">
-      <h1 class="catalogue__titre">Catalogue</h1>
-      <p class="catalogue__sous-titre">Par matière</p>
+  @if (loading()) {
+    <div class="catalogue__grille" aria-busy="true" aria-live="polite">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="catalogue__squelette"></div>
+      }
     </div>
-    <div class="catalogue__actions">
-      <button class="nl-icon-btn" (click)="openSearch()" aria-label="Rechercher"><nl-icon name="search" /></button>
-      <button class="nl-icon-btn" (click)="openFavoris()" aria-label="Favoris"><nl-icon name="bookmark" /></button>
-      <button class="nl-icon-btn" (click)="openOffline()" aria-label="Hors ligne"><nl-icon name="cloud_download" /></button>
-    </div>
-  </header>
-
-  <div class="catalogue__corps">
-    @if (loading()) {
-      <p class="catalogue__etat">Chargement…</p>
-    } @else if (error()) {
-      <div class="catalogue__etat catalogue__etat--erreur">
-        <p>{{ error() }}</p>
-        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+  } @else if (error()) {
+    <nl-empty-state
+      [title]="'erreurChargement' | t"
+      [subtitle]="error() ?? ''"
+      [ctaLabel]="'actionReessayer' | t"
+      (cta)="load()">
+      <nl-icon icon name="cloud_off" [size]="28" />
+    </nl-empty-state>
+  } @else if (nombreMatieres() === 0) {
+    <nl-empty-state
+      [title]="'catalogueAucuneMatiere' | t"
+      [subtitle]="'catalogueAucuneMatiereCorps' | t"
+      [ctaLabel]="'catalogueToutParcourir' | t"
+      (cta)="openBibliotheque()">
+      <nl-icon icon name="school" [size]="28" />
+    </nl-empty-state>
+  } @else {
+    <!-- Le titre et le fil : où l'on est, avant ce qu'on y trouve. Le
+         commutateur à droite change la grille de dossiers en liste. -->
+    <header class="catalogue__entete">
+      <div class="catalogue__entete-textes">
+        <h1 class="catalogue__titre">{{ 'catalogueTitre' | t }}</h1>
+        <p class="catalogue__fil">
+          <span>{{ 'navBibliotheque' | t }}</span>
+          <nl-icon name="chevron_right" [size]="14" />
+          <span>{{ 'catalogueNombreMatieres' | t: { nombre: nombreMatieres() } }}</span>
+          <span class="catalogue__fil-point" aria-hidden="true"></span>
+          <span>{{ 'catalogueDocumentsCompte' | t: { nombre: nombreDocuments() } }}</span>
+        </p>
       </div>
-    } @else if (propres().length === 0 && communes().length === 0) {
-      <nl-empty-state
-        icon="school"
-        title="Aucune matière"
-        subtitle="Le catalogue ne contient pas encore de matières." />
-    } @else {
-      @if (propres().length > 0) {
-        <section class="catalogue__section">
-          <h2 class="catalogue__section-title">Ma filière</h2>
-          <div class="catalogue__grid">
-            @for (m of propres(); track m.id) {
-              <button class="catalogue__carte" [style.--matiere-color]="m.couleur" (click)="openMatiere(m.id)">
-                <span class="catalogue__carte-nom">{{ m.nom }}</span>
-                <span class="catalogue__carte-count">{{ m.count }} document{{ m.count > 1 ? 's' : '' }}</span>
-              </button>
-            }
-          </div>
-        </section>
-      }
+      <div class="catalogue__vues" role="group" [attr.aria-label]="'catalogueAffichage' | t">
+        <button type="button" class="catalogue__vue" [class.catalogue__vue--actif]="mode() === 'liste'"
+          [attr.aria-pressed]="mode() === 'liste'" [attr.aria-label]="'catalogueVueListe' | t" (click)="choisirMode('liste')">
+          <nl-icon name="view_agenda" [size]="20" />
+        </button>
+        <button type="button" class="catalogue__vue" [class.catalogue__vue--actif]="mode() === 'grille'"
+          [attr.aria-pressed]="mode() === 'grille'" [attr.aria-label]="'catalogueVueGrille' | t" (click)="choisirMode('grille')">
+          <nl-icon name="grid_view" [size]="20" />
+        </button>
+      </div>
+    </header>
 
-      @if (communes().length > 0) {
-        <section class="catalogue__section">
-          <h2 class="catalogue__section-title">Matières communes</h2>
-          <div class="catalogue__grid">
-            @for (m of communes(); track m.id) {
-              <button class="catalogue__carte" [style.--matiere-color]="m.couleur" (click)="openMatiere(m.id)">
-                <span class="catalogue__carte-nom">{{ m.nom }}</span>
-                <span class="catalogue__carte-count">{{ m.count }} document{{ m.count > 1 ? 's' : '' }}</span>
-              </button>
-            }
-          </div>
-        </section>
-      }
-
-      <button class="catalogue__tout" (click)="openBibliotheque()">
-        <nl-icon name="list_alt" />
-        <span>Tout parcourir</span>
-      </button>
+    @if (propres().length > 0) {
+      <section class="catalogue__section">
+        <h2 class="catalogue__titre-section">
+          {{ (programmeConnu() ? 'catalogueMaFiliere' : 'catalogueMatieresDuCatalogue') | t }}
+        </h2>
+        @if (!programmeConnu()) {
+          <p class="catalogue__aide">{{ 'catalogueMatieresDuCatalogueAide' | t }}</p>
+        }
+        <div class="catalogue__grille" [class.catalogue__grille--liste]="mode() === 'liste'">
+          @for (m of propres(); track m.id; let i = $index) {
+            <button type="button" class="catalogue__dossier" [style.--teinte]="teinte(m.couleur, i)" (click)="openMatiere(m.id)">
+              <span class="catalogue__dossier-icone"><nl-icon name="folder_fill" [size]="mode() === 'grille' ? 40 : 32" /></span>
+              <span class="catalogue__dossier-textes">
+                <span class="catalogue__nom">{{ m.nom }}</span>
+                <span class="catalogue__compte">{{ 'catalogueDocumentsCompte' | t: { nombre: m.count } }}</span>
+              </span>
+              <nl-icon class="catalogue__dossier-fleche" name="chevron_right" [size]="18" />
+            </button>
+          }
+        </div>
+      </section>
     }
-  </div>
+
+    @if (communes().length > 0) {
+      <section class="catalogue__section">
+        <h2 class="catalogue__titre-section">{{ 'catalogueMatieresCommunes' | t }}</h2>
+        <p class="catalogue__aide">{{ 'catalogueMatieresCommunesAide' | t }}</p>
+        <div class="catalogue__grille" [class.catalogue__grille--liste]="mode() === 'liste'">
+          @for (m of communes(); track m.id; let i = $index) {
+            <button type="button" class="catalogue__dossier" [style.--teinte]="teinte(m.couleur, i)" (click)="openMatiere(m.id)">
+              <span class="catalogue__dossier-icone"><nl-icon name="folder_fill" [size]="mode() === 'grille' ? 40 : 32" /></span>
+              <span class="catalogue__dossier-textes">
+                <span class="catalogue__nom">{{ m.nom }}</span>
+                <span class="catalogue__compte">{{ 'catalogueDocumentsCompte' | t: { nombre: m.count } }}</span>
+              </span>
+              <nl-icon class="catalogue__dossier-fleche" name="chevron_right" [size]="18" />
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    <button type="button" class="catalogue__tout" (click)="openBibliotheque()">
+      <nl-icon name="list_alt" [size]="20" />
+      <span>{{ 'catalogueToutParcourir' | t }}</span>
+    </button>
+  }
 </div>

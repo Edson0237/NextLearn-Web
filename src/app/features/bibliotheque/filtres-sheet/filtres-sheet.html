@@ -1,0 +1,64 @@
+<nl-bottom-sheet-shell>
+  <div class="nl-filtres__entete">
+    <p class="nl-filtres__titre">{{ 'biblioFiltresTitre' | t }}</p>
+    @if (modifie()) {
+      <button type="button" class="nl-filtres__reset" (click)="reinitialiser()">
+        {{ 'actionReinitialiser' | t }}
+      </button>
+    }
+    <button type="button" class="nl-filtres__fermer" [attr.aria-label]="'actionFermer' | t" (click)="ref.close(undefined)">
+      <nl-icon name="close" [size]="20" />
+    </button>
+  </div>
+
+  <div class="nl-filtres__corps">
+    <p class="nl-filtres__section">{{ 'biblioFiltresFormat' | t }}</p>
+    <div class="nl-filtres__puces">
+      @for (f of data.formats; track f.label) {
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="type() === f.type"
+          [disabled]="compteFormat(f.type) === 0 && type() !== f.type"
+          (click)="choisirType(f.type)">
+          {{ f.label }} <span class="nl-filtres__compte">{{ compteFormat(f.type) }}</span>
+        </button>
+      }
+    </div>
+
+    @if (data.matieres.length > 0) {
+      <p class="nl-filtres__section">{{ 'biblioFiltresMatiere' | t }}</p>
+      <div class="nl-filtres__puces">
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="matiere() === null"
+          (click)="choisirMatiere(null)">
+          {{ 'epreuveTypeTous' | t }} <span class="nl-filtres__compte">{{ compteMatiere(null) }}</span>
+        </button>
+        @for (m of data.matieres; track m.id) {
+          <button
+            type="button"
+            class="nl-filtres__puce"
+            [class.nl-filtres__puce--active]="matiere() === m.id"
+            [disabled]="compteMatiere(m.id) === 0 && matiere() !== m.id"
+            (click)="choisirMatiere(m.id)">
+            {{ m.nom }} <span class="nl-filtres__compte">{{ compteMatiere(m.id) }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    <button type="button" class="nl-filtres__catalogue" (click)="versCatalogue()">
+      <nl-icon name="grid_view" [size]="18" />
+      <span>{{ 'biblioFiltresCatalogue' | t }}</span>
+      <nl-icon name="chevron_right" [size]="18" />
+    </button>
+  </div>
+
+  <div class="nl-filtres__pied">
+    <button type="button" class="nl-filtres__valider" [disabled]="total() === 0" (click)="appliquer()">
+      {{ 'biblioFiltresVoir' | t: { nombre: total() } }}
+    </button>
+  </div>
+</nl-bottom-sheet-shell>

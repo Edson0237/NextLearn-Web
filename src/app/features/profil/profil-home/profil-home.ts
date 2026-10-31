@@ -1,14 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild, ElementRef } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProfilRepository } from '../../../core/profil/profil-repository';
 import { ProfilStats } from '../../../core/profil/profil.model';
 import { Avatar } from '../../../shared/ui/avatar/avatar';
 import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { Badge } from '../../../shared/ui/badge/badge';
+import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { SettingsList } from '../settings-list/settings-list';
 import { Failure } from '../../../core/models/failure.model';
 import { nomComplet, initiales, libelleNiveau } from '../../../core/models/user.model';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
+import { AppRoutes } from '../../../core/router/app-routes';
 
 /**
  * Onglet Profil — traduction de `ProfilHomePage`
@@ -22,12 +28,13 @@ import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sh
 @Component({
   selector: 'app-profil-home',
   standalone: true,
-  imports: [Avatar, AnimatedNumber, Icon, SettingsList],
+  imports: [TraductionPipe, Avatar, AnimatedNumber, Icon, Badge, AppHeader, SettingsList],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './profil-home.html',
   styleUrl: './profil-home.scss',
 })
 export class ProfilHome {
+  private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly repo = inject(ProfilRepository);
   private readonly actions = inject(FeuilleActionService);
@@ -46,6 +53,21 @@ export class ProfilHome {
     const u = this.user();
     return u ? libelleNiveau(u.niveau, u.cycle) : '';
   });
+  /** L'école et le niveau, pour la puce de contexte de l'en-tête. */
+  protected readonly cursus = computed(() => {
+    const u = this.user();
+    if (!u) return undefined;
+    return [u.universite, libelleNiveau(u.niveau)].filter(Boolean).join(' • ');
+  });
+
+  protected openNotifications(): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.notifications);
+  }
+
+  protected openFavoris(): void {
+    void this.router.navigate(['/app', AppRoutes.favoris]);
+  }
+
   protected readonly libelleCycle = computed(() => {
     const u = this.user();
     if (!u || !u.cycle) return '';
@@ -85,10 +107,10 @@ export class ProfilHome {
     const aPhoto = !!this.user()?.avatarUrl;
     const options: ActionOption<string>[] = [
       { value: 'pick', label: aPhoto ? 'Modifier la photo' : 'Ajouter une photo', icon: 'photo_library' },
-      ...(aPhoto ? [{ value: 'remove', label: 'Supprimer la photo', icon: 'delete', destructive: true } as ActionOption<string>] : []),
+      ...(aPhoto ? [{ value: 'remove', label: tr('pwaSupprimerPhoto', 'Supprimer la photo'), icon: 'delete', destructive: true } as ActionOption<string>] : []),
     ];
     const choix = await this.actions.choisir<string>({
-      title: 'Photo de profil',
+      title: tr('pwaPhotoProfil', 'Photo de profil'),
       options,
     });
     if (choix === 'pick') {

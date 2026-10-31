@@ -19,6 +19,7 @@ describe('DepotForm — envoi', () => {
     });
     const fixture = TestBed.createComponent(DepotForm);
     const controller = TestBed.inject(HttpTestingController);
+    controller.match((r) => r.url === '/api/references/limites-fichier').forEach((r) => r.flush({ data: { maxFileSizeMb: 50, formats: ['pdf'] } }));
     controller.expectOne((r) => r.url === '/api/references/document-types').flush({ data: [] });
     controller.expectOne((r) => r.url === '/api/references/matieres').flush({ data: [] });
     return { component: fixture.componentInstance, controller, router: TestBed.inject(Router) };

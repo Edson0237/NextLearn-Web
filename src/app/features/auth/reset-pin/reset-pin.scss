@@ -118,8 +118,8 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in srgb, var(--text-on-primary) 40%, transparent);
+  border-top-color: var(--text-on-primary);
   animation: nl-resetpin-spin 0.7s linear infinite;
 }
 

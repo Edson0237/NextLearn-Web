@@ -68,6 +68,17 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
       return authentifie ? aller(AppRoutes.home) : aller(AppRoutes.login);
     }
 
+    // ── Textes légaux : accessibles dans tous les cas ────────────────────────
+    //
+    // Traduction de `routesToujoursAccessibles` (`app_router.dart`), et placée
+    // au même endroit : après le verrou, avant les routes publiques. Ces deux
+    // textes n'appartiennent à aucune des deux catégories, et c'est
+    // précisément ce qui les rendait inatteignables — déconnecté, on était
+    // renvoyé vers l'onboarding, alors que ce sont les textes qu'il faut
+    // pouvoir lire *avant* de consentir. Apple exige par ailleurs que la
+    // politique de confidentialité soit consultable sans compte.
+    if (chemin.startsWith('legal/document/')) return true;
+
     const routesPubliques = [
       AppRoutes.onboarding, AppRoutes.register, AppRoutes.otp,
       AppRoutes.pinSetup, AppRoutes.login, AppRoutes.loginOtp,

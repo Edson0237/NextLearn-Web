@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Location } from '@angular/common';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { SettingsList } from '../settings-list/settings-list';
@@ -13,7 +14,7 @@ import { SettingsList } from '../settings-list/settings-list';
 @Component({
   selector: 'app-parametres',
   standalone: true,
-  imports: [Icon, SettingsList],
+  imports: [TraductionPipe, Icon, SettingsList],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './parametres.html',
   styleUrl: './parametres.scss',

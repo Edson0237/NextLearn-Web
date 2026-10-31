@@ -12,16 +12,11 @@
 }
 
 .nl-unlock__avatar {
-  width: 84px;
-  height: 84px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  color: var(--text-on-primary);
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 40%, transparent);
-  font: 700 1.6rem/1 var(--font-family);
+  // Le rond est dessiné par `nl-identite` : ne reste ici que ce qui relève
+  // de la page — sa place dans la colonne et le halo qui le décolle du fond.
   margin-bottom: var(--space-lg);
+  border-radius: 50%;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 28%, transparent);
 }
 
 .nl-unlock__titre {

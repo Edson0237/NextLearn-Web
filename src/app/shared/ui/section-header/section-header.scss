@@ -1,0 +1,61 @@
+@use '../../styles/type';
+@use '../../styles/tokens' as *;
+
+:host {
+  display: block;
+}
+
+.nl-section {
+  display: flex;
+  // Au premier interligne, pas au milieu : si le titre passe sur deux lignes,
+  // une pastille centrée verticalement flotte en face de rien.
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.nl-section__gauche {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.nl-section__pastille {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--teinte) 12%, transparent);
+  color: var(--teinte);
+}
+
+.nl-section__textes {
+  min-width: 0;
+}
+
+.nl-section__titre {
+  margin: 0;
+  @include type.nl-h2;
+}
+
+.nl-section__sous-titre {
+  margin: 2px 0 0;
+  @include type.nl-body-sm;
+}
+
+.nl-section__action {
+  @include cible-etendue(24px);
+  flex: none;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  cursor: pointer;
+  @include type.nl-label-lg;
+  color: var(--primary);
+}

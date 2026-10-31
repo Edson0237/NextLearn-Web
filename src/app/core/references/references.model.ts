@@ -35,6 +35,8 @@ export interface TypeContenuOption {
   readonly value: string;
   readonly label: string;
   readonly collection: string;
+  /** Couleur choisie dans l'administration (`#RRGGBB`). */
+  readonly couleur?: string;
 }
 
 export interface JustificatifType {
@@ -76,6 +78,7 @@ export function typeContenuDepuisJson(json: Record<string, unknown>): TypeConten
     value: texte(json, 'value'),
     label: texte(json, 'label'),
     collection: json['collection'] != null ? String(json['collection']) : 'documents',
+    couleur: json['color'] != null ? String(json['color']) : undefined,
   };
 }
 

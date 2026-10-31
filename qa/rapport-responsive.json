@@ -1,0 +1,170 @@
+[
+  {
+    "ecran": "home",
+    "gabarit": "360x800",
+    "largeurDocument": 360,
+    "largeurFenetre": 360,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "gabarit": "360x800",
+    "largeurDocument": 360,
+    "largeurFenetre": 360,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "profil-home",
+    "gabarit": "360x800",
+    "largeurDocument": 360,
+    "largeurFenetre": 360,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "document-detail",
+    "gabarit": "360x800",
+    "largeurDocument": 391,
+    "largeurFenetre": 360,
+    "defilementHorizontal": true
+  },
+  {
+    "ecran": "home",
+    "gabarit": "390x844",
+    "largeurDocument": 390,
+    "largeurFenetre": 390,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "gabarit": "390x844",
+    "largeurDocument": 390,
+    "largeurFenetre": 390,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "profil-home",
+    "gabarit": "390x844",
+    "largeurDocument": 390,
+    "largeurFenetre": 390,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "document-detail",
+    "gabarit": "390x844",
+    "largeurDocument": 391,
+    "largeurFenetre": 390,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "home",
+    "gabarit": "375x667",
+    "largeurDocument": 375,
+    "largeurFenetre": 375,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "gabarit": "375x667",
+    "largeurDocument": 375,
+    "largeurFenetre": 375,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "profil-home",
+    "gabarit": "375x667",
+    "largeurDocument": 375,
+    "largeurFenetre": 375,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "document-detail",
+    "gabarit": "375x667",
+    "largeurDocument": 391,
+    "largeurFenetre": 375,
+    "defilementHorizontal": true
+  },
+  {
+    "ecran": "home",
+    "gabarit": "430x932",
+    "largeurDocument": 430,
+    "largeurFenetre": 430,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "gabarit": "430x932",
+    "largeurDocument": 430,
+    "largeurFenetre": 430,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "profil-home",
+    "gabarit": "430x932",
+    "largeurDocument": 430,
+    "largeurFenetre": 430,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "document-detail",
+    "gabarit": "430x932",
+    "largeurDocument": 430,
+    "largeurFenetre": 430,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "home",
+    "gabarit": "768x1024",
+    "largeurDocument": 768,
+    "largeurFenetre": 768,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "gabarit": "768x1024",
+    "largeurDocument": 768,
+    "largeurFenetre": 768,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "profil-home",
+    "gabarit": "768x1024",
+    "largeurDocument": 768,
+    "largeurFenetre": 768,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "document-detail",
+    "gabarit": "768x1024",
+    "largeurDocument": 768,
+    "largeurFenetre": 768,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "home",
+    "gabarit": "1280x800",
+    "largeurDocument": 1280,
+    "largeurFenetre": 1280,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "gabarit": "1280x800",
+    "largeurDocument": 1280,
+    "largeurFenetre": 1280,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "profil-home",
+    "gabarit": "1280x800",
+    "largeurDocument": 1280,
+    "largeurFenetre": 1280,
+    "defilementHorizontal": false
+  },
+  {
+    "ecran": "document-detail",
+    "gabarit": "1280x800",
+    "largeurDocument": 1280,
+    "largeurFenetre": 1280,
+    "defilementHorizontal": false
+  }
+]

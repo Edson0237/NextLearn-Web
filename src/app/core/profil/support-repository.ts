@@ -1,7 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
+import { tr } from '../i18n/traduction.service';
+import { enFailure } from '../network/erreur-api';
 
 export enum SupportTicketStatus {
   open = 'open',
@@ -20,14 +21,20 @@ export function statutTicketDepuisApi(s: string | null | undefined): SupportTick
   }
 }
 
+/**
+ * Le statut `open` veut dire « reçu, pas encore pris en charge » : le
+ * libellé « Ouvert » laissait croire qu'un agent l'avait déjà ouvert. Les
+ * libellés viennent du catalogue (« En attente », « En cours de traitement »,
+ * « Résolu »), qui les prévoyait déjà.
+ */
 export function libelleStatutTicket(status: SupportTicketStatus): string {
   switch (status) {
     case SupportTicketStatus.open:
-      return 'Ouvert';
+      return tr('supportStatutOuvert', 'En attente');
     case SupportTicketStatus.inProgress:
-      return 'En cours';
+      return tr('supportStatutEnCours', 'En cours de traitement');
     case SupportTicketStatus.resolved:
-      return 'Résolu';
+      return tr('supportStatutResolu', 'Résolu');
   }
 }
 
@@ -67,7 +74,7 @@ export class SupportRepository {
     try {
       await firstValueFrom(this.http.post('/api/support/tickets', { categorie, sujet, message }));
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -78,12 +85,8 @@ export class SupportRepository {
       const liste = Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
       return liste.map(ticketDepuisApi);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
-  private echec(e: unknown): Failure {
-    if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, true);
-    return new Failure('Une erreur est survenue.');
-  }
 }

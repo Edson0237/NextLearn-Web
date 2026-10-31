@@ -102,6 +102,14 @@ function messagePour(
   // rares messages serveur qu'on laisse passer : il précise ce qu'il faut
   // faire (déposer, compléter, attendre) et ne révèle rien d'une ressource
   // protégée.
+  // Les refus de la connexion Google disent eux aussi ce qu'il faut faire
+  // (utiliser son adresse d'établissement, contacter un administrateur) et ne
+  // révèlent rien de protégé.
+  if (code === 'domain_not_allowed' || code === 'account_banned' || code === 'use_google_auth') {
+    const message = duServeur?.trim();
+    if (message && message.length > 0 && message.length <= 240) return message;
+  }
+
   if (code === 'ACCOUNT_NOT_VALIDATED') {
     const message = duServeur?.trim();
     if (message && message.length > 0 && message.length <= 240) return message;

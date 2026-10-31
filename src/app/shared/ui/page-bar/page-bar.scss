@@ -1,0 +1,81 @@
+@use '../../styles/type';
+@use '../../styles/tokens' as *;
+
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nl-barre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-page);
+  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--border);
+
+  @supports (backdrop-filter: blur(16px)) {
+    background: color-mix(in srgb, var(--bg-canvas) 85%, transparent);
+    backdrop-filter: blur(16px);
+  }
+}
+
+.nl-barre__titre {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  @include type.nl-h3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nl-barre__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+
+  // Les boutons posés par l'écran prennent le même rond que le retour :
+  // c'est ici que la barre impose sa forme, plutôt que dans chaque écran.
+  ::ng-deep button {
+    display: grid;
+    place-items: center;
+    width: var(--touch-min);
+    height: var(--touch-min);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pilule);
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+}
+
+.nl-barre__rond {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pilule);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

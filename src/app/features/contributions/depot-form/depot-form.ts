@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { DepotRepository } from '../../../core/contributions/depot-repository';
@@ -9,12 +11,16 @@ import { niveauCourt } from '../../../core/models/user.model';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Failure } from '../../../core/models/failure.model';
+import { ScanTransfert } from '../../../core/scan/numerisation';
 import { AppRoutes } from '../../../core/router/app-routes';
 
-/** 20 Mo — contrôlé ici en plus du serveur : découvrir le refus après
- * avoir téléversé quinze mégaoctets coûte du temps et des données, sur
- * une connexion mobile mesurée. */
-const TAILLE_MAX_OCTETS = 20 * 1024 * 1024;
+/**
+ * Le plafond de taille avant d'avoir la réponse du serveur : celui que
+ * l'administration règle aujourd'hui. Le plafond réel est demandé au serveur ;
+ * le contrôler ici en plus évite de découvrir le refus après avoir téléversé
+ * des dizaines de mégaoctets, sur une connexion mobile mesurée.
+ */
+const TAILLE_MAX_PAR_DEFAUT_MO = 50;
 
 /**
  * Proposer un document — traduction de `DepotFormPage`
@@ -35,7 +41,7 @@ const TAILLE_MAX_OCTETS = 20 * 1024 * 1024;
 @Component({
   selector: 'app-depot-form',
   standalone: true,
-  imports: [Icon],
+  imports: [TraductionPipe, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './depot-form.html',
   styleUrl: './depot-form.scss',
@@ -67,7 +73,15 @@ export class DepotForm {
 
   protected readonly envoiEnCours = signal(false);
 
+  /** Le plafond de taille réglé par l'administration (Mo). */
+  private readonly scans = inject(ScanTransfert);
+  protected readonly tailleMaxMo = signal(TAILLE_MAX_PAR_DEFAUT_MO);
+
   constructor() {
+    // Un document qui vient d'être scanné arrive ici comme s'il avait été importé.
+    const scanne = this.scans.reprendre();
+    if (scanne) this.fichier.set(scanne);
+    void this.refs.getLimitesFichier().then((l) => this.tailleMaxMo.set(l.maxFileSizeMb)).catch(() => undefined);
     void this.chargerTypes();
     void this.chargerMatieres();
   }
@@ -97,8 +111,13 @@ export class DepotForm {
   protected surFichierChoisi(e: Event): void {
     const f = (e.target as HTMLInputElement).files?.[0];
     if (!f) return;
-    if (f.size > TAILLE_MAX_OCTETS) {
-      this.toast.erreur('Ce fichier dépasse 20 Mo. Choisis-en un plus léger.');
+    // Le PDF seulement : c'est le seul format que l'application sait lire.
+    if (f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf')) {
+      this.toast.erreur(tr('depotFormatPdfSeulement', 'Seuls les fichiers PDF sont acceptés pour le moment.'));
+      return;
+    }
+    if (f.size > this.tailleMaxMo() * 1024 * 1024) {
+      this.toast.erreur(`Ce fichier dépasse ${this.tailleMaxMo()} Mo. Choisis-en un plus léger.`);
       return;
     }
     this.fichier.set(f);
@@ -113,12 +132,12 @@ export class DepotForm {
     const description = this.description().trim();
 
     if (titre.length < 3) return this.toast.info("Donne un titre d'au moins 3 caractères.");
-    if (description.length < 10) return this.toast.info('Décris le document en 10 caractères au moins.');
-    if (!this.type()) return this.toast.info('Choisis le type de document.');
-    if (!this.matiereId()) return this.toast.info('Choisis la matière.');
+    if (description.length < 10) return this.toast.info(tr('depotDescriptionTropCourte', 'Décris le document en 10 caractères au moins.'));
+    if (!this.type()) return this.toast.info(tr('depotChoisisType', 'Choisis le type de document.'));
+    if (!this.matiereId()) return this.toast.info(tr('depotChoisisMatiere', 'Choisis la matière.'));
     if (!this.licence()) return this.toast.info("Indique d'où vient ce document.");
     const fichier = this.fichier();
-    if (!fichier) return this.toast.info('Joins le fichier PDF.');
+    if (!fichier) return this.toast.info(tr('depotJoinsFichier', 'Joins le fichier PDF.'));
 
     this.envoiEnCours.set(true);
     try {
@@ -132,13 +151,17 @@ export class DepotForm {
         auteur: this.auteur().trim() || undefined,
         fichier,
       });
-      this.toast.succes('Document envoyé. Tu seras prévenu après la relecture.');
+      this.toast.succes(tr('depotEnvoye', 'Document envoyé. Tu seras prévenu après la relecture.'));
       void this.router.navigate(['/app', AppRoutes.mesDepots]);
     } catch (e) {
       this.toast.erreur(e instanceof Failure ? e.message : 'Envoi impossible. Réessaie.');
     } finally {
       this.envoiEnCours.set(false);
     }
+  }
+
+  protected scanner(): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.depotScanner);
   }
 
   protected annuler(): void {

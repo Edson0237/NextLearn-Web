@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
 import { Button } from '../../../shared/ui/button/button';
 import { Card } from '../../../shared/ui/card/card';
 import { Chip } from '../../../shared/ui/chip/chip';
@@ -73,7 +74,7 @@ export class DesignCatalog {
   protected readonly metaDemo: MetaDocument[] = [
     { icon: 'person', label: 'Dr. Mballa' },
     { icon: 'description', label: '24 pages' },
-    { icon: 'cloud', label: '2.4 Mo' },
+    { icon: 'cloud_outline', label: '2.4 Mo' },
   ];
 
   protected attributTheme(): string | null {
@@ -101,15 +102,15 @@ export class DesignCatalog {
     this.rafraichissement.set(true);
     setTimeout(() => {
       this.rafraichissement.set(false);
-      this.toast.succes('Liste mise à jour');
+      this.toast.succes(tr('pwaListeMiseAJour', 'Liste mise à jour'));
     }, 1200);
   }
 
   protected async ouvrirConfirmation(): Promise<void> {
     const confirme = await this.feuilleAction.confirmer({
-      title: 'Supprimer ce document ?',
-      description: 'Cette action est définitive et ne peut pas être annulée.',
-      confirmLabel: 'Supprimer',
+      title: tr('pwaSupprimerDocumentQuestion', 'Supprimer ce document ?'),
+      description: tr('pwaActionDefinitiveDetail', 'Cette action est définitive et ne peut pas être annulée.'),
+      confirmLabel: tr('actionSupprimer', 'Supprimer'),
       destructive: true,
       icon: 'error',
     });
@@ -118,10 +119,10 @@ export class DesignCatalog {
 
   protected async ouvrirListeActions(): Promise<void> {
     const valeur = await this.feuilleAction.choisir<string>({
-      title: 'Partager',
+      title: tr('docPartager', 'Partager'),
       options: [
-        { label: 'Copier le lien', value: 'copier', icon: 'description' },
-        { label: 'Signaler', value: 'signaler', icon: 'error', destructive: true },
+        { label: tr('pwaCopierLien', 'Copier le lien'), value: 'copier', icon: 'description' },
+        { label: tr('pwaSignaler', 'Signaler'), value: 'signaler', icon: 'error', destructive: true },
       ],
     });
     if (valeur) this.toast.info(`Choisi : ${valeur}`);
@@ -129,7 +130,7 @@ export class DesignCatalog {
 
   protected async ouvrirSelection(): Promise<void> {
     const valeur = await this.feuilleSelection.ouvrir<string>({
-      title: 'Choisir une filière',
+      title: tr('pwaChoisirFiliere', 'Choisir une filière'),
       currentValue: 'isi',
       choices: [
         { value: 'isi', label: 'Ingénierie des systèmes informatiques' },

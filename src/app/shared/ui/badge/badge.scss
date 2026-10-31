@@ -1,0 +1,85 @@
+@use '../../styles/type';
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  // 22px de haut, 8px de côtés : les proportions de l'étiquette de la
+  // référence. Plus haut, elle se confond avec un bouton ; plus bas, le texte
+  // touche les bords.
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--radius-pilule);
+  background: var(--badge-fond, var(--bg-secondary));
+  color: var(--badge-teinte, var(--text-secondary));
+  white-space: nowrap;
+  max-width: 100%;
+  @include type.nl-label-md;
+  color: var(--badge-teinte, var(--text-secondary));
+}
+
+.nl-badge__texte {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ── Teintes ────────────────────────────────────────────────────────────────
+// Chacune est une paire : la couleur du texte et le fond qui la porte. Elles
+// viennent des jetons, jamais d'un hexadécimal écrit ici — c'est ce qui leur
+// permet de suivre le thème sombre.
+
+:host(.nl-badge--neutre) {
+  --badge-teinte: var(--text-secondary);
+  --badge-fond: var(--bg-secondary);
+}
+:host(.nl-badge--primaire) {
+  --badge-teinte: var(--primary);
+  --badge-fond: var(--primary-soft);
+}
+:host(.nl-badge--cyan) {
+  --badge-teinte: var(--type-td);
+  --badge-fond: var(--type-td-soft);
+}
+:host(.nl-badge--ambre) {
+  --badge-teinte: var(--type-epreuve);
+  --badge-fond: var(--type-epreuve-soft);
+}
+:host(.nl-badge--emeraude) {
+  --badge-teinte: var(--type-corrige);
+  --badge-fond: var(--type-corrige-soft);
+}
+:host(.nl-badge--violet) {
+  --badge-teinte: var(--type-synthese);
+  --badge-fond: var(--type-synthese-soft);
+}
+:host(.nl-badge--rose) {
+  --badge-teinte: var(--type-rapport);
+  --badge-fond: var(--type-rapport-soft);
+}
+:host(.nl-badge--orange) {
+  --badge-teinte: var(--type-expose);
+  --badge-fond: var(--type-expose-soft);
+}
+:host(.nl-badge--danger) {
+  --badge-teinte: var(--danger);
+  --badge-fond: var(--danger-soft);
+}
+
+// ── Variantes ──────────────────────────────────────────────────────────────
+
+// Sélectionné : la teinte passe au fond, le texte se renverse. C'est l'état
+// d'un filtre actif, lisible d'un coup d'œil au milieu de ses voisins.
+:host(.nl-badge--pleine) {
+  background: var(--badge-teinte, var(--text-primary));
+  color: var(--bg-primary);
+}
+
+:host(.nl-badge--capitales) {
+  @include type.nl-label-sm;
+  color: var(--badge-teinte, var(--text-secondary));
+  height: 20px;
+}
+
+:host(.nl-badge--pleine.nl-badge--capitales) {
+  color: var(--bg-primary);
+}

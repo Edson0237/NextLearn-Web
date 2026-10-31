@@ -1,16 +1,22 @@
 <div class="pdf-reader">
   <header class="pdf-reader__barre">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+    <button class="nl-icon-btn" (click)="goBack()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" />
     </button>
-    <span class="pdf-reader__titre">Lecture</span>
-    <button class="nl-icon-btn" (click)="openInNewTab()" aria-label="Ouvrir dans un nouvel onglet">
+    <span class="pdf-reader__titre">
+      @if (totalPages() > 0) {
+        Page {{ page() }} / {{ totalPages() }}
+      } @else {
+        Lecture
+      }
+    </span>
+    <button class="nl-icon-btn" (click)="openInNewTab()" [attr.aria-label]="'pwaOuvrirNouvelOnglet' | t">
       <nl-icon name="open_in_new" />
     </button>
   </header>
 
   @if (loading()) {
-    <p class="pdf-reader__etat">Chargement du document…</p>
+    <p class="pdf-reader__etat">{{ 'pdfChargement' | t }}</p>
   } @else if (error()) {
     <div class="pdf-reader__etat pdf-reader__etat--erreur">
       <p>{{ error() }}</p>
@@ -21,18 +27,21 @@
         <iframe
           class="pdf-reader__frame"
           [src]="safeUrl()"
-          title="Lecteur PDF"
+          [attr.title]="'pwaLecteurPdf' | t"
           allowfullscreen></iframe>
       } @else {
         <pdf-viewer
           [src]="url()"
+          [page]="page()"
           [render-text]="true"
           [original-size]="false"
           [fit-to-page]="false"
           [autoresize]="true"
+          [show-all]="true"
           style="width: 100%; height: 100%;"
           (onError)="onError($event)"
-          (after-load-complete)="onLoaded()"
+          (after-load-complete)="onLoaded($event)"
+          (pageChange)="surChangementDePage($event)"
         />
       }
     </div>

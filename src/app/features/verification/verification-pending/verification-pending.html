@@ -1,35 +1,83 @@
 <div class="pending">
-  <header class="pending__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
-      <nl-icon name="arrow_back" />
-    </button>
-    <h1 class="pending__titre">Vérification</h1>
-  </header>
+  <nl-page-bar [titre]="'authVerification' | t" (retour)="sortir()" />
 
   <div class="pending__corps">
     @if (loading()) {
-      <p class="pending__etat">Chargement…</p>
+      <p class="pending__etat">{{ 'chargementEnCours' | t }}</p>
     } @else {
-      <div class="pending__card">
+      <section class="pending__hero" [attr.data-ton]="presentation().ton">
+        <span class="pending__pastille"><nl-icon [name]="presentation().icone" [size]="34" /></span>
+
         @switch (status().statut) {
-          @case ('verifie') {
-            <nl-icon name="check_circle" />
-            <h2>Compte vérifié</h2>
-            <p>Votre justificatif a été accepté.</p>
+          @case (Statut.approuve) {
+            <h2>{{ 'pwaCompteVerifie' | t }}</h2>
+            <p>{{ 'pwaJustificatifAccepte' | t }}</p>
+            <button type="button" class="pending__cta" (click)="continuer()">{{ 'docContinuer' | t }}</button>
           }
-          @case ('rejete') {
-            <nl-icon name="report_problem" />
-            <h2>Demande rejetée</h2>
-            <p>{{ status().message || 'Veuillez soumettre un nouveau justificatif.' }}</p>
-            <button nlButton variant="primary" size="md" (click)="newRequest()">Nouvelle demande</button>
+          @case (Statut.rejete) {
+            <h2>{{ 'pwaDossierRejete' | t }}</h2>
+            <p>{{ status().motifRejet || 'Ton justificatif n’a pas pu être validé.' }}</p>
+            @if (status().resoumissionsRestantes > 0) {
+              <p class="pending__note">{{ tentativesTexte() }}</p>
+              <button type="button" class="pending__cta" (click)="newRequest()">{{ 'pwaDeposerNouveauJustificatif' | t }}</button>
+            } @else {
+              <!-- Aucune décision ne doit être sans appel : quand les resoumissions
+                   sont épuisées, le recours reste la voie ouverte. -->
+              <p class="pending__note">{{ 'pwaPlusDeResoumission' | t }}</p>
+            }
+          }
+          @case (Statut.infosComplementairesRequises) {
+            <h2>{{ 'verifStatutComplement' | t }}</h2>
+            <p>{{ status().messageComplement || 'Un élément manque à ton dossier.' }}</p>
+            <button type="button" class="pending__cta" (click)="newRequest()">{{ 'pwaCompleterDossier' | t }}</button>
+          }
+          @case (Statut.enRevue) {
+            <h2>{{ 'pwaDossierEnExamen' | t }}</h2>
+            <p>{{ 'pwaExamenEnCours' | t }}</p>
+          }
+          @case (Statut.requis) {
+            <h2>{{ 'pwaJustificatifAttendu' | t }}</h2>
+            <p>{{ 'pwaDeposeCarteEtudiant' | t }}</p>
+            <button type="button" class="pending__cta" (click)="newRequest()">{{ 'pwaDeposerJustificatif' | t }}</button>
           }
           @default {
-            <nl-icon name="schedule" />
-            <h2>Dossier en attente</h2>
-            <p>Votre demande est en cours d'examen. Revenez plus tard.</p>
+            <h2>{{ 'pwaDossierEnAttente' | t }}</h2>
+            <p>{{ 'pwaDemandeEnFileAttente' | t }}</p>
           }
         }
-      </div>
+      </section>
+
+      @if (enCours()) {
+        <!-- Ce qui reste à passer : l'étudiant voit où il en est. -->
+        <ol class="pending__frise" [attr.aria-label]="'verifFriseTitre' | t">
+          <li [class.pending__etape--faite]="etape() >= 1" [class.pending__etape--courante]="etape() === 1">
+            <span class="pending__rond"><nl-icon name="check" [size]="14" /></span>
+            <span class="pending__etape-nom">{{ 'verifEtapeRecu' | t }}</span>
+          </li>
+          <li [class.pending__etape--faite]="etape() >= 2" [class.pending__etape--courante]="etape() === 2">
+            <span class="pending__rond"><nl-icon name="check" [size]="14" /></span>
+            <span class="pending__etape-nom">{{ 'verifEtapeExamen' | t }}</span>
+          </li>
+          <li [class.pending__etape--faite]="etape() >= 3">
+            <span class="pending__rond"><nl-icon name="check" [size]="14" /></span>
+            <span class="pending__etape-nom">{{ 'verifEtapeDecision' | t }}</span>
+          </li>
+        </ol>
+
+        <section class="pending__infos">
+          @if (depotLe(); as date) {
+            <div><span>{{ 'verifDepotLe' | t }}</span><strong>{{ date }}</strong></div>
+          }
+          @if (status().tentatives > 1) {
+            <div><span>{{ 'verifTentative' | t }}</span><strong>n° {{ status().tentatives }}</strong></div>
+          }
+          <p>{{ 'verifPrevenu' | t }}</p>
+        </section>
+      }
+
+      @if (status().requis && status().statut !== Statut.approuve) {
+        <button type="button" class="pending__lien" (click)="sortir()">{{ 'profilDeconnecter' | t }}</button>
+      }
     }
   </div>
 </div>

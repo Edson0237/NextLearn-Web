@@ -1,0 +1,393 @@
+[
+  {
+    "ecran": "splash",
+    "urlDemandee": "/app",
+    "urlFinale": "/app",
+    "redirectionAttendue": "\\/app\\/(login|onboarding)",
+    "longueurTexte": 0,
+    "extrait": "",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "onboarding",
+    "urlDemandee": "/app/onboarding",
+    "urlFinale": "/app/onboarding",
+    "redirectionAttendue": null,
+    "longueurTexte": 508,
+    "extrait": "🎓 NextLearn Passer 😤 WhatsApp USB Tes cours éparpillés partout WhatsApp, clés USB, groupes Telegram… retrouver un poly prend plus de temps que de l'étudier. Ce n'est plus acceptable. 📚 Hors ligne 2 sec Une bibliothèque pour tout trouver Cours, TD, synthèses",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "register",
+    "urlDemandee": "/app/register",
+    "urlFinale": "/app/register",
+    "redirectionAttendue": null,
+    "longueurTexte": 310,
+    "extrait": "Créer un compte 1/2 Qui es-tu ? Quelques informations pour commencer. Prénom Nom E-mail institutionnel Je n'ai pas d'adresse institutionnelle Un justificatif de scolarité sera demandé. J'ai lu et j'accepte la politique de confidentialité et les conditions d'ut",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "login-pin",
+    "urlDemandee": "/app/login",
+    "urlFinale": "/app/login",
+    "redirectionAttendue": null,
+    "longueurTexte": 128,
+    "extrait": "NL Bienvenue Entre ton e-mail et ton PIN pour continuer Email 1 2 3 4 5 6 7 8 9 0 PIN oublié ? Pas encore de compte ? S'inscrire",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "reset-pin",
+    "urlDemandee": "/app/login/reset-pin",
+    "urlFinale": "/app/login/reset-pin",
+    "redirectionAttendue": null,
+    "longueurTexte": 198,
+    "extrait": "PIN oublié Récupérer ton compte Indique l'adresse de ton compte : on t'envoie un code pour définir un nouveau PIN. Ta bibliothèque et ta progression sont conservées. Email du compte Recevoir un code",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "unlock",
+    "urlDemandee": "/app/unlock",
+    "urlFinale": "/app/unlock",
+    "redirectionAttendue": null,
+    "longueurTexte": 108,
+    "extrait": "AN Bon retour, Awa ! Entre ton PIN pour rouvrir ton espace 1 2 3 4 5 6 7 8 9 0 PIN oublié ? Ce n'est pas moi",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "home",
+    "urlDemandee": "/app/home",
+    "urlFinale": "/app/home",
+    "redirectionAttendue": null,
+    "longueurTexte": 1340,
+    "extrait": "A Bonjour Awa Niveau 3 · Génie logiciel 5 Série 0 Hors ligne 0 Lus Rechercher Favoris Hors ligne Déposer Recommandés pour vous Voir tout Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. Ngonga 42 p. 2.4 Mo TD TD 4 — Récursivité et complexit",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "urlDemandee": "/app/bibliotheque",
+    "urlFinale": "/app/bibliotheque",
+    "redirectionAttendue": null,
+    "longueurTexte": 2033,
+    "extrait": "Bibliothèque Tous Cours TD Synthèse Épreuve Toutes Algorithmique avancée Algorithmique avancée Algorithmique avancée Algorithmique avancée Algorithmique avancée Algorithmique avancée Algorithmique avancée Cours Chapitre 3 — Les intégrales multiples Algorithmiq",
+    "erreursConsole": [],
+    "avertissements": [
+      "The 'allowSignalWrites' flag is deprecated and no longer impacts effect() (writes are always allowed)"
+    ],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "catalogue-matieres",
+    "urlDemandee": "/app/bibliotheque/matieres",
+    "urlFinale": "/app/bibliotheque/matieres",
+    "redirectionAttendue": null,
+    "longueurTexte": 285,
+    "extrait": "Catalogue Par matière Ma filière Algorithmique avancée 3 documents Algorithmique avancée 3 documents Algorithmique avancée 3 documents Algorithmique avancée 3 documents Algorithmique avancée 3 documents Algorithmique avancée 3 documents Algorithmique avancée 3",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "matiere",
+    "urlDemandee": "/app/bibliotheque/matiere/m1",
+    "urlFinale": "/app/bibliotheque/matiere/m1",
+    "redirectionAttendue": null,
+    "longueurTexte": 300,
+    "extrait": "Algorithmique avancée 3 documents Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. Ngonga 42 p. 2.4 Mo Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. Ngonga 42 p. 2.4 Mo Cours Chapitre 3 — Les intégrales multiples Algo",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "document-detail",
+    "urlDemandee": "/app/bibliotheque/doc/d1",
+    "urlFinale": "/app/bibliotheque/doc/d1",
+    "redirectionAttendue": null,
+    "longueurTexte": 360,
+    "extrait": "COURS Chapitre 3 — Les intégrales multiples Algorithmique avancée · M. Ngonga · Institut Saint-Jean Description Document de test utilisé par la recette : description assez longue pour éprouver le repli du texte sur deux lignes et plus. Informations ANNÉE 2025-",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "pdf-reader",
+    "urlDemandee": "/app/bibliotheque/doc/d1/read",
+    "urlFinale": "/app/bibliotheque/doc/d1/read",
+    "redirectionAttendue": null,
+    "longueurTexte": 0,
+    "extrait": "",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "favoris",
+    "urlDemandee": "/app/favoris",
+    "urlFinale": "/app/favoris",
+    "redirectionAttendue": null,
+    "longueurTexte": 66,
+    "extrait": "Favoris Aucun favori Ajoutez des documents pour les retrouver ici.",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "offline-library",
+    "urlDemandee": "/app/offline",
+    "urlFinale": "/app/offline",
+    "redirectionAttendue": null,
+    "longueurTexte": 550,
+    "extrait": "Hors ligne Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. Ngonga 42 p. 2.4 Mo Épreuve Contrôle continu — Algorithmique 2025 Algorithmique avancée M. Ngonga 42 p. 2.4 Mo Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. ",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "recherche",
+    "urlDemandee": "/app/recherche",
+    "urlFinale": "/app/recherche",
+    "redirectionAttendue": null,
+    "longueurTexte": 52,
+    "extrait": "Commencez à taper pour chercher parmi les documents.",
+    "erreursConsole": [],
+    "avertissements": [
+      "The 'allowSignalWrites' flag is deprecated and no longer impacts effect() (writes are always allowed)"
+    ],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "epreuves-list",
+    "urlDemandee": "/app/epreuves",
+    "urlFinale": "/app/epreuves",
+    "redirectionAttendue": null,
+    "longueurTexte": 317,
+    "extrait": "Annales Tous Contrôle continu Session normale Toutes Algorithmique avancée Année 2025 Avec corrigé 2025 Algorithmique avancée CC M. Ngonga 120 min · N3 2025 Algorithmique avancée SN M. Ngonga 120 min · N3 · Corrigé 2025 Algorithmique avancée M. Ngonga 120 min ",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "epreuve-detail",
+    "urlDemandee": "/app/epreuves/ep1",
+    "urlFinale": "/app/epreuves/ep1",
+    "redirectionAttendue": null,
+    "longueurTexte": 289,
+    "extrait": "Épreuve 2025 Algorithmique avancée Institut Saint-Jean Voir l'épreuve Informations Université Institut Saint-Jean Institution source M. Ngonga Type de document Contrôle continu Niveau N3 Semestre S1 Année 2025 Durée 120 min Corrigé Non disponible 54 vues 12 té",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "quiz-session",
+    "urlDemandee": "/app/quiz/q1",
+    "urlFinale": "/app/quiz/q1",
+    "redirectionAttendue": null,
+    "longueurTexte": 123,
+    "extrait": "Quiz Question 1 / 2 Quelle est la complexité d’une recherche dichotomique ? O(n) O(log n) O(n log n) O(1) Précédent Suivant",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "progression",
+    "urlDemandee": "/app/progression",
+    "urlFinale": "/app/progression",
+    "redirectionAttendue": null,
+    "longueurTexte": 325,
+    "extrait": "Ma progression 5 jours de suite 23 Docs lus 14 Heures 12 Sessions Activité de la semaine FRI SAT SUN MON TUE WED THU Badges Aucun badge pour l'instant. Matières étudiées Algorithmique avancée 5 h 20 min Bases de données 3 h 0 min Dernières sessions Aucune sess",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "mes-depots",
+    "urlDemandee": "/app/depots",
+    "urlFinale": "/app/depots",
+    "redirectionAttendue": null,
+    "longueurTexte": 390,
+    "extrait": "Mes dépôts Proposer Mon dépôt en attente En attente de relecture En relecture. Ce document n'est pas encore visible par les autres étudiants. Tu seras prévenu dès qu'il aura été relu. Mon dépôt refusé En attente de relecture Refusé. Ce document n'est pas encor",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "depot-form",
+    "urlDemandee": "/app/depots/nouveau",
+    "urlFinale": "/app/depots/nouveau",
+    "redirectionAttendue": null,
+    "longueurTexte": 1468,
+    "extrait": "Proposer un document Relu avant publication Ton document n'apparaît pas tout de suite dans la bibliothèque : un administrateur le lit d'abord. Tu seras prévenu de sa décision, et tu retrouveras l'état de tes envois dans « Mes dépôts ». Le document Titre Descri",
+    "erreursConsole": [],
+    "avertissements": [
+      "NG0955: The provided track expression resulted in duplicated keys for a given collection. Adjust the tracking expression such that it uniquely identifies all the items in the collection. Duplicated keys were: \nkey \"\" at index \"0\" and \"1\". Find more at https://v21.angular.dev/errors/NG0955"
+    ],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "notifications",
+    "urlDemandee": "/app/notifications",
+    "urlFinale": "/app/notifications",
+    "redirectionAttendue": null,
+    "longueurTexte": 168,
+    "extrait": "Notifications Tout lire Nouveau document en Algorithmique Chapitre 3 vient d’être publié. Cette semaine Ton dépôt a été publié Merci pour ta contribution. Cette semaine",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "profil-home",
+    "urlDemandee": "/app/profil",
+    "urlFinale": "/app/profil",
+    "redirectionAttendue": null,
+    "longueurTexte": 0,
+    "extrait": "",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "parametres",
+    "urlDemandee": "/app/profil/parametres",
+    "urlFinale": "/app/profil/parametres",
+    "redirectionAttendue": null,
+    "longueurTexte": 988,
+    "extrait": "Réglages COMPTE E-mail Rattachée à ton école etudiant.test@isj.cm Niveau Ta promotion actuelle Niveau 3 Code PIN Changer le code de déverrouillage Appareils connectés Gérer tes sessions actives Supprimer mon compte Action irréversible APPARENCE Thème Clair, so",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "sessions",
+    "urlDemandee": "/app/profil/appareils",
+    "urlFinale": "/app/profil/appareils",
+    "redirectionAttendue": null,
+    "longueurTexte": 265,
+    "extrait": "Appareils connectés Tu vois ici les sessions actives de ton compte. La session en cours est signalée. Déconnecter tous les autres appareils Navigateur Chrome CET APPAREIL web 1.0.0 · Actif le 21/10/2026 10:00 Tecno Spark 10 android 1.0.0 · Actif le 19/10/2026 ",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "support-tickets",
+    "urlDemandee": "/app/support/tickets",
+    "urlFinale": "/app/support/tickets",
+    "redirectionAttendue": null,
+    "longueurTexte": 165,
+    "extrait": "Mes signalements Retrouve ici les demandes que tu as envoyées à l'équipe NextLearn et leurs réponses. Impossible d’ouvrir un PDF Ouvert Rien ne s’affiche. 10/10/2026",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "delete-account",
+    "urlDemandee": "/app/profil/supprimer-compte",
+    "urlFinale": "/app/profil/supprimer-compte",
+    "redirectionAttendue": null,
+    "longueurTexte": 470,
+    "extrait": "Supprimer mon compte Cette action est définitive Nous supprimerons ton compte et les données associées. Les suppressions démarrent immédiatement et ne peuvent pas être annulées. Voici ce qui sera supprimé : Tes documents favoris et signets seront supprimés. To",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "recours",
+    "urlDemandee": "/app/recours",
+    "urlFinale": "/app/recours",
+    "redirectionAttendue": null,
+    "longueurTexte": 107,
+    "extrait": "Recours Vous pouvez contester une décision prise dans les 30 derniers jours. Dossier de vérification rejeté",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "a-propos",
+    "urlDemandee": "/app/legal/a-propos",
+    "urlFinale": "/app/legal/a-propos",
+    "redirectionAttendue": null,
+    "longueurTexte": 713,
+    "extrait": "À propos NextLearn La bibliothèque numérique qui accompagne les étudiants de l'enseignement supérieur. NextLearn centralise cours, épreuves, TD et travaux pratiques pour faciliter la révision, le partage et la progression académique. Nos valeurs Accessibilité ",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "legal-confidentialite",
+    "urlDemandee": "/app/legal/document/confidentialite",
+    "urlFinale": "/app/legal/document/confidentialite",
+    "redirectionAttendue": null,
+    "longueurTexte": 28,
+    "extrait": "Politique de confidentialité",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "legal-conditions",
+    "urlDemandee": "/app/legal/document/conditions",
+    "urlFinale": "/app/legal/document/conditions",
+    "redirectionAttendue": null,
+    "longueurTexte": 24,
+    "extrait": "Conditions d'utilisation",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "verification-form",
+    "urlDemandee": "/app/verification",
+    "urlFinale": "/app/home",
+    "redirectionAttendue": null,
+    "longueurTexte": 1340,
+    "extrait": "A Bonjour Awa Niveau 3 · Génie logiciel 5 Série 0 Hors ligne 0 Lus Rechercher Favoris Hors ligne Déposer Recommandés pour vous Voir tout Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. Ngonga 42 p. 2.4 Mo TD TD 4 — Récursivité et complexit",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "verification-pending",
+    "urlDemandee": "/app/verification/attente",
+    "urlFinale": "/app/home",
+    "redirectionAttendue": null,
+    "longueurTexte": 1340,
+    "extrait": "A Bonjour Awa Niveau 3 · Génie logiciel 5 Série 0 Hors ligne 0 Lus Rechercher Favoris Hors ligne Déposer Recommandés pour vous Voir tout Cours Chapitre 3 — Les intégrales multiples Algorithmique avancée M. Ngonga 42 p. 2.4 Mo TD TD 4 — Récursivité et complexit",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "legal-confidentialite-sans-compte",
+    "urlDemandee": "/app/legal/document/confidentialite",
+    "urlFinale": "/app/legal/document/confidentialite",
+    "redirectionAttendue": null,
+    "longueurTexte": 28,
+    "extrait": "Politique de confidentialité",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  },
+  {
+    "ecran": "legal-conditions-sans-compte",
+    "urlDemandee": "/app/legal/document/conditions",
+    "urlFinale": "/app/legal/document/conditions",
+    "redirectionAttendue": null,
+    "longueurTexte": 24,
+    "extrait": "Conditions d'utilisation",
+    "erreursConsole": [],
+    "avertissements": [],
+    "requetesEchouees": []
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "metriques": {
+    "domContentLoaded": 2790,
+    "load": 2802
+  },
+  "poidsParType": {
+    "/app/login": 0,
+    "css": 18861,
+    "js": 0,
+    "woff2": 7884
+  }
+}

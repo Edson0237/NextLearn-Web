@@ -1,190 +1,282 @@
-// Jetons de design — traduction directe de `lib/app/theme/` (Flutter,
-// source de vérité) en variables CSS. Hex, tailles et graisses copiés sans
-// arrondi : un utilisateur qui passe de l'app mobile à la PWA ne doit rien
-// remarquer.
+// Jetons de design — système « Academic Clarity ».
 //
-// Portée : jamais sur `:root`. La vitrine (`features/vitrine/`) a sa
-// propre palette dans `src/styles.scss` et ne doit rien en hériter — les
-// deux coexistent dans le même projet (un seul domaine), pas dans le même
-// espace visuel. Deux façons de les poser : la classe `.nl-app`, pour une
-// route entièrement sous la coque applicative (design-catalog, app-shell) ;
-// le mixin `nl-app-tokens` directement sur son propre `:host`, pour un
-// composant qui peut se retrouver à côté de la vitrine dans le même arbre
-// — `App` sert les deux, donc ce qu'il affiche à sa racine (`FatalError`,
-// `ToastHost`) ne peut pas compter sur un ancêtre `.nl-app`.
+// ## D'où ils viennent
 //
-// Thème : trois états, comme `ThemeModeNotifier` côté Flutter — clair,
-// sombre, système. Par défaut (`.nl-app` seul) : clair. Le système décide
-// via `prefers-color-scheme` s'il n'y a pas de choix explicite.
-// `[data-theme="dark"]`/`[data-theme="light"]` sur `.nl-app` représente ce
-// choix explicite et l'emporte toujours — même contrat que
-// `AppColors.applyBrightness`, où le réglage de l'utilisateur prime sur
-// celui du téléphone.
+// De `qa/Inspiration/.../academic_clarity/DESIGN.md`, la direction retenue
+// pour la PWA : un fond ardoise immaculé, des cartes blanches posées dessus,
+// une typographie à hiérarchie serrée, et un cobalt employé avec parcimonie —
+// actions, onglet courant, anneaux de progression. Les jetons précédents
+// traduisaient `lib/app/theme/` (Flutter) hexadécimal par hexadécimal ; ils
+// restent la référence du **contrat de comportement** (échelle de 4,
+// cible tactile, mouvement réduit), mais plus de la palette.
+//
+// ## La conséquence, dite ici plutôt que découverte plus tard
+//
+// La PWA n'a plus les couleurs de l'application mobile. Le bleu
+// institutionnel (#1A4A7E) reste la couleur de **marque** — écran de
+// démarrage, icône, dégradé d'en-tête — mais l'interface agit en cobalt.
+// Repeindre Flutter de la même façon est un chantier à part.
+//
+// ## Portée
+//
+// Jamais sur `:root`. La vitrine (`features/vitrine/`) a sa propre palette
+// dans `src/styles.scss` et ne doit rien en hériter. Deux façons de les
+// poser : la classe `.nl-app`, ou le mixin `nl-app-tokens` sur un `:host`
+// quand le composant peut se retrouver à côté de la vitrine (`FatalError`,
+// `ToastHost`).
 
 @mixin palette-claire {
-  // ── Primaires (NextLearn Blue) ─────────────────────────────────────────
-  --primary: #1a4a7e;
-  --primary-dark: #0f2e4d;
-  --primary-deep: #0f2e4d;
-  --primary-light: #3d6fa3;
-
-  // ── Secondaires (Spark Coral) ──────────────────────────────────────────
-  --secondary: #ff7a59;
-  --secondary-light: #ffb39e;
-
-  // ── Tertiaires (vert sémantique) ───────────────────────────────────────
-  --tertiary: #2e9e5b;
-  --tertiary-light: #7fc89d;
-
-  // ── Accent frais (Sky) ─────────────────────────────────────────────────
-  --accent: #86aec9;
-
-  // ── Sémantiques ────────────────────────────────────────────────────────
-  --danger: #d14343;
-  --warning: #ed8b22;
-  --neutral: #8aa1b6;
-  --streak-orange: #ff7a59;
-  --streak-orange-deep: #e85a38;
-
-  // ── Fonds ──────────────────────────────────────────────────────────────
+  // ── Surfaces ────────────────────────────────────────────────────────────
+  // Le fond n'est pas blanc : c'est l'écart entre le nuage et le blanc pur
+  // des cartes qui donne le relief, sans une seule ombre portée franche.
+  --bg-canvas: #f8fafc;
   --bg-primary: #ffffff;
-  --bg-canvas: #eef4f9;
-  --bg-secondary: #f5f9fc;
-  --bg-tertiary: #e1ebf5;
+  --bg-secondary: #f1f5f9;
+  --bg-tertiary: #e2e8f0;
 
-  // ── Texte ──────────────────────────────────────────────────────────────
-  --text-primary: #10202e;
-  --text-secondary: #4d6072;
-  --text-muted: #8aa1b6;
+  // ── Texte ───────────────────────────────────────────────────────────────
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
   --text-on-primary: #ffffff;
 
-  // ── Bordures ───────────────────────────────────────────────────────────
-  --border: #d6e1ea;
-  --border-light: #f5f9fc;
+  // ── Le bleu NextLearn : actions, onglet courant, progression ────────────
+  //
+  // `#1a4a7e` n'est pas un bleu choisi dans une charte : c'est celui du logo,
+  // échantillonné sur `images/Logo.png`, et celui que porte déjà le splash.
+  // Le cobalt de l'inspiration lui a cédé la place — une application ne
+  // devrait pas changer de bleu entre son écran d'ouverture et le reste.
+  --primary: #1a4a7e;
+  --primary-dark: #143c66;
+  --primary-deep: #0f2b49;
+  --primary-light: #3d7ab8;
+  /** Fond teinté d'une action ou d'un badge de type « cours ». */
+  --primary-soft: #eef4fb;
 
-  // ── Ombre (teintée navy en clair, cf. AppColors.shadowCard) ───────────
-  --shadow-color: 15, 46, 77; // #0F2E4D, en triplet rgb pour alpha variable
-  --shadow-card-alpha: 0.06;
+  // ── Accents ─────────────────────────────────────────────────────────────
+  // Cyan pour ce qui est vérifié ou disponible, ambre pour ce qui presse,
+  // émeraude pour ce qui est résolu.
+  --secondary: #0891b2;
+  --secondary-light: #67e8f9;
+  --secondary-soft: #ecfeff;
+  --tertiary: #059669;
+  --tertiary-light: #6ee7b7;
+  --tertiary-deep: #047857;
+  --tertiary-soft: #ecfdf5;
+  --accent: #06b6d4;
+
+  // ── Sémantiques ─────────────────────────────────────────────────────────
+  --danger: #dc2626;
+  --danger-soft: #fef2f2;
+  --warning: #d97706;
+  --warning-deep: #b45309;
+  --warning-soft: #fffbeb;
+  // Le jaune d'accueil : un or franc et chaud, loin de l'ambre brunâtre des
+  // alertes. Le texte posé dessus est foncé — du blanc sur un jaune clair ne se
+  // lit pas.
+  --soleil: #f6b93b;
+  --soleil-deep: #eba20c;
+  --soleil-encre: #3a2800;
+  // Le texte posé sur une teinte d'accent ; une diapositive peut le surcharger.
+  --encre: var(--text-on-primary);
+  --neutral: #64748b;
+  --streak-orange: #f97316;
+  --streak-orange-deep: #ea580c;
+
+  // ── Bordures ────────────────────────────────────────────────────────────
+  // Une bordure continue plutôt qu'une ombre marquée : sur un écran peu
+  // lumineux, c'est elle qui tient la carte, pas le dégradé.
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --border-strong: #cbd5e1;
+
+  // ── Ombres ──────────────────────────────────────────────────────────────
+  --shadow-color: 15, 23, 42; // #0F172A, en triplet rgb pour alpha variable
+  --shadow-card-alpha: 0.04;
   --shadow-soft-alpha: 0.08;
 
-  // ── Types de document ──────────────────────────────────────────────────
-  --type-cours: #3b74d6;
-  --type-td: #16a34a;
-  --type-epreuve: #dc2626;
-  --type-synthese: #7c3aed;
-  --type-annales: #d97706;
-  --type-corrige: #0d9488;
-  --type-rapport: #db2777;
-  --type-expose: #ea580c;
-  --type-tp: #475569;
+  // ── Couleurs par type de document ───────────────────────────────────────
+  // Chaque type a sa teinte **et** son fond teinté : c'est la paire qui fait
+  // le badge, et elle doit rester lisible sur une carte blanche.
+  // Une seule teinte pour tous les formats : le bleu de l'application. Huit
+  // couleurs d'icône côte à côte (bleu, cyan, ambre, vert, violet, rose,
+  // orange) faisaient un écran bariolé, sans hiérarchie — le format se lit sur
+  // son libellé et son icône, pas sur sa couleur. Les variables restent une par
+  // format pour que l'on puisse en redistinguer un sans toucher aux écrans.
+  --type-cours: var(--primary);
+  --type-cours-soft: var(--primary-soft);
+  --type-td: var(--primary);
+  --type-td-soft: var(--primary-soft);
+  --type-tp: var(--primary);
+  --type-tp-soft: var(--primary-soft);
+  --type-epreuve: var(--primary);
+  --type-epreuve-soft: var(--primary-soft);
+  --type-annales: var(--primary);
+  --type-annales-soft: var(--primary-soft);
+  --type-corrige: var(--primary);
+  --type-corrige-soft: var(--primary-soft);
+  --type-synthese: var(--primary);
+  --type-synthese-soft: var(--primary-soft);
+  --type-rapport: var(--primary);
+  --type-rapport-soft: var(--primary-soft);
+  --type-expose: var(--primary);
+  --type-expose-soft: var(--primary-soft);
+
+  // ── Marque ──────────────────────────────────────────────────────────────
+  // Le bleu NextLearn ne disparaît pas : il reste l'identité, sur l'écran de
+  // démarrage et les bandeaux de marque.
+  --brand: #1a4a7e;
+  --brand-deep: #0f2e4d;
 }
 
 @mixin palette-sombre {
-  // Les bleus sont éclaircis : #1A4A7E sur fond sombre tombe sous le seuil
-  // de contraste lisible. Même raison pour le corail, adouci.
-  --primary: #74aae0;
-  --primary-dark: #12314f;
-  --primary-deep: #0f2e4d;
-  --primary-light: #9ac4ec;
+  // Le sombre n'est pas l'inverse du clair : les surfaces montent par
+  // paliers d'ardoise, et le cobalt s'éclaircit pour rester lisible dessus.
+  --bg-canvas: #0b1120;
+  --bg-primary: #111827;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
 
-  --secondary: #ff9478;
-  --secondary-light: #ffbba6;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-on-primary: #0b1120;
 
-  --tertiary: #5cbe86;
-  --tertiary-light: #8fd6ae;
+  // Le bleu du logo est trop sombre pour porter du texte sur de l'ardoise :
+  // c'est le même bleu éclairci, pas un autre bleu.
+  --primary: #6ca8dd;
+  --primary-dark: #4e8dc7;
+  --primary-deep: #0f2b49;
+  --primary-light: #9cc5e8;
+  --primary-soft: #15263a;
 
-  --accent: #86aec9;
+  --secondary: #22d3ee;
+  --secondary-light: #67e8f9;
+  --secondary-soft: #0e2b33;
+  --tertiary: #34d399;
+  --tertiary-light: #6ee7b7;
+  --tertiary-deep: #059669;
+  --tertiary-soft: #0d2b22;
+  --accent: #22d3ee;
 
-  --danger: #f2796a;
-  --warning: #e3a648;
-  --neutral: #728799;
-  --streak-orange: #ff9478;
-  --streak-orange-deep: #e85a38;
+  --danger: #f87171;
+  --danger-soft: #2a1515;
+  --warning: #fbbf24;
+  --warning-deep: #d97706;
+  --warning-soft: #2b1f0b;
+  --soleil: #f6b93b;
+  --soleil-deep: #eba20c;
+  --soleil-encre: #3a2800;
+  --neutral: #94a3b8;
+  --streak-orange: #fb923c;
+  --streak-orange-deep: #ea580c;
 
-  --bg-primary: #11212f;
-  --bg-canvas: #0a1620;
-  --bg-secondary: #17293a;
-  --bg-tertiary: #1f3648;
+  --border: #1f2a3c;
+  --border-light: #172033;
+  --border-strong: #334155;
 
-  --text-primary: #e7eff6;
-  --text-secondary: #a6b8c7;
-  --text-muted: #728799;
-  --text-on-primary: #08131c;
-
-  --border: #22394e;
-  --border-light: #1a2c3d;
-
-  // Pas de relief lisible au noir sur fond sombre : l'ombre portée cède la
-  // place au contraste carte/fond, mais elle est renforcée en noir pur pour
-  // les cas où elle reste visible (overlays, feuilles).
   --shadow-color: 0, 0, 0;
-  --shadow-card-alpha: 0.32;
-  --shadow-soft-alpha: 0.42;
+  --shadow-card-alpha: 0.4;
+  --shadow-soft-alpha: 0.5;
 
-  // Les hex de la charte serveur sont calibrés pour du texte sur fond
-  // clair ; chaque teinte a son équivalent éclairci pour le fond sombre.
-  --type-cours: #7fa9ee;
-  --type-td: #5fd08a;
-  --type-epreuve: #f3796b;
-  --type-synthese: #b093f5;
-  --type-annales: #efb44b;
-  --type-corrige: #4fc9bc;
-  --type-rapport: #f07cb0;
-  --type-expose: #f59155;
-  --type-tp: #93a6bc;
+  --type-cours: var(--primary);
+  --type-cours-soft: var(--primary-soft);
+  --type-td: var(--primary);
+  --type-td-soft: var(--primary-soft);
+  --type-tp: var(--primary);
+  --type-tp-soft: var(--primary-soft);
+  --type-epreuve: var(--primary);
+  --type-epreuve-soft: var(--primary-soft);
+  --type-annales: var(--primary);
+  --type-annales-soft: var(--primary-soft);
+  --type-corrige: var(--primary);
+  --type-corrige-soft: var(--primary-soft);
+  --type-synthese: var(--primary);
+  --type-synthese-soft: var(--primary-soft);
+  --type-rapport: var(--primary);
+  --type-rapport-soft: var(--primary-soft);
+  --type-expose: var(--primary);
+  --type-expose-soft: var(--primary-soft);
+
+  --brand: #1a4a7e;
+  --brand-deep: #0f2e4d;
 }
 
-// Le corps de `.nl-app`, extrait en mixin : un composant rendu hors de
-// toute coque applicative — `FatalError`/`ToastHost` posés à la racine de
-// `App`, qui sert aussi la vitrine — ne peut pas compter sur un ancêtre
-// `.nl-app`. Il s'inclut directement sur son propre `:host` à la place.
-// `.nl-app` elle-même n'est plus qu'un alias pratique pour les routes
-// entièrement sous la coque applicative (design-catalog, futur app-shell).
 @mixin nl-app-tokens {
   @include palette-claire;
 
-  // Espacement — grille base 4, un `16` et un `18` posés côte à côte dans
-  // deux écrans voisins ne se voient pas à l'écriture, mais se voient à
-  // l'usage. Ne pas introduire de valeur hors de cette échelle.
+  // ── Espacement ──────────────────────────────────────────────────────────
+  // Échelle de 4, inchangée : c'est elle qui fait qu'une page assemblée à
+  // partir de ces jetons s'aligne d'elle-même avec les autres.
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 12px;
   --space-lg: 16px;
-  --space-xl: 20px;
-  --space-xxl: 24px;
-  --space-xxxl: 32px;
-  --space-page: 20px; // marge horizontale d'une page
-  --space-entre-elements: 12px; // deux éléments de même rang (cartes d'une liste)
-  --space-entre-sections: 20px; // deux sections d'une même page
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-xxxl: 40px;
+  --space-page: 16px; // marge extérieure de la toile
+  --space-entre-elements: 12px; // gouttière entre deux éléments de même rang
+  --space-entre-sections: 24px; // respiration entre deux sections
 
-  // Rayons — plus la surface est grande, plus l'arrondi est franc.
-  --radius-xs: 8px; // puces, champs, petites tuiles
-  --radius-sm: 12px; // boutons
-  --radius-md: 14px; // cartes
-  --radius-lg: 16px; // modales, feuilles
-  --radius-feuille: 20px; // haut d'une feuille glissante
-  --radius-pilule: 999px; // pastilles, badges
+  // ── Rayons ──────────────────────────────────────────────────────────────
+  // Plus serrés qu'avant : la rondeur excessive est ce qui donnait son air
+  // générique à l'interface. Les badges, eux, restent des stades complets —
+  // c'est ce contraste qui les détache de la carte qui les porte.
+  --radius-xs: 6px;
+  --radius-sm: 8px; // boutons, champs
+  --radius-md: 12px; // cartes
+  --radius-lg: 16px; // bandeaux, feuilles
+  --radius-xl: 20px;
+  --radius-feuille: 20px;
+  --radius-pilule: 9999px;
 
-  // Cible tactile minimale (Material + WCAG).
+  // Cible tactile minimale (Material + WCAG), contrat repris de Flutter.
   --touch-min: 48px;
 
-  // Typographie — Poppins (titres/boutons), Inter (corps), JetBrains Mono
-  // (identifiants). Les fontes sont auto-hébergées, voir fonts.scss.
-  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-family-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  // Hauteur de la barre de navigation flottante, réservée en bas de page.
+  // La place à réserver sous le contenu : la pilule (64 px) plus l'écart
+  // qui la décolle du bas de l'écran. Elle flotte désormais au lieu d'être
+  // collée, et occupe donc un peu plus de hauteur qu'avant.
+  --hauteur-barre-onglets: 88px;
 
-  // Mouvement — trois durées suffisent à tout couvrir ; les nommer empêche
-  // la dérive. `prefers-reduced-motion` est honoré au point d'usage (classe
-  // utilitaire `.nl-motion-reduced`, voir motion.scss), jamais ignoré.
-  --motion-micro: 150ms; // retour immédiat (bouton, interrupteur)
-  --motion-standard: 280ms; // cas courant (apparition, changement d'onglet)
-  --motion-lente: 400ms; // transition qui porte du sens (feuille, écran)
-  --motion-fondu: 200ms; // squelette vers contenu
-  --ease-entree: cubic-bezier(0.215, 0.61, 0.355, 1); // Curves.easeOutCubic
-  --ease-sortie: cubic-bezier(0.55, 0.055, 0.675, 0.19); // Curves.easeInCubic
-  --ease-bidirectionnelle: cubic-bezier(0.645, 0.045, 0.355, 1); // Curves.easeInOutCubic
-  --ease-rebond: cubic-bezier(0.34, 1.56, 0.64, 1); // Curves.easeOutBack
+  // ── La barre d'onglets ──────────────────────────────────────────────────
+  //
+  // Déclarées hors des deux palettes, et c'est voulu : la barre est un objet
+  // **posé sur** la page, pas une de ses surfaces — comme la barre d'un
+  // lecteur vidéo. Elle garde donc la même teinte dans les deux thèmes, sinon
+  // elle changerait d'identité en même temps que le fond.
+  //
+  // Les valeurs viennent de la charte : le bleu profond de la marque pour la
+  // pilule, le bleu clair de la même famille pour l'onglet courant. Elles
+  // étaient écrites en dur, reprises telles quelles d'une maquette — un
+  // violet et un bleu vif qui n'appartenaient à aucune palette du produit.
+  --nav-surface: #0f2e4d;
+  --nav-actif: #3d7ab8;
+  --nav-encre: rgba(255, 255, 255, 0.72);
+  --nav-encre-actif: #ffffff;
+  --nav-pastille: #e2574c;
+
+  // ── Typographie ─────────────────────────────────────────────────────────
+  // Une seule famille pour tout — titres, corps, métadonnées. Sa
+  // construction géométrique et sa grande hauteur d'x tiennent sur un écran
+  // de téléphone sans perdre en autorité. Les trois familles précédentes
+  // (Poppins, Inter, JetBrains Mono) se répartissaient les rôles sans que
+  // l'ensemble y gagne en lisibilité.
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-heading: var(--font-family);
+  --font-family-body: var(--font-family);
+  --font-family-mono: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  // ── Mouvement ───────────────────────────────────────────────────────────
+  --motion-micro: 140ms;
+  --motion-standard: 240ms;
+  --motion-lente: 380ms;
+  --motion-fondu: 200ms;
+  --ease-entree: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-sortie: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-bidirectionnelle: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-rebond: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   // Le choix explicite de l'utilisateur (`[data-theme]`) l'emporte toujours ;
   // à défaut, le système décide.
@@ -199,15 +291,54 @@
   }
 }
 
-.nl-app {
-  @include nl-app-tokens;
-}
+// La déclaration elle-même vit dans `src/app-native.scss`, feuille globale :
+// posée ici, elle était recopiée dans la feuille de chacun des sept
+// composants qui ont besoin des mixins d'à côté.
 
-// ── Utilitaires d'ombre (équivalent de AppColors.shadowCard/shadowSoft) ──
+// ── Utilitaires d'élévation ────────────────────────────────────────────────
+//
+// Deux niveaux, pas plus. Le premier porte les cartes, le second ce qui
+// flotte au-dessus d'elles — feuilles, menus, barre d'onglets.
+
 @mixin ombre-carte {
-  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
+  box-shadow:
+    0 1px 2px rgba(var(--shadow-color), calc(var(--shadow-card-alpha) / 2)),
+    0 2px 8px rgba(var(--shadow-color), var(--shadow-card-alpha));
 }
 
 @mixin ombre-douce {
-  box-shadow: 0 10px 24px rgba(var(--shadow-color), var(--shadow-soft-alpha));
+  box-shadow:
+    0 2px 6px rgba(var(--shadow-color), calc(var(--shadow-soft-alpha) / 2)),
+    0 8px 24px rgba(var(--shadow-color), var(--shadow-soft-alpha));
+}
+
+// La carte de base : fond, bordure, rayon, ombre. Une seule inclusion plutôt
+// que quatre déclarations recopiées dans chaque écran — c'est la recopie qui
+// faisait diverger les cartes d'un écran à l'autre.
+@mixin carte {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  @include ombre-carte;
+}
+
+/**
+ * Étend la zone tapable d'un élément visuellement plus petit que le seuil.
+ *
+ * Certaines commandes doivent rester fines — une puce de filtre, un chip de
+ * contexte, un onglet de segment. Les grossir à 48 px casserait la mise en
+ * page ; les laisser à 30 px casserait l'accessibilité. Un pseudo-élément
+ * déborde donc au-dessus et au-dessous, invisible, et rattrape la différence.
+ *
+ * L'élément doit porter `position: relative` et la classe `nl-cible-fine`,
+ * qui le dispense de la règle globale de hauteur minimale.
+ */
+@mixin cible-etendue($hauteur) {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: calc((var(--touch-min) - #{$hauteur}) / -2) 0;
+  }
 }

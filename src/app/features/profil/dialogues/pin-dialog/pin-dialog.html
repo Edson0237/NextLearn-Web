@@ -1,0 +1,57 @@
+<div class="nl-sl__overlay" (click)="ferme.emit()">
+  <div class="nl-sl__modal" role="dialog" aria-modal="true" aria-labelledby="pin-titre" (click)="$event.stopPropagation()">
+    <h3 id="pin-titre" class="nl-sl__modal-titre">{{ (aUnPin() ? 'pwaChangerCodePin' : 'pinCreerTitre') | t }}</h3>
+    <p class="nl-sl__modal-aide">{{ (aUnPin() ? 'pwaSaisisCodeActuelPuisNouveau' : 'pinCreerAide') | t }}</p>
+
+    @if (aUnPin()) {
+      <label class="nl-sl__pin-field">
+        <span>{{ 'pwaCodeActuel' | t }}</span>
+        <input
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          [value]="ancien()"
+          (input)="saisir('ancien', $event)"
+          [disabled]="envoi()"
+        />
+      </label>
+    }
+    <label class="nl-sl__pin-field">
+      <span>{{ 'pwaNouveauCode' | t }}</span>
+      <input
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        [value]="nouveau()"
+        (input)="saisir('nouveau', $event)"
+        [disabled]="envoi()"
+      />
+    </label>
+    <label class="nl-sl__pin-field">
+      <span>{{ 'actionConfirmer' | t }}</span>
+      <input
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        [value]="confirmation()"
+        (input)="saisir('confirmation', $event)"
+        [disabled]="envoi()"
+      />
+    </label>
+
+    @if (erreur()) {
+      <p class="nl-sl__pin-erreur">{{ erreur() }}</p>
+    }
+
+    <div class="nl-sl__modal-actions">
+      <button type="button" class="nl-sl__btn nl-sl__btn--text" [disabled]="envoi()" (click)="ferme.emit()">{{ 'actionAnnuler' | t }}</button>
+      <button type="button" class="nl-sl__btn nl-sl__btn--primary" [disabled]="envoi()" (click)="valider()">
+        @if (envoi()) {
+          <span class="nl-sl__spinner"></span>
+        } @else {
+          Enregistrer
+        }
+      </button>
+    </div>
+  </div>
+</div>

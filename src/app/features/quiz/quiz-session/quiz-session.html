@@ -1,6 +1,6 @@
 <div class="quiz">
   <header class="quiz__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+    <button class="nl-icon-btn" (click)="goBack()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" />
     </button>
     <h1 class="quiz__titre">{{ result() ? 'Résultat' : 'Quiz' }}</h1>
@@ -8,21 +8,50 @@
 
   <div class="quiz__corps">
     @if (loading()) {
-      <p class="quiz__etat">Chargement…</p>
+      <p class="quiz__etat">{{ 'chargementEnCours' | t }}</p>
     } @else if (error()) {
       <div class="quiz__etat quiz__etat--erreur">
         <p>{{ error() }}</p>
-        <button nlButton variant="primary" size="sm" (click)="goBack()">Retour</button>
+        <button nlButton variant="primary" size="sm" (click)="goBack()">{{ 'actionRetour' | t }}</button>
       </div>
     } @else if (quiz(); as q) {
       @if (result(); as r) {
         <div class="quiz__result">
           <div class="quiz__score">
             <span class="quiz__score-value">{{ r.score }}</span>
-            <span class="quiz__score-total">/ {{ r.total }}</span>
+            <span class="quiz__score-total">/ {{ r.totalQuestions }}</span>
           </div>
-          <p class="quiz__score-label">{{ r.bonnesReponses }} bonne{{ r.bonnesReponses > 1 ? 's' : '' }} réponse{{ r.bonnesReponses > 1 ? 's' : '' }}</p>
-          <button nlButton variant="primary" size="md" (click)="restart()">Recommencer</button>
+          <p class="quiz__score-label">
+            {{ r.score }} bonne{{ r.score > 1 ? 's' : '' }} réponse{{ r.score > 1 ? 's' : '' }}
+          </p>
+
+          <!-- La correction, question par question. Le serveur ne renvoie la
+               bonne réponse qu'ici, après soumission : l'afficher est tout
+               l'intérêt d'avoir passé le quiz. -->
+          <section class="quiz__correction">
+            <h2 class="quiz__correction-titre">{{ 'pwaCorrection' | t }}</h2>
+            @for (question of q.questions; track question.id; let i = $index) {
+              @if (detailDe(question.id); as d) {
+                <article class="quiz__corrige" [class.quiz__corrige--faux]="!d.estCorrect">
+                  <header class="quiz__corrige-entete">
+                    <nl-icon [name]="d.estCorrect ? 'check_circle' : 'close'" [size]="20" />
+                    <span class="quiz__corrige-numero">Question {{ i + 1 }}</span>
+                  </header>
+                  <p class="quiz__corrige-enonce">{{ question.enonce }}</p>
+                  @if (!d.estCorrect) {
+                    <p class="quiz__corrige-attendu">
+                      Bonne réponse : {{ question.options[d.bonneReponseIndex] }}
+                    </p>
+                  }
+                  @if (d.explication) {
+                    <p class="quiz__corrige-explication">{{ d.explication }}</p>
+                  }
+                </article>
+              }
+            }
+          </section>
+
+          <button nlButton variant="primary" size="md" (click)="restart()">{{ 'pwaRecommencer' | t }}</button>
         </div>
       } @else {
         <div class="quiz__progress">
@@ -48,13 +77,13 @@
         }
 
         <div class="quiz__nav">
-          <button nlButton variant="outline" size="md" [disabled]="currentIndex() === 0" (click)="previous()">Précédent</button>
+          <button nlButton variant="outline" size="md" [disabled]="currentIndex() === 0" (click)="previous()">{{ 'quizPrecedent' | t }}</button>
           @if (currentIndex() === q.questions.length - 1) {
             <button nlButton variant="primary" size="md" [disabled]="submitting()" (click)="submit()">
               {{ submitting() ? 'Envoi…' : 'Terminer' }}
             </button>
           } @else {
-            <button nlButton variant="primary" size="md" (click)="next()">Suivant</button>
+            <button nlButton variant="primary" size="md" (click)="next()">{{ 'quizSuivant' | t }}</button>
           }
         </div>
 

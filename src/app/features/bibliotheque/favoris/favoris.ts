@@ -1,18 +1,23 @@
+import { metaDocument, noteDocument } from '../../../core/bibliotheque/document.model';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { CascadeEnter } from '../../../shared/directives/cascade-enter';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DocumentCard } from '../../../shared/ui/document-card/document-card';
+import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { FavorisRepository } from '../../../core/bibliotheque/favoris-repository';
-import { DocumentModel, DocumentType, labelTypeDocument, couleurTypeDocument } from '../../../core/bibliotheque/document.model';
+import { DocumentModel, DocumentType } from '../../../core/bibliotheque/document.model';
 import { AppRoutes } from '../../../core/router/app-routes';
+import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 
 @Component({
   selector: 'nl-favoris',
   standalone: true,
-  imports: [CommonModule, DocumentCard, Icon, EmptyState, Button],
+  imports: [TypeDocumentPipe, CascadeEnter, TraductionPipe, CommonModule, DocumentCard, Icon, EmptyState, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './favoris.html',
   styleUrl: './favoris.scss',
@@ -43,7 +48,7 @@ export class Favoris implements OnInit {
   }
 
   protected goBack(): void {
-    void this.router.navigate(['/', AppRoutes.home]);
+    void this.router.navigate(['/app', AppRoutes.home]);
   }
 
   protected openDocument(doc: DocumentModel): void {
@@ -60,29 +65,14 @@ export class Favoris implements OnInit {
     }
   }
 
-  protected typeIcon(type: DocumentType): string {
-    switch (type) {
-      case DocumentType.cours: return 'menu_book';
-      case DocumentType.td: return 'edit_note';
-      case DocumentType.synthese: return 'summarize';
-      case DocumentType.epreuve: return 'assignment';
-      default: return 'description';
-    }
-  }
 
-  protected typeColor(type: DocumentType): string {
-    return couleurTypeDocument(type);
-  }
 
-  protected typeLabel(type: DocumentType): string {
-    return labelTypeDocument(type);
-  }
 
   protected metaFor(doc: DocumentModel) {
-    const meta = [];
-    if (doc.enseignant) meta.push({ icon: 'person' as const, label: doc.enseignant });
-    if (doc.pages > 0) meta.push({ icon: 'description' as const, label: `${doc.pages} p.` });
-    if (doc.tailleMb > 0) meta.push({ icon: 'download' as const, label: `${doc.tailleMb.toFixed(1)} Mo` });
-    return meta;
+    return metaDocument(doc);
+  }
+
+  protected noteFor(doc: DocumentModel): number | undefined {
+    return noteDocument(doc);
   }
 }

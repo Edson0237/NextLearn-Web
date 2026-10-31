@@ -32,6 +32,14 @@
           <button type="button" class="nl-select__ligne"
                   [class.nl-select__ligne--selectionne]="choix.value === data.currentValue"
                   (click)="choisir(choix)">
+            @if (choix.icone; as nom) {
+              <span
+                class="nl-select__vignette"
+                [style.--teinte]="choix.teinte ?? 'var(--primary)'"
+                [style.--teinte-fond]="choix.teinteFond ?? 'var(--primary-soft)'">
+                <nl-icon [name]="nom" [size]="20" />
+              </span>
+            }
             <span class="nl-select__texte">
               <span class="nl-select__libelle">{{ choix.label }}</span>
               @if (choix.description) {

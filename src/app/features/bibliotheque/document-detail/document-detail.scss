@@ -1,143 +1,342 @@
 @use '../../../shared/styles/type';
+@use '../../../shared/styles/tokens' as *;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: block;
+  min-height: 100dvh;
   background: var(--bg-canvas);
 }
 
 .doc-detail {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  min-height: 100dvh;
+}
 
-  &__hero {
-    position: relative;
-    padding: var(--space-lg);
-    padding-top: calc(var(--space-lg) + env(safe-area-inset-top));
-    background: linear-gradient(135deg, var(--doc-color, var(--primary)) 0%, color-mix(in srgb, var(--doc-color, var(--primary)) 70%, black) 100%);
-    color: white;
+// ── Barre supérieure ───────────────────────────────────────────────────────
+//
+// Le bandeau dégradé en pleine largeur a disparu : il mangeait le tiers de
+// l'écran pour répéter ce que les étiquettes disent mieux, et il imposait un
+// texte blanc qui ne tenait pas sur les teintes claires des types.
+
+// ── Corps ──────────────────────────────────────────────────────────────────
+
+.doc-detail__corps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-page) var(--space-xxl);
+}
+
+.doc-detail__fil {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--text-muted);
+  font: 500 0.8125rem/1.2 var(--font-family-body);
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+}
 
-  &__back,
-  &__share {
-    position: absolute;
-    top: var(--space-md);
+.doc-detail__fil-lien {
+  @include cible-etendue(22px);
+  max-width: 55%;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  cursor: pointer;
+  font: 600 0.8125rem/1.2 var(--font-family-body);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.doc-detail__etiquettes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.doc-detail__titre {
+  margin: 0;
+  @include type.nl-display-md;
+}
+
+.doc-detail__auteur {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.doc-detail__auteur-vignette {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.doc-detail__auteur-textes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.doc-detail__auteur-nom {
+  @include type.nl-h4;
+}
+
+.doc-detail__auteur-ecole {
+  @include type.nl-caption;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ── Les trois chiffres ─────────────────────────────────────────────────────
+
+.doc-detail__chiffres {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-sm);
+  padding: var(--space-lg) var(--space-md);
+  @include carte;
+}
+
+.doc-detail__chiffre {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.doc-detail__chiffre-libelle {
+  @include type.nl-label-sm;
+}
+
+.doc-detail__chiffre-valeur {
+  @include type.nl-stat-value;
+
+  &--note {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
-  }
+    gap: 4px;
 
-  &__back {
-    left: var(--space-md);
-  }
-
-  &__share {
-    right: var(--space-md);
-  }
-
-  &__hero-content {
-    margin-top: var(--space-xl);
-  }
-
-  &__type {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.2);
-    font: 700 0.75rem/1 var(--font-family-body);
-    text-transform: uppercase;
-  }
-
-  &__title {
-    @include type.nl-h2;
-    margin: var(--space-sm) 0 0;
-    color: white;
-  }
-
-  &__meta {
-    margin: var(--space-xs) 0 0;
-    font: 0.85rem/1.3 var(--font-family-body);
-    opacity: 0.9;
-  }
-
-  &__body {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-lg);
-  }
-
-  &__section {
-    margin-bottom: var(--space-lg);
-  }
-
-  &__section-title {
-    margin: 0 0 var(--space-sm);
-    font: 700 0.95rem/1.2 var(--font-family-heading);
-    color: var(--text-primary);
-  }
-
-  &__description {
-    margin: 0;
-    color: var(--text-secondary);
-    font: 0.9rem/1.5 var(--font-family-body);
-  }
-
-  &__infos {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-md);
-  }
-
-  &__info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  &__info-label {
-    font: 0.75rem/1 var(--font-family-body);
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-  }
-
-  &__info-value {
-    font: 600 0.9rem/1.2 var(--font-family-body);
-    color: var(--text-primary);
-  }
-
-  &__link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-md);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    text-decoration: none;
-    font: 600 0.85rem/1 var(--font-family-body);
-  }
-
-  &__actions {
-    flex: none;
-    display: flex;
-    gap: var(--space-sm);
-    padding: var(--space-md) var(--space-lg) calc(var(--space-lg) + env(safe-area-inset-bottom));
-    background: var(--bg-primary);
-    border-top: 1px solid var(--border);
-
-    nl-button {
-      flex: 1;
+    nl-icon {
+      color: var(--warning);
     }
+  }
+}
+
+.doc-detail__chiffre-aide {
+  @include type.nl-caption;
+  min-height: 1rem;
+}
+
+.doc-detail__chiffre-filet {
+  width: 1px;
+  background: var(--border);
+}
+
+// ── Actions ────────────────────────────────────────────────────────────────
+
+.doc-detail__principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-lg);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  cursor: pointer;
+  @include type.nl-button-text;
+  color: var(--text-on-primary);
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.doc-detail__principal-poids {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: var(--radius-pilule);
+  // Pas de blanc translucide : en sombre le cobalt s'éclaircit et le texte
+  // du bouton devient foncé — la pastille suit la couleur du texte.
+  background: color-mix(in srgb, var(--text-on-primary) 16%, transparent);
+  font: 600 0.75rem/1.4 var(--font-family-body);
+}
+
+.doc-detail__secondaires {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.doc-detail__secondaire {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 64px;
+  padding: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: 600 0.75rem/1.3 var(--font-family-body);
+
+  span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &--actif {
+    border-color: var(--tertiary);
+    background: var(--type-corrige-soft);
+    color: var(--tertiary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+// ── Blocs de contenu ───────────────────────────────────────────────────────
+
+.doc-detail__bloc {
+  padding: var(--space-lg);
+  @include carte;
+}
+
+.doc-detail__bloc-titre {
+  margin: 0 0 var(--space-sm);
+  @include type.nl-h3;
+}
+
+.doc-detail__description {
+  margin: 0;
+  @include type.nl-body-md;
+  color: var(--text-secondary);
+}
+
+.doc-detail__etoiles {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.doc-detail__etoile {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  background: none;
+  color: var(--warning);
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.doc-detail__note-merci {
+  margin: var(--space-sm) 0 0;
+  @include type.nl-body-sm;
+  color: var(--tertiary);
+}
+
+.doc-detail__corrige {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  text-decoration: none;
+  color: var(--text-primary);
+  @include carte;
+
+  > nl-icon:last-child {
+    flex: none;
+    color: var(--text-muted);
+  }
+}
+
+.doc-detail__corrige-vignette {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: var(--type-corrige-soft);
+  color: var(--type-corrige);
+}
+
+.doc-detail__corrige-textes {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-detail__corrige-titre {
+  @include type.nl-h4;
+}
+
+.doc-detail__corrige-aide {
+  @include type.nl-caption;
+}
+
+// ── Squelettes ─────────────────────────────────────────────────────────────
+
+.doc-detail__squelette {
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: doc-brillance 1.4s ease-in-out infinite;
+
+  &--titre {
+    height: 28px;
+    width: 70%;
+  }
+
+  &--bloc {
+    height: 96px;
+  }
+}
+
+@keyframes doc-brillance {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }

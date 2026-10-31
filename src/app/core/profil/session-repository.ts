@@ -1,7 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
+import { Appareil } from '../auth/appareil';
+import { enFailure } from '../network/erreur-api';
 
 /** Un appareil connecté au compte. */
 export interface SessionAppareil {
@@ -38,15 +39,27 @@ export function sessionDepuisApi(json: Record<string, unknown>): SessionAppareil
 @Injectable({ providedIn: 'root' })
 export class SessionRepository {
   private readonly http = inject(HttpClient);
+  private readonly appareil = inject(Appareil);
+
+  /**
+   * L'identifiant de cet appareil, pour que le serveur sache laquelle des
+   * sessions listées est celle-ci. Envoyé sur ces seuls appels : un en-tête
+   * non standard déclenche une vérification CORS préalable (voir
+   * `auth.interceptor.ts`), inutile sur les autres routes.
+   */
+  private get entetes(): Record<string, string> {
+    const id = this.appareil.identifiant();
+    return id ? { 'X-Device-Id': id } : {};
+  }
 
   async lister(): Promise<SessionAppareil[]> {
     try {
-      const reponse = await firstValueFrom(this.http.get('/api/auth/sessions'));
+      const reponse = await firstValueFrom(this.http.get('/api/auth/sessions', { headers: this.entetes }));
       const data = (reponse as Record<string, unknown>)?.['data'];
       const liste = Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
       return liste.map(sessionDepuisApi);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -54,24 +67,20 @@ export class SessionRepository {
     try {
       await firstValueFrom(this.http.delete(`/api/auth/sessions/${sessionId}`));
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
   /** Déconnecte tous les autres appareils, en gardant celui-ci. */
   async revoquerLesAutres(): Promise<number> {
     try {
-      const reponse = await firstValueFrom(this.http.delete('/api/auth/sessions'));
+      const reponse = await firstValueFrom(this.http.delete('/api/auth/sessions', { headers: this.entetes }));
       const data = (reponse as Record<string, unknown>)?.['data'] as Record<string, unknown> | undefined;
       const fermees = data?.['fermees'];
       return typeof fermees === 'number' ? fermees : 0;
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
-  private echec(e: unknown): Failure {
-    if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, true);
-    return new Failure('Une erreur est survenue.');
-  }
 }

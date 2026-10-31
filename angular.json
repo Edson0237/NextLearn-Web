@@ -27,9 +27,19 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "pdf.worker.min.mjs",
+                "input": "node_modules/pdfjs-dist/legacy/build",
+                "output": "/"
               }
             ],
-            "styles": ["src/styles.scss", "src/shared.scss"]
+            "styles": [
+              "node_modules/@angular/cdk/overlay-prebuilt.css",
+              "src/styles.scss",
+              "src/shared.scss",
+              "src/app-native.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -71,7 +81,9 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "setupFiles": ["src/test-setup.ts"]
+            "setupFiles": [
+              "src/test-setup.ts"
+            ]
           }
         }
       }

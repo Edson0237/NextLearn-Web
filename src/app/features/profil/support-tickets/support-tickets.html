@@ -1,15 +1,8 @@
 <div class="nl-sup">
-  <header class="nl-sup__header">
-    <button type="button" class="nl-sup__back" (click)="retour()" aria-label="Retour">
-      <nl-icon name="arrow_back" [size]="24" />
-    </button>
-    <h1 class="nl-sup__titre">Mes signalements</h1>
-  </header>
+  <nl-page-bar [titre]="'titreMesSignalements' | t" (retour)="retour()" />
 
   <main class="nl-sup__body">
-    <p class="nl-sup__intro">
-      Retrouve ici les demandes que tu as envoyées à l'équipe NextLearn et leurs réponses.
-    </p>
+    <p class="nl-sup__intro">{{ 'pwaRetrouveDemandes' | t }}</p>
 
     @if (chargement()) {
       <div class="nl-sup__squelette">
@@ -20,17 +13,47 @@
     } @else if (erreur()) {
       <div class="nl-sup__vide">
         <p>{{ erreur() }}</p>
-        <button type="button" class="nl-sup__btn" (click)="charger()">Réessayer</button>
+        <button type="button" class="nl-sup__btn" (click)="charger()">{{ 'actionReessayer' | t }}</button>
       </div>
-    } @else if (tickets().length === 0) {
+    } @else if (tickets().length === 0 && signalements().length === 0) {
       <div class="nl-sup__vide">
         <div class="nl-sup__vide-icon">
           <nl-icon name="admin_panel_settings" [size]="48" />
         </div>
-        <p>Aucun signalement pour l'instant.</p>
-        <p class="nl-sup__vide-aide">Utilise le bouton « Signaler un problème » dans tes réglages.</p>
+        <p>{{ 'pwaAucunSignalement' | t }}</p>
+        <p class="nl-sup__vide-aide">{{ 'pwaUtiliseSignalerProbleme' | t }}</p>
       </div>
     } @else {
+      @if (signalements().length > 0) {
+        <h2 class="nl-sup__section">{{ 'signalementsContenuTitre' | t }}</h2>
+        <ul class="nl-sup__liste">
+          @for (s of signalements(); track s.id) {
+            <li class="nl-sup__ticket">
+              <div class="nl-sup__ticket-header">
+                <span class="nl-sup__ticket-sujet">{{ s.cibleTitre ?? ('signalementContenuRetire' | t) }}</span>
+                <span class="nl-sup__ticket-status" [style.color]="'var(' + couleurSignalement(s.status) + ')'">
+                  {{ libelleSignalement(s.status) }}
+                </span>
+              </div>
+              <p class="nl-sup__ticket-message">
+                {{ s.cibleType === CibleSignalement.epreuve ? ('signalementTypeEpreuve' | t) : ('signalementTypeDocument' | t) }}
+                · {{ s.motifLabel }}
+              </p>
+              @if (s.decisionMotif) {
+                <div class="nl-sup__ticket-reponse">
+                  <span class="nl-sup__ticket-reponse-label">{{ 'supportReponseEquipe' | t }}</span>
+                  <p>{{ s.decisionMotif }}</p>
+                </div>
+              }
+              <span class="nl-sup__ticket-date">{{ formatDate(s.createdAt) }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (tickets().length > 0) {
+        <h2 class="nl-sup__section">{{ 'signalementsTicketsTitre' | t }}</h2>
+      }
       <ul class="nl-sup__liste">
         @for (ticket of tickets(); track ticket.id) {
           <li class="nl-sup__ticket">
@@ -43,7 +66,7 @@
             <p class="nl-sup__ticket-message">{{ ticket.message }}</p>
             @if (ticket.reponseAdmin) {
               <div class="nl-sup__ticket-reponse">
-                <span class="nl-sup__ticket-reponse-label">Réponse de l'équipe</span>
+                <span class="nl-sup__ticket-reponse-label">{{ 'supportReponseEquipe' | t }}</span>
                 <p>{{ ticket.reponseAdmin }}</p>
               </div>
             }

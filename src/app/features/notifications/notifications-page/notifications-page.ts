@@ -1,17 +1,20 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { CascadeEnter } from '../../../shared/directives/cascade-enter';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { NotificationsRepository } from '../../../core/notifications/notifications-repository';
-import { NotificationModel } from '../../../core/notifications/notification.model';
+import { NotificationsEtat } from '../../../core/notifications/notifications-etat';
+import { NotificationModel, routeDeNotification } from '../../../core/notifications/notification.model';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 @Component({
   selector: 'nl-notifications-page',
   standalone: true,
-  imports: [CommonModule, Icon, EmptyState, Button],
+  imports: [CascadeEnter, TraductionPipe, CommonModule, Icon, EmptyState, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './notifications-page.html',
   styleUrl: './notifications-page.scss',
@@ -19,6 +22,7 @@ import { AppRoutes } from '../../../core/router/app-routes';
 export class NotificationsPage implements OnInit {
   private readonly router = inject(Router);
   private readonly notifRepo = inject(NotificationsRepository);
+  private readonly etat = inject(NotificationsEtat);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -34,6 +38,9 @@ export class NotificationsPage implements OnInit {
     try {
       const list = await this.notifRepo.getNotifications();
       this.notifications.set(list);
+      // Resynchronise la pastille : la liste vient d'arriver, autant que le
+      // compte de la cloche soit celui du serveur et non un chiffre ancien.
+      void this.etat.rafraichir();
     } catch (e) {
       this.error.set('Impossible de charger les notifications.');
     } finally {
@@ -42,13 +49,14 @@ export class NotificationsPage implements OnInit {
   }
 
   protected goBack(): void {
-    void this.router.navigate(['/', AppRoutes.home]);
+    void this.router.navigate(['/app', AppRoutes.home]);
   }
 
   protected async markAllAsRead(): Promise<void> {
     try {
       await this.notifRepo.markAllAsRead();
       this.notifications.set(this.notifications().map((n) => ({ ...n, lu: true })));
+      this.etat.toutLu();
     } catch {
       // Silencieux.
     }
@@ -59,12 +67,23 @@ export class NotificationsPage implements OnInit {
       try {
         await this.notifRepo.markAsRead(n.id);
         this.notifications.set(this.notifications().map((x) => x.id === n.id ? { ...x, lu: true } : x));
+        this.etat.retirer();
       } catch {
         // Silencieux.
       }
     }
-    if (n.cibleRoute) {
-      void this.router.navigateByUrl(n.cibleRoute);
+    // La destination vit dans `metadata`, pas dans un champ `cibleRoute` que
+    // le serveur n'a jamais envoyé — et elle est relative à `/app`, comme
+    // toute route de cette application.
+    const route = routeDeNotification(n);
+    if (route) {
+      void this.router.navigateByUrl(`/app/${route}`);
+      return;
+    }
+    // Une campagne peut mener vers un lien externe : seuls http(s) sont ouverts.
+    const lien = n.metadata['url'];
+    if (typeof lien === 'string' && /^https?:\/\//.test(lien)) {
+      window.open(lien, '_blank', 'noopener');
     }
   }
 

@@ -84,6 +84,11 @@
   gap: var(--space-md);
 
   .nl-reg__champ {
+    // `min-width: 0` est le tout : un élément flex vaut `min-width: auto`
+    // par défaut, et refuse donc de descendre sous la largeur intrinsèque
+    // de son contenu. Un `<input>` nu mesure une vingtaine de caractères —
+    // deux côte à côte dépassaient l'écran, et « Nom » sortait à droite.
+    min-width: 0;
     flex: 1;
   }
 }
@@ -92,6 +97,15 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+
+  input,
+  select {
+    // Même raison dans l'autre sens : sans largeur imposée, l'`<input>`
+    // garde sa taille intrinsèque au lieu de remplir sa colonne.
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 .nl-reg__label {
@@ -226,8 +240,8 @@ input[type='email'] {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in srgb, var(--text-on-primary) 40%, transparent);
+  border-top-color: var(--text-on-primary);
   animation: nl-reg-spin 0.7s linear infinite;
 }
 
@@ -339,4 +353,53 @@ input[type='email'] {
   text-align: center;
   color: var(--text-muted);
   font: 400 0.78rem/1.4 var(--font-family-body);
+}
+
+// ── Adresse gérée par Google ───────────────────────────────────────────────
+.nl-reg__info-google {
+  margin: 0;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: 14px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  background: var(--primary-soft);
+}
+
+// Le guide sous le champ e-mail, et l'issue quand le domaine est refusé.
+.nl-reg__aide-domaine {
+  margin: -4px 0 0;
+  font: 400 0.8rem/1.45 var(--font-family-body);
+  color: var(--text-muted);
+}
+
+.nl-reg__action-domaine {
+  align-self: flex-start;
+  margin: 0;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  font: 600 0.85rem var(--font-family-body);
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// Le « ou » entre Google et le formulaire, comme sur la page de connexion.
+.nl-reg__ou {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  margin: var(--space-sm) 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 }

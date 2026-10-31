@@ -1,15 +1,8 @@
 <div class="nl-ses">
-  <header class="nl-ses__header">
-    <button type="button" class="nl-ses__back" (click)="retour()" aria-label="Retour">
-      <nl-icon name="arrow_back" [size]="24" />
-    </button>
-    <h1 class="nl-ses__titre">Appareils connectés</h1>
-  </header>
+  <nl-page-bar [titre]="'sessionsTitre' | t" (retour)="retour()" />
 
   <main class="nl-ses__body">
-    <p class="nl-ses__intro">
-      Tu vois ici les sessions actives de ton compte. La session en cours est signalée.
-    </p>
+    <p class="nl-ses__intro">{{ 'pwaSessionsActives' | t }}</p>
 
     @if (chargement()) {
       <div class="nl-ses__squelette">
@@ -20,13 +13,11 @@
     } @else if (erreur()) {
       <div class="nl-ses__vide">
         <p>{{ erreur() }}</p>
-        <button type="button" class="nl-ses__btn" (click)="charger()">Réessayer</button>
+        <button type="button" class="nl-ses__btn" (click)="charger()">{{ 'actionReessayer' | t }}</button>
       </div>
     } @else {
       @if (sessions().length > 1) {
-        <button type="button" class="nl-ses__revoke-others" (click)="revoquerLesAutres()">
-          Déconnecter tous les autres appareils
-        </button>
+        <button type="button" class="nl-ses__revoke-others" (click)="revoquerLesAutres()">{{ 'pwaDeconnecterAutresAppareils' | t }}</button>
       }
 
       <ul class="nl-ses__liste">
@@ -40,7 +31,7 @@
                 <span class="nl-ses__item-nom">
                   {{ session.appareil }}
                   @if (session.courante) {
-                    <span class="nl-ses__badge-courante">Cet appareil</span>
+                    <span class="nl-ses__badge-courante">{{ 'sessionsCetAppareil' | t }}</span>
                   }
                 </span>
                 <span class="nl-ses__item-meta">

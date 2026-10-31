@@ -1,175 +1,365 @@
 @use '../../shared/styles/type';
+@use '../../shared/styles/tokens' as *;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: block;
+  min-height: 100%;
   background: var(--bg-canvas);
 }
 
 .home {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+}
 
-  &__hero {
-    padding: var(--space-lg);
-    padding-top: calc(var(--space-lg) + env(safe-area-inset-top));
-    background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%);
-    color: white;
+.home__barre {
+  padding: var(--space-md) var(--space-page) 0;
+}
+
+// ── Bandeau de progression ─────────────────────────────────────────────────
+//
+// Le seul bloc coloré de la page. Tout le reste est blanc sur ardoise : c'est
+// ce contraste qui le fait lire en premier, pas sa taille.
+
+.home__hero {
+  position: relative;
+  margin: var(--space-lg) var(--space-page) 0;
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 55%, var(--secondary) 100%);
+  color: var(--text-on-primary);
+
+  // La tache claire décentrée donne de la profondeur au dégradé, qui sans
+  // elle paraît imprimé.
+  &::after {
+    content: '';
+    position: absolute;
+    right: -32px;
+    bottom: -48px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--text-on-primary) 12%, transparent);
+    filter: blur(24px);
+    pointer-events: none;
+  }
+}
+
+.home__hero-haut {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+
+  nl-icon {
+    color: color-mix(in srgb, var(--text-on-primary) 75%, transparent);
+  }
+}
+
+.home__hero-salut {
+  @include type.nl-label-sm;
+  color: color-mix(in srgb, var(--text-on-primary) 85%, transparent);
+}
+
+.home__hero-titre {
+  position: relative;
+  z-index: 1;
+  margin: var(--space-xs) 0 var(--space-lg);
+  @include type.nl-h1;
+  color: var(--text-on-primary);
+}
+
+.home__hero-stats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.home__stat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home__stat-valeur {
+  @include type.nl-stat-value;
+  color: var(--text-on-primary);
+}
+
+.home__stat-libelle {
+  @include type.nl-caption;
+  color: color-mix(in srgb, var(--text-on-primary) 75%, transparent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home__stat-filet {
+  width: 1px;
+  height: 28px;
+  background: color-mix(in srgb, var(--text-on-primary) 25%, transparent);
+}
+
+// ── Corps ──────────────────────────────────────────────────────────────────
+
+.home__corps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-entre-sections);
+  padding: var(--space-entre-sections) var(--space-page) var(--space-xl);
+}
+
+.home__section {
+  display: flex;
+  flex-direction: column;
+}
+
+.home__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-entre-elements);
+}
+
+// Rail horizontal : réservé aux lectures en cours, qui sont peu nombreuses et
+// qu'on reprend d'un geste. Une liste verticale leur donnerait le poids d'une
+// section de contenu, qu'elles n'ont pas.
+.home__rail {
+  display: flex;
+  gap: var(--space-entre-elements);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin: 0 calc(var(--space-page) * -1);
+  padding: 0 var(--space-page) var(--space-xs);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// ── Parcourir par format ───────────────────────────────────────────────────
+
+// Quatre tuiles carrées, l'icône en rond au-dessus du libellé. La rangée
+// couchée d'avant — vignette, nom, chevron — tenait deux par ligne et
+// huit formats y faisaient quatre rangées : plus haut que le bandeau.
+.home__formats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.home__format {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 6px;
+  cursor: pointer;
+  @include carte;
+
+  &:active {
+    transform: scale(0.96);
   }
 
-  &__hero-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  // La quatrième tuile n'est pas un format : elle n'a pas de teinte, et
+  // reste grise pour ne pas se faire passer pour l'un d'eux.
+  &--autres {
+    --teinte: var(--text-secondary);
+    --teinte-fond: var(--bg-secondary);
+  }
+}
+
+.home__format-vignette {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--teinte-fond);
+  color: var(--teinte);
+}
+
+.home__format-nom {
+  @include type.nl-label-md;
+  color: var(--text-primary);
+  text-align: center;
+  text-transform: none;
+  // Deux lignes au plus : « Plus de formats » tient, « Épreuve » ne
+  // s'étire pas pour autant.
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ── Reprendre ──────────────────────────────────────────────────────────────
+
+.home__reprise {
+  position: relative;
+  flex: 0 0 240px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-md);
+  padding-bottom: calc(var(--space-md) + 6px);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  @include carte;
+}
+
+.home__reprise-titre {
+  @include type.nl-h4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.home__reprise-auteur {
+  @include type.nl-caption;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.home__reprise-pied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: auto;
+  padding-top: var(--space-sm);
+}
+
+.home__reprise-page {
+  @include type.nl-caption;
+}
+
+.home__reprise-pourcent {
+  @include type.nl-label-lg;
+  color: var(--primary);
+}
+
+.home__reprise-jauge {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: var(--bg-tertiary);
+}
+
+.home__reprise-remplie {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+// ── Mes matières ───────────────────────────────────────────────────────────
+
+.home__matieres {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.home__matiere {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  text-align: left;
+  cursor: pointer;
+  @include carte;
+
+  nl-icon {
+    flex: none;
+    color: var(--text-muted);
+  }
+}
+
+.home__matiere-pastille {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pilule);
+}
+
+.home__matiere-nom {
+  flex: 1;
+  min-width: 0;
+  @include type.nl-h4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home__tronc-titre {
+  margin: var(--space-lg) 0 2px;
+  @include type.nl-label-lg;
+}
+
+.home__tronc-aide {
+  margin: 0 0 var(--space-sm);
+  @include type.nl-caption;
+}
+
+// ── États ──────────────────────────────────────────────────────────────────
+
+.home__erreur {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--danger);
+  @include carte;
+
+  p {
+    margin: 0;
+    @include type.nl-body-md;
+  }
+}
+
+.home__squelette {
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: home-brillance 1.4s ease-in-out infinite;
+
+  &--titre {
+    width: 45%;
+    height: 20px;
     margin-bottom: var(--space-md);
   }
 
-  &__avatar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    font: 700 1rem/1 var(--font-family-heading);
+  &--carte {
+    height: 118px;
+    margin-bottom: var(--space-entre-elements);
   }
+}
 
-  &__notif {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    cursor: pointer;
+@keyframes home-brillance {
+  from {
+    background-position: 200% 0;
   }
-
-  &__greeting {
-    margin: 0;
-    font: 0.9rem/1.3 var(--font-family-body);
-    opacity: 0.9;
-  }
-
-  &__title {
-    @include type.nl-h3;
-    margin: var(--space-xs) 0 0;
-    color: white;
-  }
-
-  &__stats {
-    display: flex;
-    gap: var(--space-md);
-    margin-top: var(--space-md);
-  }
-
-  &__stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.15);
-
-    nl-icon {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  &__stat-value {
-    font: 700 1.1rem/1 var(--font-family-heading);
-  }
-
-  &__stat-label {
-    font: 0.7rem/1 var(--font-family-body);
-    opacity: 0.9;
-  }
-
-  &__tools {
-    flex: none;
-    display: grid;
-    grid-template-columns: 1fr repeat(3, auto);
-    gap: var(--space-sm);
-    align-items: center;
-    padding: var(--space-md) var(--space-lg);
-    background: var(--bg-canvas);
-    border-bottom: 1px solid var(--border);
-  }
-
-  &__tool {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 44px;
-    padding: 0 var(--space-sm);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font: 600 0.82rem/1 var(--font-family-body);
-    cursor: pointer;
-
-    &--search {
-      justify-content: flex-start;
-      padding-left: var(--space-md);
-      color: var(--text-secondary);
-    }
-  }
-
-  &__body {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--space-md) var(--space-lg) var(--space-xxxl);
-  }
-
-  &__section {
-    margin-bottom: var(--space-lg);
-  }
-
-  &__section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-sm);
-  }
-
-  &__section-title {
-    @include type.nl-h4;
-    margin: 0;
-  }
-
-  &__section-action {
-    border: none;
-    background: transparent;
-    color: var(--primary);
-    font: 600 0.8rem/1 var(--font-family-body);
-    cursor: pointer;
-  }
-
-  &__row {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  &__etat {
-    padding: var(--space-xl) var(--space-lg);
-    text-align: center;
-    color: var(--text-secondary);
-
-    &--erreur {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-md);
-    }
+  to {
+    background-position: -200% 0;
   }
 }

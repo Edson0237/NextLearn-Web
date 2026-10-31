@@ -113,6 +113,8 @@ export interface UserModel {
   readonly langue: Langue;
   readonly avatarUrl?: string;
   readonly verificationStatus?: string;
+  /** Le compte a-t-il choisi un PIN ? Facultatif : `undefined` tant que le serveur ne l'a pas dit. */
+  readonly hasPin?: boolean;
 }
 
 export function nomComplet(u: UserModel): string {
@@ -141,6 +143,7 @@ export function utilisateurDepuisApi(json: Record<string, unknown>): UserModel {
     avatarUrl: json['avatarUrl'] == null ? undefined : String(json['avatarUrl']),
     verificationStatus:
       json['verificationStatus'] == null ? undefined : String(json['verificationStatus']),
+    hasPin: typeof json['hasPin'] === 'boolean' ? json['hasPin'] : undefined,
   };
 }
 
@@ -155,6 +158,7 @@ export function utilisateurVersCache(u: UserModel): Record<string, unknown> {
     universite: u.universite, filiere: u.filiere, niveau: u.niveau,
     cycle: u.cycle ? cycleVersApi(u.cycle) : undefined,
     langue: u.langue, avatarUrl: u.avatarUrl, verificationStatus: u.verificationStatus,
+    hasPin: u.hasPin,
   };
 }
 

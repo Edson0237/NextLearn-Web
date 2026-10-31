@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Icon } from '../icon/icon';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 
 /**
  * Badge de série — traduction de `StreakBadge` (`streak_badge.dart`).
@@ -8,6 +10,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 @Component({
   selector: 'nl-streak-badge',
   standalone: true,
+  imports: [Icon, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './streak-badge.html',
   styleUrl: './streak-badge.scss',

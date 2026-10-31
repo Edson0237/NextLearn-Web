@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
@@ -29,7 +31,7 @@ const PERIODE_SONDAGE_MS = 30_000;
 @Component({
   selector: 'app-otp',
   standalone: true,
-  imports: [Icon],
+  imports: [TraductionPipe, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './otp.html',
   styleUrl: './otp.scss',
@@ -135,7 +137,7 @@ export class Otp implements OnDestroy {
     this.chargement.set(false);
 
     if (ok) {
-      void this.router.navigate(['/app', estConnexion ? AppRoutes.home : AppRoutes.pinSetup]);
+      void this.router.navigateByUrl('/app/' + AppRoutes.home);
     } else {
       this.erreur.set(this.auth.state().error ?? 'Code incorrect.');
       this.chiffres.set(['', '', '', '', '', '']);
@@ -150,12 +152,12 @@ export class Otp implements OnDestroy {
   protected async demanderAbandon(): Promise<void> {
     const estConnexion = this.estConnexion();
     const confirme = await this.feuilles.confirmer({
-      title: 'Abandonner ?',
+      title: tr('pwaAbandonnerQuestion', 'Abandonner ?'),
       description: estConnexion
         ? 'Tu devras te reconnecter depuis le début.'
         : "Tu devras reprendre l'inscription depuis le début.",
-      confirmLabel: 'Abandonner',
-      cancelLabel: 'Rester',
+      confirmLabel: tr('otpAbandonQuitter', 'Abandonner'),
+      cancelLabel: tr('quitterAppRester', 'Rester'),
       destructive: true,
     });
     if (!confirme) return;

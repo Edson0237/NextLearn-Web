@@ -1,42 +1,99 @@
+<nl-page-bar [titre]="'legalAPropos' | t" (retour)="goBack()" />
+
 <div class="apropos">
-  <header class="apropos__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
-      <nl-icon name="arrow_back" />
-    </button>
-    <h1 class="apropos__titre">À propos</h1>
-  </header>
+  <!-- ── La marque ───────────────────────────────────────────────────────
+       Le logo et le nom, avant tout texte : c'est la page qui dit qui
+       publie cette application. -->
+  <section class="apropos__marque">
+    <img class="apropos__logo" src="/images/logo-marque.png" alt="" width="64" height="64" />
+    <div class="apropos__marque-textes">
+      <h2 class="apropos__nom">NextLearn</h2>
+      <p class="apropos__accroche">{{ 'aproposAccroche' | t }}</p>
+    </div>
+    <span class="apropos__version">{{ 'aproposLigneVersion' | t }} {{ version }}</span>
+  </section>
 
-  <div class="apropos__corps">
-    <h2 class="apropos__brand">NextLearn</h2>
-    <p class="apropos__accroche">La bibliothèque numérique qui accompagne les étudiants de l'enseignement supérieur.</p>
+  <p class="apropos__intro">{{ 'aproposIntro' | t }}</p>
 
-    <p class="apropos__paragraphe">NextLearn centralise cours, épreuves, TD et travaux pratiques pour faciliter la révision, le partage et la progression académique.</p>
+  <!-- ── Ce qu'on fait, d'où on vient, où on va ──────────────────────── -->
+  <section class="apropos__bloc">
+    <h2 class="apropos__titre">{{ 'aproposMissionTitre' | t }}</h2>
+    <p class="apropos__texte">{{ 'aproposMissionCorps' | t }}</p>
+  </section>
 
-    <h3 class="apropos__section-title">Nos valeurs</h3>
+  <section class="apropos__bloc">
+    <h2 class="apropos__titre">{{ 'aproposOrigineTitre' | t }}</h2>
+    <p class="apropos__texte">{{ 'aproposOrigineCorps' | t }}</p>
+  </section>
+
+  <section class="apropos__bloc">
+    <h2 class="apropos__titre">{{ 'aproposAvenirTitre' | t }}</h2>
+    <p class="apropos__texte">{{ 'aproposAvenirCorps' | t }}</p>
+  </section>
+
+  <!-- ── Les valeurs ────────────────────────────────────────────────────── -->
+  <section class="apropos__section">
+    <h2 class="apropos__titre-section">{{ 'aproposValeursTitre' | t }}</h2>
     <div class="apropos__valeurs">
-      @for (v of valeurs; track v.nom) {
-        <div class="apropos__valeur">
-          <span class="apropos__valeur-nom">{{ v.nom }}</span>
-          <span class="apropos__valeur-texte">{{ v.texte }}</span>
-        </div>
+      @for (v of valeurs; track v.titre) {
+        <article class="apropos__valeur" [style.--teinte]="v.teinte" [style.--teinte-fond]="v.fond">
+          <span class="apropos__vignette">
+            <nl-icon [name]="v.icone" [size]="22" />
+          </span>
+          <h3 class="apropos__valeur-nom">{{ v.titre | t }}</h3>
+          <p class="apropos__valeur-corps">{{ v.corps | t }}</p>
+        </article>
       }
     </div>
+  </section>
 
-    <h3 class="apropos__section-title">L'équipe</h3>
+  <!-- ── L'équipe ───────────────────────────────────────────────────────── -->
+  <section class="apropos__section">
+    <h2 class="apropos__titre-section">{{ 'aproposEquipeTitre' | t }}</h2>
     <div class="apropos__equipe">
       @for (m of equipe; track m.nom) {
-        <div class="apropos__membre">
-          <span class="apropos__membre-nom">{{ m.nom }}</span>
-          <span class="apropos__membre-role">{{ m.role }}</span>
-          <span class="apropos__membre-competences">{{ m.competences }}</span>
-        </div>
+        <article class="apropos__membre">
+          <nl-avatar [initials]="m.initiales" [photoUrl]="m.photo" [size]="56" [onDarkBackground]="false" />
+          <div class="apropos__membre-textes">
+            <h3 class="apropos__membre-nom">{{ m.nom }}</h3>
+            <p class="apropos__membre-role">{{ m.role | t }}</p>
+            <p class="apropos__membre-competences">{{ m.competences | t }}</p>
+          </div>
+        </article>
       }
     </div>
+  </section>
 
-    <h3 class="apropos__section-title">Nous contacter</h3>
-    <div class="apropos__contact">
-      <div class="apropos__ligne"><span>Site</span><a href="https://nextlearn.cm" target="_blank">nextlearn.cm</a></div>
-      <div class="apropos__ligne"><span>Email</span><a href="mailto:nextlearncm@gmail.com">nextlearncm@gmail.com</a></div>
-    </div>
-  </div>
+  <!-- ── Nous joindre ───────────────────────────────────────────────────── -->
+  <section class="apropos__section">
+    <h2 class="apropos__titre-section">{{ 'aproposJoindreTitre' | t }}</h2>
+    <ul class="apropos__coordonnees">
+      @for (c of coordonnees; track c.libelle) {
+        <li>
+          @if (c.lien) {
+            <a class="apropos__coordonnee apropos__coordonnee--lien" [href]="c.lien" [attr.target]="c.lien.startsWith('http') ? '_blank' : null" rel="noopener">
+              <span class="apropos__vignette apropos__vignette--neutre">
+                <nl-icon [name]="c.icone" [size]="20" />
+              </span>
+              <span class="apropos__coordonnee-textes">
+                <span class="apropos__coordonnee-libelle">{{ c.libelle | t }}</span>
+                <span class="apropos__coordonnee-valeur">{{ c.valeur }}</span>
+              </span>
+              <nl-icon name="open_in_new" [size]="16" />
+            </a>
+          } @else {
+            <div class="apropos__coordonnee">
+              <span class="apropos__vignette apropos__vignette--neutre">
+                <nl-icon [name]="c.icone" [size]="20" />
+              </span>
+              <span class="apropos__coordonnee-textes">
+                <span class="apropos__coordonnee-libelle">{{ c.libelle | t }}</span>
+                <span class="apropos__coordonnee-valeur">{{ estCle(c.valeur) ? (c.valeur | t) : c.valeur }}</span>
+              </span>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  </section>
 </div>

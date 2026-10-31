@@ -1,3 +1,4 @@
+@use '../../../shared/styles/tokens' as *;
 @use '../../../shared/styles/type';
 
 :host {
@@ -12,23 +13,12 @@
   flex-direction: column;
   min-height: 100%;
 
-  &__entete {
-    flex: none;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-lg) var(--space-lg) var(--space-sm);
-  }
-
-  &__titre {
-    @include type.nl-h3;
-    margin: 0;
-  }
-
   &__corps {
     flex: 1;
     overflow-y: auto;
-    padding: 0 var(--space-lg) var(--space-xxxl);
+    // Le bandeau collait au trait de l'en-tête : l'ancien en-tête de
+    // page fournissait cet écart, `nl-app-header` ne le fait pas.
+    padding: var(--space-lg) var(--space-page) var(--space-xxxl);
   }
 
   &__etat {
@@ -58,7 +48,7 @@
     padding: var(--space-lg);
     border-radius: var(--radius-lg);
     background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 70%, black) 100%);
-    color: white;
+    color: var(--text-on-primary);
     margin-bottom: var(--space-lg);
   }
 
@@ -95,7 +85,7 @@
     align-items: center;
     padding: var(--space-sm);
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.15);
+    background: color-mix(in srgb, var(--text-on-primary) 15%, transparent);
   }
 
   &__stat-value {
@@ -130,10 +120,14 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-sm);
-    height: 120px;
+    height: 148px;
     padding: var(--space-md);
-    border-radius: var(--radius-lg);
-    background: var(--bg-primary);
+    @include carte;
+  }
+
+  &__chart-pied {
+    margin: var(--space-sm) 0 0;
+    @include type.nl-caption;
   }
 
   &__bar-wrap {
@@ -148,16 +142,31 @@
 
   &__bar {
     width: 100%;
-    max-width: 24px;
-    border-radius: var(--radius-sm);
-    background: var(--primary);
-    transition: height 0.3s ease;
+    max-width: 26px;
+    // Arrondie en haut seulement : une barre arrondie des deux côtés flotte
+    // au lieu de reposer sur sa ligne de base.
+    border-radius: var(--radius-sm) var(--radius-sm) 2px 2px;
+    background: linear-gradient(180deg, var(--primary), var(--primary-dark));
+    transition: height var(--motion-standard, 280ms) var(--ease-entree, ease-out);
+
+    // Un jour sans lecture garde un trait : une colonne absente se lirait
+    // comme un jour absent de la semaine.
+    &--vide {
+      background: var(--bg-tertiary);
+    }
+  }
+
+  &__bar-value {
+    flex: none;
+    height: 1rem;
+    @include type.nl-label-md;
+    color: var(--text-secondary);
   }
 
   &__bar-label {
-    font: 0.65rem/1 var(--font-family-body);
-    color: var(--text-tertiary);
-    text-transform: uppercase;
+    flex: none;
+    @include type.nl-caption;
+    text-transform: capitalize;
   }
 
   &__badges {
@@ -204,14 +213,43 @@
     gap: var(--space-sm);
   }
 
-  &__matiere,
   &__session {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: var(--space-md);
-    border-radius: var(--radius-md);
-    background: var(--bg-primary);
+    @include carte;
+  }
+
+  &__matiere {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    @include carte;
+  }
+
+  &__matiere-tete {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm);
+  }
+
+  // La jauge d'une matière, relative à la plus travaillée.
+  &__jauge {
+    height: 8px;
+    border-radius: var(--radius-pilule);
+    background: var(--bg-secondary);
+    overflow: hidden;
+  }
+
+  &__jauge-part {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pilule);
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width var(--motion-standard, 280ms) var(--ease-entree, ease-out);
   }
 
   &__session-title {

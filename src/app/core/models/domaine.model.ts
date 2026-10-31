@@ -20,6 +20,8 @@ export interface ReponseDomaine {
   readonly etat: EtatDomaine;
   readonly institution?: string;
   readonly message?: string;
+  /** Adresse gérée par Google Workspace : on propose « Continuer avec Google » plutôt qu'un code par e-mail. */
+  readonly google?: boolean;
 }
 
 export const DOMAINE_VIDE: ReponseDomaine = { etat: EtatDomaine.vide };
@@ -30,5 +32,6 @@ export function reponseDomaineDepuisJson(json: Record<string, unknown>): Reponse
     etat: autorise ? EtatDomaine.reconnu : EtatDomaine.refuse,
     institution: json['institutionName'] != null ? String(json['institutionName']) : undefined,
     message: json['message'] != null ? String(json['message']) : undefined,
+    google: json['google'] === true,
   };
 }

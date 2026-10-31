@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { CommonModule, Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router/app-routes';
 
@@ -9,7 +11,7 @@ type LegalDocKey = 'confidentialite' | 'conditions';
 @Component({
   selector: 'nl-legal-document',
   standalone: true,
-  imports: [CommonModule, Icon],
+  imports: [TraductionPipe, CommonModule, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './legal-document.html',
   styleUrl: './legal-document.scss',
@@ -17,17 +19,50 @@ type LegalDocKey = 'confidentialite' | 'conditions';
 export class LegalDocument {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
+  private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly doc = signal<LegalDocKey | null>(null);
   protected readonly title = signal('');
 
+  /**
+   * L'URL du document, marquée sûre pour un contexte de ressource.
+   *
+   * Angular refuse une chaîne brute sur le `src` d'une `iframe` et lève
+   * `NG0904` : le cadre restait vide et seul le titre s'affichait — sur les
+   * deux textes que les magasins exigent de rendre lisibles dans
+   * l'application.
+   *
+   * Le marquage ne vaut que parce que la valeur ne vient pas de l'extérieur :
+   * `doc` est l'une des deux clés de la liste blanche ci-dessous, jamais le
+   * paramètre d'URL tel quel.
+   */
+  protected readonly src = signal<SafeResourceUrl | null>(null);
+
   constructor() {
     const key = (this.route.snapshot.paramMap.get('doc') ?? '') as LegalDocKey;
-    this.doc.set(['confidentialite', 'conditions'].includes(key) ? key : null);
-    this.title.set(key === 'confidentialite' ? 'Politique de confidentialité' : key === 'conditions' ? 'Conditions d\'utilisation' : 'Document légal');
+    const connu = key === 'confidentialite' || key === 'conditions';
+    this.doc.set(connu ? key : null);
+    this.title.set(
+      key === 'confidentialite'
+        ? 'Politique de confidentialité'
+        : key === 'conditions'
+          ? "Conditions d'utilisation"
+          : 'Document légal',
+    );
+    if (connu) {
+      this.src.set(this.sanitizer.bypassSecurityTrustResourceUrl(`/${key}/index.html`));
+    }
   }
 
   protected goBack(): void {
-    void this.router.navigate(['/', AppRoutes.profil]);
+    // L'historique plutôt qu'une destination fixe : ces textes s'ouvrent
+    // aussi depuis l'inscription, où personne n'a encore de profil où
+    // retourner.
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+    void this.router.navigate(['/app', AppRoutes.profil]);
   }
 }

@@ -1,3 +1,5 @@
+@use '../../../shared/styles/tokens' as *;
+
 :host {
   display: block;
   height: 100dvh;
@@ -7,8 +9,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #f6f8fb;
-  color: #0d1b2a;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
 }
 
 .nl-onb__entete {
@@ -16,8 +18,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 12px 0 20px;
-  padding-top: max(12px, env(safe-area-inset-top));
+  padding: var(--space-md) var(--space-page) 0;
+  padding-top: max(var(--space-md), env(safe-area-inset-top));
 }
 
 .nl-onb__marque {
@@ -29,21 +31,23 @@
 }
 
 .nl-onb__logo {
-  display: grid;
-  place-items: center;
+  flex: none;
   width: 30px;
   height: 30px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, #0b3b73, #1a6fbf);
-  font-size: 16px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
 }
 
 .nl-onb__passer {
   border: none;
   background: none;
   font: 600 0.85rem/1 var(--font-family-body, 'Inter', sans-serif);
-  color: #8595a8;
-  padding: 10px 12px;
+  color: var(--text-muted);
+  // Le rembourrage à droite est repris par la marge négative : la cible
+  // reste de 48 px sans décaler le texte de la marge extérieure.
+  padding: var(--space-md);
+  margin-right: calc(var(--space-md) * -1);
+  min-height: var(--touch-min);
   cursor: pointer;
 }
 
@@ -68,7 +72,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 28px;
+  padding: 0 var(--space-page);
 }
 
 .nl-onb__illustration {
@@ -88,11 +92,13 @@
   &--grand {
     width: 230px;
     height: 230px;
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
   }
 
   &--petit {
     width: 175px;
     height: 175px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
   }
 }
 
@@ -103,12 +109,12 @@
   border-radius: 38px;
   display: grid;
   place-items: center;
-  box-shadow: 0 8px 18px rgba(10, 42, 78, 0.28);
+  background: linear-gradient(135deg, var(--accent), var(--accent-fonce));
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 32%, transparent);
   transition: background var(--motion-standard, 280ms) var(--ease-entree, ease-out);
 
-  span {
-    font-size: 62px;
-    line-height: 1;
+  nl-icon {
+    color: var(--encre, var(--text-on-primary));
   }
 }
 
@@ -118,8 +124,9 @@
   align-items: center;
   padding: 7px 11px;
   border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(10, 42, 78, 0.06);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  @include ombre-carte;
   font: 600 0.7rem/1 var(--font-family-body, 'Inter', sans-serif);
 
   &--haut {
@@ -140,15 +147,15 @@
 
 .nl-onb__corps {
   font: 400 1rem/1.6 var(--font-family-body, 'Inter', sans-serif);
-  color: #4a5a6e;
+  color: var(--text-secondary);
   margin: 0;
   max-width: 320px;
 }
 
 .nl-onb__pied {
   flex: none;
-  padding: 8px 24px 28px;
-  padding-bottom: max(28px, env(safe-area-inset-bottom));
+  padding: var(--space-sm) var(--space-page) var(--space-xl);
+  padding-bottom: max(var(--space-xl), env(safe-area-inset-bottom));
 }
 
 .nl-onb__points {
@@ -159,18 +166,20 @@
 }
 
 .nl-onb__point {
+  @include cible-etendue(8px);
   width: 8px;
   height: 8px;
   border-radius: 4px;
   border: none;
   padding: 0;
-  background: #e8edf3;
+  background: var(--bg-tertiary);
   cursor: pointer;
   transition: width var(--motion-standard, 280ms) var(--ease-bidirectionnelle, ease-in-out),
     background var(--motion-standard, 280ms) var(--ease-bidirectionnelle, ease-in-out);
 
   &--actif {
     width: 26px;
+    background: var(--accent);
   }
 }
 
@@ -183,10 +192,11 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #fff;
-  font: 700 1rem/1 var(--font-family, 'Poppins', sans-serif);
+  background: var(--accent);
+  color: var(--encre, var(--text-on-primary));
+  font: 700 1rem/1 var(--font-family);
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(10, 42, 78, 0.25);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 30%, transparent);
   transition: background var(--motion-micro, 150ms) var(--ease-entree, ease-out);
 
   span {

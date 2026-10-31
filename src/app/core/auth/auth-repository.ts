@@ -4,10 +4,13 @@ import { firstValueFrom } from 'rxjs';
 import { AUTH_PATH } from '../network/api-config';
 import { SecureStorageService } from '../storage/secure-storage.service';
 import { Failure } from '../models/failure.model';
-import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi, NiveauxDuCycle, niveauxDuCycleDepuisApi } from '../models/user.model';
+import { Appareil } from './appareil';
+import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../models/user.model';
 import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../models/demande-otp.model';
 import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../models/parcours-otp.model';
 import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../models/domaine.model';
+import { enFailure } from '../network/erreur-api';
+import { donnees } from '../network/enveloppe-api';
 
 /** Durée de repli hors ligne quand aucune échéance n'a encore été mise en cache. */
 const OTP_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
@@ -22,14 +25,33 @@ async function hashPin(pin: string): Promise<string> {
 }
 
 /** Dépouille l'enveloppe `{ data: ... }` que rend systématiquement l'API. */
-function donnees(brut: unknown): Record<string, unknown> {
-  if (brut && typeof brut === 'object') {
-    const enveloppe = brut as Record<string, unknown>;
-    const data = enveloppe['data'];
-    if (data && typeof data === 'object') return data as Record<string, unknown>;
-    return enveloppe;
-  }
-  return {};
+/**
+ * L'utilisateur d'une réponse de profil.
+ *
+ * `PUT /api/profile` et les routes d'avatar enveloppent le compte dans
+ * `{ user }`, alors que la connexion le rend à plat. Lire l'enveloppe comme un
+ * compte donnait un profil vide — identifiant et nom compris — qui était
+ * ensuite enregistré en local : changer de niveau effaçait le compte affiché.
+ */
+/**
+ * Ce que le serveur répond à `POST /auth/google` : un statut, rien d'autre à
+ * deviner. Voir `GoogleAuthResponse` côté API.
+ */
+export type ReponseGoogle =
+  | { readonly status: 'new_profile_incomplete'; readonly profil: ProfilGoogle }
+  | { readonly status: 'pin_required' }
+  | { readonly status: 'authenticated'; readonly verificationStatus?: 'pending' };
+
+/** L'identité certifiée par Google, avant que le compte NextLearn n'existe. */
+export interface ProfilGoogle {
+  readonly email: string;
+  /** L'identifiant Google, gardé en mémoire pour l'affichage ; le serveur ne s'y fie pas (il lit son propre jeton). */
+  readonly googleSub: string;
+  readonly prenom: string;
+  readonly nom: string;
+  readonly picture?: string;
+  /** Faux pour une adresse personnelle (gmail…) : Google prouve la boîte mail, pas l'appartenance à l'école. */
+  readonly institutionnel: boolean;
 }
 
 /**
@@ -45,6 +67,7 @@ function donnees(brut: unknown): Record<string, unknown> {
 export class AuthRepository {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(SecureStorageService);
+  private readonly appareil = inject(Appareil);
 
   /** L'état de la dernière demande de code, tel que le serveur l'a rendu. */
   derniereDemandeOtp: DemandeOtp | null = null;
@@ -63,14 +86,10 @@ export class AuthRepository {
       const reponse = await firstValueFrom(this.http.post(`${AUTH_PATH}${chemin}`, corps));
       return donnees(reponse);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
-  private echec(e: unknown): Failure {
-    if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, true);
-    return new Failure('Une erreur est survenue.');
-  }
 
   // ── Étape en cours ───────────────────────────────────────────────────────
   /**
@@ -112,11 +131,34 @@ export class AuthRepository {
   }
 
   async etatVerification(): Promise<CycleVerification | null> {
+    const issue = await this.demanderEtatVerification();
+    return issue === 'injoignable' ? null : issue;
+  }
+
+  /**
+   * L'état de vérification, en distinguant « absent » de « pas pu demander ».
+   *
+   * `etatVerification` confondait les deux : une coupure réseau rendait
+   * `null`, exactement comme un compte sans dossier de vérification. En aval,
+   * `isOtpStillFresh` retombait alors sur l'échéance mise en cache, et si
+   * celle-ci était dépassée, l'application **déconnectait** — au moment
+   * précis où la personne ne peut pas se reconnecter, puisqu'elle est hors
+   * ligne. Les documents téléchargés devenaient inatteignables pour cette
+   * raison.
+   *
+   * Ne pas pouvoir poser la question n'est pas une réponse.
+   */
+  private async demanderEtatVerification(): Promise<CycleVerification | null | 'injoignable'> {
     try {
       const reponse = await firstValueFrom(this.http.get(`${AUTH_PATH}/verification-status`));
       return cycleVerificationDepuisJson(donnees(reponse));
-    } catch {
-      return null;
+    } catch (e) {
+      // 4xx : le serveur a répondu, et sa réponse fait foi — pas de dossier.
+      // Tout le reste (0 : hors ligne, 5xx : serveur en panne, délai
+      // dépassé) signifie qu'on n'a pas pu demander.
+      const statut = e instanceof HttpErrorResponse ? e.status : 0;
+      const aRepondu = statut >= 400 && statut < 500;
+      return aRepondu ? null : 'injoignable';
     }
   }
 
@@ -174,34 +216,165 @@ export class AuthRepository {
     this.storage.saveParcoursOtp(ParcoursOtp.definitionPin, this.echeanceParcours());
   }
 
-  async setupPin(pin: string): Promise<void> {
+  /** Termine l'inscription et ouvre la session. Sans `pin`, le compte est créé sans PIN (il est facultatif). */
+  async setupPin(pin?: string): Promise<void> {
     const tempToken = this.storage.getTempToken();
     if (!tempToken) throw new Failure('Cette démarche a expiré. Recommencez.');
 
-    const data = await this.poster('/setup-pin', { tempToken, pin });
+    const data = await this.poster('/setup-pin', { tempToken, ...(pin ? { pin } : {}), ...this.appareil.pourLAPI() });
     await this.ouvrirSession(data, pin);
     this.storage.clearTempToken();
   }
 
-  async loginWithPin(email: string, pin: string): Promise<void> {
-    const data = await this.poster('/login', { email, pin });
+  /**
+   * Première étape de la connexion : on donne son e-mail, le serveur dit
+   * comment ce compte se connecte.
+   *
+   *  - `'pin'`    — le compte a un PIN (ou l'adresse est inconnue : le serveur ne
+   *                 distingue pas, pour ne pas révéler quelles adresses existent) ;
+   *  - `'otp'`    — pas de PIN : un code vient de partir par e-mail ;
+   *  - `'google'` — pas de PIN, adresse gérée par Google : la preuve se fait là-bas.
+   */
+  async identifierConnexion(email: string): Promise<'pin' | 'otp' | 'google'> {
+    const data = await this.poster('/login', { email, ...this.appareil.pourLAPI() });
+    if (data['pinRequis'] === true) return 'pin';
+    if (data['methode'] === 'google') return 'google';
+
     const tempToken = data['tempToken'];
     if (typeof tempToken !== 'string' || tempToken.length === 0) {
       throw new Failure('Le serveur n’a pas renvoyé de jeton temporaire.');
     }
     this.storage.saveTempToken(tempToken);
     this.storage.saveParcoursOtp(ParcoursOtp.connexion, this.echeanceParcours());
-    // Le backend n'émet ce jeton qu'après avoir validé le PIN : on peut donc
-    // mémoriser son empreinte pour les déverrouillages locaux ultérieurs.
-    this.storage.savePinHash(await hashPin(pin));
     this.retenirDemande(data);
+    return 'otp';
+  }
+
+  /**
+   * Connexion par e-mail et PIN.
+   *
+   * Deux issues désormais, selon que le serveur connaît déjà cet appareil :
+   *
+   * - **appareil connu** — la session est ouverte sur-le-champ, sans code. Le
+   *   serveur le signale par `otpRequis: false` ;
+   * - **appareil inconnu** — un code part par e-mail, et l'écran suivant
+   *   l'attend, comme avant.
+   *
+   * L'aiguillage se fait sur `otpRequis` et non sur la présence d'un champ :
+   * si une étape intermédiaire s'ajoute un jour, le client n'aura pas à
+   * deviner laquelle en inspectant la forme de la réponse.
+   *
+   * Rend `true` quand un code est attendu, pour que l'écran sache s'il doit
+   * naviguer vers la saisie du code ou directement vers l'accueil.
+   */
+  async loginWithPin(email: string, pin: string): Promise<boolean | 'google'> {
+    const data = await this.poster('/login', { email, pin, ...this.appareil.pourLAPI() });
+
+    // Le backend n'ouvre cette porte qu'après avoir validé le PIN : son
+    // empreinte peut donc être mémorisée pour le verrou local, dans les deux
+    // cas de figure.
+    this.storage.savePinHash(await hashPin(pin));
+
+    if (data['otpRequis'] === false) {
+      await this.ouvrirSession(data, pin);
+      // `clearTempToken` efface aussi l'étape de parcours en cours.
+      this.storage.clearTempToken();
+      return false;
+    }
+
+    // Adresse gérée par Google : aucun code n'est parti, la preuve se fait par
+    // le bouton Google. Rien à mémoriser — le jeton d'identité fait foi.
+    if (data['methode'] === 'google') return 'google';
+
+    const tempToken = data['tempToken'];
+    if (typeof tempToken !== 'string' || tempToken.length === 0) {
+      throw new Failure('Le serveur n’a pas renvoyé de jeton temporaire.');
+    }
+    this.storage.saveTempToken(tempToken);
+    this.storage.saveParcoursOtp(ParcoursOtp.connexion, this.echeanceParcours());
+    this.retenirDemande(data);
+    return true;
+  }
+
+  // ── Connexion Google ─────────────────────────────────────────────────────
+
+  /** Faut-il proposer « Se connecter avec Google », et avec quel client ? Ne lève jamais. */
+  async configGoogle(): Promise<{ enabled: boolean; clientId?: string }> {
+    try {
+      const data = donnees(await firstValueFrom(this.http.get(`${AUTH_PATH}/google/config`)));
+      const clientId = typeof data['clientId'] === 'string' ? data['clientId'] : undefined;
+      return { enabled: data['enabled'] === true && !!clientId, clientId };
+    } catch {
+      return { enabled: false };
+    }
+  }
+
+  /**
+   * Envoie le jeton d'identité Google au serveur et rend **son statut**, sans
+   * rien en décider : `new_profile_incomplete`, `pin_required` ou
+   * `authenticated`. Les effets de stockage (session, jeton du choix du PIN,
+   * identité en attente) se font ici ; la navigation, elle, est à
+   * `AuthService.handleGoogleAuthResponse`, seul aiguilleur.
+   */
+  async connexionGoogle(idToken: string): Promise<ReponseGoogle> {
+    const data = await this.poster('/google', { idToken, ...this.appareil.pourLAPI() });
+    return this.statutGoogle(data);
+  }
+
+  /** Termine l'inscription d'une première visite Google : crée le compte et ouvre la session (pas de PIN à choisir). */
+  async inscriptionGoogle(infos: {
+    universite: string; filiere: string; niveau: string; cycle?: string;
+  }): Promise<ReponseGoogle> {
+    const tempToken = this.profilGoogleEnAttente?.tempToken;
+    if (!tempToken) throw new Failure('Cette démarche a expiré. Reconnecte-toi avec Google.');
+    // Seul le parcours scolaire part avec le jeton signé : l'identité n'est
+    // jamais renvoyée par le client, c'est le serveur qui la connaît.
+    const data = await this.poster('/google/inscription', { tempToken, ...infos, ...this.appareil.pourLAPI() });
+    this.profilGoogleEnAttente = null;
+    return this.statutGoogle(data);
+  }
+
+  /** La première visite Google en cours : l'identité vérifiée, en attendant le parcours académique. */
+  profilGoogleEnAttente: { tempToken: string; profil: ProfilGoogle } | null = null;
+
+  private async statutGoogle(data: Record<string, unknown>): Promise<ReponseGoogle> {
+    const status = data['status'];
+    if (status === 'authenticated') {
+      await this.ouvrirSession(data);
+      this.storage.clearTempToken();
+      return { status, ...(data['verificationStatus'] === 'pending' ? { verificationStatus: 'pending' as const } : {}) };
+    }
+    const tempToken = data['tempToken'];
+    if (typeof tempToken !== 'string' || tempToken.length === 0) {
+      throw new Failure('Le serveur n’a pas renvoyé de jeton temporaire.');
+    }
+    if (status === 'pin_required') {
+      // Même suite que l'inscription par code : le PIN, puis la session.
+      this.storage.saveTempToken(tempToken);
+      this.storage.saveParcoursOtp(ParcoursOtp.definitionPin, this.echeanceParcours());
+      return { status };
+    }
+    if (status === 'new_profile_incomplete') {
+      const p = (data['profil'] ?? {}) as Record<string, unknown>;
+      const profil: ProfilGoogle = {
+        email: String(data['email'] ?? ''),
+        googleSub: String(data['googleSub'] ?? ''),
+        prenom: String(p['prenom'] ?? ''),
+        nom: String(p['nom'] ?? ''),
+        picture: p['picture'] == null ? undefined : String(p['picture']),
+        institutionnel: p['institutionnel'] !== false,
+      };
+      this.profilGoogleEnAttente = { tempToken, profil };
+      return { status, profil };
+    }
+    throw new Failure('Réponse inattendue du serveur.');
   }
 
   async verifyLoginOtp(code: string): Promise<void> {
     const tempToken = this.storage.getTempToken();
     if (!tempToken) throw new Failure('Cette démarche a expiré. Recommencez.');
 
-    const data = await this.poster('/verify-2fa', { tempToken, code });
+    const data = await this.poster('/verify-2fa', { tempToken, code, ...this.appareil.pourLAPI() });
     await this.ouvrirSession(data);
     this.storage.clearTempToken();
   }
@@ -281,7 +454,16 @@ export class AuthRepository {
    * cache, et à défaut sur la durée de repli.
    */
   async isOtpStillFresh(): Promise<boolean> {
-    const etat = await this.etatVerification();
+    const issue = await this.demanderEtatVerification();
+
+    // Serveur injoignable : on garde la session. Conclure à l'expiration
+    // faute d'avoir pu demander reviendrait à déconnecter quiconque ouvre
+    // l'application dans le train — et à lui fermer la bibliothèque qu'il a
+    // précisément téléchargée pour ce trajet. La session tombera d'elle-même
+    // au premier échange avec un serveur qui la refuse.
+    if (issue === 'injoignable') return true;
+
+    const etat = issue;
     if (etat) {
       const echeance =
         etat.graceJusquau && etat.graceJusquau.getTime() > etat.echeanceLe.getTime()
@@ -363,89 +545,20 @@ export class AuthRepository {
   }
 
   /** Rend le nombre d'autres appareils déconnectés au passage. */
-  async changerPin(ancienPin: string, nouveauPin: string): Promise<number> {
-    const data = await this.poster('/change-pin', { ancienPin, nouveauPin });
+  async changerPin(ancienPin: string | undefined, nouveauPin: string): Promise<number> {
+    const data = await this.poster('/change-pin', {
+      ...(ancienPin ? { ancienPin } : {}),
+      nouveauPin,
+      deviceId: this.appareil.identifiant(),
+    });
+    // Le compte a désormais un PIN, qu'il l'ait créé ou changé.
+    const actuel = this.storage.getUser();
+    if (actuel && actuel.hasPin !== true) this.storage.saveUser({ ...actuel, hasPin: true });
     // L'empreinte locale sert au déverrouillage hors ligne : la laisser sur
     // l'ancien code rendrait le nouveau PIN refusé à la prochaine ouverture.
     this.storage.savePinHash(await hashPin(nouveauPin));
     this.storage.clearPinAttempts();
     const fermees = data['sessionsFermees'];
     return typeof fermees === 'number' ? fermees : 0;
-  }
-
-  /** Les niveaux entre lesquels ce compte peut changer. */
-  async niveauxDuCycle(): Promise<NiveauxDuCycle> {
-    try {
-      const reponse = await firstValueFrom(this.http.get('/api/me/levels'));
-      return niveauxDuCycleDepuisApi(donnees(reponse));
-    } catch {
-      return { niveaux: [] };
-    }
-  }
-
-  /** Dépose une photo de profil. */
-  async televerserAvatar(fichier: File): Promise<UserModel> {
-    const formulaire = new FormData();
-    formulaire.append('avatar', fichier, fichier.name);
-    try {
-      const reponse = await firstValueFrom(this.http.post('/api/profile/avatar', formulaire));
-      const utilisateur = utilisateurDepuisApi(donnees(reponse));
-      this.storage.saveUser(utilisateur);
-      return utilisateur;
-    } catch (e) {
-      throw this.echec(e);
-    }
-  }
-
-  /** Retire la photo de profil. */
-  async supprimerAvatar(): Promise<UserModel> {
-    try {
-      const reponse = await firstValueFrom(this.http.delete('/api/profile/avatar'));
-      const utilisateur = utilisateurDepuisApi(donnees(reponse));
-      this.storage.saveUser(utilisateur);
-      return utilisateur;
-    } catch (e) {
-      throw this.echec(e);
-    }
-  }
-
-  // ── Verrouillage après échecs de PIN ─────────────────────────────────────
-  /** Nombre d'échecs tolérés avant le premier blocage temporaire. */
-  private static readonly TENTATIVES_LIBRES = 4;
-
-  pinLockedUntil(): Date | null {
-    const until = this.storage.getPinLockedUntil();
-    if (!until) return null;
-    if (Date.now() > until.getTime()) return null;
-    return until;
-  }
-
-  /** Délai croissant : 30 s, 1 min, 2 min, 4 min… plafonné à 15 minutes. */
-  registerPinFailure(): number {
-    const tentatives = this.storage.getPinAttempts() + 1;
-    this.storage.savePinAttempts(tentatives);
-
-    if (tentatives > AuthRepository.TENTATIVES_LIBRES) {
-      const palier = tentatives - AuthRepository.TENTATIVES_LIBRES;
-      const secondes = Math.min(Math.max(30 * 2 ** (palier - 1), 30), 900);
-      this.storage.savePinLockedUntil(new Date(Date.now() + secondes * 1000));
-    }
-    return tentatives;
-  }
-
-  clearPinFailures(): void {
-    this.storage.clearPinAttempts();
-  }
-
-  // ── Profil ────────────────────────────────────────────────────────────────
-  async changerNiveau(code: string): Promise<UserModel> {
-    try {
-      const reponse = await firstValueFrom(this.http.put('/api/profile', { niveau: code }));
-      const utilisateur = utilisateurDepuisApi(donnees(reponse));
-      this.storage.saveUser(utilisateur);
-      return utilisateur;
-    } catch (e) {
-      throw this.echec(e);
-    }
   }
 }

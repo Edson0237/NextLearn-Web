@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { clearSession, seedSession, PIN_HASH_1234 } from './fixtures/auth';
+import { clearSession, seedSession, stubApi, PIN_HASH_1234 } from './fixtures/auth';
 
 const TEST_USER = {
   id: 'test-user-id',
@@ -13,6 +13,7 @@ const TEST_USER = {
 };
 
 async function prepare(page: Page, locked = false, withSession = true) {
+  await stubApi(page);
   await page.goto('/');
   await clearSession(page);
   if (withSession) {
@@ -33,6 +34,19 @@ test.describe('Auth / Unlock', () => {
     await page.goto('/app/unlock');
     await expect(page.locator('body')).toContainText('Bon retour', { timeout: 5000 });
     await expect(page.locator('body')).toContainText('PIN', { timeout: 5000 });
+  });
+
+  test('un PIN enregistré ne verrouille plus de lui-même', async ({ page }) => {
+    // Le changement demandé : le code n'est plus réclamé à chaque ouverture.
+    // On sème un PIN *sans* la préférence de verrouillage — l'état d'un
+    // compte existant après mise à jour — et l'application doit s'ouvrir.
+    await stubApi(page);
+    await page.goto('/');
+    await clearSession(page);
+    await seedSession(page, TEST_USER, { locked: false, pinHash: PIN_HASH_1234 });
+    await page.goto('/app/home', { waitUntil: 'domcontentloaded' });
+
+    await expect(page).not.toHaveURL(/\/app\/unlock/);
   });
 
   test('unlock accepte le PIN correct et déverrouille', async ({ page }) => {

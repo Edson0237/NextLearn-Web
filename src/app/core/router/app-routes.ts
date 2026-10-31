@@ -61,6 +61,7 @@ export abstract class AppRoutes {
 
   // ── Contributions étudiantes ──────────────────────────────────────────────
   static readonly depotForm = 'depots/nouveau';
+  static readonly depotScanner = 'depots/scanner';
 
   // ── Voie de recours ───────────────────────────────────────────────────────
   static readonly recours = 'recours';

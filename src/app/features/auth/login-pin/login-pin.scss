@@ -11,17 +11,25 @@
   overflow-y: auto;
 }
 
+// Le contenu était enveloppé dans ce conteneur, sans règle d'alignement :
+// `align-items: center` sur l'hôte centrait donc le bloc entier, mais le logo
+// — un bloc de largeur fixe — restait collé au bord gauche de ce bloc. Côté
+// Flutter il est centré, et c'est le premier élément que l'œil rencontre sur
+// l'écran de connexion.
+.nl-loginpin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+}
+
 .nl-loginpin__avatar {
-  width: 84px;
-  height: 84px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-  color: var(--text-on-primary);
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 40%, transparent);
-  font: 700 1.6rem/1 var(--font-family);
+  // Le rond est dessiné par `nl-identite` : ne reste ici que ce qui relève
+  // de la page — sa place dans la colonne et le halo qui le décolle du fond.
   margin-bottom: var(--space-lg);
+  border-radius: 50%;
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 28%, transparent);
 }
 
 .nl-loginpin__titre {
@@ -88,4 +96,87 @@
     color: var(--primary);
     font-weight: 600;
   }
+}
+
+// ── Se connecter avec Google ───────────────────────────────────────────────
+.nl-loginpin__google {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+
+  &--verif {
+    padding: var(--space-lg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg-primary);
+    text-align: center;
+
+    h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0 0 var(--space-xs);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+  }
+}
+
+.nl-loginpin__ou {
+  margin-block: var(--space-lg) var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+}
+
+.nl-loginpin__continuer {
+  width: 100%;
+  min-height: 48px;
+  margin-top: var(--space-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font: 600 1rem var(--font-family);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.nl-loginpin__erreur {
+  margin: var(--space-sm) 0 0;
+  font: 500 0.875rem var(--font-family-body);
+  color: var(--danger);
+  text-align: center;
+}
+
+// L'adresse choisie, rappelée au-dessus du pavé, avec de quoi la corriger.
+.nl-loginpin__adresse {
+  margin: 0 0 var(--space-md);
+  padding: 4px 8px;
+  border: none;
+  background: none;
+  font: 500 0.8125rem var(--font-family-body);
+  color: var(--text-muted);
+  text-decoration: underline;
+  cursor: pointer;
 }

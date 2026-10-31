@@ -1,85 +1,172 @@
 @use '../../../shared/styles/type';
+@use '../../../shared/styles/tokens' as *;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: block;
+  min-height: 100dvh;
   background: var(--bg-canvas);
 }
 
 .offline {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  min-height: 100dvh;
+}
 
-  &__entete {
-    flex: none;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-lg) var(--space-lg) var(--space-sm);
-  }
+.offline__corps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-page) var(--space-xxl);
+}
 
-  &__titre {
-    @include type.nl-h3;
-    margin: 0;
-  }
+// ── Stockage ───────────────────────────────────────────────────────────────
 
-  &__corps {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 var(--space-lg) var(--space-xxxl);
-  }
+.offline__stockage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  @include carte;
+}
 
-  &__etat {
-    padding: var(--space-xl) var(--space-lg);
-    text-align: center;
-    color: var(--text-secondary);
+.offline__stockage-tete {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 
-    &--erreur {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-md);
-    }
-  }
-
-  &__liste {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  &__item {
-    position: relative;
-  }
-
-  &__remove {
-    position: absolute;
-    top: var(--space-sm);
-    right: var(--space-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: var(--bg-primary);
-    color: var(--text-secondary);
-    cursor: pointer;
+  nl-icon {
+    color: var(--primary);
   }
 }
 
-.nl-icon-btn {
-  display: inline-flex;
+.offline__stockage-titre {
+  flex: 1;
+  margin: 0;
+  @include type.nl-h4;
+}
+
+.offline__lien {
+  @include cible-etendue(22px);
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  cursor: pointer;
+  font: 600 0.8125rem/1.2 var(--font-family-body);
+}
+
+.offline__jauge {
+  height: 8px;
+  border-radius: var(--radius-pilule);
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.offline__jauge-part {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width var(--motion-standard, 240ms) ease;
+}
+
+.offline__stockage-pied {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  @include type.nl-caption;
+}
+
+// ── Onglets ────────────────────────────────────────────────────────────────
+
+.offline__onglets {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+}
+
+.offline__onglet {
+  // 36 px de haut pour que les trois onglets tiennent dans leur rail, mais la
+  // zone tapable déborde jusqu'au seuil : `nl-cible-fine` lève le minimum,
+  // il faut donc le rendre autrement.
+  @include cible-etendue(36px);
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 var(--space-xs);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font: 600 0.75rem/1.2 var(--font-family-body);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &--actif {
+    background: var(--bg-primary);
+    color: var(--primary);
+    @include ombre-carte;
+  }
+}
+
+// ── Liste ──────────────────────────────────────────────────────────────────
+
+.offline__liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.offline__synchro {
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+  gap: var(--space-sm);
+  width: 100%;
+  min-height: var(--touch-min);
   border: none;
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--text-on-primary);
   cursor: pointer;
+  @include type.nl-button-text;
+  color: var(--text-on-primary);
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.offline__squelette {
+  height: 104px;
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: offline-brillance 1.4s ease-in-out infinite;
+}
+
+@keyframes offline-brillance {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }

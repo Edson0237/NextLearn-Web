@@ -1,128 +1,229 @@
+@use '../../styles/type';
+@use '../../styles/tokens' as *;
+
 :host {
   display: block;
 }
 
 .nl-doc-card {
-  background: var(--bg-primary);
-  border-radius: var(--radius-feuille);
-  box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
-  padding: 14px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  overflow: hidden;
   cursor: pointer;
+  @include carte;
 
-  &--h {
-    width: 172px;
-    padding: 0;
-    overflow: hidden;
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
   }
 }
 
-.nl-doc-card__ligne {
+.nl-doc-card__haut {
   display: flex;
   align-items: flex-start;
-  gap: 13px;
+  gap: var(--space-md);
 }
 
-.nl-doc-card__tuile {
+// La vignette de type : 40×40, fond teinté, icône de la couleur du type.
+.nl-doc-card__vignette {
   flex: none;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--doc-color) 12%, transparent);
-  color: var(--doc-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--type-bg);
+  color: var(--type-color);
 }
 
-.nl-doc-card__info {
+.nl-doc-card__corps {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.nl-doc-card__entete {
+.nl-doc-card__etiquettes {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--tertiary);
-
-  nl-chip {
-    margin-right: auto;
-  }
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .nl-doc-card__titre {
-  margin: 7px 0 3px;
-  font: 600 0.9375rem/1.4 var(--font-family);
-  color: var(--text-primary);
+  margin: 0;
+  @include type.nl-h3;
+  // Deux lignes au plus : au-delà, le titre pousse les métadonnées hors de
+  // vue et toutes les cartes de la liste perdent leur alignement.
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
 
-  &--h {
-    margin: 9px 12px 4px;
-    font-weight: 600;
-    font-size: 0.875rem;
+.nl-doc-card__sous-titre {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  @include type.nl-body-sm;
+  min-width: 0;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
-.nl-doc-card__matiere {
-  margin: 0;
-  font: 600 0.75rem/1.5 var(--font-family-body);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.nl-doc-card__point {
+  flex: none;
+  color: var(--text-muted);
 }
 
-.nl-doc-card--h .nl-doc-card__matiere {
-  margin: 0 12px 10px;
-  font-size: 0.6875rem;
+.nl-doc-card__hors-ligne {
+  flex: none;
+  display: inline-flex;
+  color: var(--tertiary);
+}
+
+// ── Rangée de métadonnées ──────────────────────────────────────────────────
+// Séparée par un filet : c'est ce trait qui distingue l'identité du document
+// (en haut) de ses caractéristiques (en bas).
+
+.nl-doc-card__bas {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-light);
 }
 
 .nl-doc-card__meta {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 12px;
+  align-items: center;
+  gap: var(--space-md);
 }
 
 .nl-doc-card__meta-item {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font: 500 0.6875rem/1.4 var(--font-family-body);
-  color: var(--text-muted);
+  @include type.nl-caption;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-nl-reading-progress {
-  display: block;
-  margin-top: 12px;
-}
-
-.nl-doc-card__bandeau {
-  height: 86px;
-  position: relative;
-  display: flex;
+.nl-doc-card__note {
+  flex: none;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  color: var(--doc-color);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--doc-color) 16%, transparent),
-    color-mix(in srgb, var(--doc-color) 7%, transparent)
-  );
+  gap: 3px;
+  @include type.nl-label-lg;
+  color: var(--text-primary);
+
+  nl-icon {
+    color: var(--warning);
+  }
 }
 
-.nl-doc-card__hors-ligne {
+.nl-doc-card__avis {
+  @include type.nl-caption;
+}
+
+// Bouton d'action rapide : rond, plein, à droite. C'est le geste qu'on
+// répète — télécharger — et il ne doit pas obliger à ouvrir la fiche.
+.nl-doc-card__action {
+  flex: none;
+  display: grid;
+  place-items: center;
+  @include cible-etendue(36px);
+  width: 36px;
+  height: 36px;
+  // 36 px visibles, 48 px tapables : le pseudo-élément déborde au-dessus et
+  // au-dessous. `padding` + `content-box` grossissait le dessin lui-même, et
+  // le bouton écrasait la rangée de métadonnées.
+  border: none;
+  border-radius: var(--radius-pilule);
+  background: var(--primary);
+  color: var(--text-on-primary);
+  cursor: pointer;
+
+  // Retirer n'est pas télécharger : le rond cobalt est réservé à ce qui
+  // ajoute. Le fond teinté plutôt que plein garde le geste discret — c'est
+  // une action de ménage, pas l'action principale de la carte.
+  &--destructive {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+// ── Jauge de lecture ───────────────────────────────────────────────────────
+
+.nl-doc-card__jauge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: var(--bg-tertiary);
+}
+
+.nl-doc-card__jauge-remplie {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+}
+
+// ── Variante compacte ──────────────────────────────────────────────────────
+// Pour une rangée de suggestions : la vignette rétrécit, la rangée de
+// métadonnées disparaît, le titre tient sur deux lignes.
+
+:host(.nl-doc-card--compacte) {
+  .nl-doc-card {
+    gap: var(--space-sm);
+    padding: var(--space-md);
+  }
+
+  .nl-doc-card__vignette {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nl-doc-card__titre {
+    @include type.nl-h4;
+  }
+}
+
+// ── Bouton favori ──────────────────────────────────────────────────────────
+// Dans le coin de la carte, avec une cible de 44 px : une icône de 20 px seule
+// est sous le seuil tactile, et la carte entière est elle-même cliquable.
+.nl-doc-card__favori {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -10px -10px -10px 0;
+  border: 0;
   border-radius: 50%;
-  background: var(--bg-primary);
-  color: var(--tertiary);
-  display: flex;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &--actif {
+    color: var(--primary);
+  }
 }

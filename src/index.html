@@ -2,7 +2,11 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- `viewport-fit=cover` n'est pas un détail : sans lui, les
+         `env(safe-area-inset-*)` valent zéro sur iPhone, et toutes les règles
+         de `_native.scss` qui s'appuient dessus ne font rien — la barre
+         d'onglets passait sous l'indicateur d'accueil. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
       content="NextLearn – Votre bibliothèque académique mobile. Accédez à vos cours, TD et examens, même hors ligne."
@@ -10,20 +14,114 @@
     <title>NextLearn – Bibliothèque Académique Intelligente</title>
     <base href="/" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&amp;display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+    <!-- Couleur de la barre de statut, en clair comme en sombre. Le bleu de
+         marque est celui de `AppColors.primaireDeMarque` (#1A4A7E) ; en
+         sombre, le socle Blue Deep de la charte. -->
+    <meta name="theme-color" content="#1a4a7e" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f2e4d" media="(prefers-color-scheme: dark)" />
+
+    <!-- iOS : « Partager → Sur l'écran d'accueil ». Sans ces balises, l'icône
+         posée est une capture de la page et la barre de statut reste celle de
+         Safari. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="NextLearn" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png" />
+
     <link rel="icon" href="images/Logo.png" type="image/png" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <!-- Google Identity Services : « Se connecter avec Google ». Chargé sans bloquer le
+         premier rendu ; `GoogleIdentite` attend sa disponibilité. Rien ne s'affiche si
+         le serveur n'a pas de GOOGLE_CLIENT_ID ou si le script est injoignable. -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body>
+    <!-- Écran de démarrage, en HTML et CSS seuls.
+         Une application à page unique ne peint rien tant que son code n'est
+         pas chargé puis exécuté : sur un téléphone d'entrée de gamme et un
+         réseau lent, cela faisait plusieurs secondes de page blanche, et
+         c'était le plus gros contributeur au « plus grand élément affiché ».
+         Ce bloc s'affiche immédiatement, aux couleurs de la marque, et
+         s'efface dès que l'application prend la main (`main.ts`). Il
+         reprend ce que fait un écran de lancement natif, que le web n'a
+         pas. -->
+    <div id="nl-splash" aria-hidden="true">
+      <img class="nl-splash__logo" src="images/logo-marque.png" alt="" width="84" height="84" />
+      <div class="nl-splash__nom">NextLearn</div>
+      <div class="nl-splash__barre"><span></span></div>
+    </div>
+    <script>
+      // L'écran de lancement appartient à l'application, pas à la vitrine.
+      // Il s'affichait pourtant sur toutes les adresses : ouvrir la page
+      // d'accueil publique montrait donc l'écran de marque d'une application
+      // qu'on n'ouvrait pas, puis le site. Deux choses qui n'ont rien à voir,
+      // l'une derrière l'autre.
+      //
+      // Retiré ici, avant la première peinture, et non dans `main.ts` : à ce
+      // moment-là le bloc est déjà à l'écran, et on verrait le bleu clignoter.
+      (function () {
+        var chemin = location.pathname;
+        var estApplication = chemin === '/app' || chemin.indexOf('/app/') === 0 || chemin.indexOf('/d/') === 0;
+        if (!estApplication) {
+          var splash = document.getElementById('nl-splash');
+          if (splash) splash.remove();
+        }
+      })();
+    </script>
+    <style>
+      #nl-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        background: #1a4a7e;
+        z-index: 2147483000;
+      }
+      .nl-splash__logo {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        object-fit: cover;
+        /* La marque, pas deux lettres : c'est le premier écran que voit
+           quelqu'un qui ouvre l'application, et « NL » n'y disait rien. */
+      }
+      .nl-splash__nom {
+        margin-top: -8px;
+        color: #fff;
+        font: 700 28px/1.1 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        letter-spacing: 0.01em;
+      }
+      .nl-splash__barre {
+        width: 120px;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.25);
+        overflow: hidden;
+      }
+      .nl-splash__barre span {
+        display: block;
+        width: 40%;
+        height: 100%;
+        border-radius: 999px;
+        background: #fff;
+        animation: nl-splash-glisse 1.1s ease-in-out infinite;
+      }
+      @keyframes nl-splash-glisse {
+        from { transform: translateX(-100%); }
+        to { transform: translateX(300%); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .nl-splash__barre span { animation: none; }
+      }
+      @media (prefers-color-scheme: dark) {
+        #nl-splash { background: #0f2e4d; }
+      }
+    </style>
     <app-root></app-root>
     <noscript>Please enable JavaScript to continue using this application.</noscript>
   </body>

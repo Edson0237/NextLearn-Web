@@ -1,4 +1,7 @@
+import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { validerPin } from '../../../core/auth/pin-policy';
@@ -17,7 +20,7 @@ import { AppRoutes } from '../../../core/router/app-routes';
 @Component({
   selector: 'app-pin-setup',
   standalone: true,
-  imports: [PinInput, Icon],
+  imports: [TraductionPipe, PinInput, Icon, ResultatPin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pin-setup.html',
   styleUrl: './pin-setup.scss',
@@ -35,6 +38,21 @@ export class PinSetup {
   protected readonly erreur = signal<string | undefined>(undefined);
   protected readonly chargement = signal(false);
 
+  /** Ce que la saisie du PIN a donné, montré plein écran avant de poursuivre. */
+  protected readonly resultat = signal<
+    { etat: 'succes' | 'echec'; titre: string; message: string; suite?: () => void } | null
+  >(null);
+
+  protected continuer(): void {
+    const suite = this.resultat()?.suite;
+    this.resultat.set(null);
+    suite?.();
+  }
+
+  protected reessayer(): void {
+    this.resultat.set(null);
+  }
+
   protected onChiffre(d: string): void {
     this.erreur.set(undefined);
     if (!this.confirmant()) {
@@ -47,7 +65,11 @@ export class PinSetup {
           this.pin = '';
           this.saisieActuelle.set('');
         } else {
+          // Le pavé se bloque dès que quatre chiffres sont affichés : sans
+          // remise à zéro, la confirmation ne pouvait plus être saisie et
+          // l'inscription ne se terminait jamais.
           this.confirmant.set(true);
+          this.saisieActuelle.set('');
         }
       }
       return;
@@ -89,14 +111,23 @@ export class PinSetup {
     const ok = await this.auth.setupPin(this.pin);
     this.chargement.set(false);
 
+    this.pin = '';
+    this.confirmation = '';
+    this.confirmant.set(false);
+    this.saisieActuelle.set('');
     if (ok) {
-      void this.router.navigate(['/app', AppRoutes.home]);
+      this.resultat.set({
+        etat: 'succes',
+        titre: 'Ton compte est prêt',
+        message: 'Ton PIN est enregistré. Bienvenue sur NextLearn !',
+        suite: () => void this.router.navigate(['/app', AppRoutes.home]),
+      });
     } else {
-      this.erreur.set(this.auth.state().error ?? 'Une erreur est survenue. Réessaie.');
-      this.pin = '';
-      this.confirmation = '';
-      this.confirmant.set(false);
-      this.saisieActuelle.set('');
+      this.resultat.set({
+        etat: 'echec',
+        titre: 'PIN non enregistré',
+        message: this.auth.state().error ?? 'Une erreur est survenue. Réessaie.',
+      });
     }
   }
 
@@ -105,10 +136,10 @@ export class PinSetup {
    * sait la reprendre. */
   protected async demanderAbandon(): Promise<void> {
     const confirme = await this.feuilles.confirmer({
-      title: 'Abandonner ?',
+      title: tr('pwaAbandonnerQuestion', 'Abandonner ?'),
       description: "Tu devras reprendre l'inscription depuis le début.",
-      confirmLabel: 'Abandonner',
-      cancelLabel: 'Rester',
+      confirmLabel: tr('otpAbandonQuitter', 'Abandonner'),
+      cancelLabel: tr('quitterAppRester', 'Rester'),
       destructive: true,
     });
     if (!confirme) return;

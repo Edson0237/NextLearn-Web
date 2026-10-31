@@ -1,33 +1,55 @@
+<nl-app-header
+  [section]="'navProfil' | t"
+  [prenom]="user()?.prenom"
+  [nom]="user()?.nom"
+  [avatarUrl]="user()?.avatarUrl"
+  [contexte]="cursus()"
+  (favoris)="openFavoris()"
+  (notifications)="openNotifications()"
+  (profil)="ouvrirChoixPhoto()"
+  (changerContexte)="ouvrirChoixPhoto()" />
+
 <div class="nl-prf">
-  <header class="nl-prf__header">
-    <div class="nl-prf__header-bg"></div>
-    <div class="nl-prf__header-content">
-      <h1 class="nl-prf__titre">Profil</h1>
-      @if (user()) {
-        <nl-avatar
-          class="nl-prf__avatar"
-          [initials]="initiales()"
-          [photoUrl]="user()!.avatarUrl"
-          [size]="84"
-          [editable]="true"
-          (edit)="ouvrirChoixPhoto()"
-        />
-        <input
-          #avatarInput
-          type="file"
-          accept="image/*"
-          class="nl-prf__avatar-input"
-          (change)="onFileSelected($event)"
-        />
+  <!-- Le bandeau dégradé pleine largeur a disparu : il coûtait un tiers de
+       la hauteur utile pour répéter un titre que la barre porte déjà, et son
+       texte clair ne tenait pas sur le bleu pâli du thème sombre. L'identité
+       vit maintenant dans une carte, comme le reste de la page. -->
+  @if (user(); as u) {
+    <section class="nl-prf__identite">
+      <nl-avatar
+        class="nl-prf__avatar"
+        [initials]="initiales()"
+        [photoUrl]="u.avatarUrl"
+        [size]="72"
+        [editable]="true"
+        [onDarkBackground]="false"
+        (edit)="ouvrirChoixPhoto()"
+      />
+      <input
+        #avatarInput
+        type="file"
+        accept="image/*"
+        class="nl-prf__avatar-input"
+        (change)="onFileSelected($event)"
+      />
+      <div class="nl-prf__identite-textes">
         <p class="nl-prf__nom">{{ nomComplet() }}</p>
-        <p class="nl-prf__promo">
-          {{ libelleCycle() }}{{ libelleCycle() && libelleNiveau() ? ' · ' : '' }}{{ libelleNiveau() }}
+        <p class="nl-prf__filiere">{{ u.filiere }}</p>
+        <div class="nl-prf__etiquettes">
+          @if (libelleCycle()) {
+            <nl-badge [capitales]="true">{{ libelleCycle() }}</nl-badge>
+          }
+          @if (libelleNiveau()) {
+            <nl-badge ton="primaire" [capitales]="true">{{ libelleNiveau() }}</nl-badge>
+          }
+        </div>
+        <p class="nl-prf__universite">
+          <nl-icon name="account_balance" [size]="14" />
+          <span>{{ u.universite }}</span>
         </p>
-        <p class="nl-prf__filiere">{{ user()!.filiere }}</p>
-        <p class="nl-prf__universite">{{ user()!.universite }}</p>
-      }
-    </div>
-  </header>
+      </div>
+    </section>
+  }
 
   <main class="nl-prf__body">
     <div class="nl-prf__stats">
@@ -36,28 +58,28 @@
           <nl-icon name="local_fire" [size]="22" />
         </div>
         <nl-animated-number class="nl-prf__stat-value" [value]="stats().streak" />
-        <span class="nl-prf__stat-label">jours de suite</span>
+        <span class="nl-prf__stat-label">{{ 'pwaJoursDeSuite' | t }}</span>
       </div>
       <div class="nl-prf__stat">
         <div class="nl-prf__stat-icon nl-prf__stat-icon--docs">
           <nl-icon name="menu_book" [size]="22" />
         </div>
         <nl-animated-number class="nl-prf__stat-value" [value]="stats().docsLus" />
-        <span class="nl-prf__stat-label">docs lus</span>
+        <span class="nl-prf__stat-label">{{ 'pwaDocsLus' | t }}</span>
       </div>
       <div class="nl-prf__stat">
         <div class="nl-prf__stat-icon nl-prf__stat-icon--hours">
           <nl-icon name="schedule" [size]="22" />
         </div>
         <nl-animated-number class="nl-prf__stat-value" [value]="stats().heuresEtude" suffix="h" />
-        <span class="nl-prf__stat-label">heures</span>
+        <span class="nl-prf__stat-label">{{ 'pwaHeuresMinuscule' | t }}</span>
       </div>
       <div class="nl-prf__stat">
         <div class="nl-prf__stat-icon nl-prf__stat-icon--offline">
           <nl-icon name="cloud_done" [size]="22" />
         </div>
         <nl-animated-number class="nl-prf__stat-value" [value]="stats().docsTelecharges" />
-        <span class="nl-prf__stat-label">hors-ligne</span>
+        <span class="nl-prf__stat-label">{{ 'pwaHorsLigneMinuscule' | t }}</span>
       </div>
     </div>
 

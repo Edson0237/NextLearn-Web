@@ -1,105 +1,128 @@
-// Échelle typographique — copie directe de `app_text_styles.dart`.
+// Échelle typographique — système « Academic Clarity ».
 //
 // Des mixins, pas des classes : une règle de classe partagée (`.nl-h3 {...}`)
 // ne traverserait pas l'encapsulation de vues d'Angular — chaque composant
 // compile son propre CSS, scopé par un attribut que seul CE composant pose
-// sur ses propres éléments. Un `.nl-h3` écrit ici et un `<p class="nl-h3">`
-// posé dans un autre composant ne se rencontreraient jamais. Un mixin, lui,
-// copie les propriétés au point d'inclusion : aucune dépendance à un
-// sélecteur partagé, donc aucun risque de ce genre.
+// sur ses propres éléments. Un mixin, lui, copie les propriétés au point
+// d'inclusion : aucune dépendance à un sélecteur partagé.
 //
-// Chaque composant qui a besoin d'un style l'inclut directement dans sa
-// propre feuille : `@include nl-h3;`. Les variables CSS (`var(--primary)`,
-// etc.) restent, elles, partageables sans ce problème — elles se propagent
-// par héritage du DOM, pas par correspondance de sélecteur.
+// ## Ce qui change par rapport à l'échelle précédente
+//
+// Les tailles ne bougent presque pas ; les **graisses et l'interlettrage**,
+// si. Un titre à -0.02em d'interlettrage et 700 de graisse se lit comme un
+// titre de publication ; le même à 0 et 600 se lit comme du texte en gras.
+// C'est l'essentiel de ce qui donnait son air générique à l'interface.
+//
+// Les trois libellés (`label-lg/md/sm`) sont la nouveauté utile : ce sont
+// eux qui portent les micro-badges — « L3 », « CORRIGÉ », « TD/TP » — dont la
+// lecture doit être instantanée au pouce.
+
+// ── Titres ──────────────────────────────────────────────────────────────────
 
 @mixin nl-display-lg {
-  font: 800 2rem/1.15 var(--font-family);
-  letter-spacing: -0.5px;
+  font: 800 2rem/2.5rem var(--font-family);
+  letter-spacing: -0.03em;
   color: var(--text-primary);
 }
 @mixin nl-display-md {
-  font: 800 1.625rem/1.2 var(--font-family);
-  letter-spacing: -0.3px;
+  font: 800 1.75rem/2.25rem var(--font-family);
+  letter-spacing: -0.03em;
   color: var(--text-primary);
 }
+/** Titre d'écran. */
 @mixin nl-h1 {
-  font: 700 1.5rem/1.25 var(--font-family);
-  letter-spacing: -0.2px;
+  font: 700 1.5rem/2rem var(--font-family);
+  letter-spacing: -0.02em;
   color: var(--text-primary);
 }
+/** Titre de section. */
 @mixin nl-h2 {
-  font: 700 1.25rem/1.3 var(--font-family);
-  letter-spacing: -0.2px;
+  font: 700 1.25rem/1.75rem var(--font-family);
+  letter-spacing: -0.015em;
   color: var(--text-primary);
 }
+/** Titre de carte — le plus employé de tous. */
 @mixin nl-h3 {
-  font: 700 1.0625rem/1.35 var(--font-family);
+  font: 600 1rem/1.5rem var(--font-family);
+  letter-spacing: -0.01em;
   color: var(--text-primary);
 }
 @mixin nl-h4 {
-  font: 600 0.9375rem/1.4 var(--font-family);
+  font: 600 0.875rem/1.25rem var(--font-family);
+  letter-spacing: -0.005em;
   color: var(--text-primary);
 }
 
+// ── Corps ───────────────────────────────────────────────────────────────────
+
 @mixin nl-body-lg {
-  font: 400 1rem/1.55 var(--font-family-body);
+  font: 400 1rem/1.5rem var(--font-family-body);
+  letter-spacing: -0.005em;
   color: var(--text-primary);
 }
 @mixin nl-body-md {
-  font: 400 0.875rem/1.5 var(--font-family-body);
+  font: 400 0.875rem/1.25rem var(--font-family-body);
   color: var(--text-primary);
 }
 @mixin nl-body-sm {
-  font: 400 0.75rem/1.5 var(--font-family-body);
+  font: 400 0.75rem/1rem var(--font-family-body);
+  letter-spacing: 0.01em;
   color: var(--text-secondary);
 }
 
+// ── Libellés et micro-badges ────────────────────────────────────────────────
+
 @mixin nl-label-lg {
-  font: 600 0.875rem/1.2 var(--font-family-body);
-  letter-spacing: 0.1px;
+  font: 600 0.8125rem/1.125rem var(--font-family-body);
+  letter-spacing: 0.01em;
   color: var(--text-primary);
 }
+/** Le badge courant : capitales, interlettrage ouvert, lecture au vol. */
 @mixin nl-label-md {
-  font: 600 0.75rem/1.2 var(--font-family-body);
-  letter-spacing: 0.2px;
+  font: 700 0.6875rem/0.875rem var(--font-family-body);
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
 @mixin nl-label-sm {
-  font: 600 0.625rem/1.2 var(--font-family-body);
-  letter-spacing: 0.3px;
+  font: 700 0.625rem/0.75rem var(--font-family-body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 @mixin nl-caption {
-  font: 500 0.6875rem/1.4 var(--font-family-body);
+  font: 500 0.6875rem/1rem var(--font-family-body);
   color: var(--text-muted);
 }
 
+// ── Rôles particuliers ──────────────────────────────────────────────────────
+
 @mixin nl-button-text {
-  font: 700 0.9375rem/1.2 var(--font-family);
-  letter-spacing: 0.1px;
+  font: 600 0.9375rem/1.25rem var(--font-family);
+  letter-spacing: 0.01em;
 }
 @mixin nl-button-text-sm {
-  font: 600 0.8125rem/1.2 var(--font-family);
-  letter-spacing: 0.1px;
+  font: 600 0.8125rem/1.125rem var(--font-family);
+  letter-spacing: 0.01em;
 }
 
 @mixin nl-pin-digit {
-  font: 700 1.875rem/1.2 var(--font-family-mono);
+  font: 700 1.875rem/1.2 var(--font-family);
   letter-spacing: 2px;
   color: var(--primary);
 }
+/** Chiffre d'une statistique : c'est lui qu'on lit, pas son libellé. */
 @mixin nl-stat-value {
-  font: 800 1.375rem/1 var(--font-family);
-  letter-spacing: -0.3px;
-  color: var(--primary);
+  font: 800 1.5rem/1.75rem var(--font-family);
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
 }
 @mixin nl-streak-number {
-  font: 800 1.0625rem/1.2 var(--font-family);
+  font: 800 1.125rem/1.25rem var(--font-family);
+  letter-spacing: -0.02em;
   color: var(--streak-orange);
 }
 @mixin nl-badge-text {
-  font: 700 0.625rem/1.2 var(--font-family);
-  letter-spacing: 0.5px;
-  color: var(--text-on-primary);
+  font: 700 0.625rem/0.75rem var(--font-family);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }

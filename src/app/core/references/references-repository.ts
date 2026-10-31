@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Failure } from '../models/failure.model';
 import {
@@ -61,6 +61,17 @@ export class ReferencesRepository {
     return this.liste('/api/references/document-types', typeContenuDepuisJson);
   }
 
+  /** Taille maximale et formats acceptés pour un fichier envoyé, tels que le serveur les règle. */
+  async getLimitesFichier(): Promise<{ maxFileSizeMb: number; formats: readonly string[] }> {
+    const reponse = await firstValueFrom(this.http.get('/api/references/limites-fichier'));
+    const data = ((reponse as Record<string, unknown>)?.['data'] ?? {}) as Record<string, unknown>;
+    const taille = Number(data['maxFileSizeMb']);
+    return {
+      maxFileSizeMb: Number.isFinite(taille) && taille > 0 ? taille : 50,
+      formats: Array.isArray(data['formats']) ? (data['formats'] as unknown[]).map(String) : ['pdf'],
+    };
+  }
+
   getJustificatifTypes(): Promise<JustificatifType[]> {
     return this.liste('/api/references/justificatif-types', justificatifTypeDepuisJson);
   }
@@ -76,7 +87,7 @@ export class ReferencesRepository {
       const brut = Array.isArray(enveloppe?.['data']) ? (enveloppe['data'] as unknown[]) : [];
       return brut.map((e) => depuisJson(e as Record<string, unknown>));
     } catch (e) {
-      if (e instanceof HttpErrorResponse) throw Failure.depuisErreurHttp(e, true);
+      if (e instanceof HttpErrorResponse) throw Failure.depuisErreurHttp(e, !isDevMode());
       throw new Failure('Une erreur est survenue.');
     }
   }

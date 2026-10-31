@@ -1,23 +1,20 @@
 <div class="nl-resetpin">
   <header class="nl-resetpin__entete">
-    <button type="button" class="nl-resetpin__retour" (click)="quitter()" aria-label="Retour">
+    <button type="button" class="nl-resetpin__retour" (click)="quitter()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" [size]="20" />
     </button>
-    <h1 class="nl-resetpin__titre-entete">PIN oublié</h1>
+    <h1 class="nl-resetpin__titre-entete">{{ 'resetPinTitre' | t }}</h1>
   </header>
 
   <div class="nl-resetpin__corps">
     @switch (etape()) {
       @case ('email') {
-        <h2 class="nl-resetpin__titre">Récupérer ton compte</h2>
-        <p class="nl-resetpin__texte">
-          Indique l'adresse de ton compte : on t'envoie un code pour définir un nouveau PIN. Ta bibliothèque et ta
-          progression sont conservées.
-        </p>
+        <h2 class="nl-resetpin__titre">{{ 'resetPinRecupererCompte' | t }}</h2>
+        <p class="nl-resetpin__texte">{{ 'pwaIndiqueAdresseCompte' | t }}</p>
 
         <label class="nl-resetpin__champ">
-          <span>Email du compte</span>
-          <input type="email" placeholder="toi@exemple.com" [value]="email()" (input)="email.set(val($event))" />
+          <span>{{ 'resetPinEmailCompte' | t }}</span>
+          <input type="email" [attr.placeholder]="'authEmailExemple' | t" [value]="email()" (input)="email.set(val($event))" />
         </label>
 
         <button type="button" class="nl-resetpin__cta" [disabled]="chargement" (click)="envoyerCode()">
@@ -30,7 +27,7 @@
       }
 
       @case ('code') {
-        <h2 class="nl-resetpin__titre">Vérifie tes e-mails</h2>
+        <h2 class="nl-resetpin__titre">{{ 'resetPinVerifieEmails' | t }}</h2>
         <p class="nl-resetpin__texte">
           @if (reprise) {
             Un code à 6 chiffres t'attend dans ta boîte mail. Saisis-le ici.
@@ -40,7 +37,7 @@
         </p>
 
         <label class="nl-resetpin__champ">
-          <span>Code à 6 chiffres</span>
+          <span>{{ 'resetPinCodeSixChiffres' | t }}</span>
           <input
             type="text"
             inputmode="numeric"
@@ -51,22 +48,15 @@
           />
         </label>
 
-        <button type="button" class="nl-resetpin__cta" [disabled]="chargement" (click)="validerCode()">Continuer</button>
-        <button type="button" class="nl-resetpin__lien" [disabled]="chargement" (click)="envoyerCode()">
-          Renvoyer un code
-        </button>
-        <button type="button" class="nl-resetpin__lien nl-resetpin__lien--discret" [disabled]="chargement" (click)="quitter()">
-          Adresse incorrecte ? Recommencer
-        </button>
+        <button type="button" class="nl-resetpin__cta" [disabled]="chargement" (click)="validerCode()">{{ 'docContinuer' | t }}</button>
+        <button type="button" class="nl-resetpin__lien" [disabled]="chargement" (click)="envoyerCode()">{{ 'resetPinRenvoyer' | t }}</button>
+        <button type="button" class="nl-resetpin__lien nl-resetpin__lien--discret" [disabled]="chargement" (click)="quitter()">{{ 'otpAbandonLienReinitialisation' | t }}</button>
       }
 
       @case ('nouveauPin') {
         <h2 class="nl-resetpin__titre nl-resetpin__titre--centre">
           {{ confirmant() ? 'Confirme ton nouveau PIN' : 'Choisis un nouveau PIN' }}
         </h2>
-        <p class="nl-resetpin__texte nl-resetpin__texte--centre">
-          Évite un code trop simple : il protège l'accès à ton compte sur cet appareil.
-        </p>
 
         <nl-pin-input
           [pin]="saisiePin()"
@@ -83,3 +73,12 @@
     }
   </div>
 </div>
+
+@if (resultat(); as r) {
+  <nl-resultat-pin
+    [etat]="r.etat"
+    [titre]="r.titre"
+    [message]="r.message"
+    (termine)="continuer()"
+    (reessayer)="reessayer()" />
+}

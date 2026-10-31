@@ -1,6 +1,11 @@
 :host {
   display: flex;
   flex-direction: column;
+  // Le panneau de l'overlay est lui-même un conteneur flex en ligne : sans
+  // largeur explicite, la coque s'y réduit à celle de son contenu et la
+  // feuille s'affichait étroite au lieu de s'étaler d'un bord à l'autre.
+  width: 100%;
+  min-width: 0;
   background: var(--bg-primary);
   border-radius: var(--radius-feuille) var(--radius-feuille) 0 0;
   max-height: 92vh;

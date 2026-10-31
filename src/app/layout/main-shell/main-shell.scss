@@ -1,0 +1,101 @@
+@use '../../shared/styles/type';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  background: var(--bg-canvas);
+}
+
+.nl-shell__corps {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  // La barre flotte au-dessus du contenu : sans cette réserve, la dernière
+  // carte d'une liste finit cachée dessous, et rien ne le signale.
+  padding-bottom: calc(var(--hauteur-barre-onglets) + var(--space-md));
+}
+
+// ── La barre d'onglets ─────────────────────────────────────────────────────
+//
+// Une pilule sombre qui flotte au-dessus du contenu, détachée des bords.
+// Ses teintes viennent de la charte (`--nav-*`, déclarées hors des deux
+// palettes) : le bleu profond de la marque, et le bleu clair de la même
+// famille pour l'onglet courant.
+
+.nl-shell__barre {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: max(var(--space-md), env(safe-area-inset-bottom));
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  // Jamais plus large que l'écran moins ses marges, jamais plus de 420 px :
+  // sur une tablette, une barre pleine largeur éloigne les icônes du pouce.
+  width: min(calc(100vw - var(--space-lg) * 2), 420px);
+  height: 64px;
+  padding: 0 var(--space-sm);
+  border-radius: var(--radius-pilule);
+  background: var(--nav-surface);
+  box-shadow:
+    0 10px 30px rgba(var(--shadow-color), 0.28),
+    0 2px 8px rgba(var(--shadow-color), 0.16);
+}
+
+.nl-shell__onglet {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--nav-encre);
+  text-decoration: none;
+
+  &:active .nl-shell__pastille {
+    transform: scale(0.92);
+  }
+}
+
+// Le carré arrondi derrière l'onglet courant. Il remplace le point et le
+// libellé : sans texte, il faut que la sélection se voie de loin, et une
+// couleur de trait seule ne suffirait pas à côté d'un daltonisme.
+.nl-shell__pastille {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  transition:
+    background var(--motion-micro, 150ms) var(--ease-entree, ease-out),
+    transform var(--motion-micro, 150ms) var(--ease-entree, ease-out);
+}
+
+.nl-shell__onglet--actif {
+  color: var(--nav-encre-actif);
+
+  .nl-shell__pastille {
+    background: var(--nav-actif);
+  }
+}
+
+// Pastille de compte sur un onglet — les documents disponibles hors ligne.
+.nl-shell__compte {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  margin-left: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pilule);
+  background: var(--nav-pastille);
+  color: var(--nav-encre-actif);
+  // L'anneau reprend le fond de la pilule, pas celui de la page : c'est sur
+  // elle que la pastille est posée.
+  box-shadow: 0 0 0 2px var(--nav-surface);
+  font: 700 0.625rem/18px var(--font-family);
+  text-align: center;
+}

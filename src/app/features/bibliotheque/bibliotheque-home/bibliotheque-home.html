@@ -1,73 +1,118 @@
-<div class="biblio">
-  <header class="biblio__entete">
-    <h1 class="biblio__titre">Bibliothèque</h1>
-    <div class="biblio__actions">
-      <button class="nl-icon-btn" (click)="openSearch()" aria-label="Rechercher">
-        <nl-icon name="search" />
-      </button>
-      <button class="nl-icon-btn" (click)="openCatalogue()" aria-label="Catalogue par matière">
-        <nl-icon name="list_alt" />
-      </button>
-      <button class="nl-icon-btn" (click)="openFavoris()" aria-label="Favoris">
-        <nl-icon name="bookmark" />
-      </button>
-      <button class="nl-icon-btn" (click)="openOffline()" aria-label="Hors ligne">
-        <nl-icon name="cloud_download" />
-      </button>
-    </div>
-  </header>
+<nl-app-header
+  [section]="'navBibliotheque' | t"
+  [prenom]="user()?.prenom"
+  [nom]="user()?.nom"
+  [avatarUrl]="user()?.avatarUrl"
+  [contexte]="cursus()"
+  (favoris)="openFavoris()"
+  (notifications)="openNotifications()"
+  (profil)="openProfil()"
+  (changerContexte)="openProfil()" />
 
-  <nav class="biblio__tabs" aria-label="Types de document">
-    @for (tab of tabs; track tab.label) {
-      <button
-        class="biblio__tab"
-        [class.biblio__tab--active]="selectedType() === tab.type"
-        [style.--tab-color]="typeColor(tab.type)"
-        (click)="selectType(tab.type)">
-        @if (tab.type) {
-          <nl-icon [name]="typeIcon(tab.type)" />
-        }
-        <span>{{ tab.label }}</span>
-      </button>
-    }
-  </nav>
-
-  <div class="biblio__filtres">
-    <div class="biblio__matieres">
-      <button class="biblio__chip" [class.biblio__chip--active]="selectedMatiere() === null" (click)="selectMatiere(null)">
-        Toutes
-      </button>
-      @for (m of matiereOptions(); track m.id) {
-        <button class="biblio__chip" [class.biblio__chip--active]="selectedMatiere() === m.id" (click)="selectMatiere(m.id)">
-          {{ m.nom }}
-        </button>
-      }
-    </div>
+<div class="nl-biblio">
+  <div class="nl-biblio__recherche">
+    <nl-search-bar
+      [(valeur)]="searchQuery"
+      [placeholder]="'pwaRechercherDocumentMatiere' | t"
+      [avecFiltres]="true"
+      [filtresActifs]="nombreFiltres()"
+      (filtrer)="ouvrirFiltres()" />
   </div>
 
-  <div class="biblio__corps">
+  <!-- Les formats, en rangée qui défile. Le compte sur chaque puce dit ce
+       qu'elle donnera avant qu'on la touche — c'est ce qui évite d'ouvrir un
+       filtre vide. -->
+  <div class="nl-biblio__segments" role="tablist" [attr.aria-label]="'pwaTypesDeDocument' | t">
+    @for (tab of tabs(); track tab.label) {
+      <button
+        type="button"
+        role="tab"
+        class="nl-biblio__segment nl-cible-fine"
+        [class.nl-biblio__segment--actif]="selectedType() === tab.type"
+        [attr.aria-selected]="selectedType() === tab.type"
+        [style.--teinte]="(tab.type | typeDoc).couleur"
+        (click)="selectType(tab.type)">
+        <nl-icon [name]="(tab.type | typeDoc).icone" [size]="16" />
+        <span class="nl-biblio__segment-nom">{{ tab.label }}</span>
+        <span class="nl-biblio__segment-compte">{{ compteType(tab.type) }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Les matières du programme. Deuxième niveau de filtre : on choisit
+       d'abord ce qu'on cherche, ensuite dans quelle matière. -->
+  @if (matiereOptions().length > 0) {
+    <div class="nl-biblio__matieres">
+      <button
+        type="button"
+        class="nl-biblio__puce nl-cible-fine"
+        [class.nl-biblio__puce--active]="selectedMatiere() === null"
+        (click)="selectMatiere(null)">
+        {{ 'epreuveTypeTous' | t }}
+      </button>
+      @for (m of matiereOptions(); track m.id) {
+        <button
+          type="button"
+          class="nl-biblio__puce nl-cible-fine"
+          [class.nl-biblio__puce--active]="selectedMatiere() === m.id"
+          (click)="selectMatiere(m.id)">
+          {{ m.nom }} <span class="nl-biblio__puce-compte">{{ compteMatiere(m.id) }}</span>
+        </button>
+      }
+      <button type="button" class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine" (click)="openCatalogue()">
+        {{ 'biblioCatalogueLien' | t }}<nl-icon name="chevron_right" [size]="14" />
+      </button>
+    </div>
+  }
+
+  <div class="nl-biblio__corps">
     @if (loading()) {
-      <p class="biblio__etat">Chargement…</p>
-    } @else if (error()) {
-      <div class="biblio__etat biblio__etat--erreur">
-        <p>{{ error() }}</p>
-        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      <div aria-busy="true" aria-live="polite">
+        <div class="nl-biblio__squelette"></div>
+        <div class="nl-biblio__squelette"></div>
+        <div class="nl-biblio__squelette"></div>
+      </div>
+    } @else if (error(); as message) {
+      <div class="nl-biblio__erreur">
+        <nl-icon name="warning" [size]="22" />
+        <p>{{ message }}</p>
+        <button nlButton variant="primary" size="sm" (click)="load()">
+          {{ 'actionReessayer' | t }}
+        </button>
       </div>
     } @else if (filteredDocuments().length === 0) {
       <nl-empty-state
-        icon="description"
-        title="Aucun document"
-        subtitle="Essayez un autre filtre ou revenez plus tard." />
+        [title]="'pwaAucunDocument' | t"
+        [subtitle]="'pwaEssayezAutreFiltre' | t"
+        [ctaLabel]="nombreFiltres() > 0 ? ('actionReinitialiser' | t) : undefined"
+        (cta)="reinitialiser()">
+        <nl-icon icon name="search" [size]="28" />
+      </nl-empty-state>
     } @else {
-      <div class="biblio__liste">
-        @for (doc of filteredDocuments(); track doc.id) {
+      <p class="nl-biblio__resultats">
+        {{ 'pwaResultats' | t: { nombre: filteredDocuments().length } }}
+      </p>
+
+      <div class="nl-biblio__liste">
+        @for (doc of filteredDocuments(); track doc.id; let i = $index) {
           <nl-document-card
+            [nlCascadeEnter]="i"
+            [documentId]="doc.id"
             [title]="doc.titre"
             [subject]="doc.matiere"
-            [typeLabel]="typeLabel(doc.type)"
-            [typeIcon]="typeIcon(doc.type)"
-            [typeColor]="typeColor(doc.type)"
+            [auteur]="doc.enseignant"
+                [annee]="doc.anneeAcademique"
+            [typeLabel]="(doc.type | typeDoc).label"
+            [typeIcon]="(doc.type | typeDoc).icone"
+            [typeColor]="(doc.type | typeDoc).couleur"
+            [typeBackground]="(doc.type | typeDoc).fond"
+            [etiquettes]="etiquettesDe(doc)"
             [meta]="metaFor(doc)"
+            [note]="noteFor(doc)"
+            [offline]="estHorsLigne(doc)"
+            actionIcone="download"
+            [actionLibelle]="'actionTelecharger' | t"
+            (action)="telecharger(doc)"
             (activate)="openDocument(doc)" />
         }
       </div>

@@ -12,7 +12,9 @@
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/*.js"
+          "/*.js",
+          "/pdf.worker.min.mjs",
+          "/images/logo-marque.png"
         ]
       }
     },
@@ -21,7 +23,39 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"]
+        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2|mjs)"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-lecture",
+      "urls": [
+        "/api/documents",
+        "/api/documents?*",
+        "/api/documents/recommended",
+        "/api/documents/popular",
+        "/api/documents/recent",
+        "/api/documents/*",
+        "/api/epreuves",
+        "/api/epreuves?*",
+        "/api/epreuves/*",
+        "/api/favorites",
+        "/api/offline/documents",
+        "/api/me/context",
+        "/api/references/**",
+        "/api/progress/lecture",
+        "/api/progression/**",
+        "/api/notifications",
+        "/api/notifications?*",
+        "/api/profile",
+        "/api/users/me"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 300,
+        "maxAge": "7d",
+        "timeout": "5s"
       }
     }
   ]
