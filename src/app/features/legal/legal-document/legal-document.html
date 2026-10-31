@@ -3,12 +3,12 @@
     <button class="nl-icon-btn" (click)="goBack()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" />
     </button>
-    <h1 class="legal__titre">{{ title() }}</h1>
+    <h1 class="legal__titre">{{ titleKey() | t }}</h1>
   </header>
 
   <div class="legal__corps">
     @if (src(); as url) {
-      <iframe class="legal__frame" [src]="url" [title]="title()"></iframe>
+      <iframe class="legal__frame" [src]="url" [title]="titleKey() | t"></iframe>
     } @else {
       <p class="legal__etat">{{ 'pwaDocumentInconnu' | t }}</p>
     }

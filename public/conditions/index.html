@@ -1,11 +1,21 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Conditions d'utilisation - NextLearn</title>
+<title>Conditions d'utilisation / Terms of use - NextLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Conditions d'utilisation de l'application NextLearn.">
+<meta name="description" content="Conditions d'utilisation / Terms of use - NextLearn.">
 <link rel="icon" href="/images/Logo.png" type="image/png">
+<script>(function () {
+  var d = document.documentElement, l = null;
+  try {
+    var q = /[?&]lang=(fr|en)/.exec(location.search); if (q) l = q[1];
+    if (!l) { var p = localStorage.getItem('nl_langue'); if (p === 'fr' || p === 'en') l = p; }
+  } catch (e) {}
+  if (!l) l = /^en/i.test(navigator.language || '') ? 'en' : 'fr';
+  d.setAttribute('data-lang', l); d.lang = l;
+  window.nlLangue = function (x) { d.setAttribute('data-lang', x); d.lang = x; };
+})();</script>
 <style>
   :root {
     --primary: #1a497d; --primary-dark: #0d2844; --accent: #7db8ff;
@@ -50,6 +60,15 @@
     font-size: 0.9rem; color: var(--doux);
   }
   footer a { margin-right: 18px; white-space: nowrap; }
+  .langues { margin-left: auto; display: flex; gap: 6px; }
+  .langues button {
+    font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; padding: 4px 12px;
+  }
+  html[data-lang="fr"] .langues [data-l="fr"],
+  html[data-lang="en"] .langues [data-l="en"] { background: #fff; color: var(--primary-dark); }
+  html[data-lang="fr"] [lang="en"].version, html[data-lang="en"] [lang="fr"].version { display: none; }
   @media (max-width: 600px) {
     article { padding: 24px 20px; border-radius: 12px; }
     h1 { font-size: 1.5rem; }
@@ -60,10 +79,15 @@
 <header>
   <div class="bande">
     <a href="/"><img src="/images/Logo.png" alt="">Next<span>Learn</span></a>
+    <div class="langues" role="group" aria-label="Langue / Language">
+      <button type="button" data-l="fr" onclick="nlLangue('fr')">FR</button>
+      <button type="button" data-l="en" onclick="nlLangue('en')">EN</button>
+    </div>
   </div>
 </header>
 <main>
   <article>
+<div class="version" lang="fr">
 <h1>Conditions générales d&#39;utilisation de l&#39;application NextLearn</h1>
 <p>Dernière mise à jour : 8 octobre 2026</p>
 <h2>Préambule</h2>
@@ -324,12 +348,262 @@ de l&#39;inscription. Aucune case n&#39;est pré-cochée.</p>
 stipulations conserveraient leur plein effet.</p>
 <p>L&#39;utilisateur reconnaît avoir pris connaissance des présentes conditions et
 les accepter.</p>
-    <footer>
+<footer>
       <a href="/confidentialite/">Politique de confidentialité</a>
       <a href="/conditions/">Conditions d'utilisation</a>
       <a href="/suppression-compte/">Supprimer mon compte</a>
       <a href="mailto:tientcheumarvin@gmail.com">Nous écrire</a>
     </footer>
+</div>
+<div class="version" lang="en">
+<h1>NextLearn Application Terms of Use</h1>
+<p>Last updated: 8 October 2026</p>
+<h2>Preamble</h2>
+<p>The NextLearn application is a library of academic resources intended for
+higher-education students in Cameroon. It is published and operated by an
+individual acting in their own name, identified in Article 3.</p>
+<p>NextLearn is neither an educational institution nor a certifying body. It
+provides teaching documents and revision tools; it awards no qualification and
+does not replace any teaching.</p>
+<p>These terms are drawn up in accordance with the Cameroonian legal requirements
+in force. Reading them in full and expressly accepting them is mandatory before
+any access to the application&#39;s services.</p>
+<h2>Article 1: purpose</h2>
+<p>These terms determine:</p>
+<ul>
+<li>the conditions of access to the application and of registration;</li>
+<li>the arrangements for verifying student status;</li>
+<li>the respective obligations of the user and of the publisher;</li>
+<li>the regime of intellectual property and copyright;</li>
+<li>the procedure for reporting and removing content;</li>
+<li>the complaint routes open to rights holders;</li>
+<li>the system of sanctions and remedies;</li>
+<li>the arrangements for deleting the account;</li>
+<li>the settlement of disputes and the applicable law.</li>
+</ul>
+<p>This list is not exhaustive.</p>
+<h2>Article 2: definitions</h2>
+<ul>
+<li>Application or platform: the NextLearn service, whatever the medium through
+which it is accessed. Both terms designate the same entity.</li>
+<li>User: any natural person registered on the application.</li>
+<li>Content: any document, exam, exercise or resource made available on the
+application.</li>
+<li>Publisher: the individual operating the application, identified in
+Article 3. The publisher does not operate as a company; they are personally
+liable for the obligations placed on them by these terms.</li>
+</ul>
+<h2>Article 3: identification of the publisher</h2>
+<p>In accordance with the law governing electronic commerce in Cameroon, which
+requires the publisher of an online service to be identifiable:</p>
+<ul>
+<li>Full name: Tientcheu Siani Joel Marvin</li>
+<li>Capacity: individual, promoter of the NextLearn project</li>
+<li>Place of activity: Yaoundé, Cameroon</li>
+<li>Unique Identification Number (NIU): PO70416373919C</li>
+<li>Contact email address: <a href="mailto:tientcheumarvin@gmail.com">tientcheumarvin@gmail.com</a></li>
+<li>Publication director: the publisher in person</li>
+</ul>
+<p>The publisher is not incorporated. They therefore have no company name, no share
+capital and no registration number in the Trade and Personal Property Credit
+Register (RCCM). They are, however, identified with the Cameroonian tax
+authorities by the unique identification number given above. This situation is
+stated openly rather than passed over in silence, and it in no way reduces the
+obligations that these terms place on them: they answer for them with their own
+assets.</p>
+<p>As the publisher has no postal address, all correspondence relating to these
+terms, including the notices, complaints and disputes provided for in Articles
+10, 11 and 16, is received at the email address above.</p>
+<p>If the operation were transferred to a company incorporated for that purpose,
+users would be informed before the transfer takes effect, and this article
+would be updated accordingly.</p>
+<h2>Article 4: access to the application and registration</h2>
+<p>Access requires installing the application on a compatible device and creating
+an account.</p>
+<p>Registration requires you to provide a valid email address, your identity, your
+institution, your field of study and your level. A verification code is sent to
+you by email, then you set a four-digit PIN.</p>
+<p>Registration is free. Access to the resources is free as of the date of these
+terms.</p>
+<p>You undertake to provide accurate information and to keep it up to date. This
+information determines the content offered to you: inaccurate information would
+expose you to receiving resources unrelated to your course of study.</p>
+<p>Your PIN is strictly personal. You are responsible for any use made with your
+credentials, unless you establish fraudulent use that you reported without
+delay.</p>
+<p>An account is individual. Sharing an account, or impersonating a third party,
+leads to its suspension and, where applicable, to the prosecution provided for
+by the law on cybersecurity and cybercrime.</p>
+<h2>Article 5: verification of student status</h2>
+<p>Full access to the resources is reserved for persons who can prove their
+enrolment in a higher-education institution.</p>
+<p>Where you have an email address issued by your institution, verification is
+automatic.</p>
+<p>Otherwise, you are asked to submit a supporting document: student card,
+enrolment certificate, pass record or registration receipt. This document is
+reviewed by an authorised administrator within forty-eight (48) hours. It is
+deleted from our servers thirty (30) days after the decision.</p>
+<p>Submitting a forged document leads to the rejection of the application, the
+closure of the account, and exposes its author to the criminal penalties
+applicable to forgery and use of forged documents.</p>
+<p>In the event of rejection, the reason is communicated to you and you may submit
+a new application or contest the decision under the conditions of Article 12.</p>
+<h2>Article 6: user obligations</h2>
+<p>You undertake to:</p>
+<ul>
+<li>comply with these terms and the instructions given in the application;</li>
+<li>use the content only for your personal education;</li>
+<li>not resell, rent, publicly redistribute or republish the content on another
+medium or platform;</li>
+<li>not circumvent technical protection measures or attempt to access non-public
+parts of the service;</li>
+<li>not upload any unlawful, insulting or defamatory content, nor any content
+infringing the rights of a third party;</li>
+<li>upload as a profile photo only an image you own and that does not depict a
+third party without their consent. This photo is optional and is shown to no
+one but you; it nevertheless remains content that you upload, and the same
+rules apply to it;</li>
+<li>report any manifestly unlawful content that comes to your knowledge.</li>
+</ul>
+<p>Any fraudulent access, any hindrance to the operation of the service and any
+fraudulent introduction of data are punished by the law on cybersecurity and
+cybercrime.</p>
+<h2>Article 7: publisher obligations</h2>
+<p>The publisher undertakes to:</p>
+<ul>
+<li>use reasonable means to ensure the availability and security of the service;</li>
+<li>examine any content report within twenty-four (24) hours;</li>
+<li>process any verification application within forty-eight (48) hours;</li>
+<li>give reasons for any decision to reject, suspend or remove;</li>
+<li>reply to any complaint within thirty (30) days;</li>
+<li>inform users without delay of any significant interruption of the service;</li>
+<li>cooperate with Cameroonian administrative and judicial authorities on a lawful
+request.</li>
+</ul>
+<p>The publisher guarantees neither the accuracy, nor the completeness, nor the
+currency of the content. It comes from various sources and may contain errors.
+It is up to you to check it with your teachers.</p>
+<h2>Article 8: intellectual property and copyright</h2>
+<p>The content made available remains the property of its respective authors,
+protected by Law No. 2000/011 of 19 December 2000 on copyright and
+neighbouring rights.</p>
+<p>You are granted a personal, non-exclusive and non-transferable right of use,
+solely for your education. This right corresponds to the exceptions that
+Cameroonian law recognises for reproduction for strictly personal and private
+use and for the illustration of teaching. It gives you no ownership right over
+the content.</p>
+<p>Any reproduction, performance, distribution or making available to the public
+going beyond this use constitutes infringement, punished by the aforementioned
+law and by the Penal Code.</p>
+<p>The trademarks, logos, graphic identity and software developments of the
+application are the property of the publisher. Any reuse without written
+authorisation is prohibited.</p>
+<p>When you upload content yourself, you warrant that you hold the rights or have
+the necessary authorisations, and you grant the publisher the right to host it
+and distribute it to the users of the application. You remain solely
+responsible for the uploaded content and its consequences with regard to third
+parties.</p>
+<h2>Article 9: reporting content</h2>
+<p>Any user may report content from its page, stating the reason and, where
+applicable, details.</p>
+<p>The following reasons lead to the immediate removal of the content, as a
+precautionary measure and for the duration of the review: infringement of
+copyright, exposure of personal data, unlawful or shocking content, exam
+questions not yet administered.</p>
+<p>Other reasons lead to removal when the content is the subject of five (5)
+distinct reports.</p>
+<p>Precautionary removal does not prejudge the decision. Every report is examined
+by an authorised administrator within the period set in Article 7, and the
+decision is reasoned.</p>
+<p>A manifestly abusive report, or one repeated with intent to harm, exposes its
+author to the sanctions of Article 11.</p>
+<h2>Article 10: claims by rights holders</h2>
+<p>Any person who considers that content distributed on the application infringes
+their rights may give notice of it at the address given in Article 3.</p>
+<p>The notice includes:</p>
+<ul>
+<li>the identity and contact details of the claimant;</li>
+<li>the precise identification of the disputed content;</li>
+<li>the nature of the rights invoked and the elements supporting them;</li>
+<li>the declaration that the information provided is accurate.</li>
+</ul>
+<p>On receipt of an admissible notice, the content is removed as a precautionary
+measure. The publisher examines the claim and notifies the claimant, as well as
+the person who uploaded the content, of the decision; the latter may submit
+observations.</p>
+<h2>Article 11: moderation, sanctions and remedies</h2>
+<p>In the event of a breach of these terms, the publisher may, depending on the
+seriousness and in a proportionate manner:</p>
+<ul>
+<li>issue a warning;</li>
+<li>remove content;</li>
+<li>suspend the account temporarily;</li>
+<li>close the account.</li>
+</ul>
+<p>Every measure is notified by email and reasoned.</p>
+<p>You have thirty (30) days to contest it, by writing to the address in
+Article 3. The review is entrusted to a person other than the one who took the
+initial measure where the organisation allows it. The reply is sent to you
+within thirty (30) days of the contestation.</p>
+<h2>Article 12: account deletion</h2>
+<p>You can delete your account at any time, from the Profile screen then &quot;Delete
+my account&quot;. Deletion is confirmed with your PIN.</p>
+<p>It is final and erases your favourites, your progress, your results, your
+reports, your profile photo and your supporting document.</p>
+<p>Records of administration decisions concerning you are kept in anonymised form,
+under the conditions set out in the data protection policy.</p>
+<h2>Article 13: limitation of liability</h2>
+<p>The publisher cannot be held liable for:</p>
+<ul>
+<li>errors, omissions or inaccuracies affecting content produced by a third
+party;</li>
+<li>the use you make of the content, in particular in your academic assessments;</li>
+<li>an interruption of the service due to a cause beyond their control, in
+particular a failure of electronic communication networks, a power cut or a
+case of force majeure;</li>
+<li>loss of data following the deletion of your account, which is irreversible
+and brought to your attention before confirmation.</li>
+</ul>
+<p>Nothing in these terms can exclude the publisher&#39;s liability for gross
+negligence or wilful misconduct, nor the public-policy guarantees recognised for
+consumers by Law No. 2011/012 of 6 May 2011 on consumer protection in
+Cameroon.</p>
+<h2>Article 14: personal data</h2>
+<p>The processing of your data is governed by the personal data protection policy,
+accessible from the application and forming an integral part of these terms.</p>
+<p>Acceptance of these terms is separate from acceptance of that policy: each is
+the subject of its own consent.</p>
+<h2>Article 15: changes to the terms</h2>
+<p>The publisher may amend these terms. Any change is brought to your attention in
+the application before it takes effect, and your acceptance is collected through
+a mechanism that leaves a trace.</p>
+<p>Refusing a substantial change gives you the option of deleting your account
+without charge or penalty.</p>
+<h2>Article 16: dispute resolution and applicable law</h2>
+<p>Any dispute gives rise, before any action, to a complaint sent to support from
+the application or to the address in Article 3. The publisher replies within
+thirty (30) days.</p>
+<p>In the event of dissatisfaction, the parties undertake to seek an amicable
+settlement within a period that may not exceed ninety (90) days from notice of
+that dissatisfaction.</p>
+<p>Failing agreement within that period, the dispute falls to the competent courts
+of the city of Yaoundé.</p>
+<p>Nothing in this article deprives the consumer of the right to bring the matter
+before the court of their domicile where the law grants it.</p>
+<p>These terms are governed by Cameroonian law.</p>
+<h2>Article 17: final provisions</h2>
+<p>Acceptance of these terms is given by ticking the box provided for that purpose
+at registration. No box is pre-ticked.</p>
+<p>If any provision of these terms were declared void, the other provisions would
+remain fully effective.</p>
+<p>The user acknowledges having read these terms and accepts them.</p>
+<footer>
+      <a href="/confidentialite/">Privacy policy</a>
+      <a href="/conditions/">Terms of use</a>
+      <a href="/suppression-compte/">Delete my account</a>
+      <a href="mailto:tientcheumarvin@gmail.com">Contact us</a>
+    </footer>
+</div>
   </article>
 </main>
 </body>

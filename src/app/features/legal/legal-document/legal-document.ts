@@ -23,7 +23,8 @@ export class LegalDocument {
   private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly doc = signal<LegalDocKey | null>(null);
-  protected readonly title = signal('');
+  /** Clé de traduction du titre : le texte suit la langue choisie dans les Réglages. */
+  protected readonly titleKey = signal('pwaDocumentInconnu');
 
   /**
    * L'URL du document, marquée sûre pour un contexte de ressource.
@@ -43,12 +44,12 @@ export class LegalDocument {
     const key = (this.route.snapshot.paramMap.get('doc') ?? '') as LegalDocKey;
     const connu = key === 'confidentialite' || key === 'conditions';
     this.doc.set(connu ? key : null);
-    this.title.set(
+    this.titleKey.set(
       key === 'confidentialite'
-        ? 'Politique de confidentialité'
+        ? 'legalConfidentialite'
         : key === 'conditions'
-          ? "Conditions d'utilisation"
-          : 'Document légal',
+          ? 'legalConditions'
+          : 'pwaDocumentInconnu',
     );
     if (connu) {
       this.src.set(this.sanitizer.bypassSecurityTrustResourceUrl(`/${key}/index.html`));

@@ -1,11 +1,21 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-lang="fr">
 <head>
 <meta charset="utf-8">
-<title>Politique de confidentialité - NextLearn</title>
+<title>Politique de confidentialité / Privacy policy - NextLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Politique de confidentialité de l'application NextLearn.">
+<meta name="description" content="Politique de confidentialité / Privacy policy - NextLearn.">
 <link rel="icon" href="/images/Logo.png" type="image/png">
+<script>(function () {
+  var d = document.documentElement, l = null;
+  try {
+    var q = /[?&]lang=(fr|en)/.exec(location.search); if (q) l = q[1];
+    if (!l) { var p = localStorage.getItem('nl_langue'); if (p === 'fr' || p === 'en') l = p; }
+  } catch (e) {}
+  if (!l) l = /^en/i.test(navigator.language || '') ? 'en' : 'fr';
+  d.setAttribute('data-lang', l); d.lang = l;
+  window.nlLangue = function (x) { d.setAttribute('data-lang', x); d.lang = x; };
+})();</script>
 <style>
   :root {
     --primary: #1a497d; --primary-dark: #0d2844; --accent: #7db8ff;
@@ -50,6 +60,15 @@
     font-size: 0.9rem; color: var(--doux);
   }
   footer a { margin-right: 18px; white-space: nowrap; }
+  .langues { margin-left: auto; display: flex; gap: 6px; }
+  .langues button {
+    font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; padding: 4px 12px;
+  }
+  html[data-lang="fr"] .langues [data-l="fr"],
+  html[data-lang="en"] .langues [data-l="en"] { background: #fff; color: var(--primary-dark); }
+  html[data-lang="fr"] [lang="en"].version, html[data-lang="en"] [lang="fr"].version { display: none; }
   @media (max-width: 600px) {
     article { padding: 24px 20px; border-radius: 12px; }
     h1 { font-size: 1.5rem; }
@@ -60,10 +79,15 @@
 <header>
   <div class="bande">
     <a href="/"><img src="/images/Logo.png" alt="">Next<span>Learn</span></a>
+    <div class="langues" role="group" aria-label="Langue / Language">
+      <button type="button" data-l="fr" onclick="nlLangue('fr')">FR</button>
+      <button type="button" data-l="en" onclick="nlLangue('en')">EN</button>
+    </div>
   </div>
 </header>
 <main>
   <article>
+<div class="version" lang="fr">
 <h1>Politique de protection des données à caractère personnel</h1>
 <p>Dernière mise à jour : 8 octobre 2026</p>
 <h2>Préambule</h2>
@@ -297,12 +321,231 @@ modification porte sur une finalité nouvelle, votre consentement est recueilli
 <p>Si l&#39;exploitation de NextLearn venait à être transférée à une société
 constituée à cet effet, vous en seriez informé avant que ce transfert ne
 prenne effet, et l&#39;article premier serait mis à jour en conséquence.</p>
-    <footer>
+<footer>
       <a href="/confidentialite/">Politique de confidentialité</a>
       <a href="/conditions/">Conditions d'utilisation</a>
       <a href="/suppression-compte/">Supprimer mon compte</a>
       <a href="mailto:tientcheumarvin@gmail.com">Nous écrire</a>
     </footer>
+</div>
+<div class="version" lang="en">
+<h1>Personal Data Protection Policy</h1>
+<p>Last updated: 8 October 2026</p>
+<h2>Preamble</h2>
+<p>This policy is established in accordance with Law No. 2024/017 of
+23 December 2024 on the protection of personal data in Cameroon, as well as
+Law No. 2010/012 of 21 December 2010 on cybersecurity and cybercrime and
+Law No. 2010/021 of 21 December 2010 governing electronic commerce in
+Cameroon.</p>
+<p>It explains what data NextLearn collects, why, how long it is kept, who it is
+shared with, and which rights you can exercise.</p>
+<p>Reading it is essential before any registration. Your acceptance is collected
+in a free, informed, specific, unambiguous and express manner, through a
+checkbox separate from the one for the terms of use.</p>
+<h2>Article 1: data controller</h2>
+<p>NextLearn is published and operated by an individual acting in their own name:</p>
+<ul>
+<li>Full name: Tientcheu Siani Joel Marvin</li>
+<li>Capacity: promoter of the NextLearn project</li>
+<li>Place of activity: Yaoundé, Cameroon</li>
+<li>Unique Identification Number (NIU): PO70416373919C</li>
+<li>Email address: <a href="mailto:tientcheumarvin@gmail.com">tientcheumarvin@gmail.com</a></li>
+</ul>
+<p>The publisher is not incorporated: there is no company name, no share capital
+and no registration number in the Trade and Personal Property Credit Register
+(RCCM). The publisher is, however, identified with the Cameroonian tax
+authorities by the unique identification number given above. This situation is
+stated openly rather than passed over in silence: the law does not require the
+data controller to be registered in the trade register, it requires the
+controller to be identifiable.</p>
+<p>As the publisher has no postal address, the email address above is the contact
+address. It is monitored.</p>
+<p>The publisher personally assumes the capacity of data controller within the
+meaning of Law No. 2024/017. As such, they are your sole point of contact for
+any question about your data, and the designated contact for its protection.</p>
+<p>Any request concerning your data must be sent to this email address, and a
+reply is owed to you within the period set out in Article 10.</p>
+<h2>Article 2: data we collect</h2>
+<h3>2.1 Data you provide to us</h3>
+<ul>
+<li>Your email address, your last name and first name.</li>
+<li>Your higher-education institution, your field of study and your level.</li>
+<li>Your display language.</li>
+<li>Your four-digit PIN, stored as an irreversible cryptographic hash. It is never
+stored in clear text and the publisher cannot retrieve it.</li>
+<li><strong>Your profile photo, if you choose to upload one.</strong> It is optional: the
+application works identically without it, and you can remove it at any time
+from the Profile screen. A photograph of a face is data that directly
+identifies you, and it is treated as such. It is used for one purpose only:
+to represent you in your own application. It is never shown to other users,
+never used to recognise you automatically, and is not subject to any
+biometric processing: no facial template is computed and no comparison is
+carried out.</li>
+<li>Where you do not have an email address issued by your institution, the
+supporting document you submit to establish your registration: student card,
+enrolment certificate, pass record or registration receipt, and where
+applicable your student number.</li>
+</ul>
+<h3>2.2 Data produced by your use of the service</h3>
+<ul>
+<li>The documents you view, your reading progress and the duration of your study
+sessions.</li>
+<li>Your favourites and your downloads for offline use.</li>
+<li>Your results and your answers to self-assessment exercises.</li>
+<li>The ratings you give to documents and exams.</li>
+<li>Your content reports and your messages to support.</li>
+<li>The documents you propose to the catalogue, where applicable, and the rights
+regime you declare for them.</li>
+</ul>
+<h3>2.3 Technical data</h3>
+<ul>
+<li>Your IP address, recorded when an administration decision concerns you, so
+that it can be established after the fact who decided what.</li>
+<li>A technical device identifier, if you enable notifications.</li>
+<li>A brief description of the devices from which you open a session (device type
+and system), so that you can recognise them on the &quot;connected devices&quot; screen
+and remotely close a session you do not recognise.</li>
+</ul>
+<p>NextLearn uses no advertising device, no third-party tracker, and does not
+follow your activity outside the application.</p>
+<h2>Article 3: purposes and legal bases of processing</h2>
+<p>Each processing operation pursues a specific purpose and rests on its own legal
+basis:</p>
+<ul>
+<li>Creating and securing your account: performance of the contract between us.</li>
+<li>Verifying your student status: performance of the contract, and the
+legitimate interest in reserving academic content for the audience it is
+intended for.</li>
+<li>Offering you documents matching your course of study: performance of the
+contract.</li>
+<li>Keeping your progress, favourites and results: performance of the contract.</li>
+<li>Displaying your profile photo: your consent, given by the upload itself and
+revocable at any time by deleting it.</li>
+<li>Moderating reported content: legal obligation and legitimate interest.</li>
+<li>Sending you notifications: your consent, revocable at any time.</li>
+<li>Keeping a record of administration decisions: duty of accountability.</li>
+</ul>
+<p>No decision producing legal effects with regard to you is taken solely on the
+basis of automated processing. We carry out no advertising profiling.</p>
+<h2>Article 4: consent and minors</h2>
+<p>Your consent is collected by an explicit positive action. No box is
+pre-ticked. You may withdraw it at any time, without affecting the lawfulness
+of earlier processing.</p>
+<p>NextLearn is intended for higher-education students. If you are under eighteen
+(18) years of age, Cameroonian law requires the prior consent of the person
+holding parental authority. In that case you must obtain this consent before
+creating an account, and provide it to us on request. Failing that, the account
+is closed and the data deleted.</p>
+<h2>Article 5: recipients and processors</h2>
+<p>Your data is not sold, rented or transferred for commercial purposes.</p>
+<p>It is accessible:</p>
+<ul>
+<li>to the publisher, and to persons the publisher expressly authorises for
+administration tasks, within the limits that task requires;</li>
+<li>to Cameroonian administrative or judicial authorities, on a lawful request
+and within the limits of that request.</li>
+</ul>
+<p>We also use the following technical processors, bound by their contractual
+terms and required to act only on our instructions:</p>
+<ul>
+<li>Contabo GmbH, for hosting the application server, as well as documents,
+exams, submissions and supporting documents, which are stored on the disk of
+that server;</li>
+<li>MongoDB Atlas, for hosting the database;</li>
+<li>Cloudinary, for hosting profile photos only;</li>
+<li>Google Firebase Cloud Messaging, for delivering notifications when you have
+enabled them;</li>
+<li>Google (Gmail messaging service), for sending login codes and service
+messages.</li>
+</ul>
+<p>Your identity or enrolment document is not entrusted to a third-party file
+host: it remains on the application server, and is never served from a fixed or
+guessable address. Each access goes through a time-limited address,
+cryptographically signed.</p>
+<p>Access to identity documents is restricted to the persons authorised to process
+applications, and each access is logged.</p>
+<h2>Article 6: transfers outside Cameroon</h2>
+<p>The providers mentioned in Article 5 operate servers located outside Cameroon.
+Your data is therefore subject to an international transfer.</p>
+<p>Law No. 2024/017 makes such a transfer subject to the prior authorisation of
+the Personal Data Protection Authority (APDP), which verifies that the
+destination country ensures an adequate level of protection.</p>
+<p>This formality falls on the publisher as data controller, regardless of the
+fact that they operate in their own name. The status of the procedure is stated
+here as soon as it is completed.</p>
+<h2>Article 7: retention periods</h2>
+<ul>
+<li>Profile photo: kept for as long as you keep it online. Deleting it from the
+application removes it immediately from our servers and from those of the
+file host; it is not kept in an archive.</li>
+<li>Identity document: automatically deleted thirty (30) days after the decision
+made on your application. A daily task carries out this purge.</li>
+<li>Session tokens: thirty (30) days from the last login.</li>
+<li>Verification codes sent by email: ten (10) minutes.</li>
+<li>Recognition of a device that waives the verification code: the validity
+period of the current verification, with no extension through use.</li>
+<li>Account and usage data: kept for as long as the account exists.</li>
+<li>Records of administration decisions: kept after the account is closed, in
+anonymised form, for justification purposes.</li>
+</ul>
+<h2>Article 8: security</h2>
+<p>Exchanges between the application and our servers are encrypted. Your PIN is
+hashed. Access to your account requires this PIN, as well as a periodic
+verification of your email address. Administration access is subject to
+two-factor authentication and named permissions.</p>
+<p>We maintain a register of our processing activities, available to the APDP.</p>
+<p>As no system is infallible, we cannot guarantee absolute security.</p>
+<h2>Article 9: data breach</h2>
+<p>In the event of a personal data breach, we notify the APDP without delay. Where
+the breach is likely to affect your rights, you are also informed, together
+with the measures taken and those we recommend to you.</p>
+<h2>Article 10: your rights</h2>
+<p>You have the following rights over your data:</p>
+<ul>
+<li>Access: obtain confirmation that it is processed and receive a copy.</li>
+<li>Rectification: have inaccurate or incomplete data corrected. Your profile
+information can be edited directly in the application.</li>
+<li>Erasure: obtain the deletion of your data. You can exercise it yourself,
+immediately, from the Profile screen then &quot;Delete my account&quot;. Deletion is
+final and removes your favourites, your progress, your results, your reports,
+your profile photo and your supporting document.</li>
+<li>Objection: object to processing on grounds relating to your particular
+situation.</li>
+<li>Restriction: request the suspension of a contested processing while it is
+being verified.</li>
+<li>Portability: receive your data in a structured, commonly used format.</li>
+<li>Objection to profiling: refuse any decision based exclusively on automated
+processing.</li>
+</ul>
+<p>These rights are exercised through the address given in Article 1. We reply
+within thirty (30) days. We may ask you to prove your identity where there is
+reasonable doubt.</p>
+<h2>Article 11: complaint</h2>
+<p>If our reply does not satisfy you, you may refer the matter to the Personal Data
+Protection Authority (APDP), the authority competent in Cameroon to deal with
+breaches of Law No. 2024/017.</p>
+<p>This option does not preclude an appeal before the competent courts.</p>
+<h2>Article 12: trackers</h2>
+<p>The NextLearn application uses no advertising cookie and no third-party audience
+measurement tracker. The only data stored on your device is what is necessary
+for the service to work: your session, your display preferences and the
+documents you have chosen to keep offline.</p>
+<p>Consent given to this policy in no way constitutes consent to any trackers,
+which would be the subject of a separate agreement.</p>
+<h2>Article 13: changes to this policy</h2>
+<p>Any change leads to the update of the date at the top of this document and to a
+notice in the application. Where the change concerns a new purpose, your
+consent is collected again before it takes effect.</p>
+<p>If the operation of NextLearn were transferred to a company incorporated for
+that purpose, you would be informed before the transfer takes effect, and
+Article 1 would be updated accordingly.</p>
+<footer>
+      <a href="/confidentialite/">Privacy policy</a>
+      <a href="/conditions/">Terms of use</a>
+      <a href="/suppression-compte/">Delete my account</a>
+      <a href="mailto:tientcheumarvin@gmail.com">Contact us</a>
+    </footer>
+</div>
   </article>
 </main>
 </body>

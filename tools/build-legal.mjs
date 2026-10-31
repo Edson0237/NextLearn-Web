@@ -16,14 +16,37 @@ import { marked } from 'marked';
 
 const racine = join(dirname(fileURLToPath(import.meta.url)), '..');
 
+// Chaque page existe en français (`legal/<source>`) et en anglais
+// (`legal/en/<source>`). Les deux versions sont dans le même fichier : la
+// langue est choisie côté navigateur, sans second aller-retour réseau.
 const PAGES = [
   { source: 'politique-confidentialite.md', slug: 'confidentialite',
-    titre: 'Politique de confidentialité' },
+    titre: { fr: 'Politique de confidentialité', en: 'Privacy policy' } },
   { source: 'conditions-utilisation.md', slug: 'conditions',
-    titre: "Conditions d'utilisation" },
+    titre: { fr: "Conditions d'utilisation", en: 'Terms of use' } },
   { source: 'suppression-compte.md', slug: 'suppression-compte',
-    titre: 'Supprimer votre compte' },
+    titre: { fr: 'Supprimer votre compte', en: 'Delete your account' } },
 ];
+
+const PIED = {
+  fr: { confidentialite: 'Politique de confidentialité', conditions: "Conditions d'utilisation",
+        suppression: 'Supprimer mon compte', ecrire: 'Nous écrire' },
+  en: { confidentialite: 'Privacy policy', conditions: 'Terms of use',
+        suppression: 'Delete my account', ecrire: 'Contact us' },
+};
+
+// Même clé que l'application (`TraductionService`) : le texte s'ouvre dans la
+// langue choisie dans les Réglages, y compris dans le lecteur intégré.
+const SCRIPT_LANGUE = `(function () {
+  var d = document.documentElement, l = null;
+  try {
+    var q = /[?&]lang=(fr|en)/.exec(location.search); if (q) l = q[1];
+    if (!l) { var p = localStorage.getItem('nl_langue'); if (p === 'fr' || p === 'en') l = p; }
+  } catch (e) {}
+  if (!l) l = /^en/i.test(navigator.language || '') ? 'en' : 'fr';
+  d.setAttribute('data-lang', l); d.lang = l;
+  window.nlLangue = function (x) { d.setAttribute('data-lang', x); d.lang = x; };
+})();`;
 
 // Les fichiers source portent des notes internes en commentaire HTML - dont
 // « À FAIRE VALIDER PAR UN CONSEIL JURIDIQUE AVANT PUBLICATION ». marked les
@@ -34,14 +57,24 @@ const sansCommentaires = (md) => md.replace(/<!--[\s\S]*?-->/g, '');
 const echapper = (s) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+const pied = (l) => `<footer>
+      <a href="/confidentialite/">${PIED[l].confidentialite}</a>
+      <a href="/conditions/">${PIED[l].conditions}</a>
+      <a href="/suppression-compte/">${PIED[l].suppression}</a>
+      <a href="mailto:tientcheumarvin@gmail.com">${PIED[l].ecrire}</a>
+    </footer>`;
+
+const version = (l, html) => `<div class="version" lang="${l}">\n${html}\n${pied(l)}\n</div>`;
+
 const gabarit = (titre, corps) => `<!doctype html>
-<html lang="fr">
+<html lang="fr" data-lang="fr">
 <head>
 <meta charset="utf-8">
-<title>${echapper(titre)} - NextLearn</title>
+<title>${echapper(titre.fr)} / ${echapper(titre.en)} - NextLearn</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="${echapper(titre)} de l'application NextLearn.">
+<meta name="description" content="${echapper(titre.fr)} / ${echapper(titre.en)} - NextLearn.">
 <link rel="icon" href="/images/Logo.png" type="image/png">
+<script>${SCRIPT_LANGUE}</script>
 <style>
   :root {
     --primary: #1a497d; --primary-dark: #0d2844; --accent: #7db8ff;
@@ -86,6 +119,15 @@ const gabarit = (titre, corps) => `<!doctype html>
     font-size: 0.9rem; color: var(--doux);
   }
   footer a { margin-right: 18px; white-space: nowrap; }
+  .langues { margin-left: auto; display: flex; gap: 6px; }
+  .langues button {
+    font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; padding: 4px 12px;
+  }
+  html[data-lang="fr"] .langues [data-l="fr"],
+  html[data-lang="en"] .langues [data-l="en"] { background: #fff; color: var(--primary-dark); }
+  html[data-lang="fr"] [lang="en"].version, html[data-lang="en"] [lang="fr"].version { display: none; }
   @media (max-width: 600px) {
     article { padding: 24px 20px; border-radius: 12px; }
     h1 { font-size: 1.5rem; }
@@ -96,33 +138,36 @@ const gabarit = (titre, corps) => `<!doctype html>
 <header>
   <div class="bande">
     <a href="/"><img src="/images/Logo.png" alt="">Next<span>Learn</span></a>
+    <div class="langues" role="group" aria-label="Langue / Language">
+      <button type="button" data-l="fr" onclick="nlLangue('fr')">FR</button>
+      <button type="button" data-l="en" onclick="nlLangue('en')">EN</button>
+    </div>
   </div>
 </header>
 <main>
   <article>
 ${corps}
-    <footer>
-      <a href="/confidentialite/">Politique de confidentialité</a>
-      <a href="/conditions/">Conditions d'utilisation</a>
-      <a href="/suppression-compte/">Supprimer mon compte</a>
-      <a href="mailto:tientcheumarvin@gmail.com">Nous écrire</a>
-    </footer>
   </article>
 </main>
 </body>
 </html>
 `;
 
-for (const { source, slug, titre } of PAGES) {
-  const md = readFileSync(join(racine, 'legal', source), 'utf8');
+const rendre = (chemin, source) => {
+  const md = readFileSync(chemin, 'utf8');
   const corps = marked.parse(sansCommentaires(md), { async: false }).trim();
-
   if (corps.includes('<!--')) {
     throw new Error(`${source} : un commentaire a survécu au nettoyage`);
   }
+  return corps;
+};
+
+for (const { source, slug, titre } of PAGES) {
+  const fr = rendre(join(racine, 'legal', source), source);
+  const en = rendre(join(racine, 'legal', 'en', source), `en/${source}`);
 
   const cible = join(racine, 'public', slug, 'index.html');
   mkdirSync(dirname(cible), { recursive: true });
-  writeFileSync(cible, gabarit(titre, corps), 'utf8');
-  console.log(`public/${slug}/index.html  <-  legal/${source}`);
+  writeFileSync(cible, gabarit(titre, version('fr', fr) + '\n' + version('en', en)), 'utf8');
+  console.log(`public/${slug}/index.html  <-  legal/${source} + legal/en/${source}`);
 }
