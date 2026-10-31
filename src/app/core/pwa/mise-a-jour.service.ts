@@ -101,9 +101,10 @@ export class MiseAJourService {
     if (automatique) this.memoriserRechargement();
     try {
       await this.updates?.activateUpdate();
-    } finally {
-      this.recharger();
+    } catch {
+      // Rien à activer (déjà fait, ou service worker occupé) : on recharge quand même.
     }
+    this.recharger();
   }
 
   protected recharger(): void {
