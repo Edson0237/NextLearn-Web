@@ -1,4 +1,7 @@
+import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { SecureStorageService } from '../../../core/storage/secure-storage.service';
@@ -27,7 +30,7 @@ type Etape = 'email' | 'code' | 'nouveauPin';
 @Component({
   selector: 'app-reset-pin',
   standalone: true,
-  imports: [PinInput, Icon],
+  imports: [TraductionPipe, PinInput, Icon, ResultatPin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reset-pin.html',
   styleUrl: './reset-pin.scss',
@@ -49,6 +52,21 @@ export class ResetPin {
   private confirmation = '';
   protected readonly confirmant = signal(false);
   protected readonly saisiePin = signal('');
+
+  /** Ce que la saisie du PIN a donné, montré plein écran avant de poursuivre. */
+  protected readonly resultat = signal<
+    { etat: 'succes' | 'echec'; titre: string; message: string; suite?: () => void } | null
+  >(null);
+
+  protected continuer(): void {
+    const suite = this.resultat()?.suite;
+    this.resultat.set(null);
+    suite?.();
+  }
+
+  protected reessayer(): void {
+    this.resultat.set(null);
+  }
 
   protected get chargement(): boolean {
     return this.auth.state().isLoading;
@@ -94,7 +112,9 @@ export class ResetPin {
           this.pin = '';
           this.saisiePin.set('');
         } else {
+          // Voir `PinSetup` : le pavé se bloque à quatre chiffres affichés.
           this.confirmant.set(true);
+          this.saisiePin.set('');
         }
       }
       return;
@@ -142,15 +162,23 @@ export class ResetPin {
       // redemander un second code pour la connexion qui suivrait
       // consommerait un envoi pour une preuve déjà faite.
       const connecte = estAuthentifie(this.auth.state());
-      void this.router.navigate(['/app', connecte ? AppRoutes.home : AppRoutes.login]);
+      this.reinitialiserSaisiePin();
+      this.resultat.set({
+        etat: 'succes',
+        titre: 'PIN modifié',
+        message: connecte ? 'Ton nouveau PIN est enregistré.' : 'Ton nouveau PIN est enregistré. Tu peux te connecter.',
+        suite: () => void this.router.navigate(['/app', connecte ? AppRoutes.home : AppRoutes.login]),
+      });
       return;
     }
 
     // Le code est le suspect le plus probable — un PIN qui, lui, était
     // valide ne devrait pas être redemandé.
-    this.erreur.set(this.auth.state().error);
+    const message = this.auth.state().error ?? 'Le code saisi n’est pas valide.';
+    this.erreur.set(message);
     this.etape.set('code');
     this.reinitialiserSaisiePin();
+    this.resultat.set({ etat: 'echec', titre: 'PIN non modifié', message });
   }
 
   protected async quitter(): Promise<void> {
@@ -160,10 +188,10 @@ export class ResetPin {
     }
 
     const confirme = await this.feuilles.confirmer({
-      title: 'Abandonner ?',
-      description: 'Le code déjà envoyé ne servira plus. Tu devras relancer la récupération de ton PIN et en redemander un.',
-      confirmLabel: 'Abandonner',
-      cancelLabel: 'Rester',
+      title: tr('pwaAbandonnerQuestion', 'Abandonner ?'),
+      description: tr('otpAbandonCorpsReinitialisation', 'Le code déjà envoyé ne servira plus. Tu devras relancer la récupération de ton PIN et en redemander un.'),
+      confirmLabel: tr('otpAbandonQuitter', 'Abandonner'),
+      cancelLabel: tr('quitterAppRester', 'Rester'),
       destructive: true,
     });
     if (!confirme) return;

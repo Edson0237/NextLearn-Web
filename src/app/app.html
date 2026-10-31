@@ -1,6 +1,6 @@
 @if (erreurFatale(); as erreur) {
-  <nl-fatal-error [showDetails]="modeDebug" [details]="erreur.details" />
+  <nl-fatal-error class="nl-app" [showDetails]="modeDebug" [details]="erreur.details" />
 } @else {
   <router-outlet />
 }
-<nl-toast-host />
+<nl-toast-host class="nl-overlay" />

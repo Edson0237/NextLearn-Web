@@ -1,6 +1,6 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
 import { ContexteRepository } from './contexte-repository';
-import { ContexteEtudiant, CONTEXTE_OUVERT, typeVisible, fonctionnaliteOuverte } from './contexte.model';
+import { ContexteEtudiant, CONTEXTE_OUVERT, typeVisible, fonctionnaliteOuverte, fonctionnaliteFermee } from './contexte.model';
 import { DocumentType } from '../bibliotheque/document.model';
 
 /**
@@ -27,6 +27,11 @@ export class ContexteService {
 
   typeVisible(type: DocumentType): boolean {
     return typeVisible(this._contexte(), type);
+  }
+
+  /** Vrai seulement si l'administration a fermé cette fonctionnalité. */
+  fonctionnaliteFermee(nom: string): boolean {
+    return fonctionnaliteFermee(this._contexte(), nom);
   }
 
   fonctionnaliteOuverte(nom: string): boolean {

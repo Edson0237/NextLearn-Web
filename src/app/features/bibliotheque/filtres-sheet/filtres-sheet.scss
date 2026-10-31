@@ -1,0 +1,126 @@
+.nl-filtres__entete {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px 0 20px;
+  margin-bottom: 8px;
+}
+
+.nl-filtres__titre {
+  flex: 1;
+  margin: 0;
+  font: 700 1.0625rem/1.35 var(--font-family);
+  color: var(--text-primary);
+}
+
+.nl-filtres__reset {
+  border: none;
+  background: none;
+  padding: 8px;
+  font: 600 0.875rem var(--font-family-body);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.nl-filtres__fermer {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nl-filtres__corps {
+  padding: 0 20px;
+  max-height: 60dvh;
+  overflow-y: auto;
+}
+
+.nl-filtres__section {
+  margin: 16px 0 8px;
+  font: 600 0.75rem var(--font-family-body);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.nl-filtres__puces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.nl-filtres__puce {
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: none;
+  font: 500 0.875rem var(--font-family-body);
+  color: var(--text-primary);
+  cursor: pointer;
+
+  &--active {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.nl-filtres__compte {
+  margin-left: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.nl-filtres__catalogue {
+  width: 100%;
+  margin-top: 20px;
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: none;
+  text-align: left;
+  font: 500 0.9375rem var(--font-family-body);
+  color: var(--text-primary);
+  cursor: pointer;
+
+  span {
+    flex: 1;
+  }
+}
+
+.nl-filtres__pied {
+  padding: 12px 20px 16px;
+}
+
+.nl-filtres__valider {
+  width: 100%;
+  min-height: 48px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  font: 600 1rem var(--font-family);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}

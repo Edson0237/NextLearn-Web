@@ -1,0 +1,117 @@
+{
+  "resultats": [
+    {
+      "ecran": "home",
+      "ciblesTropPetites": [
+        "button.home__section-action 53x13",
+        "nl-chip.nl-chip--compact 45x18",
+        "nl-chip.nl-chip--compact 30x18",
+        "nl-chip.nl-chip--compact 56x18",
+        "nl-chip.nl-chip--compact 62x18",
+        "button.home__section-action 53x13",
+        "nl-chip.nl-chip--compact 30x18",
+        "nl-chip.nl-chip--compact 56x18",
+        "nl-chip.nl-chip--compact 62x18",
+        "nl-chip.nl-chip--compact 29x18",
+        "button.home__section-action 53x13",
+        "nl-chip.nl-chip--compact 56x18"
+      ],
+      "nbCiblesTropPetites": 16,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Poppins, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    },
+    {
+      "ecran": "bibliotheque-home",
+      "ciblesTropPetites": [
+        "button.nl-icon-btn 40x40",
+        "button.nl-icon-btn 40x40",
+        "button.nl-icon-btn 40x40",
+        "button.nl-icon-btn 40x40",
+        "button.biblio__tab 49x34",
+        "button.biblio__tab 86x34",
+        "button.biblio__tab 66x34",
+        "button.biblio__tab 108x34",
+        "button.biblio__tab 100x34",
+        "button.biblio__chip 61x23",
+        "button.biblio__chip 165x23",
+        "button.biblio__chip 165x23"
+      ],
+      "nbCiblesTropPetites": 38,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Poppins, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    },
+    {
+      "ecran": "profil-home",
+      "ciblesTropPetites": [
+        "input.nl-prf__avatar-input 1x1"
+      ],
+      "nbCiblesTropPetites": 1,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    },
+    {
+      "ecran": "parametres",
+      "ciblesTropPetites": [
+        "button.nl-par__back 40x40"
+      ],
+      "nbCiblesTropPetites": 1,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    },
+    {
+      "ecran": "epreuves-list",
+      "ciblesTropPetites": [
+        "button.nl-epl__segment 116x32",
+        "button.nl-epl__segment 116x32",
+        "button.nl-epl__segment 116x32",
+        "button.nl-epl__puce 69x32",
+        "button.nl-epl__puce 169x32",
+        "select.nl-epl__select 74x32",
+        "button.nl-epl__toggle 111x32"
+      ],
+      "nbCiblesTropPetites": 7,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Poppins, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    },
+    {
+      "ecran": "document-detail",
+      "ciblesTropPetites": [
+        "button.doc-detail__back 40x40",
+        "button.doc-detail__share 40x40"
+      ],
+      "nbCiblesTropPetites": 2,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Poppins, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    },
+    {
+      "ecran": "login-pin",
+      "ciblesTropPetites": [
+        "button.nl-loginpin__lien 298x14",
+        "button.nl-loginpin__lien 298x14"
+      ],
+      "nbCiblesTropPetites": 2,
+      "policeCorps": "Poppins, -apple-system, BlinkMacSystemFont, sans-serif",
+      "policeTitre": "Poppins, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "fondCorps": "rgb(255, 255, 255)",
+      "safeAreaUtilisee": null
+    }
+  ],
+  "polices": [
+    "Poppins 400",
+    "Poppins 700",
+    "Inter 400",
+    "Inter 600"
+  ]
+}

@@ -40,8 +40,8 @@
 .nl-offline__spin {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #fff;
+  border: 2px solid color-mix(in srgb, var(--text-on-primary) 40%, transparent);
+  border-top-color: var(--text-on-primary);
   border-radius: 50%;
   animation: nl-spin 700ms linear infinite;
 }

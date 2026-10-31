@@ -1,0 +1,11 @@
+{
+  "_lisezMoi": "Configuration du client web Firebase (projet nextlearn-91195, application Web), pour les notifications poussées. Ces valeurs ne sont pas secrètes : elles identifient le projet côté navigateur, comme dans tout SDK Firebase web. Il manque 'vapidKey' : console Firebase → Paramètres du projet → Cloud Messaging → Certificats push Web → « Générer une paire de clés », puis coller la clé PUBLIQUE ici. Tant qu'elle manque, PushService se déclare 'non-configure' et ne tente rien. L'envoi côté API demande en plus la clé de compte de service (FCM_* dans l'environnement de l'API).",
+  "apiKey": "AIzaSyCw8Okva8-xZ2b7NNbQyHJNs4e95kdkqs8",
+  "authDomain": "nextlearn-91195.firebaseapp.com",
+  "projectId": "nextlearn-91195",
+  "storageBucket": "nextlearn-91195.firebasestorage.app",
+  "messagingSenderId": "1056604146252",
+  "appId": "1:1056604146252:web:75ac402ad942005f5142e9",
+  "measurementId": "G-SQC6CJRC2F",
+  "vapidKey": "BBJFAzuT4lecIL07QWC-kKSS_FUNpB_mIwl7dnsgOdOHP4xwCItEhRO4WhusUvS7LhCn95mIDAS83RGQGLaViYM"
+}

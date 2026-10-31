@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { BottomSheetRef, BOTTOM_SHEET_DATA } from '../bottom-sheet';
 import { BottomSheetShell } from '../shell/bottom-sheet-shell';
 import { Icon } from '../../icon/icon';
+import { IconName } from '../../icon/icon-paths';
 import { HapticService } from '../../../services/haptic';
 
 /** Le seuil au-delà duquel le champ de recherche apparaît. */
@@ -12,6 +13,17 @@ export interface ChoixSelection<T = unknown> {
   readonly value: T;
   readonly label: string;
   readonly description?: string;
+  /**
+   * Une icône dessinée, à gauche du libellé.
+   *
+   * Facultative : une liste d'écoles ou d'années n'en a pas besoin, chaque
+   * ligne s'y distingue par son texte. Une liste d'actions, si — c'est
+   * l'icône qu'on reconnaît avant d'avoir lu.
+   */
+  readonly icone?: IconName;
+  /** La teinte de l'icône et de son fond. Par défaut, celle de l'action. */
+  readonly teinte?: string;
+  readonly teinteFond?: string;
 }
 
 export interface SelectionSheetData<T = unknown> {

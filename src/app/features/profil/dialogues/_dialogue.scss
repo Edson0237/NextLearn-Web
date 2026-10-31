@@ -1,0 +1,135 @@
+// Le gabarit commun des fenêtres du profil : voile, carte, champs, boutons.
+@use '../../../shared/styles/tokens' as *;
+
+// Même voile que derrière les feuilles glissantes (`.nl-sheet-backdrop`) : deux
+// modales de l'application ne doivent pas assombrir la page de deux façons.
+.nl-sl__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
+}
+
+.nl-sl__modal {
+  background: var(--bg-primary);
+  // Le rayon d'une feuille, pas un 22 px de plus : trois valeurs voisines
+  // (16, 20, 22) pour la même idée « grande surface flottante ».
+  border-radius: var(--radius-feuille);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-xl);
+  max-height: calc(100dvh - var(--space-lg) * 2);
+  overflow-y: auto;
+  @include ombre-douce;
+}
+
+.nl-sl__modal-titre {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: var(--text-primary);
+}
+
+.nl-sl__modal-aide {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 0 18px;
+}
+
+.nl-sl__pin-field,
+.nl-sl__support-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+
+  span {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+.nl-sl__pin-erreur {
+  font-size: 0.85rem;
+  color: var(--danger);
+  margin: -4px 0 14px;
+}
+
+.nl-sl__modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.nl-sl__btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  min-width: 88px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: var(--primary);
+    color: var(--text-on-primary);
+  }
+
+  &--text {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+}
+
+.nl-sl__spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: nl-spin 0.8s linear infinite;
+}
+
+@keyframes nl-spin {
+  to { transform: rotate(360deg); }
+}

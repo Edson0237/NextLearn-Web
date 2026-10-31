@@ -1,38 +1,99 @@
-<div class="nl-dep">
-  <header class="nl-dep__entete">
-    <h1 class="nl-dep__titre">Mes dépôts</h1>
-    @if (depots().length > 0) {
-      <button type="button" class="nl-dep__ajouter" (click)="proposer()">
-        <nl-icon name="upload_file" [size]="18" />
-        Proposer
-      </button>
-    }
-  </header>
+<nl-app-header
+  [section]="'navContribution' | t"
+  [prenom]="user()?.prenom"
+  [nom]="user()?.nom"
+  [avatarUrl]="user()?.avatarUrl"
+  [contexte]="cursus()"
+  (favoris)="openFavoris()"
+  (notifications)="openNotifications()"
+  (profil)="openProfil()"
+  (changerContexte)="openProfil()" />
 
+<div class="nl-dep">
   <nl-refreshable class="nl-dep__corps" [refreshing]="rafraichissement()" (refresh)="rafraichir()">
     @switch (statut()) {
       @case ('chargement') {
-        <div class="nl-dep__liste">
+        <div class="nl-dep__liste" aria-busy="true" aria-live="polite">
+          <div class="nl-dep__squelette nl-dep__squelette--bloc"></div>
           @for (i of [0, 1, 2]; track i) {
             <nl-document-skeleton />
           }
         </div>
       }
+
       @case ('erreur') {
-        <nl-empty-state title="Chargement impossible" [subtitle]="erreur()" ctaLabel="Réessayer" (cta)="rafraichir()" />
-      }
-      @case ('pret') {
-        @if (depots().length === 0) {
+        <div class="nl-dep__liste">
           <nl-empty-state
-            title="Aucun dépôt pour le moment"
-            subtitle="Tu peux proposer tes notes de cours, une synthèse ou un TD. Un administrateur les relit avant publication."
-            ctaLabel="Proposer"
-            (cta)="proposer()"
-          />
+            [title]="'erreurChargement' | t"
+            [subtitle]="erreur()"
+            [ctaLabel]="'actionReessayer' | t"
+            (cta)="rafraichir()">
+            <nl-icon icon name="cloud_off" [size]="28" />
+          </nl-empty-state>
+        </div>
+      }
+
+      @case ('pret') {
+        @if (total() === 0) {
+          <div class="nl-dep__liste">
+            <nl-empty-state
+              [title]="'contribAucunDepot' | t"
+              [subtitle]="'mesDepotsAucunCorps' | t"
+              [ctaLabel]="'mesDepotsProposer' | t"
+              (cta)="proposer()">
+              <nl-icon icon name="upload_file" [size]="28" />
+            </nl-empty-state>
+          </div>
         } @else {
           <div class="nl-dep__liste">
+            <!-- ── Le résumé ───────────────────────────────────────────────
+                 Un dépôt met des jours à être relu : le chiffre qui compte
+                 n'est pas la liste, c'est la part de ce qui est passé. -->
+            <section class="nl-dep__resume">
+              <div class="nl-dep__resume-tete">
+                <div class="nl-dep__resume-textes">
+                  <p class="nl-dep__resume-libelle">{{ 'contribSuiviTitre' | t }}</p>
+                  <p class="nl-dep__resume-total">
+                    <nl-animated-number [value]="total()" />
+                    <span>{{ 'contribUnite' | t: { nombre: total() } }}</span>
+                  </p>
+                </div>
+                <span class="nl-dep__resume-taux">
+                  {{ 'contribTauxPublies' | t: { pourcent: tauxPublies() } }}
+                </span>
+              </div>
+
+              <!-- La barre de répartition : une tranche par statut, large
+                   comme sa part. Elle dit en un coup d'œil ce qu'une liste
+                   de vingt cartes demande de compter à la main. -->
+              <div
+                class="nl-dep__barre"
+                role="img"
+                [attr.aria-label]="'contribRepartition' | t">
+                @for (tranche of tranches(); track tranche.statut) {
+                  <span
+                    [class]="'nl-dep__barre-part nl-dep__barre-part--' + tranche.statut"
+                    [style.width.%]="tranche.part"
+                    [attr.title]="tranche.libelle + ' : ' + tranche.nombre"></span>
+                }
+              </div>
+
+              <ul class="nl-dep__legende">
+                @for (tranche of tranches(); track tranche.statut) {
+                  <li class="nl-dep__legende-item">
+                    <span [class]="'nl-dep__puce nl-dep__puce--' + tranche.statut"></span>
+                    <span class="nl-dep__legende-nombre">{{ tranche.nombre }}</span>
+                    <span class="nl-dep__legende-nom">{{ tranche.libelle }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+
+            <!-- ── Le détail ──────────────────────────────────────────────── -->
+            <h2 class="nl-dep__section-titre">{{ 'contribMesDepots' | t }}</h2>
+
             @for (d of depots(); track d.id) {
-              <div class="nl-dep__carte">
+              <article class="nl-dep__carte">
                 <div class="nl-dep__ligne-titre">
                   <span class="nl-dep__titre-depot">{{ d.titre }}</span>
                   <span [class]="'nl-dep__pastille nl-dep__pastille--' + d.statut">
@@ -40,31 +101,46 @@
                     {{ libelleDepotStatut(d.statut) }}
                   </span>
                 </div>
+
                 @if (d.description) {
                   <p class="nl-dep__description">{{ d.description }}</p>
                 }
 
                 @if (d.statut === DepotStatut.enAttente || d.statut === DepotStatut.enRevue) {
-                  <p class="nl-dep__note">
-                    Ce document n'est pas encore visible par les autres étudiants. Tu seras prévenu dès qu'il aura été relu.
-                  </p>
+                  <p class="nl-dep__note">{{ 'mesDepotsPasEncoreVisible' | t }}</p>
                 }
 
                 @if (d.statut === DepotStatut.refuse) {
                   <div class="nl-dep__refus">
-                    <strong>Motif du refus</strong>
-                    <p>{{ d.motifRefus?.trim() || "Aucun motif n'a été précisé." }}</p>
+                    <strong>{{ 'mesDepotsMotifRefus' | t }}</strong>
+                    <p>{{ d.motifRefus?.trim() || ('mesDepotsAucunMotif' | t) }}</p>
                     <button type="button" class="nl-dep__contester" (click)="contester()">
                       <nl-icon name="fact_check" [size]="15" />
-                      Contester cette décision
+                      <span>{{ 'recoursContesterDecision' | t }}</span>
                     </button>
                   </div>
                 }
-              </div>
+              </article>
             }
           </div>
         }
       }
     }
   </nl-refreshable>
+
+  <!-- L'action principale reste atteignable quelle que soit la hauteur de la
+       liste : c'est pour elle qu'on vient sur cet onglet. -->
+  @if (total() > 0) {
+    <!-- Scanner et proposer, côte à côte : le scan est la voie courante quand
+         le support est une feuille (voir le formulaire de dépôt). -->
+    <div class="nl-dep__flottants">
+      <button type="button" class="nl-dep__scan" (click)="scanner()" [attr.aria-label]="'depotScanner' | t">
+        <nl-icon name="photo_camera" [size]="22" />
+      </button>
+      <button type="button" class="nl-dep__flottant" (click)="proposer()">
+        <nl-icon name="upload_file" [size]="20" />
+        <span>{{ 'mesDepotsProposer' | t }}</span>
+      </button>
+    </div>
+  }
 </div>

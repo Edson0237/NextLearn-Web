@@ -1,36 +1,37 @@
 <div class="favoris">
   <header class="favoris__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+    <button class="nl-icon-btn" (click)="goBack()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" />
     </button>
-    <h1 class="favoris__titre">Favoris</h1>
+    <h1 class="favoris__titre">{{ 'homeFavoris' | t }}</h1>
   </header>
 
   <div class="favoris__corps">
     @if (loading()) {
-      <p class="favoris__etat">Chargement…</p>
+      <p class="favoris__etat">{{ 'chargementEnCours' | t }}</p>
     } @else if (error()) {
       <div class="favoris__etat favoris__etat--erreur">
         <p>{{ error() }}</p>
-        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+        <button nlButton variant="primary" size="sm" (click)="load()">{{ 'actionReessayer' | t }}</button>
       </div>
     } @else if (documents().length === 0) {
       <nl-empty-state
         icon="bookmark_outline"
-        title="Aucun favori"
-        subtitle="Ajoutez des documents pour les retrouver ici." />
+        [title]="'favorisAucun' | t"
+        [subtitle]="'pwaAjouteDocumentsPourRetrouver' | t" />
     } @else {
       <div class="favoris__liste">
-        @for (doc of documents(); track doc.id) {
-          <div class="favoris__item" (click)="openDocument(doc)">
+        @for (doc of documents(); track doc.id; let i = $index) {
+          <div [nlCascadeEnter]="i" class="favoris__item" (click)="openDocument(doc)">
             <nl-document-card
               [title]="doc.titre"
               [subject]="doc.matiere"
-              [typeLabel]="typeLabel(doc.type)"
-              [typeIcon]="typeIcon(doc.type)"
-              [typeColor]="typeColor(doc.type)"
-              [meta]="metaFor(doc)" />
-            <button class="favoris__remove" (click)="remove(doc, $event)" aria-label="Retirer des favoris">
+              [typeLabel]="(doc.type | typeDoc).label"
+              [typeIcon]="(doc.type | typeDoc).icone"
+              [typeColor]="(doc.type | typeDoc).couleur"
+              [meta]="metaFor(doc)"
+            [note]="noteFor(doc)" />
+            <button class="favoris__remove" (click)="remove(doc, $event)" [attr.aria-label]="'docRetirerFavoris' | t">
               <nl-icon name="close" />
             </button>
           </div>

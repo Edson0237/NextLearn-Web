@@ -37,6 +37,15 @@ describe('Home', () => {
     http.expectOne('/api/documents/recent').flush({ data: [] });
     http.expectOne('/api/profile').flush({ data: { stats: { docsTelecharges: 0, docsLus: 0, heuresEtude: 0, streak: 0 } } });
     http.expectOne('/api/progression/stats').flush({ data: { streak: 0 } });
+    // L'accueil charge aussi le contexte (matières du programme), la
+    // progression de lecture (section « Reprendre ») et le compteur de
+    // notifications non lues — les trois sections que la PWA n'affichait pas.
+    http.expectOne('/api/me/context').flush({ data: { resolved: true, subjects: [] } });
+    http.expectOne('/api/progress/lecture').flush({ data: [] });
+    http.expectOne('/api/notifications/unread-count').flush({ data: { count: 0 } });
+    // Les formats proposés (voir `FormatsService`), demandés par l'accueil.
+    http.match('/api/references/document-types').forEach((r) => r.flush({ data: [] }));
+    http.match('/api/favorites').forEach((r) => r.flush({ data: [] }));
     http.verify();
     await tick();
 

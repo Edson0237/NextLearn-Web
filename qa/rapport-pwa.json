@@ -1,0 +1,92 @@
+{
+  "serviceWorker": {
+    "nbEnregistrements": 1,
+    "scopes": [
+      "http://localhost:4400/"
+    ],
+    "actif": [
+      "http://localhost:4400/ngsw-worker.js"
+    ]
+  },
+  "meta": {
+    "themeColor": null,
+    "viewport": "width=device-width, initial-scale=1.0",
+    "appleCapable": null,
+    "appleStatusBar": null,
+    "appleTitle": null,
+    "appleTouchIcon": null,
+    "appleStartup": 0,
+    "manifest": "manifest.webmanifest",
+    "lang": "fr",
+    "cdnExternes": [
+      "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    ]
+  },
+  "manifeste": {
+    "statut": 200,
+    "champs": [
+      "name",
+      "short_name",
+      "display",
+      "scope",
+      "start_url",
+      "icons"
+    ],
+    "manquants": [
+      "id",
+      "theme_color",
+      "background_color",
+      "description",
+      "lang",
+      "orientation",
+      "screenshots",
+      "categories"
+    ],
+    "iconesMaskable": 0,
+    "tailles": [
+      "72x72",
+      "96x96",
+      "128x128",
+      "144x144",
+      "152x152",
+      "192x192",
+      "384x384",
+      "512x512"
+    ],
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone"
+  },
+  "urlNueApp": {
+    "statut": 404
+  },
+  "horsLigneRechargement": {
+    "url": "http://localhost:4400/app/home",
+    "texte": "A Bonjour Awa Niveau 3 · Génie logiciel 0 Série 0 Hors ligne 0 Lus Rechercher Favoris Hors ligne Déposer Impossible de charger l'accueil. Réessayer Accueil Bibliothèque Progression Contribution Profil",
+    "erreurs": [
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: net::ERR_FAILED"
+    ]
+  },
+  "horsLigneNavigation": {
+    "url": "http://localhost:4400/app/bibliotheque",
+    "texte": "Bibliothèque Tous Cours TD Synthèse Épreuve Toutes Impossible de charger les documents. Réessayer Accueil Bibliothèque Progression Contribution Profil",
+    "erreurs": [
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: net::ERR_FAILED",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)",
+      "Failed to load resource: the server responded with a status of 504 (Gateway Timeout)"
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+<header class="nl-entete">
+  <div class="nl-entete__rangee">
+    <div class="nl-entete__marque">
+      <!-- La marque du logo, pas deux lettres : « NL » ne disait rien à
+           quelqu'un qui vient de voir la toque sur le splash. L'image est
+           mise en cache par le service worker, donc présente hors ligne. -->
+      <img
+        class="nl-entete__logo"
+        src="/images/logo-marque.png"
+        alt=""
+        aria-hidden="true"
+        width="32"
+        height="32" />
+      <span class="nl-entete__titres">
+        <span class="nl-entete__produit">NextLearn</span>
+        <span class="nl-entete__section">{{ section() }}</span>
+      </span>
+    </div>
+
+    <div class="nl-entete__actions">
+      <!-- L'ordre est celui de l'usage : ce que l'on garde, ce qui arrive, soi. -->
+      <button
+        type="button"
+        class="nl-entete__cloche"
+        [attr.aria-label]="'homeFavoris' | t"
+        (click)="favoris.emit()">
+        <nl-icon name="bookmark_outline" [size]="22" />
+      </button>
+
+      <button
+        type="button"
+        class="nl-entete__cloche"
+        [attr.aria-label]="
+          badge()
+            ? ('homeNotificationsNonLues' | t: { nombre: nonLues() })
+            : ('homeNotifications' | t)
+        "
+        (click)="notifications.emit()">
+        <nl-icon name="notifications" [size]="22" />
+        @if (badge(); as compte) {
+          <!-- Un point quand il y a peu, le compte au-delà : « 1 » et « 12 »
+               n'appellent pas le même geste. -->
+          <span class="nl-entete__pastille">{{ compte }}</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="nl-entete__profil"
+        [attr.aria-label]="'profilTitre' | t"
+        (click)="profil.emit()">
+        <nl-avatar
+          [initials]="initiales()"
+          [photoUrl]="avatarUrl()"
+          [size]="34"
+          [onDarkBackground]="false" />
+      </button>
+    </div>
+  </div>
+
+  @if (contexte(); as cursus) {
+    <!-- Le cursus actif décide de tout ce que les écrans affichent : il est
+         donc montré en permanence, et se change d'un geste. -->
+    <button type="button" class="nl-entete__contexte nl-cible-fine" (click)="changerContexte.emit()">
+      <nl-icon name="school" [size]="15" />
+      <span class="nl-entete__contexte-texte">{{ cursus }}</span>
+      <nl-icon name="expand_more" [size]="16" />
+    </button>
+  }
+</header>

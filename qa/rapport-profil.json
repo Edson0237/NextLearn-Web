@@ -1,0 +1,18 @@
+{
+  "url": "http://localhost:4200/app/profil",
+  "texte": "Profil AN Awa Ngonga Niveau 3 Génie logiciel Institut Saint-Jean 5 jours de suite 0 docs lus 0h heures 0 hors-ligne COMPTE E-mail Rattachée à ton école etudiant.test@isj.cm Niveau Ta promotion actuelle Niveau 3 Code PIN Changer le code de déverrouillage Appareils connectés Gérer tes sessions actives",
+  "html": "<div _ngcontent-ng-c4028271619=\"\" class=\"nl-app\"><!--container--><!--container--><!--container--><!--container--><router-outlet _ngcontent-ng-c4028271619=\"\"></router-outlet><app-main-shell _nghost-ng-c4090186268=\"\"><div _ngcontent-ng-c4090186268=\"\" class=\"nl-shell__corps\"><router-outlet _ngcontent-ng-c4090186268=\"\"></router-outlet><app-profil-home _nghost-ng-c4257071890=\"\"><div _ngcontent-ng-c4257",
+  "nbRequetes": 80,
+  "requetesApi": [
+    "GET /api/auth/verification-status",
+    "GET /api/verification/requests/me"
+  ],
+  "journal": [
+    "debug: [vite] connecting...",
+    "debug: [vite] connected.",
+    "log: Angular is running in development mode.",
+    "debug: [vite] connecting...",
+    "debug: [vite] connected.",
+    "log: Angular is running in development mode."
+  ]
+}

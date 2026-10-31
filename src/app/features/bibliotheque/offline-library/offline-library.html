@@ -1,41 +1,130 @@
 <div class="offline">
-  <header class="offline__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
-      <nl-icon name="arrow_back" />
+  <nl-page-bar [titre]="'pwaMaBibliotheque' | t" (retour)="goBack()">
+    <button type="button" [disabled]="loading()" [attr.aria-label]="'pwaSynchroniser' | t" (click)="load()">
+      <nl-icon name="cloud_sync" [size]="20" />
     </button>
-    <h1 class="offline__titre">Hors ligne</h1>
-  </header>
+  </nl-page-bar>
 
   <div class="offline__corps">
+    <!-- Ce que l'appareil garde réellement. La barre vient de
+         `navigator.storage.estimate()` : si le navigateur ne sait pas
+         l'estimer — Safari le fait rarement — le bloc ne s'affiche pas,
+         plutôt que d'annoncer un chiffre inventé. -->
+    @if (stockageTotal()) {
+      <section class="offline__stockage">
+        <div class="offline__stockage-tete">
+          <nl-icon name="storage" [size]="18" />
+          <h2 class="offline__stockage-titre">{{ 'pwaStockageAppareil' | t }}</h2>
+          <button type="button" class="offline__lien nl-cible-fine" (click)="gererCache()">
+            {{ 'pwaGererLeCache' | t }}
+          </button>
+        </div>
+        <div
+          class="offline__jauge"
+          role="progressbar"
+          [attr.aria-valuenow]="pourcentageStockage()"
+          aria-valuemin="0"
+          aria-valuemax="100">
+          <span class="offline__jauge-part" [style.width.%]="pourcentageStockage()"></span>
+        </div>
+        <div class="offline__stockage-pied">
+          <span>{{ 'pwaStockageUtilise' | t: { taille: lisible(stockageUtilise()) } }}</span>
+          <span>{{ 'pwaStockageTotal' | t: { taille: lisible(stockageTotal()) } }}</span>
+        </div>
+      </section>
+    }
+
+    <div class="offline__onglets" role="tablist" [attr.aria-label]="'pwaMaBibliotheque' | t">
+      <button
+        type="button"
+        role="tab"
+        class="offline__onglet nl-cible-fine"
+        [class.offline__onglet--actif]="onglet() === 'telecharges'"
+        [attr.aria-selected]="onglet() === 'telecharges'"
+        (click)="choisir('telecharges')">
+        {{ 'pwaTelecharges' | t }} ({{ compte('telecharges') }})
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="offline__onglet nl-cible-fine"
+        [class.offline__onglet--actif]="onglet() === 'favoris'"
+        [attr.aria-selected]="onglet() === 'favoris'"
+        (click)="choisir('favoris')">
+        {{ 'homeFavoris' | t }} ({{ compte('favoris') }})
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="offline__onglet nl-cible-fine"
+        [class.offline__onglet--actif]="onglet() === 'historique'"
+        [attr.aria-selected]="onglet() === 'historique'"
+        (click)="choisir('historique')">
+        {{ 'pwaHistorique' | t }} ({{ compte('historique') }})
+      </button>
+    </div>
+
+    <nl-search-bar
+      [(valeur)]="recherche"
+      [placeholder]="'pwaRechercherDansMaBibliotheque' | t" />
+
     @if (loading()) {
-      <p class="offline__etat">Chargement…</p>
-    } @else if (error()) {
-      <div class="offline__etat offline__etat--erreur">
-        <p>{{ error() }}</p>
-        <button nlButton variant="primary" size="sm" (click)="load()">Réessayer</button>
+      <div aria-busy="true" aria-live="polite">
+        <div class="offline__squelette"></div>
+        <div class="offline__squelette"></div>
+        <div class="offline__squelette"></div>
       </div>
-    } @else if (offlineDocuments().length === 0) {
+    } @else if (error(); as message) {
       <nl-empty-state
-        icon="cloud_download"
-        title="Aucun document hors-ligne"
-        subtitle="Marquez des documents pour les consulter sans connexion." />
+        [title]="'erreurChargement' | t"
+        [subtitle]="message"
+        [ctaLabel]="'actionReessayer' | t"
+        (cta)="load()">
+        <nl-icon icon name="cloud_off" [size]="28" />
+      </nl-empty-state>
+    } @else if (liste().length === 0) {
+      <nl-empty-state
+        [title]="'pwaAucunDocumentHorsLigne' | t"
+        [subtitle]="'pwaMarquezDocumentsHorsLigne' | t">
+        <nl-icon icon name="cloud_download" [size]="28" />
+      </nl-empty-state>
     } @else {
+      <nl-section-header
+        [titre]="'pwaFichiersRecents' | t"
+        [sousTitre]="'pwaResultats' | t: { nombre: liste().length }"
+        icone="folder"
+        teinte="var(--primary)" />
+
       <div class="offline__liste">
-        @for (doc of offlineDocuments(); track doc.id) {
-          <div class="offline__item" (click)="openDocument(doc)">
-            <nl-document-card
-              [title]="doc.titre"
-              [subject]="doc.matiere"
-              [typeLabel]="typeLabel(doc.type)"
-              [typeIcon]="typeIcon(doc.type)"
-              [typeColor]="typeColor(doc.type)"
-              [meta]="metaFor(doc)" />
-            <button class="offline__remove" (click)="remove(doc, $event)" aria-label="Retirer du hors-ligne">
-              <nl-icon name="close" />
-            </button>
-          </div>
+        @for (doc of liste(); track doc.id; let i = $index) {
+          <nl-document-card
+            [nlCascadeEnter]="i"
+            [documentId]="doc.id"
+            [title]="doc.titre"
+            [subject]="doc.matiere"
+            [auteur]="doc.enseignant"
+            [annee]="doc.anneeAcademique"
+            [typeLabel]="(doc.type | typeDoc).label"
+            [typeIcon]="(doc.type | typeDoc).icone"
+            [typeColor]="(doc.type | typeDoc).couleur"
+            [typeBackground]="(doc.type | typeDoc).fond"
+            [etiquettes]="etiquettesDe(doc)"
+            [meta]="metaFor(doc)"
+            [note]="noteFor(doc)"
+            [progress]="avancementDe(doc)"
+            [offline]="true"
+            actionIcone="delete"
+            [actionDestructive]="true"
+            [actionLibelle]="'pwaRetirerHorsLigne' | t"
+            (action)="remove(doc)"
+            (activate)="openDocument(doc)" />
         }
       </div>
+
+      <button type="button" class="offline__synchro" [disabled]="loading()" (click)="load()">
+        <nl-icon name="cloud_sync" [size]="20" />
+        <span>{{ 'pwaSynchroniser' | t }}</span>
+      </button>
     }
   </div>
 </div>

@@ -1,0 +1,46 @@
+[
+  {
+    "depart": "/app/home",
+    "clic": "Rechercher",
+    "trouve": true,
+    "urlApres": "/app/home",
+    "erreurs": [
+      "[clic] locator.click: Timeout 4000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Rechercher').first()\u001b[22m\n\u001b[2m    - loc"
+    ]
+  },
+  {
+    "depart": "/app/home",
+    "clic": "Favoris",
+    "trouve": true,
+    "urlApres": "/app/favoris",
+    "erreurs": []
+  },
+  {
+    "depart": "/app/home",
+    "clic": "Hors ligne",
+    "trouve": true,
+    "urlApres": "/app/home",
+    "erreurs": []
+  },
+  {
+    "depart": "/app/home",
+    "clic": "Déposer",
+    "trouve": true,
+    "urlApres": "/app/depots%2Fnouveau",
+    "erreurs": []
+  },
+  {
+    "depart": "/app/home",
+    "clic": "Voir tout",
+    "trouve": true,
+    "urlApres": "/app/bibliotheque",
+    "erreurs": []
+  },
+  {
+    "depart": "/app/bibliotheque",
+    "clic": "Matières",
+    "trouve": false,
+    "urlApres": "/app/bibliotheque",
+    "erreurs": []
+  }
+]

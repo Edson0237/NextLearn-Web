@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { DepotRepository } from '../../../core/contributions/depot-repository';
 import { Depot, DepotStatut, libelleDepotStatut } from '../../../core/contributions/depot.model';
@@ -9,6 +10,20 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Failure } from '../../../core/models/failure.model';
 import { AppRoutes } from '../../../core/router/app-routes';
+import { AppHeader } from '../../../shared/ui/app-header/app-header';
+import { AuthService } from '../../../core/auth/auth.service';
+import { libelleNiveau } from '../../../core/models/user.model';
+import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
+
+/** Une tranche de la barre de répartition : un statut, son compte, sa part. */
+export interface TrancheStatut {
+  readonly statut: DepotStatut;
+  readonly libelle: string;
+  readonly icone: IconName;
+  readonly nombre: number;
+  /** Part du total, en pourcentage. */
+  readonly part: number;
+}
 
 /**
  * Suivi des dépôts — traduction de `MesDepotsPage`
@@ -19,7 +34,7 @@ import { AppRoutes } from '../../../core/router/app-routes';
 @Component({
   selector: 'app-mes-depots',
   standalone: true,
-  imports: [EmptyState, DocumentSkeleton, Refreshable, Icon],
+  imports: [TraductionPipe, EmptyState, DocumentSkeleton, Refreshable, Icon, AppHeader, AnimatedNumber],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './mes-depots.html',
   styleUrl: './mes-depots.scss',
@@ -27,6 +42,16 @@ import { AppRoutes } from '../../../core/router/app-routes';
 export class MesDepots {
   private readonly router = inject(Router);
   private readonly repo = inject(DepotRepository);
+  private readonly auth = inject(AuthService);
+
+  protected readonly user = computed(() => this.auth.state().user);
+
+  /** L'école et le niveau, pour la puce de contexte de l'en-tête. */
+  protected readonly cursus = computed(() => {
+    const u = this.user();
+    if (!u) return undefined;
+    return [u.universite, libelleNiveau(u.niveau)].filter(Boolean).join(' • ');
+  });
 
   protected readonly DepotStatut = DepotStatut;
   protected readonly libelleDepotStatut = libelleDepotStatut;
@@ -35,6 +60,61 @@ export class MesDepots {
   protected readonly statut = signal<'chargement' | 'pret' | 'erreur'>('chargement');
   protected readonly erreur = signal('');
   protected readonly rafraichissement = signal(false);
+
+  /**
+   * La répartition par statut, dans l'ordre du parcours d'un dépôt :
+   * déposé, relu, puis publié ou refusé.
+   *
+   * L'écran ne montrait qu'une liste à plat. Un dépôt met des jours à être
+   * relu : sans cette vue d'ensemble, impossible de voir d'un coup d'œil
+   * combien attendent, combien sont passés, et combien ont été refusés.
+   */
+  protected readonly tranches = computed<TrancheStatut[]>(() => {
+    const tous = this.depots();
+    const total = tous.length;
+    const ordre: readonly DepotStatut[] = [
+      DepotStatut.publie,
+      DepotStatut.enRevue,
+      DepotStatut.enAttente,
+      DepotStatut.refuse,
+    ];
+    return ordre
+      .map((statut) => {
+        const nombre = tous.filter((d) => d.statut === statut).length;
+        return {
+          statut,
+          libelle: libelleDepotStatut(statut),
+          icone: this.iconeStatut(statut),
+          nombre,
+          // Pas d'arrondi au plus proche : trois tranches à 33,3 % en
+          // donneraient 99 et laisseraient un creux au bout de la barre.
+          part: total > 0 ? (nombre / total) * 100 : 0,
+        };
+      })
+      .filter((tr) => tr.nombre > 0);
+  });
+
+  protected readonly total = computed(() => this.depots().length);
+
+  /** La part des dépôts publiés, arrondie — le chiffre qui résume l'écran. */
+  protected readonly tauxPublies = computed(() => {
+    const total = this.total();
+    if (total === 0) return 0;
+    const publies = this.depots().filter((d) => d.statut === DepotStatut.publie).length;
+    return Math.round((publies / total) * 100);
+  });
+
+  protected openNotifications(): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.notifications);
+  }
+
+  protected openFavoris(): void {
+    void this.router.navigate(['/app', AppRoutes.favoris]);
+  }
+
+  protected openProfil(): void {
+    void this.router.navigate(['/app', AppRoutes.profil]);
+  }
 
   constructor() {
     void this.charger();
@@ -57,8 +137,12 @@ export class MesDepots {
     this.rafraichissement.set(false);
   }
 
+  protected scanner(): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.depotScanner);
+  }
+
   protected proposer(): void {
-    void this.router.navigate(['/app', AppRoutes.depotForm]);
+    void this.router.navigateByUrl('/app/' + AppRoutes.depotForm);
   }
 
   protected contester(): void {

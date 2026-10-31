@@ -3,6 +3,17 @@ import { DemandeOtp } from '../models/demande-otp.model';
 import { ParcoursOtp } from '../models/parcours-otp.model';
 
 /** Justificatif retenu le temps de l'inscription, jusqu'à la validation du PIN. */
+/**
+ * L'issue d'une tentative de connexion.
+ *
+ * `'session'` n'existait pas : la connexion passait forcément par un code.
+ * Depuis que le serveur reconnaît les appareils, elle peut aboutir d'un
+ * coup, et l'écran doit savoir s'il enchaîne sur la saisie du code ou sur
+ * l'accueil.
+ */
+/** `google` : l'appareil est nouveau et l'adresse est gérée par Google — la preuve passe par le bouton Google, aucun code ne part. */
+export type ResultatConnexion = 'session' | 'otp' | 'google' | 'echec';
+
 export interface PendingJustificatif {
   readonly type: string;
   readonly bytes: Uint8Array;

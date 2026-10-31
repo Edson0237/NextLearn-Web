@@ -1,0 +1,37 @@
+[
+  {
+    "ecran": "splash",
+    "theme": "light",
+    "url": "http://localhost:4300/#/"
+  },
+  {
+    "ecran": "onboarding",
+    "theme": "light",
+    "url": "http://localhost:4300/#/onboarding"
+  },
+  {
+    "ecran": "register",
+    "theme": "light",
+    "url": "http://localhost:4300/#/register"
+  },
+  {
+    "ecran": "login-pin",
+    "theme": "light",
+    "url": "http://localhost:4300/#/login"
+  },
+  {
+    "ecran": "reset-pin",
+    "theme": "light",
+    "url": "http://localhost:4300/#/login/reset-pin"
+  },
+  {
+    "ecran": "legal-confidentialite",
+    "theme": "light",
+    "url": "http://localhost:4300/#/legal/confidentialite"
+  },
+  {
+    "ecran": "legal-conditions",
+    "theme": "light",
+    "url": "http://localhost:4300/#/legal/conditions"
+  }
+]

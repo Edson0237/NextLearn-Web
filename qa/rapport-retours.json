@@ -1,0 +1,110 @@
+[
+  {
+    "ecran": "home",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "bibliotheque-home",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "catalogue-matieres",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "matiere",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "document-detail",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "pdf-reader",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "favoris",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "offline-library",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "recherche",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "epreuves-list",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "epreuve-detail",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "quiz-session",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "progression",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "mes-depots",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "depot-form",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "notifications",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "profil-home",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "parametres",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "sessions",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "support-tickets",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "delete-account",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "recours",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "a-propos",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "legal-confidentialite",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "legal-conditions",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "verification-form",
+    "boutonRetour": "absent"
+  },
+  {
+    "ecran": "verification-pending",
+    "boutonRetour": "absent"
+  }
+]

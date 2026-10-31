@@ -17,7 +17,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   template: `<ng-content />`,
   styleUrl: './chip.scss',
   host: {
-    role: 'button',
+    // `role="button"` n'est plus posé d'office. Les deux seuls usages réels
+    // sont des étiquettes de type sur une carte : elles ne se tapent pas, et
+    // les annoncer comme des boutons trompait les lecteurs d'écran autant que
+    // la règle de taille minimale, qui étirait chaque étiquette à 48 px de
+    // haut au milieu d'une carte.
+    '[attr.role]': "interactive() ? 'button' : null",
+    '[attr.tabindex]': 'interactive() ? 0 : null',
     '[class.nl-chip--selected]': 'selected()',
     '[class.nl-chip--compact]': 'compact()',
     '[style.--chip-color]': 'color()',
@@ -25,6 +31,8 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class Chip {
   readonly selected = input(false);
+  /** Puce réellement tapable (filtre) plutôt que simple étiquette. */
+  readonly interactive = input(false);
   readonly compact = input(false);
   /** N'importe quelle couleur CSS valide : hex, `var(--type-cours)`, etc. */
   readonly color = input<string>('var(--primary)');

@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://api-nextlearn.duckdns.org",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

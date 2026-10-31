@@ -2,6 +2,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { signal } from '@angular/core';
+import { GoogleIdentite } from '../../../core/auth/google-identite';
 import { Register } from './register';
 import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille-selection';
 
@@ -29,6 +31,8 @@ describe('Register — cascade académique', () => {
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: FeuilleSelectionService, useValue: { ouvrir } },
+        // Google n'est pas l'objet de ces tests : le bouton reste muet, sans requête de configuration.
+        { provide: GoogleIdentite, useValue: { disponible: signal(false), preparer: async () => false } },
       ],
     });
     const fixture = TestBed.createComponent(Register);

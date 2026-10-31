@@ -1,3 +1,4 @@
+import { tr } from '../../core/i18n/traduction.service';
 /**
  * Un document proposé par un étudiant, et son sort — traduction de
  * `lib/domains/contributions/domain/models/depot_model.dart`.
@@ -46,7 +47,7 @@ export enum DepotLicence {
 export const LICENCES_PROPOSEES: readonly { readonly valeur: DepotLicence; readonly titre: string; readonly explication: string }[] = [
   { valeur: DepotLicence.auteur, titre: "C'est moi qui l'ai écrit", explication: 'Tes propres notes, ta synthèse, ton résumé de cours.' },
   { valeur: DepotLicence.autorise, titre: "J'ai l'accord de l'auteur", explication: "L'enseignant ou l'auteur t'a autorisé à le partager." },
-  { valeur: DepotLicence.institutionnel, titre: 'Document distribué par mon école', explication: "Polycopié, sujet ou support remis officiellement par l'école." },
+  { valeur: DepotLicence.institutionnel, titre: tr('depotLicenceInstitutionnel', 'Document distribué par mon école'), explication: "Polycopié, sujet ou support remis officiellement par l'école." },
   {
     valeur: DepotLicence.inconnue,
     titre: "Je ne sais pas d'où il vient",

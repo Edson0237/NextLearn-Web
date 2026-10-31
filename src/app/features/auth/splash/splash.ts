@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 
 /**
  * Écran de marque — traduction de `SplashPage`
@@ -15,11 +16,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'app-splash',
   standalone: true,
+  imports: [TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="nl-splash">
       <img class="nl-splash__logo" src="/images/Logo.png" alt="NextLearn" width="220" />
-      <p class="nl-splash__accroche">Toute ta bibliothèque académique, à portée de recherche</p>
+      <p class="nl-splash__accroche">{{ 'splashAccroche' | t }}</p>
     </div>
   `,
   styleUrl: './splash.scss',

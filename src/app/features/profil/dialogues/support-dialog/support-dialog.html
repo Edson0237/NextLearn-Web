@@ -1,0 +1,35 @@
+<div class="nl-sl__overlay" (click)="ferme.emit()">
+  <div class="nl-sl__modal" role="dialog" aria-modal="true" aria-labelledby="support-titre" (click)="$event.stopPropagation()">
+    <h3 id="support-titre" class="nl-sl__modal-titre">{{ 'profilSignalerProbleme' | t }}</h3>
+
+    <label class="nl-sl__support-field">
+      <span>{{ 'supportTypeProbleme' | t }}</span>
+      <select [value]="categorie()" (change)="categorie.set(val($event))">
+        @for (cat of categories; track cat.value) {
+          <option [value]="cat.value">{{ cat.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="nl-sl__support-field">
+      <span>{{ 'supportSujet' | t }}</span>
+      <input type="text" [value]="sujet()" (input)="sujet.set(val($event))" [attr.placeholder]="'pwaExempleImpossibleConnexion' | t" />
+    </label>
+
+    <label class="nl-sl__support-field">
+      <span>{{ 'docDescription' | t }}</span>
+      <textarea [value]="message()" (input)="message.set(val($event))" rows="4" [attr.placeholder]="'pwaDecrisCeQuiSePasse' | t"></textarea>
+    </label>
+
+    <div class="nl-sl__modal-actions">
+      <button type="button" class="nl-sl__btn nl-sl__btn--text" [disabled]="envoi()" (click)="ferme.emit()">{{ 'actionAnnuler' | t }}</button>
+      <button type="button" class="nl-sl__btn nl-sl__btn--primary" [disabled]="!peutEnvoyer()" (click)="envoyer()">
+        @if (envoi()) {
+          <span class="nl-sl__spinner"></span>
+        } @else {
+          Envoyer
+        }
+      </button>
+    </div>
+  </div>
+</div>

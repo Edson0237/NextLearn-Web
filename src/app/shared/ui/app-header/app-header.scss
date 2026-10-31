@@ -1,0 +1,163 @@
+@use '../../styles/type';
+@use '../../styles/tokens' as *;
+
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.nl-entete {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-page);
+  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
+  // Translucide et flouté : le contenu défile dessous et se devine, sans
+  // jamais passer au travers du texte de l'en-tête. Le repli plein évite
+  // qu'un navigateur sans `backdrop-filter` laisse le titre illisible.
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--border-light);
+
+  @supports (backdrop-filter: blur(16px)) {
+    background: color-mix(in srgb, var(--bg-canvas) 85%, transparent);
+    backdrop-filter: blur(16px);
+  }
+}
+
+.nl-entete__rangee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.nl-entete__marque {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.nl-entete__logo {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  // L'image porte déjà son fond bleu ; `object-fit` la garde carrée quelles
+  // que soient les dimensions servies.
+  object-fit: cover;
+}
+
+.nl-entete__titres {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nl-entete__produit {
+  @include type.nl-h3;
+  line-height: 1.1;
+}
+
+.nl-entete__section {
+  @include type.nl-label-sm;
+  color: var(--primary);
+  margin-top: 1px;
+}
+
+.nl-entete__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.nl-entete__cloche {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: var(--radius-pilule);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.nl-entete__pastille {
+  position: absolute;
+  top: 6px;
+  right: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: var(--radius-pilule);
+  // L'anneau de la couleur du fond détache la pastille de l'icône qu'elle
+  // chevauche, quel que soit le thème.
+  box-shadow: 0 0 0 2px var(--bg-canvas);
+  background: var(--danger);
+  color: var(--text-on-primary);
+  font: 700 0.6875rem/18px var(--font-family);
+  text-align: center;
+}
+
+.nl-entete__profil {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ── Cursus actif ───────────────────────────────────────────────────────────
+
+.nl-entete__contexte {
+  @include cible-etendue(30px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  max-width: 100%;
+  height: 30px;
+  padding: 0 var(--space-md);
+  border: none;
+  border-radius: var(--radius-pilule);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+
+  > nl-icon:first-child {
+    color: var(--primary);
+    flex: none;
+  }
+
+  > nl-icon:last-child {
+    color: var(--text-muted);
+    flex: none;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.nl-entete__contexte-texte {
+  @include type.nl-label-md;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

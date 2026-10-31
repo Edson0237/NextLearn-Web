@@ -1,7 +1,5 @@
-@use '../../../shared/styles/tokens' as *;
 
 :host {
-  @include nl-app-tokens;
   display: block;
   min-height: 100vh;
   background: var(--bg-canvas);
@@ -130,7 +128,7 @@
 
 .nl-del__btn-continuer {
   background: var(--danger);
-  color: #fff;
+  color: var(--text-on-primary);
 }
 
 .nl-del__btn-annuler {
@@ -205,4 +203,27 @@
   color: var(--danger);
   margin: 12px 0 0;
   text-align: center;
+}
+
+// La recopie du mot, pour un compte sans PIN : un vrai champ, visible.
+.nl-del__pin-input.nl-del__mot-input {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  width: 100%;
+  margin: 8px 0 4px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font: 600 1rem var(--font-family);
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nl-del__btn-continuer:disabled {
+  opacity: 0.5;
+  cursor: default;
 }

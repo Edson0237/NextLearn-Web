@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CascadeEnter } from '../../../shared/directives/cascade-enter';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves/epreuves-repository';
 import { EpreuveModel, TypeEpreuve, typeEpreuveVersApi } from '../../../core/epreuves/epreuve.model';
@@ -28,7 +30,7 @@ const FILTRE_VIDE: Filtre = {};
 @Component({
   selector: 'app-epreuves-list',
   standalone: true,
-  imports: [EmptyState, DocumentSkeleton, Refreshable, Icon],
+  imports: [CascadeEnter, TraductionPipe, EmptyState, DocumentSkeleton, Refreshable, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './epreuves-list.html',
   styleUrl: './epreuves-list.scss',
@@ -129,6 +131,6 @@ export class EpreuvesList {
   }
 
   protected ouvrir(id: string): void {
-    void this.router.navigate(['/app', AppRoutes.epreuveDetailPath(id)]);
+    void this.router.navigateByUrl('/app/' + AppRoutes.epreuveDetailPath(id));
   }
 }

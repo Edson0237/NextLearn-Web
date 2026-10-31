@@ -1,7 +1,5 @@
-@use '../../../shared/styles/tokens' as *;
 
 :host {
-  @include nl-app-tokens;
   display: block;
   min-height: 100vh;
   background: var(--bg-canvas);

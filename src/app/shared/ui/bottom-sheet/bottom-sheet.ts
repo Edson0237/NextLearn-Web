@@ -1,6 +1,7 @@
 import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { ComponentPortal, ComponentType } from '@angular/cdk/portal';
 import { inject, Injectable, InjectionToken, Injector } from '@angular/core';
+import { ThemeService } from '../../services/theme';
 
 /** Ce que reçoit le contenu ouvert dans une feuille — sa façon de se fermer. */
 export abstract class BottomSheetRef<R = unknown> {
@@ -26,6 +27,7 @@ export abstract class BottomSheetRef<R = unknown> {
 export class BottomSheetService {
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);
+  private readonly theme = inject(ThemeService);
 
   /** Ouvre une feuille portant un composant quelconque. */
   open<T, R = unknown>(component: ComponentType<T>, data?: unknown): BottomSheetHandle<T, R> {
@@ -34,12 +36,30 @@ export class BottomSheetService {
       scrollStrategy: this.overlay.scrollStrategies.block(),
       hasBackdrop: true,
       backdropClass: 'nl-sheet-backdrop',
-      panelClass: 'nl-sheet-panel',
+      // ── `nl-overlay` sur le panneau, et ce n'est pas décoratif ───────────
+      //
+      // Un overlay CDK est attaché à `<body>`, donc **hors** du sous-arbre
+      // `.nl-app` qui porte les jetons de la charte. Sans cette classe,
+      // `var(--bg-primary)`, `var(--radius-feuille)` et le reste ne
+      // résolvaient pas : la feuille s'affichait sans fond — transparente,
+      // par-dessus la page — sans coins arrondis et dans la police de la
+      // vitrine.
+      //
+      // `nl-overlay`, et non `nl-app` : cette dernière porte aussi les règles
+      // d'une page entière (`min-height: 100dvh`…), qui étiraient le panneau
+      // sur tout l'écran et rejetaient la feuille dans son coin.
+      panelClass: ['nl-sheet-panel', 'nl-overlay'],
       width: '100%',
       maxWidth: '560px',
     });
 
     const overlayRef = this.overlay.create(config);
+
+    // Le thème choisi doit suivre la feuille : les jetons sombres sont posés
+    // sous `[data-theme='dark']`, attribut que seule la coque applicative
+    // porte — et dont l'overlay, détaché, n'hérite pas.
+    const theme = this.theme.attribute();
+    if (theme) overlayRef.overlayElement.setAttribute('data-theme', theme);
 
     let resoudre!: (valeur: R | undefined) => void;
     const resultat = new Promise<R | undefined>((r) => (resoudre = r));

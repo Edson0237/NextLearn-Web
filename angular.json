@@ -27,11 +27,18 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "pdf.worker.min.mjs",
+                "input": "node_modules/pdfjs-dist/legacy/build",
+                "output": "/"
               }
             ],
             "styles": [
+              "node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss",
-              "src/shared.scss"
+              "src/shared.scss",
+              "src/app-native.scss"
             ]
           },
           "configurations": {
@@ -48,7 +55,8 @@
                   "maximumError": "12kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,

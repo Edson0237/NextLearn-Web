@@ -1,7 +1,14 @@
+// `height: 100%` ne vaut que si l'ancetre a une hauteur definie. Ici il n'en
+// a pas : la coque applicative est un simple `div` qui grandit avec son
+// contenu. Resultat, le lecteur se reduisait a sa barre d'outils (390x65) et
+// le PDF, pourtant charge et analyse par pdf.js, n'etait jamais peint.
+// `100dvh` donne la hauteur definie qui manquait — et `dvh` plutot que `vh`
+// pour que la barre d'adresse mobile, qui se retracte au defilement, ne
+// decoupe pas le bas de la page.
 :host {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100dvh;
   background: var(--bg-canvas);
 }
 
@@ -42,9 +49,16 @@
     }
   }
 
-  &__frame {
+  &__viewport {
     flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: var(--bg-secondary);
+  }
+
+  &__frame {
     width: 100%;
+    height: 100%;
     border: none;
   }
 }

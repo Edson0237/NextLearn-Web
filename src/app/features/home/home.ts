@@ -1,38 +1,138 @@
+import { metaDocument, noteDocument } from '../../core/bibliotheque/document.model';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { TraductionPipe } from '../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { DocumentsRepository } from '../../core/bibliotheque/documents-repository';
 import { ProfilRepository } from '../../core/profil/profil-repository';
-import { DocumentModel, DocumentType, labelTypeDocument, couleurTypeDocument } from '../../core/bibliotheque/document.model';
-import { UserModel, libelleNiveau } from '../../core/models/user.model';
-import { DocumentCard } from '../../shared/ui/document-card/document-card';
+import { FormatsService } from '../../core/references/formats.service';
+import { ContexteRepository } from '../../core/contexte/contexte-repository';
+import { CONTEXTE_OUVERT, MatiereDuProgramme, typeVisible, fonctionnaliteFermee } from '../../core/contexte/contexte.model';
+import {
+  LectureProgress,
+  LectureProgressRepository,
+  pourcentageLu,
+} from '../../core/bibliotheque/lecture-progress-repository';
+import {
+  DocumentModel,
+  DocumentType,
+  } from '../../core/bibliotheque/document.model';
+import { libelleNiveau } from '../../core/models/user.model';
+import { DocumentCard, EtiquetteDocument } from '../../shared/ui/document-card/document-card';
+import { AppHeader } from '../../shared/ui/app-header/app-header';
+import { SearchBar } from '../../shared/ui/search-bar/search-bar';
+import { SectionHeader } from '../../shared/ui/section-header/section-header';
+import { Badge } from '../../shared/ui/badge/badge';
+import { tr } from '../../core/i18n/traduction.service';
+import { FeuilleSelectionService } from '../../shared/ui/bottom-sheet/feuille-selection';
 import { Icon } from '../../shared/ui/icon/icon';
 import { EmptyState } from '../../shared/ui/empty-state/empty-state';
 import { Button } from '../../shared/ui/button/button';
 import { AnimatedNumber } from '../../shared/ui/animated-number/animated-number';
 import { AppRoutes } from '../../core/router/app-routes';
+import { presentationType, TypeDocumentPipe } from '../../shared/ui/type-document/presentation-type-document';
+
+/** Une lecture en cours, avec le document qu'elle désigne. */
+interface Reprise {
+  readonly document: DocumentModel;
+  readonly progression: LectureProgress;
+  readonly pourcentage: number;
+}
 
 @Component({
   selector: 'nl-home',
   standalone: true,
-  imports: [CommonModule, DocumentCard, Icon, EmptyState, Button, AnimatedNumber],
+  imports: [TypeDocumentPipe, 
+    TraductionPipe, CommonModule, DocumentCard, Icon, EmptyState, Button, AnimatedNumber,
+    AppHeader, SearchBar, SectionHeader, Badge,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
   private readonly router = inject(Router);
+  private readonly selections = inject(FeuilleSelectionService);
   private readonly auth = inject(AuthService);
   private readonly docsRepo = inject(DocumentsRepository);
   private readonly profilRepo = inject(ProfilRepository);
+  private readonly contexteRepo = inject(ContexteRepository);
+  private readonly lectureRepo = inject(LectureProgressRepository);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly recommended = signal<DocumentModel[]>([]);
   protected readonly popular = signal<DocumentModel[]>([]);
   protected readonly recent = signal<DocumentModel[]>([]);
+
   protected readonly streak = signal(0);
+  /** Documents disponibles hors ligne et documents lus — les vrais chiffres.
+   *  Ils étaient écrits en dur à zéro dans le gabarit. */
+  protected readonly horsLigne = signal(0);
+  protected readonly lus = signal(0);
+
+
+  private readonly formats = inject(FormatsService);
+  protected readonly contexte = signal(CONTEXTE_OUVERT);
+  /** La recherche, quand l'administration ne l'a pas fermée. */
+  protected readonly rechercheOuverte = computed(() => !fonctionnaliteFermee(this.contexte(), 'search'));
+  protected readonly reprises = signal<Reprise[]>([]);
+
+  /**
+   * Les matières du programme, tronc commun mis à part.
+   *
+   * La distinction n'est pas décorative : une matière de tronc commun est
+   * partagée avec les autres filières du même niveau, ses documents viennent
+   * d'ailleurs. Les mêler effacerait la séparation que l'administration a
+   * posée.
+   */
+  protected readonly matieresFiliere = computed(() =>
+    this.contexte().matieres.filter((m) => !m.troncCommun),
+  );
+  protected readonly matieresTroncCommun = computed(() =>
+    this.contexte().matieres.filter((m) => m.troncCommun),
+  );
+
+  /**
+   * Les types de document ouverts à cet étudiant.
+   *
+   * Chercher « toutes les épreuves de ma filière » n'est pas une recherche :
+   * il n'y a pas de mot à taper, c'est un filtre — donc un bouton.
+   */
+  private readonly tousLesTypes = [
+    DocumentType.epreuve,
+    DocumentType.annales,
+    DocumentType.td,
+    DocumentType.cours,
+    DocumentType.synthese,
+    DocumentType.corrige,
+    DocumentType.tp,
+    DocumentType.expose,
+  ];
+
+  /** Les types ouverts à cet étudiant, dans l'ordre d'usage. */
+  private readonly typesDisponibles = computed(() => {
+    const nommes = this.tousLesTypes.filter((t) => this.formats.actif(t) && typeVisible(this.contexte(), t));
+    // Les formats créés dans l'administration viennent après ceux qu'on nomme.
+    const supplementaires = (this.formats.formats() ?? [])
+      .map((f) => f.type)
+      .filter((t) => !this.tousLesTypes.includes(t) && t !== DocumentType.autre);
+    return [...nommes, ...supplementaires];
+  });
+
+  /**
+   * Les trois formats qu'on vient chercher, et rien d'autre.
+   *
+   * Les huit tuiles d'avant couvraient deux écrans à elles seules et
+   * mettaient « Exposé » au même rang qu'« Épreuve ». Épreuves, annales et
+   * TD sont ce pour quoi on ouvre l'application la veille d'un examen ; le
+   * reste passe derrière une quatrième tuile.
+   */
+  protected readonly typesRapides = computed(() => this.typesDisponibles().slice(0, 3));
+
+  /** Ceux qui vivent derrière la tuile « Plus de formats ». */
+  protected readonly typesSecondaires = computed(() => this.typesDisponibles().slice(3));
 
   protected readonly user = computed(() => this.auth.state().user);
   protected readonly subtitle = computed(() => {
@@ -40,6 +140,25 @@ export class Home implements OnInit {
     if (!u) return 'Bienvenue sur NextLearn';
     return [libelleNiveau(u.niveau, u.cycle), u.filiere].filter(Boolean).join(' · ');
   });
+
+  /**
+   * Les formats secondaires, en feuille.
+   *
+   * Une feuille plutôt que cinq tuiles de plus : la liste est consultée
+   * rarement, et chaque entrée y garde son icône et sa teinte, donc se
+   * reconnaît aussi vite qu'une tuile.
+   */
+  protected async ouvrirAutresFormats(): Promise<void> {
+    const choisi = await this.selections.ouvrir<DocumentType>({
+      title: tr('homeChoisirFormat', 'Choisir un format'),
+      choices: this.typesSecondaires().map((t) => {
+        const p = presentationType(t);
+        return { value: t, label: p.label, icone: p.icone, teinte: p.couleur, teinteFond: p.fond };
+      }),
+      emptyMessage: tr('selecteurAucunResultat', 'Aucun résultat'),
+    });
+    if (choisi) this.openBibliotheque(choisi);
+  }
 
   async ngOnInit(): Promise<void> {
     await this.load();
@@ -49,74 +168,151 @@ export class Home implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const [rec, pop, recents, stats] = await Promise.all([
+      const [rec, pop, recents, stats, contexte, progression] = await Promise.all([
         this.docsRepo.getRecommended(),
         this.docsRepo.getPopular(),
         this.docsRepo.getRecent(),
         this.profilRepo.getStats().catch(() => null),
+        this.contexteRepo.charger(),
+        this.lectureRepo.getAll().catch(() => new Map<string, LectureProgress>()),
       ]);
+
       this.recommended.set(rec);
       this.popular.set(pop);
       this.recent.set(recents);
       this.streak.set(stats?.streak ?? 0);
-    } catch (e) {
-      this.error.set('Impossible de charger l\'accueil.');
+      this.horsLigne.set(stats?.docsTelecharges ?? 0);
+      this.lus.set(stats?.docsLus ?? 0);
+      this.contexte.set(contexte);
+      this.reprises.set(this.composerReprises(progression, [...rec, ...pop, ...recents]));
+    } catch {
+      this.error.set("Impossible de charger l'accueil.");
     } finally {
       this.loading.set(false);
     }
   }
 
+  /**
+   * Les lectures commencées et non finies, les plus récentes d'abord.
+   *
+   * Seuls les documents déjà connus des trois rangées sont proposés : aller
+   * chercher une fiche par identifiant pour chaque progression ferait autant
+   * de requêtes que de lectures en cours, au chargement de l'accueil.
+   */
+  private composerReprises(
+    progression: Map<string, LectureProgress>,
+    documents: readonly DocumentModel[],
+  ): Reprise[] {
+    const parId = new Map(documents.map((d) => [d.id, d]));
+    const reprises: Reprise[] = [];
+    for (const p of progression.values()) {
+      const document = parId.get(p.documentId);
+      if (!document) continue;
+      const pourcentage = pourcentageLu(p);
+      if (pourcentage <= 0 || pourcentage >= 1) continue;
+      reprises.push({ document, progression: p, pourcentage });
+    }
+    return reprises
+      .sort((a, b) => (a.progression.derniereLecture < b.progression.derniereLecture ? 1 : -1))
+      .slice(0, 5);
+  }
+
+  /** L'école et le niveau, tels qu'affichés dans l'en-tête. */
+  protected readonly cursus = computed(() => {
+    const u = this.user();
+    if (!u) return undefined;
+    return [u.universite, libelleNiveau(u.niveau, u.cycle)].filter(Boolean).join(' • ');
+  });
+
+  protected openProfil(): void {
+    void this.router.navigate(['/app', AppRoutes.profil]);
+  }
+
+  /**
+   * Télécharge depuis la carte, sans passer par la fiche.
+   *
+   * C'est le geste qu'on répète — et l'obliger à passer par un écran de plus
+   * était le reproche principal fait à l'ancienne liste.
+   */
+  protected async telecharger(doc: DocumentModel): Promise<void> {
+    const url = (await this.docsRepo.urlLecture(doc.id).catch(() => null)) ?? doc.urlPdf;
+    if (!url) return;
+    void this.docsRepo.recordDownload(doc.id);
+    const lien = window.document.createElement('a');
+    lien.href = url;
+    lien.download = `${doc.titre}.pdf`;
+    lien.rel = 'noopener';
+    lien.target = '_blank';
+    lien.click();
+  }
+
   protected openDocument(doc: DocumentModel): void {
-    void this.router.navigate(['/', AppRoutes.documentDetail.replace(':id', doc.id)]);
+    void this.router.navigateByUrl('/app/' + AppRoutes.docDetailPath(doc.id));
+  }
+
+  protected reprendre(reprise: Reprise): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.docReaderPath(reprise.document.id));
+  }
+
+  protected openMatiere(matiere: MatiereDuProgramme): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.matierePath(matiere.id));
   }
 
   protected openBibliotheque(type?: DocumentType): void {
-    void this.router.navigate(['/', AppRoutes.bibliotheque], { state: { type } });
+    // Un paramètre d'URL et non l'état de navigation : le filtre survit ainsi
+    // à un rechargement et se partage, là où `state` disparaît au premier F5.
+    void this.router.navigate(['/app', AppRoutes.bibliotheque], {
+      queryParams: type ? { type } : {},
+    });
   }
 
   protected openSearch(): void {
-    void this.router.navigate(['/', AppRoutes.recherche]);
+    void this.router.navigate(['/app', AppRoutes.recherche]);
   }
 
   protected openFavoris(): void {
-    void this.router.navigate(['/', AppRoutes.favoris]);
+    void this.router.navigate(['/app', AppRoutes.favoris]);
   }
 
   protected openOffline(): void {
-    void this.router.navigate(['/', AppRoutes.offlineLibrary]);
+    void this.router.navigate(['/app', AppRoutes.offlineLibrary]);
   }
 
   protected openDepot(): void {
-    void this.router.navigate(['/', AppRoutes.depotForm]);
+    void this.router.navigateByUrl('/app/' + AppRoutes.depotForm);
   }
 
   protected openNotifications(): void {
-    void this.router.navigate(['/', AppRoutes.notifications]);
+    void this.router.navigate(['/app', AppRoutes.notifications]);
   }
 
-  protected typeIcon(type: DocumentType): string {
-    switch (type) {
-      case DocumentType.cours: return 'menu_book';
-      case DocumentType.td: return 'edit_note';
-      case DocumentType.synthese: return 'summarize';
-      case DocumentType.epreuve: return 'assignment';
-      default: return 'description';
-    }
+
+
+  /**
+   * Les étiquettes d'une carte : la matière, puis le niveau et le semestre
+   * s'ils sont connus. Trois au plus — au-delà, la rangée passe à la ligne et
+   * la carte perd l'alignement qu'elle partage avec ses voisines.
+   */
+  protected etiquettesDe(doc: DocumentModel): EtiquetteDocument[] {
+    const etiquettes: EtiquetteDocument[] = [
+      { texte: doc.matiere, ton: 'primaire' },
+    ];
+    const parcours = [doc.niveau, doc.semestre].filter(Boolean).join(' • ');
+    if (parcours) etiquettes.push({ texte: parcours });
+    return etiquettes;
   }
 
-  protected typeColor(type: DocumentType): string {
-    return couleurTypeDocument(type);
-  }
 
-  protected typeLabel(type: DocumentType): string {
-    return labelTypeDocument(type);
+
+  protected couleurMatiere(matiere: MatiereDuProgramme): string {
+    return matiere.couleur;
   }
 
   protected metaFor(doc: DocumentModel) {
-    const meta = [];
-    if (doc.enseignant) meta.push({ icon: 'person' as const, label: doc.enseignant });
-    if (doc.pages > 0) meta.push({ icon: 'description' as const, label: `${doc.pages} p.` });
-    if (doc.tailleMb > 0) meta.push({ icon: 'download' as const, label: `${doc.tailleMb.toFixed(1)} Mo` });
-    return meta;
+    return metaDocument(doc);
+  }
+
+  protected noteFor(doc: DocumentModel): number | undefined {
+    return noteDocument(doc);
   }
 }

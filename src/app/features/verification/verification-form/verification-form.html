@@ -1,70 +1,77 @@
 <div class="verif">
-  <header class="verif__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
-      <nl-icon name="arrow_back" />
-    </button>
-    <h1 class="verif__titre">Vérification académique</h1>
-  </header>
+  <nl-page-bar [titre]="'pwaVerificationAcademique' | t" (retour)="sortir()" />
 
   <div class="verif__corps">
-    @if (status()?.statut === 'en_attente') {
-      <div class="verif__pending">
-        <nl-icon name="schedule" />
-        <p>Votre demande est en cours de traitement.</p>
-        <button nlButton variant="primary" size="md" (click)="goBack()">Retour</button>
+    @if (loading()) {
+      <p class="verif__etat">{{ 'chargementEnCours' | t }}</p>
+    } @else if (dossierEnCours()) {
+      <div class="verif__carte verif__carte--centre">
+        <nl-icon name="schedule" [size]="48" />
+        <p>{{ 'pwaDemandeEnTraitement' | t }}</p>
+        <button type="button" class="verif__cta" (click)="allerAccueil()">{{ 'actionRetour' | t }}</button>
       </div>
-    } @else if (status()?.statut === 'verifie') {
-      <div class="verif__success">
-        <nl-icon name="check_circle" />
-        <p>Votre compte est vérifié.</p>
-        <button nlButton variant="primary" size="md" (click)="goBack()">Retour</button>
+    } @else if (dossierApprouve()) {
+      <div class="verif__carte verif__carte--centre">
+        <nl-icon name="check_circle" [size]="48" />
+        <p>{{ 'pwaCompteEstVerifie' | t }}</p>
+        <button type="button" class="verif__cta" (click)="allerAccueil()">{{ 'actionRetour' | t }}</button>
       </div>
     } @else {
-      <form class="verif__form" (ngSubmit)="submit()">
-        <label class="verif__field">
-          <span>Nom</span>
-          <input type="text" [(ngModel)]="nom" name="nom" required />
+      <form class="verif__form" (submit)="$event.preventDefault(); submit()">
+        <p class="verif__intro">{{ 'verifIntro' | t }}</p>
+
+        <!-- Le parcours donné à l'inscription : repris, pas redemandé. -->
+        <section class="verif__parcours" [attr.aria-label]="'verifParcours' | t">
+          <h2 class="verif__sous-titre">{{ 'verifParcours' | t }}</h2>
+          <dl>
+            <div><dt>{{ 'docUniversite' | t }}</dt><dd>{{ parcours().universite }}</dd></div>
+            <div><dt>{{ 'communFiliere' | t }}</dt><dd>{{ parcours().filiere }}</dd></div>
+            <div><dt>{{ 'docNiveau' | t }}</dt><dd>{{ parcours().niveau }}</dd></div>
+          </dl>
+        </section>
+
+        <div class="verif__ligne">
+          <label class="verif__champ">
+            <span class="verif__label">{{ 'registerPrenom' | t }}</span>
+            <input type="text" [value]="prenom()" (input)="prenom.set(val($event))" autocomplete="given-name" />
+          </label>
+          <label class="verif__champ">
+            <span class="verif__label">{{ 'communNom' | t }}</span>
+            <input type="text" [value]="nom()" (input)="nom.set(val($event))" autocomplete="family-name" />
+          </label>
+        </div>
+
+        <label class="verif__champ">
+          <span class="verif__label">{{ 'pwaMatricule' | t }}</span>
+          <input type="text" [value]="matricule()" (input)="matricule.set(val($event))" />
         </label>
-        <label class="verif__field">
-          <span>Prénom</span>
-          <input type="text" [(ngModel)]="prenom" name="prenom" required />
-        </label>
-        <label class="verif__field">
-          <span>Matricule</span>
-          <input type="text" [(ngModel)]="matricule" name="matricule" />
-        </label>
-        <label class="verif__field">
-          <span>Université</span>
-          <input type="text" [(ngModel)]="universite" name="universite" required />
-        </label>
-        <label class="verif__field">
-          <span>Filière</span>
-          <input type="text" [(ngModel)]="filiere" name="filiere" required />
-        </label>
-        <label class="verif__field">
-          <span>Niveau</span>
-          <input type="text" [(ngModel)]="niveau" name="niveau" placeholder="N3" required />
-        </label>
-        <label class="verif__field">
-          <span>Type de justificatif</span>
-          <select [(ngModel)]="justificatifType" name="justificatifType" required>
-            <option value="">Choisir…</option>
-            @for (t of types(); track t.id) {
-              <option [value]="t.id">{{ t.nom }}</option>
-            }
-          </select>
-        </label>
-        <label class="verif__field">
-          <span>Justificatif (PDF, JPG, PNG)</span>
-          <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileChange($event)" required />
-        </label>
+
+        <div class="verif__champ">
+          <span class="verif__label">{{ 'pwaTypeJustificatif' | t }}</span>
+          <button type="button" class="verif__cascade" (click)="choisirType()">
+            <span [class.verif__cascade-vide]="!typeChoisi()">{{ typeChoisi()?.label ?? ('pwaChoisir' | t) }}</span>
+            <nl-icon name="chevron_right" [size]="18" />
+          </button>
+          @if (typeChoisi()?.description; as aide) {
+            <small class="verif__aide">{{ aide }}</small>
+          }
+        </div>
+
+        <div class="verif__champ">
+          <span class="verif__label">{{ 'pwaJustificatifFormats' | t }}</span>
+          <label class="verif__fichier">
+            <nl-icon name="upload_file" [size]="20" />
+            <span class="verif__fichier-nom">{{ file()?.name ?? ('verifChoisirFichier' | t) }}</span>
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileChange($event)" />
+          </label>
+        </div>
 
         @if (error()) {
-          <p class="verif__error">{{ error() }}</p>
+          <p class="verif__error" role="alert">{{ error() }}</p>
         }
 
-        <button nlButton variant="primary" size="md" [disabled]="sending()">
-          {{ sending() ? 'Envoi…' : 'Envoyer la demande' }}
+        <button type="submit" class="verif__cta" [disabled]="sending()">
+          {{ (sending() ? 'verifEnvoiEnCours' : 'verifEnvoyer') | t }}
         </button>
       </form>
     }

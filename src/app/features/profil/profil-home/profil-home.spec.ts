@@ -43,6 +43,10 @@ describe('ProfilHome', () => {
       data: { stats: { docsTelecharges: 5, docsLus: 10, heuresEtude: 2, streak: 3 } },
     });
     http.expectOne('/api/progression/stats').flush({ data: { streak: 7 } });
+    // L'en-tête partage le compteur de notifications : il le demande à l'ouverture.
+    http.match('/api/notifications/unread-count').forEach((r) => r.flush({ data: { count: 0 } }));
+    // « Mes ressources » affiche le nombre de favoris.
+    http.match('/api/favorites').forEach((r) => r.flush({ data: [] }));
     http.verify();
     await tick();
 

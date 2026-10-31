@@ -1,9 +1,9 @@
 <div class="nl-otp">
   <header class="nl-otp__entete">
-    <button type="button" class="nl-otp__fermer" (click)="demanderAbandon()" aria-label="Abandonner">
+    <button type="button" class="nl-otp__fermer" (click)="demanderAbandon()" [attr.aria-label]="'otpAbandonQuitter' | t">
       <nl-icon name="close" [size]="20" />
     </button>
-    <h1 class="nl-otp__titre-entete">Vérification</h1>
+    <h1 class="nl-otp__titre-entete">{{ 'authVerification' | t }}</h1>
   </header>
 
   <div class="nl-otp__corps">
@@ -13,13 +13,13 @@
           <div class="nl-otp__pastille nl-otp__pastille--refus">
             <nl-icon name="error" [size]="28" />
           </div>
-          <h2 class="nl-otp__titre">Demande refusée</h2>
+          <h2 class="nl-otp__titre">{{ 'pwaDemandeRefusee' | t }}</h2>
           <p class="nl-otp__texte">{{ demande?.message || 'Cette demande ne peut pas être traitée.' }}</p>
         } @else {
           <div class="nl-otp__pastille">
             <nl-icon name="refresh" [size]="28" />
           </div>
-          <h2 class="nl-otp__titre">En file d'attente</h2>
+          <h2 class="nl-otp__titre">{{ 'pwaEnFileAttente' | t }}</h2>
           <p class="nl-otp__texte">
             {{ demande?.message || 'Ta demande de code est enregistrée, elle sera traitée bientôt.' }}
           </p>
@@ -27,31 +27,27 @@
           <div class="nl-otp__carte">
             @if (demande?.position != null) {
               <div class="nl-otp__ligne">
-                <span>Position dans la file</span>
+                <span>{{ 'fileAttentePosition' | t }}</span>
                 <strong>{{ demande?.position }}</strong>
               </div>
             }
             @if ((demande?.personnesDevant ?? 0) > 0) {
               <div class="nl-otp__ligne">
-                <span>Devant toi</span>
+                <span>{{ 'pwaDevantToi' | t }}</span>
                 <strong>{{ demande?.personnesDevant }}</strong>
               </div>
             }
             <div class="nl-otp__ligne">
-              <span>Traitement estimé</span>
+              <span>{{ 'fileAttenteTraitement' | t }}</span>
               <strong class="nl-otp__ligne-accent">{{ traitementEstime() }}</strong>
             </div>
           </div>
 
           <p class="nl-otp__note">
-            <nl-icon name="check_circle" [size]="16" />
-            Ta place est gardée, pas besoin de revenir ni de recommencer.
-          </p>
+            <nl-icon name="check_circle" [size]="16" />{{ 'pwaPlaceGardee' | t }}</p>
 
           <button type="button" class="nl-otp__secondaire" [disabled]="actualisation()" (click)="actualiserPosition()">
-            <nl-icon name="refresh" [size]="16" />
-            Actualiser
-          </button>
+            <nl-icon name="refresh" [size]="16" />{{ 'pwaActualiser' | t }}</button>
         }
       </section>
     } @else {
@@ -60,7 +56,7 @@
           <nl-icon name="description" [size]="28" />
         </div>
         <h2 class="nl-otp__titre">{{ estConnexion() ? 'Code de vérification' : "Vérifie ton e-mail" }}</h2>
-        <p class="nl-otp__texte">Saisis le code à six chiffres que tu viens de recevoir par e-mail.</p>
+        <p class="nl-otp__texte">{{ 'pwaSaisisCodeSixChiffres' | t }}</p>
 
         <div class="nl-otp__cases" (paste)="surCollage($event)">
           @for (c of chiffres(); track $index) {
@@ -81,7 +77,7 @@
           <p class="nl-otp__erreur">{{ erreur() }}</p>
         }
 
-        <button type="button" class="nl-otp__lien" (click)="renvoyer()">Renvoyer le code</button>
+        <button type="button" class="nl-otp__lien" (click)="renvoyer()">{{ 'otpRenvoyerCode' | t }}</button>
         <button type="button" class="nl-otp__lien nl-otp__lien--discret" (click)="demanderAbandon()">
           {{ estConnexion() ? 'Annuler la connexion' : "Annuler l'inscription" }}
         </button>

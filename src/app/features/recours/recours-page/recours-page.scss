@@ -55,7 +55,7 @@
     nl-icon {
       width: 48px;
       height: 48px;
-      color: var(--success);
+      color: var(--tertiary);
     }
 
     h2 {
@@ -178,4 +178,16 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
+}
+
+.recours__type-decision {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.recours__type:disabled {
+  opacity: 0.6;
 }

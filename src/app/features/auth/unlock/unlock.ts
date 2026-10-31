@@ -1,9 +1,13 @@
+import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { BiometricService } from '../../../core/auth/biometric.service';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
+import { Identite } from '../../../shared/ui/identite/identite';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { initiales } from '../../../core/models/user.model';
 
@@ -17,7 +21,7 @@ import { initiales } from '../../../core/models/user.model';
 @Component({
   selector: 'app-unlock',
   standalone: true,
-  imports: [PinInput],
+  imports: [TraductionPipe, PinInput, Identite, ResultatPin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './unlock.html',
   styleUrl: './unlock.scss',
@@ -38,7 +42,14 @@ export class Unlock {
 
   protected get initialesAffichees(): string {
     const u = this.auth.state().user;
-    return u ? initiales(u) : 'NL';
+    // Chaîne vide et non « NL » : c'est elle qui dit à `nl-identite` qu'on
+    // ne sait pas encore qui se présente, et qu'il faut montrer la marque.
+    return u ? initiales(u) : '';
+  }
+
+  /** La photo du compte, quand il en porte une. */
+  protected get photoAffichee(): string | undefined {
+    return this.auth.state().user?.avatarUrl;
   }
 
   protected get accroche(): string {
@@ -66,6 +77,22 @@ export class Unlock {
     const ok = await this.biometrie.authenticate();
     if (!ok) return;
     this.auth.unlockWithBiometrics();
+    void this.router.navigate(['/app', AppRoutes.home]);
+  }
+
+  /** Ce que la saisie du PIN a donné, montré plein écran avant de poursuivre. */
+  protected readonly resultat = signal<
+    { etat: 'succes' | 'echec'; titre: string; message: string; suite?: () => void } | null
+  >(null);
+
+  protected continuer(): void {
+    const suite = this.resultat()?.suite;
+    this.resultat.set(null);
+    suite?.();
+  }
+
+  protected reessayer(): void {
+    this.resultat.set(null);
   }
 
   protected onChiffre(d: string): void {
@@ -84,22 +111,33 @@ export class Unlock {
 
   private async soumettre(pin: string): Promise<void> {
     const ok = await this.auth.unlockWithPin(pin);
-    if (!ok) {
-      this.erreur.set(this.auth.state().error ?? 'PIN incorrect. Réessaie.');
-      this.pin.set('');
+    this.pin.set('');
+    if (ok) {
+      this.resultat.set({
+        etat: 'succes',
+        titre: 'Déverrouillé',
+        message: '',
+        suite: () => void this.router.navigate(['/app', AppRoutes.home]),
+      });
+      return;
     }
+    this.resultat.set({
+      etat: 'echec',
+      titre: 'PIN incorrect',
+      message: this.auth.state().error ?? 'Le code saisi n’est pas le bon. Réessaie.',
+    });
   }
 
   protected allerReinitialisation(): void {
-    void this.router.navigate(['/app', AppRoutes.resetPin]);
+    void this.router.navigateByUrl('/app/' + AppRoutes.resetPin);
   }
 
   protected async changerDeCompte(): Promise<void> {
     const confirme = await this.feuilles.confirmer({
-      title: 'Changer de compte ?',
-      description: 'Ce compte sera oublié sur cet appareil. Il faudra te reconnecter avec ton e-mail, ton PIN et un code envoyé par e-mail.',
-      confirmLabel: 'Changer de compte',
-      cancelLabel: 'Annuler',
+      title: tr('authChangerCompteTitre', 'Changer de compte ?'),
+      description: tr('authChangerCompteCorps', 'Ce compte sera oublié sur cet appareil. Il faudra te reconnecter avec ton e-mail, ton PIN et un code envoyé par e-mail.'),
+      confirmLabel: tr('authChangerCompte', 'Changer de compte'),
+      cancelLabel: tr('actionAnnuler', 'Annuler'),
       destructive: true,
     });
     if (confirme) await this.auth.forgetDevice();

@@ -5,8 +5,8 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, from, switchMap, throwError } from 'rxjs';
-import { estCheminSansJeton, estCheminPreAuth, API_BASE_URL, AUTH_PATH } from './api-config';
+import { catchError, from, switchMap, throwError, timeout } from 'rxjs';
+import { estCheminSansJeton, estCheminPreAuth, AUTH_PATH, DELAI_EXPIRATION_MS } from './api-config';
 import { SecureStorageService } from '../storage/secure-storage.service';
 import { SessionExpiredService } from './session-expired.service';
 
@@ -35,6 +35,26 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const requete = ajouterJeton(req, storage);
 
   return next(requete).pipe(
+    // Même délai que `connectTimeout`/`receiveTimeout` de Dio
+    // (`dio_client.dart`). `HttpClient` n'en a aucun par défaut : sur un
+    // réseau lent — le cas d'usage visé — la requête restait pendante
+    // indéfiniment et l'écran tournait sans fin, sans message ni issue.
+    //
+    // L'expiration est présentée comme une réponse de statut 0, celle que
+    // `Failure` traduit déjà par « Le serveur met du temps à répondre » :
+    // inutile d'inventer un second chemin d'erreur pour le même événement.
+    timeout({
+      each: DELAI_EXPIRATION_MS,
+      with: () =>
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 0,
+              statusText: 'Délai dépassé',
+              url: req.url,
+            }),
+        ),
+    }),
     catchError((erreur: unknown) => {
       if (!(erreur instanceof HttpErrorResponse)) return throwError(() => erreur);
 
@@ -94,7 +114,16 @@ async function doRafraichir(storage: SecureStorageService): Promise<boolean> {
   if (!refreshToken) return false;
 
   try {
-    const reponse = await fetch(`${API_BASE_URL}${AUTH_PATH}/refresh`, {
+    // URL relative, comme tous les autres appels de l'application.
+    //
+    // Elle pointait sur `API_BASE_URL`, c'est-à-dire directement sur l'hôte de
+    // l'API : seule requête de toute la PWA à sortir de son origine. En
+    // production, tout le reste passe par la réécriture `/api/:path*` de
+    // Vercel et reste donc same-origin. Le rafraîchissement, lui, dépendait de
+    // la liste blanche CORS du serveur (`CORS_ORIGINS`) : un domaine oublié et
+    // c'est la seule requête qui échoue — donc toutes les sessions qui
+    // expirent au bout d'un quart d'heure, sans que rien d'autre ne casse.
+    const reponse = await fetch(`${AUTH_PATH}/refresh`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),

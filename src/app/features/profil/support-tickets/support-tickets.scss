@@ -1,45 +1,8 @@
-@use '../../../shared/styles/tokens' as *;
 
 :host {
-  @include nl-app-tokens;
   display: block;
   min-height: 100vh;
   background: var(--bg-canvas);
-}
-
-.nl-sup__header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--bg-primary);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.nl-sup__back {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--text-primary);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-
-  &:active {
-    background: var(--bg-secondary);
-  }
-}
-
-.nl-sup__titre {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-primary);
 }
 
 .nl-sup__body {
@@ -168,4 +131,12 @@
   color: var(--text-on-primary);
   font-weight: 600;
   cursor: pointer;
+}
+
+.nl-sup__section {
+  margin: var(--space-lg) 0 var(--space-sm);
+  font: 700 0.8125rem var(--font-family);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
 }

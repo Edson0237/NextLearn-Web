@@ -1,23 +1,51 @@
 <div class="recherche">
   <header class="recherche__entete">
-    <button class="nl-icon-btn" (click)="goBack()" aria-label="Retour">
+    <button class="nl-icon-btn" (click)="goBack()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" />
     </button>
     <div class="recherche__field">
       <nl-icon name="search" />
       <input
         type="text"
-        placeholder="Rechercher un document, une matière…"
+        [attr.placeholder]="'pwaRechercherDocumentMatiere' | t"
         [(ngModel)]="query"
-        aria-label="Rechercher" />
+        [attr.aria-label]="'actionRechercher' | t" />
     </div>
   </header>
 
   <div class="recherche__corps">
     @if (query().trim().length === 0) {
-      <p class="recherche__hint">Commencez à taper pour chercher parmi les documents.</p>
+      <!-- Les dernières recherches : elles épargnent une saisie au clavier,
+           le geste le plus coûteux de cet écran. -->
+      @if (historique.aAfficher().length > 0) {
+        <section class="recherche__historique">
+          <div class="recherche__historique-entete">
+            <h2 class="recherche__historique-titre">{{ 'rechercheRecentes' | t }}</h2>
+            <button type="button" class="recherche__historique-vider" (click)="historique.vider()">
+              {{ 'actionEffacer' | t }}
+            </button>
+          </div>
+          @for (terme of historique.aAfficher(); track terme) {
+            <button type="button" class="recherche__recente" (click)="rejouer(terme)">
+              <nl-icon name="schedule" [size]="18" />
+              <span class="recherche__recente-texte">{{ terme }}</span>
+              <span
+                class="recherche__recente-fermer"
+                role="button"
+                tabindex="0"
+                [attr.aria-label]="'actionSupprimer' | t"
+                (click)="oublier(terme, $event)"
+                (keydown.enter)="oublier(terme, $event)">
+                <nl-icon name="close" [size]="16" />
+              </span>
+            </button>
+          }
+        </section>
+      } @else {
+        <p class="recherche__hint">{{ 'pwaCommencerRecherche' | t }}</p>
+      }
     } @else if (loading()) {
-      <p class="recherche__etat">Recherche…</p>
+      <p class="recherche__etat">{{ 'pwaRecherche' | t }}</p>
     } @else if (error()) {
       <div class="recherche__etat recherche__etat--erreur">
         <p>{{ error() }}</p>
@@ -25,18 +53,20 @@
     } @else if (results().length === 0) {
       <nl-empty-state
         icon="search"
-        title="Aucun résultat"
-        subtitle="Essayez un autre terme." />
+        [title]="'selecteurAucunResultat' | t"
+        [subtitle]="'pwaEssayezAutreTerme' | t" />
     } @else {
       <div class="recherche__liste">
         @for (doc of results(); track doc.id) {
           <nl-document-card
+            [documentId]="doc.id"
             [title]="doc.titre"
             [subject]="doc.matiere"
-            [typeLabel]="typeLabel(doc.type)"
-            [typeIcon]="typeIcon(doc.type)"
-            [typeColor]="typeColor(doc.type)"
+            [typeLabel]="(doc.type | typeDoc).label"
+            [typeIcon]="(doc.type | typeDoc).icone"
+            [typeColor]="(doc.type | typeDoc).couleur"
             [meta]="metaFor(doc)"
+            [note]="noteFor(doc)"
             (activate)="openDocument(doc)" />
         }
       </div>

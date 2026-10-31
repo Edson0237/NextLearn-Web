@@ -1,0 +1,150 @@
+/* ============================================
+   NAVBAR
+   (styles inchangés par rapport au template original)
+   Les variables CSS (--primary, --gray-900, etc.)
+   doivent rester définies globalement dans styles.css
+   ============================================ */
+
+.navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 18px 0;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: var(--transition);
+    border-bottom: 1px solid transparent;
+}
+
+.navbar.scrolled {
+    padding: 10px 0;
+    background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px; height: 38px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.logo-highlight { color: var(--primary); }
+
+.nav-menu { display: flex; align-items: center; gap: 4px; }
+
+.nav-link {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    position: relative;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary);
+    background: rgba(26,73,125,0.05);
+}
+
+.nav-cta {
+    background: var(--primary) !important;
+    color: var(--white) !important;
+    padding: 10px 22px !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    margin-left: 8px;
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.nav-cta:hover {
+    background: var(--primary-dark) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 1001;
+}
+
+.hamburger-line {
+    width: 26px; height: 2.5px;
+    background: var(--gray-900);
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.nav-toggle.active .hamburger-line:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.nav-toggle.active .hamburger-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-toggle.active .hamburger-line:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+.nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.nav-overlay.active { opacity: 1; pointer-events: all; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 0; right: -100%;
+        width: 280px; height: 100vh;
+        background: var(--white);
+        flex-direction: column;
+        padding: 100px 30px 30px;
+        gap: 4px;
+        box-shadow: -10px 0 40px rgba(0,0,0,0.1);
+        transition: right 0.4s cubic-bezier(0.4,0,0.2,1);
+        z-index: 999;
+    }
+
+    .nav-menu.active { right: 0; }
+    .nav-menu .nav-link { font-size: 1rem; padding: 14px 16px; width: 100%; border-radius: var(--radius-sm); }
+    .nav-cta { margin-left: 0 !important; margin-top: 8px; text-align: center; }
+    .nav-toggle { display: flex; }
+}

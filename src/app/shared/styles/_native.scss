@@ -69,6 +69,15 @@
     min-height: var(--touch-min);
   }
 
+  // Dispense explicite, pour les commandes qui doivent rester fines : puces
+  // de filtre, chip de cursus, onglets de segment. Elles rattrapent la zone
+  // tapable par un pseudo-élément débordant (`cible-etendue`), jamais en
+  // renonçant au seuil.
+  .nl-cible-fine {
+    min-width: 0;
+    min-height: 0;
+  }
+
   // Le survol n'existe pas au doigt : aucun état ne doit dépendre
   // uniquement de `:hover` pour être atteignable. Les styles `:hover`
   // écrits par composant doivent donc être couplés à `:focus-visible` ou

@@ -1,0 +1,62 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.csr.html",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/*.css",
+          "/*.js",
+          "/pdf.worker.min.mjs",
+          "/images/logo-marque.png"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2|mjs)"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-lecture",
+      "urls": [
+        "/api/documents",
+        "/api/documents?*",
+        "/api/documents/recommended",
+        "/api/documents/popular",
+        "/api/documents/recent",
+        "/api/documents/*",
+        "/api/epreuves",
+        "/api/epreuves?*",
+        "/api/epreuves/*",
+        "/api/favorites",
+        "/api/offline/documents",
+        "/api/me/context",
+        "/api/references/**",
+        "/api/progress/lecture",
+        "/api/progression/**",
+        "/api/notifications",
+        "/api/notifications?*",
+        "/api/profile",
+        "/api/users/me"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 300,
+        "maxAge": "7d",
+        "timeout": "5s"
+      }
+    }
+  ]
+}

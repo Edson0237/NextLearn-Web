@@ -1,9 +1,9 @@
 <div class="nl-pinset">
   <header class="nl-pinset__entete">
-    <button type="button" class="nl-pinset__fermer" (click)="demanderAbandon()" aria-label="Abandonner">
+    <button type="button" class="nl-pinset__fermer" (click)="demanderAbandon()" [attr.aria-label]="'otpAbandonQuitter' | t">
       <nl-icon name="close" [size]="20" />
     </button>
-    <h1 class="nl-pinset__titre-entete">Créer ton PIN</h1>
+    <h1 class="nl-pinset__titre-entete">{{ 'authCreerTonPin' | t }}</h1>
   </header>
 
   <div class="nl-pinset__corps">
@@ -24,3 +24,12 @@
     />
   </div>
 </div>
+
+@if (resultat(); as r) {
+  <nl-resultat-pin
+    [etat]="r.etat"
+    [titre]="r.titre"
+    [message]="r.message"
+    (termine)="continuer()"
+    (reessayer)="reessayer()" />
+}

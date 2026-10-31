@@ -1,60 +1,98 @@
-@if (horizontal()) {
-  <div
-    class="nl-doc-card nl-doc-card--h"
-    nlPressable
-    [attr.aria-label]="resume()"
-    (click)="activate.emit()"
-  >
-    <div class="nl-doc-card__bandeau" [style.--doc-color]="typeColor()">
-      <nl-icon [name]="typeIcon()" [size]="38" />
-      @if (offline()) {
-        <span class="nl-doc-card__hors-ligne">
-          <nl-icon name="cloud_done" [size]="14" />
-        </span>
-      }
-    </div>
-    <div class="nl-doc-card__corps">
-      <nl-chip [color]="typeColor()" [compact]="true">{{ typeLabel() }}</nl-chip>
-      <p class="nl-doc-card__titre nl-doc-card__titre--h">{{ title() }}</p>
-      <p class="nl-doc-card__matiere" [style.color]="typeColor()">{{ subject() }}</p>
-    </div>
-  </div>
-} @else {
-  <div
-    class="nl-doc-card"
-    nlPressable
-    [attr.aria-label]="resume()"
-    (click)="activate.emit()"
-  >
-    <div class="nl-doc-card__ligne">
-      <div class="nl-doc-card__tuile" [style.--doc-color]="typeColor()">
-        <nl-icon [name]="typeIcon()" [size]="26" />
-      </div>
-      <div class="nl-doc-card__info">
-        <div class="nl-doc-card__entete">
-          <nl-chip [color]="typeColor()" [compact]="true">{{ typeLabel() }}</nl-chip>
-          @if (offline()) {
-            <nl-icon name="cloud_done" [size]="17" />
-          }
-        </div>
-        <p class="nl-doc-card__titre">{{ title() }}</p>
-        <p class="nl-doc-card__matiere" [style.color]="typeColor()">{{ subject() }}</p>
-      </div>
+<article
+  class="nl-doc-card"
+  nlPressable
+  role="button"
+  tabindex="0"
+  [attr.aria-label]="resume()"
+  [style.--type-color]="typeColor()"
+  [style.--type-bg]="typeBackground()"
+  (click)="activate.emit()"
+  (keydown.enter)="activate.emit()"
+  (keydown.space)="activate.emit()">
+  <div class="nl-doc-card__haut">
+    <!-- La vignette : c'est elle qu'on balaie du regard pour trier une liste,
+         avant même de lire un titre. -->
+    <div class="nl-doc-card__vignette">
+      <nl-icon [name]="typeIcon()" [size]="22" />
     </div>
 
-    @if (meta().length > 0) {
+    <div class="nl-doc-card__corps">
+      @if (etiquettes().length > 0) {
+        <div class="nl-doc-card__etiquettes">
+          @for (e of etiquettes(); track e.texte) {
+            <nl-badge [ton]="e.ton ?? 'neutre'" [icone]="e.icone">{{ e.texte }}</nl-badge>
+          }
+        </div>
+      }
+
+      <h3 class="nl-doc-card__titre">{{ title() }}</h3>
+
+      @if (sousTitre()) {
+        <p class="nl-doc-card__sous-titre">
+          <span>{{ sousTitre() }}</span>
+        </p>
+      }
+    </div>
+
+    @if (offline()) {
+      <span class="nl-doc-card__hors-ligne" [attr.aria-label]="'biblioHorsLigne' | t">
+        <nl-icon name="cloud_done" [size]="18" />
+      </span>
+    }
+    @if (documentId()) {
+      <button
+        type="button"
+        class="nl-doc-card__favori"
+        [class.nl-doc-card__favori--actif]="estFavori()"
+        [attr.aria-pressed]="estFavori()"
+        [attr.aria-label]="(estFavori() ? 'docRetirerFavoris' : 'docAjouterFavoris') | t"
+        (click)="basculerFavori($event)"
+        (keydown.enter)="$event.stopPropagation()"
+        (keydown.space)="$event.stopPropagation()">
+        <nl-icon [name]="estFavori() ? 'bookmark' : 'bookmark_outline'" [size]="20" />
+      </button>
+    }
+  </div>
+
+  @if (meta().length > 0 || note() != null) {
+    <div class="nl-doc-card__bas">
       <div class="nl-doc-card__meta">
-        @for (item of meta(); track item.label) {
+        @for (m of meta(); track m.label) {
           <span class="nl-doc-card__meta-item">
-            <nl-icon [name]="item.icon" [size]="13" />
-            {{ item.label }}
+            <nl-icon [name]="m.icon" [size]="14" />
+            {{ m.label }}
           </span>
         }
       </div>
-    }
 
-    @if (progress() !== undefined) {
-      <nl-reading-progress [progress]="progress()!" />
-    }
-  </div>
-}
+      @if (note() != null) {
+        <span class="nl-doc-card__note">
+          <nl-icon name="star_fill" [size]="14" />
+          {{ noteAffichee() }}
+          @if (nombreAvis()) {
+            <span class="nl-doc-card__avis">({{ nombreAvis() }})</span>
+          }
+        </span>
+      }
+
+      @if (actionIcone(); as icone) {
+        <button
+          type="button"
+          class="nl-doc-card__action"
+          [class.nl-doc-card__action--destructive]="actionDestructive()"
+          [attr.aria-label]="actionLibelle()"
+          (click)="declencherAction($event)">
+          <nl-icon [name]="icone" [size]="18" />
+        </button>
+      }
+    </div>
+  }
+
+  @if (progress(); as fraction) {
+    <!-- La jauge se lit sans chiffre : c'est une position dans un document,
+         pas une mesure à comparer. -->
+    <span class="nl-doc-card__jauge" aria-hidden="true">
+      <span class="nl-doc-card__jauge-remplie" [style.width.%]="fraction * 100"></span>
+    </span>
+  }
+</article>

@@ -1,10 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves/epreuves-repository';
 import { EpreuveModel, TypeEpreuve } from '../../../core/epreuves/epreuve.model';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { Badge } from '../../../shared/ui/badge/badge';
+import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Failure } from '../../../core/models/failure.model';
+import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
+import { CibleSignalement } from '../../../core/moderation/report.model';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 /**
@@ -24,7 +30,7 @@ import { AppRoutes } from '../../../core/router/app-routes';
 @Component({
   selector: 'app-epreuve-detail',
   standalone: true,
-  imports: [Icon],
+  imports: [TraductionPipe, Icon, Badge, PageBar],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './epreuve-detail.html',
   styleUrl: './epreuve-detail.scss',
@@ -34,6 +40,7 @@ export class EpreuveDetail {
 
   private readonly repo = inject(EpreuvesRepository);
   private readonly toast = inject(ToastService);
+  private readonly signalement = inject(SignalementFlux);
   private readonly router = inject(Router);
   private readonly id = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
 
@@ -45,6 +52,10 @@ export class EpreuveDetail {
   protected readonly noteChoisie = signal(0);
   protected readonly envoiNote = signal(false);
   protected readonly noteEnvoyee = signal(false);
+
+  protected signaler(): Promise<void> {
+    return this.signalement.signaler(CibleSignalement.epreuve, this.id);
+  }
 
   constructor() {
     void this.charger();
@@ -93,7 +104,7 @@ export class EpreuveDetail {
     try {
       await this.repo.rate(ep.id, this.noteChoisie());
       this.noteEnvoyee.set(true);
-      this.toast.succes('Merci pour ta note !');
+      this.toast.succes(tr('docMerciNote', 'Merci pour ta note !'));
       void this.charger();
     } catch (e) {
       this.toast.erreur(e instanceof Failure ? e.message : 'Envoi impossible.');

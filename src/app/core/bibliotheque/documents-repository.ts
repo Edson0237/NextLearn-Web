@@ -1,8 +1,9 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Failure } from '../models/failure.model';
 import { DocumentModel, documentDepuisApi, DocumentPage, pageDocumentsDepuisApi, DocumentSort } from './document.model';
+import { enFailure } from '../network/erreur-api';
 
 /**
  * Accès réseau au catalogue de documents — traduction de
@@ -33,7 +34,7 @@ export class DocumentsRepository {
 
       return allDocs;
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -65,7 +66,7 @@ export class DocumentsRepository {
       const reponse = await firstValueFrom(this.http.get('/api/documents', { params }));
       return pageDocumentsDepuisApi(reponse as Record<string, unknown>);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -80,7 +81,7 @@ export class DocumentsRepository {
       const reponse = await firstValueFrom(this.http.get('/api/documents/search', { params }));
       return pageDocumentsDepuisApi(reponse as Record<string, unknown>);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -91,7 +92,7 @@ export class DocumentsRepository {
       const liste = Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
       return liste.map(documentDepuisApi);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -101,7 +102,7 @@ export class DocumentsRepository {
       const data = (reponse as Record<string, unknown>)?.['data'] as Record<string, unknown> | undefined;
       return data ? documentDepuisApi(data) : null;
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -129,7 +130,7 @@ export class DocumentsRepository {
     try {
       await firstValueFrom(this.http.post(`/api/documents/${id}/rate`, { note }));
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -161,12 +162,8 @@ export class DocumentsRepository {
       const liste = Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
       return liste.map(documentDepuisApi);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
-  private echec(e: unknown): Failure {
-    if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, true);
-    return new Failure('Une erreur est survenue.');
-  }
 }

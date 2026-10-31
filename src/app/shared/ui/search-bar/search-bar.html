@@ -1,0 +1,45 @@
+<div class="nl-recherche">
+  <div class="nl-recherche__champ" [class.nl-recherche__champ--bouton]="lectureSeule()">
+    <nl-icon class="nl-recherche__loupe" name="search" [size]="20" />
+
+    @if (lectureSeule()) {
+      <!-- Un bouton, pas un champ : ouvrir l'écran de recherche ne doit pas
+           faire monter le clavier sur un champ qu'on va quitter aussitôt. -->
+      <button type="button" class="nl-recherche__declencheur" (click)="ouvrir.emit()">
+        {{ placeholder() }}
+      </button>
+    } @else {
+      <input
+        type="search"
+        class="nl-recherche__saisie"
+        [value]="valeur()"
+        [attr.placeholder]="placeholder()"
+        [attr.aria-label]="'actionRechercher' | t"
+        (input)="surSaisie($event)" />
+
+      @if (valeur()) {
+        <button
+          type="button"
+          class="nl-recherche__effacer"
+          [attr.aria-label]="'actionEffacer' | t"
+          (click)="effacer($event)">
+          <nl-icon name="close" [size]="18" />
+        </button>
+      }
+    }
+  </div>
+
+  @if (avecFiltres()) {
+    <button
+      type="button"
+      class="nl-recherche__filtres"
+      [class.nl-recherche__filtres--actifs]="filtresActifs() > 0"
+      (click)="filtrer.emit()">
+      <nl-icon name="tune" [size]="18" />
+      <span>{{ 'biblioFiltres' | t }}</span>
+      @if (filtresActifs() > 0) {
+        <span class="nl-recherche__compte">{{ filtresActifs() }}</span>
+      }
+    </button>
+  }
+</div>

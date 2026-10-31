@@ -1,4 +1,4 @@
-import { DocumentType } from '../bibliotheque/document.model';
+import { DocumentType, typeConnu } from '../bibliotheque/document.model';
 
 export interface MatiereDuProgramme {
   readonly id: string;
@@ -13,6 +13,8 @@ export interface ContexteEtudiant {
   readonly matieres: readonly MatiereDuProgramme[];
   readonly typesVisibles: readonly string[];
   readonly fonctionnalites: readonly string[];
+  /** Les fonctionnalités que l'administration a explicitement fermées. */
+  readonly fonctionnalitesFermees: readonly string[];
   readonly modePortee: string;
 }
 
@@ -21,6 +23,7 @@ export const CONTEXTE_OUVERT: ContexteEtudiant = {
   matieres: [],
   typesVisibles: [],
   fonctionnalites: [],
+  fonctionnalitesFermees: [],
   modePortee: 'class_only',
 };
 
@@ -29,6 +32,13 @@ export function contexteEtudiantDepuisApi(json: Record<string, unknown>): Contex
     if (!brut || typeof brut !== 'object' || Array.isArray(brut)) return [];
     return Object.entries(brut)
       .filter(([, v]) => v === true)
+      .map(([k]) => k);
+  };
+
+  const fausDe = (brut: unknown): string[] => {
+    if (!brut || typeof brut !== 'object' || Array.isArray(brut)) return [];
+    return Object.entries(brut)
+      .filter(([, v]) => v === false)
       .map(([k]) => k);
   };
 
@@ -50,6 +60,7 @@ export function contexteEtudiantDepuisApi(json: Record<string, unknown>): Contex
     matieres,
     typesVisibles: vraisDe(json['contentTypes']),
     fonctionnalites: vraisDe(json['features']),
+    fonctionnalitesFermees: fausDe(json['features']),
     modePortee: portee && typeof portee === 'object' && !Array.isArray(portee)
       ? String((portee as Record<string, unknown>)['mode'] ?? 'class_only')
       : 'class_only',
@@ -57,9 +68,24 @@ export function contexteEtudiantDepuisApi(json: Record<string, unknown>): Contex
 }
 
 export function typeVisible(contexte: ContexteEtudiant, type: DocumentType): boolean {
+  // Le contexte ne règle que les neuf formats nommés : un format créé depuis
+  // l'administration n'y figure pas, et n'est donc jamais « masqué » par lui.
+  if (!typeConnu(type)) return true;
   return contexte.typesVisibles.length === 0 || contexte.typesVisibles.includes(type);
 }
 
 export function fonctionnaliteOuverte(contexte: ContexteEtudiant, nom: string): boolean {
   return contexte.fonctionnalites.includes(nom);
+}
+
+/**
+ * Une fonctionnalité fermée **par l'administration**.
+ *
+ * Distinct de `!fonctionnaliteOuverte` : tant que le contexte n'est pas chargé
+ * (ou si le serveur ne répond pas), la liste des ouvertes est vide, et tout
+ * lire comme « fermé » masquerait la recherche, les dépôts et le hors ligne
+ * à quelqu'un dont le réseau tousse. On ne cache que ce qui est dit fermé.
+ */
+export function fonctionnaliteFermee(contexte: ContexteEtudiant, nom: string): boolean {
+  return contexte.fonctionnalitesFermees.includes(nom);
 }

@@ -1,6 +1,11 @@
 @if (showLabel()) {
   <p class="nl-progress__label" [class.nl-progress__label--termine]="termine()">
-    {{ termine() ? 'Lu ✓' : 'Lu ' + pourcentage() + '%' }}
+    @if (termine()) {
+      <nl-icon name="check" [size]="14" />
+      <span>{{ 'pwaLuTermine' | t }}</span>
+    } @else {
+      <span>{{ 'pwaLuPourcent' | t: { pourcent: pourcentage() } }}</span>
+    }
   </p>
 }
 <div class="nl-progress__piste" [style.height.px]="height()" [style.border-radius.px]="height()">

@@ -1,6 +1,10 @@
 import { inject } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { CanActivateChildFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { filter, map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { AuthState } from '../auth/auth.model';
 import { VerificationService } from '../verification/verification.service';
 import { PendingDestinationService } from './pending-destination.service';
 import { estAuthentifie } from '../auth/auth.model';
@@ -33,97 +37,100 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
   const router = inject(Router);
 
   const chemin = cheminRelatif(state);
-  const s = auth.state();
-  // `createUrlTree(['/app', dest])` traiterait un `dest` à plusieurs
-  // segments (« login/otp », « bibliotheque/doc/42 »…) comme un seul
-  // segment littéral, slash échappé en %2F inclus — `parseUrl` découpe
-  // correctement la chaîne, comme le ferait une navigation par URL.
   const aller = (dest: string): UrlTree => router.parseUrl(`/app/${dest}`);
 
-  // ── Démarrage : restaure la session, le routeur reste sur le splash ──────
-  if (s.isInitializing) {
-    return chemin === AppRoutes.splash ? true : aller(AppRoutes.splash);
-  }
+  const resultat = (s: AuthState): boolean | UrlTree => {
+    // ── Démarrage : restaure la session, le routeur reste sur le splash ──────
+    if (s.isInitializing) {
+      return chemin === AppRoutes.splash ? true : aller(AppRoutes.splash);
+    }
 
-  const authentifie = estAuthentifie(s);
+    const authentifie = estAuthentifie(s);
 
-  // ── Splash quitté : décide où partir ──────────────────────────────────────
-  if (chemin === AppRoutes.splash) {
-    if (authentifie) {
-      if (s.isLocked) return aller(AppRoutes.unlock);
+    // ── Splash quitté : décide où partir ──────────────────────────────────────
+    if (chemin === AppRoutes.splash) {
+      if (authentifie) {
+        if (s.isLocked) return aller(AppRoutes.unlock);
+        const destination = pending.consommer();
+        return aller(destination ?? AppRoutes.home);
+      }
+      return aller(ecranDuParcours(s.parcoursOtp) ?? (s.isFirstLaunch ? AppRoutes.onboarding : AppRoutes.login));
+    }
+
+    // ── Session verrouillée ────────────────────────────────────────────────
+    if (authentifie && s.isLocked) {
+      if (chemin === AppRoutes.unlock || chemin === AppRoutes.resetPin) return true;
+      return aller(AppRoutes.unlock);
+    }
+
+    // ── Verrou levé / pas de session : déverrouillage inutile ────────────────
+    if (chemin === AppRoutes.unlock) {
+      return authentifie ? aller(AppRoutes.home) : aller(AppRoutes.login);
+    }
+
+    // ── Textes légaux : accessibles dans tous les cas ────────────────────────
+    //
+    // Traduction de `routesToujoursAccessibles` (`app_router.dart`), et placée
+    // au même endroit : après le verrou, avant les routes publiques. Ces deux
+    // textes n'appartiennent à aucune des deux catégories, et c'est
+    // précisément ce qui les rendait inatteignables — déconnecté, on était
+    // renvoyé vers l'onboarding, alors que ce sont les textes qu'il faut
+    // pouvoir lire *avant* de consentir. Apple exige par ailleurs que la
+    // politique de confidentialité soit consultable sans compte.
+    if (chemin.startsWith('legal/document/')) return true;
+
+    const routesPubliques = [
+      AppRoutes.onboarding, AppRoutes.register, AppRoutes.otp,
+      AppRoutes.pinSetup, AppRoutes.login, AppRoutes.loginOtp,
+    ];
+    const estRoutePublique = routesPubliques.some((r) => chemin === r || chemin.startsWith(r));
+
+    if (!authentifie) {
+      const ecranParcours = ecranDuParcours(s.parcoursOtp);
+      if (ecranParcours) {
+        return chemin === ecranParcours ? true : aller(ecranParcours);
+      }
+
+      if (estRoutePublique) return true;
+
+      if (chemin.startsWith('bibliotheque/doc/')) pending.set(chemin);
+
+      return aller(s.isFirstLaunch ? AppRoutes.onboarding : AppRoutes.login);
+    }
+
+    if (estRoutePublique) {
       const destination = pending.consommer();
       return aller(destination ?? AppRoutes.home);
     }
-    return aller(ecranDuParcours(s.parcoursOtp) ?? (s.isFirstLaunch ? AppRoutes.onboarding : AppRoutes.login));
-  }
 
-  // ── Session verrouillée : rien d'autre que le PIN local ───────────────────
-  // Placé avant les routes publiques pour qu'un lien ne puisse pas
-  // contourner le verrou. Seule exception : la récupération du PIN —
-  // précisément l'écran dont a besoin quelqu'un qui a oublié le code que
-  // le verrou lui réclame.
-  if (authentifie && s.isLocked) {
-    if (chemin === AppRoutes.unlock || chemin === AppRoutes.resetPin) return true;
-    return aller(AppRoutes.unlock);
-  }
+    // ── Vérification académique ────────────────────────────────────────────
+    const etatVerif = verification.state();
+    const estRouteVerification = chemin.startsWith(AppRoutes.verificationForm);
 
-  // ── Verrou levé (ou pas de session) : l'écran de déverrouillage n'a plus lieu d'être ──
-  if (chemin === AppRoutes.unlock) {
-    return authentifie ? aller(AppRoutes.home) : aller(AppRoutes.login);
-  }
+    if (bloqueAcces(etatVerif)) {
+      if (chemin.startsWith(AppRoutes.recours)) return true;
 
-  const routesPubliques = [
-    AppRoutes.onboarding, AppRoutes.register, AppRoutes.otp,
-    AppRoutes.pinSetup, AppRoutes.login, AppRoutes.loginOtp,
-  ];
-  const estRoutePublique = routesPubliques.some((r) => chemin === r || chemin.startsWith(r));
-
-  if (!authentifie) {
-    // Une démarche est ouverte : on y reste. Elle tient à un jeton
-    // temporaire et à un code déjà envoyé — s'en éloigner par accident
-    // obligerait à tout reprendre et à consommer un second code. Chaque
-    // écran propose de renoncer explicitement (voir `abandonnerParcoursOtp`),
-    // ce qui efface le jeton et rend la navigation libre.
-    const ecranParcours = ecranDuParcours(s.parcoursOtp);
-    if (ecranParcours) {
-      return chemin === ecranParcours ? true : aller(ecranParcours);
+      if (demandeAction(etatVerif.statut)) {
+        return chemin === AppRoutes.verificationForm ? true : aller(AppRoutes.verificationForm);
+      }
+      return chemin === AppRoutes.verificationPending ? true : aller(AppRoutes.verificationPending);
     }
 
-    if (estRoutePublique) return true;
+    if (estRouteVerification) return aller(AppRoutes.home);
 
-    // On retient où l'on voulait aller — le cas du lien partagé vers une
-    // fiche document, à retrouver une fois connecté.
-    if (chemin.startsWith('bibliotheque/doc/')) pending.set(chemin);
+    return true;
+  };
 
-    return aller(s.isFirstLaunch ? AppRoutes.onboarding : AppRoutes.login);
+  const stateInitial = auth.state();
+  if (stateInitial.isInitializing) {
+    return toObservable(auth.state).pipe(
+      filter((s) => !s.isInitializing),
+      take(1),
+      map((s) => resultat(s)),
+    );
   }
 
-  if (estRoutePublique) {
-    const destination = pending.consommer();
-    return aller(destination ?? AppRoutes.home);
-  }
-
-  // ── Vérification académique ────────────────────────────────────────────
-  // Un compte standard n'a pas de dossier : `bloqueAcces` est faux et rien
-  // ne change pour lui.
-  const etatVerif = verification.state();
-  const estRouteVerification = chemin.startsWith(AppRoutes.verificationForm);
-
-  if (bloqueAcces(etatVerif)) {
-    // La voie de recours échappe au blocage : les seules personnes qui ont
-    // un rejet à contester sont précisément celles dont l'accès est coupé.
-    if (chemin.startsWith(AppRoutes.recours)) return true;
-
-    if (demandeAction(etatVerif.statut)) {
-      return chemin === AppRoutes.verificationForm ? true : aller(AppRoutes.verificationForm);
-    }
-    return chemin === AppRoutes.verificationPending ? true : aller(AppRoutes.verificationPending);
-  }
-
-  // Dossier tranché favorablement : on quitte les écrans de vérification.
-  if (estRouteVerification) return aller(AppRoutes.home);
-
-  return true;
+  return resultat(stateInitial);
 };
 
 /** L'écran à reprendre pour l'étape d'authentification en cours, s'il y en a une. */

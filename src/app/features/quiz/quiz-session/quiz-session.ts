@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Button } from '../../../shared/ui/button/button';
 import { QuizRepository } from '../../../core/quiz/quiz-repository';
-import { QuizModel, QuizQuestion, QuizSubmitResult } from '../../../core/quiz/quiz.model';
+import { QuizAnswerDetail, QuizModel, QuizQuestion, QuizSubmitResult } from '../../../core/quiz/quiz.model';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 @Component({
   selector: 'nl-quiz-session',
   standalone: true,
-  imports: [CommonModule, Icon, Button],
+  imports: [TraductionPipe, CommonModule, Icon, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './quiz-session.html',
   styleUrl: './quiz-session.scss',
@@ -74,6 +75,11 @@ export class QuizSession implements OnInit {
     }
   }
 
+  /** Le détail de correction d'une question, s'il est arrivé avec le résultat. */
+  protected detailDe(questionId: string): QuizAnswerDetail | undefined {
+    return this.result()?.details.find((d) => d.questionId === questionId);
+  }
+
   protected restart(): void {
     this.currentIndex.set(0);
     this.answers.set({});
@@ -83,6 +89,6 @@ export class QuizSession implements OnInit {
   }
 
   protected goBack(): void {
-    void this.router.navigate(['/', AppRoutes.home]);
+    void this.router.navigate(['/app', AppRoutes.home]);
   }
 }

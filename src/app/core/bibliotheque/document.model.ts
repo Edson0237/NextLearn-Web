@@ -1,3 +1,4 @@
+import { tr } from '../i18n/traduction.service';
 /**
  * Modèle Document — traduction de `DocumentModel`
  * (`lib/domains/bibliotheque/domain/models/document_model.dart`).
@@ -28,8 +29,34 @@ export function typeDocumentDepuisApi(valeur: string): DocumentType {
     EXPOSE: DocumentType.expose,
     TP: DocumentType.tp,
   };
-  return apiVersType[valeur?.toUpperCase()] ?? DocumentType.autre;
+  const connu = apiVersType[valeur?.toUpperCase()];
+  if (connu) return connu;
+  // Un format créé dans l'administration, que l'application ne nomme pas :
+  // on garde son identifiant plutôt que de le noyer dans « Document » — son
+  // libellé et sa couleur viennent du serveur (`enregistrerFormatsServeur`).
+  const slug = String(valeur ?? '').trim().toLowerCase();
+  return (slug === '' ? DocumentType.autre : slug) as DocumentType;
 }
+
+const TYPES_CONNUS: ReadonlySet<string> = new Set(Object.values(DocumentType));
+
+/** Vrai pour un format que l'application sait dessiner (icône et couleur à elle). */
+export function typeConnu(type: string): boolean {
+  return TYPES_CONNUS.has(type);
+}
+
+/**
+ * Les formats déclarés par le serveur, pour ceux que l'application ne connaît
+ * pas : libellé et couleur y sont lus à l'affichage. Alimenté par
+ * `FormatsService` dès que la liste arrive.
+ */
+const formatsServeur = new Map<string, { label: string; couleur?: string }>();
+
+export function enregistrerFormatsServeur(liste: readonly { slug: string; label: string; couleur?: string }[]): void {
+  formatsServeur.clear();
+  for (const f of liste) formatsServeur.set(f.slug.toLowerCase(), { label: f.label, couleur: f.couleur });
+}
+
 
 export function labelTypeDocument(type: DocumentType): string {
   switch (type) {
@@ -43,22 +70,22 @@ export function labelTypeDocument(type: DocumentType): string {
     case DocumentType.expose: return 'Exposé';
     case DocumentType.tp: return 'TP';
     case DocumentType.autre: return 'Document';
+    default: {
+      const inconnu = formatsServeur.get(String(type))?.label;
+      if (inconnu) return inconnu;
+      const brut = String(type);
+      return brut.charAt(0).toUpperCase() + brut.slice(1);
+    }
   }
 }
 
-export function couleurTypeDocument(type: DocumentType): string {
-  switch (type) {
-    case DocumentType.cours: return '#7fa9ee';
-    case DocumentType.td: return '#5fd08a';
-    case DocumentType.epreuve: return '#f3796b';
-    case DocumentType.synthese: return '#b093f5';
-    case DocumentType.annales: return '#efb44b';
-    case DocumentType.corrige: return '#4fc9bc';
-    case DocumentType.rapport: return '#f07cb0';
-    case DocumentType.expose: return '#f59155';
-    case DocumentType.tp: return '#93a6bc';
-    case DocumentType.autre: return '#9aa0a6';
-  }
+/**
+ * Ce que le serveur déclare pour un format que l'application ne connaît pas
+ * (libellé, couleur d'administration). Lu par la présentation — qui décide
+ * seule de l'icône et des teintes ; ce modèle ne sait rien de l'interface.
+ */
+export function formatServeur(type: string): { label: string; couleur?: string } | undefined {
+  return formatsServeur.get(String(type));
 }
 
 export interface DocumentModel {
@@ -98,8 +125,18 @@ export function documentDepuisApi(json: Record<string, unknown>): DocumentModel 
     description: String(json['description'] ?? ''),
     type: typeDocumentDepuisApi(String(json['type'] ?? '')),
     matiere: matiereRef.nom ?? (matiereRef.id ? `Matière #${matiereRef.id}` : 'Matière'),
-    enseignant: enseignantRef.nom ?? (enseignantRef.id ? `Enseignant #${enseignantRef.id}` : 'Enseignant'),
-    universite: universiteRef.nom ?? (universiteRef.id ? `Université #${universiteRef.id}` : 'Université'),
+    // Mêmes replis que `DocumentModel.fromJson` côté Flutter : « Enseignant »
+    // et « Université » affirmaient un libellé là où la donnée manque.
+    enseignant:
+      enseignantRef.nom ??
+      (enseignantRef.id
+        ? `Enseignant #${enseignantRef.id}`
+        : tr('communNonRenseigne', 'Non renseigné')),
+    universite:
+      universiteRef.nom ??
+      (universiteRef.id
+        ? `Université #${universiteRef.id}`
+        : tr('communNonRenseignee', 'Non renseignée')),
     niveau: String(json['niveau'] ?? ''),
     semestre: json['semestre'] ? String(json['semestre']) : undefined,
     dureeMinutes: typeof json['dureeMinutes'] === 'number' ? Math.round(json['dureeMinutes']) : undefined,
@@ -164,4 +201,26 @@ export function pageDocumentsDepuisApi(json: Record<string, unknown>): DocumentP
     total: typeof meta['total'] === 'number' ? meta['total'] : data.length,
     sortApplied: meta['sort'] ? String(meta['sort']) : undefined,
   };
+}
+
+/**
+ * Les métadonnées d'une carte de ressource : pages, poids, et vues.
+ *
+ * Pages et poids sont toujours là (« — » tant qu'ils sont inconnus), pour que
+ * deux cartes voisines aient la même forme. Les **vues** n'apparaissent qu'à
+ * partir de la première : « 0 vue » n'apprend rien et fait croire à un
+ * document délaissé. Même règle pour la note, voir `noteDocument`.
+ */
+export function metaDocument(doc: Pick<DocumentModel, 'pages' | 'tailleMb' | 'vues'>): { icon: 'description' | 'attach_file' | 'visibility'; label: string }[] {
+  const meta: { icon: 'description' | 'attach_file' | 'visibility'; label: string }[] = [
+    { icon: 'description', label: doc.pages > 0 ? `${doc.pages} p.` : '— p.' },
+    { icon: 'attach_file', label: doc.tailleMb > 0 ? `${doc.tailleMb.toFixed(1)} Mo` : '— Mo' },
+  ];
+  if ((doc.vues ?? 0) > 0) meta.push({ icon: 'visibility', label: String(doc.vues) });
+  return meta;
+}
+
+/** La note moyenne à montrer sur une carte : seulement s'il y a au moins une note. */
+export function noteDocument(doc: Pick<DocumentModel, 'noteMoyenne'>): number | undefined {
+  return (doc.noteMoyenne ?? 0) > 0 ? doc.noteMoyenne : undefined;
 }

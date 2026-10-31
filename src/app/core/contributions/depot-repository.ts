@@ -1,9 +1,9 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
 import { TypeContenuOption, typeContenuDepuisJson } from '../references/references.model';
 import { Depot, DepotLicence, depotDepuisJson } from './depot.model';
+import { enFailure } from '../network/erreur-api';
 
 /**
  * Accès réseau aux dépôts — traduction de `DepotRemoteRepository`
@@ -55,7 +55,7 @@ export class DepotRepository {
     try {
       await firstValueFrom(this.http.post('/api/documents/submissions', formData));
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
@@ -66,12 +66,8 @@ export class DepotRepository {
       const brut = Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
       return brut.map(depuisJson);
     } catch (e) {
-      throw this.echec(e);
+      throw enFailure(e);
     }
   }
 
-  private echec(e: unknown): Failure {
-    if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, true);
-    return new Failure('Une erreur est survenue.');
-  }
 }

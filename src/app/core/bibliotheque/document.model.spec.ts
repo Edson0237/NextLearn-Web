@@ -1,4 +1,4 @@
-import { DocumentType, documentDepuisApi, labelTypeDocument, typeDocumentDepuisApi } from './document.model';
+import { DocumentType, documentDepuisApi, labelTypeDocument, typeDocumentDepuisApi, typeConnu, enregistrerFormatsServeur } from './document.model';
 
 describe('DocumentModel', () => {
   it('parse un document depuis l\'API et résout les références', () => {
@@ -25,8 +25,18 @@ describe('DocumentModel', () => {
     expect(doc.matiereId).toBe('m1');
   });
 
-  it('tombe sur « autre » pour un type inconnu', () => {
-    expect(typeDocumentDepuisApi('INCONNU')).toBe(DocumentType.autre);
+  it('tombe sur « autre » quand le type est absent', () => {
+    expect(typeDocumentDepuisApi('')).toBe(DocumentType.autre);
+  });
+
+  it('garde l’identifiant d’un format créé dans l’administration, avec le libellé du serveur', () => {
+    const type = typeDocumentDepuisApi('MEMOIRE');
+    expect(type).toBe('memoire');
+    expect(typeConnu(type)).toBe(false);
+    expect(labelTypeDocument(type)).toBe('Memoire');
+    enregistrerFormatsServeur([{ slug: 'MEMOIRE', label: 'Mémoire', couleur: '#0ea5e9' }]);
+    expect(labelTypeDocument(type)).toBe('Mémoire');
+    enregistrerFormatsServeur([]);
   });
 
   it('fournit un libellé lisible pour chaque type connu', () => {

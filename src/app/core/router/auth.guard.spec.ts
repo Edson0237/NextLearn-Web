@@ -61,10 +61,16 @@ describe('authGuard', () => {
     prive.patch(partiel);
   }
 
-  it('reste sur le splash pendant l’initialisation', async () => {
-    const { router, location } = monterRouteur();
-    await router.navigateByUrl('/app');
-    expect(location.path()).toBe('/app');
+  it('attend la fin de l’initialisation puis redirige depuis le splash', async () => {
+    const { router, location, auth } = monterRouteur();
+    forcerEtat(auth, { isInitializing: true });
+
+    const navigation = router.navigateByUrl('/app');
+    forcerEtat(auth, { isInitializing: false, isFirstLaunch: true });
+
+    await navigation;
+
+    expect(location.path()).toBe(`/app/${AppRoutes.onboarding}`);
   });
 
   it('un compte neuf sans session part sur l’onboarding', async () => {

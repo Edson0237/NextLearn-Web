@@ -1,0 +1,13 @@
+[
+  {
+    "nom": "legal-sans-compte",
+    "url": "/app/legal/document/conditions",
+    "texte": "Conditions d'utilisation",
+    "longueur": 24,
+    "cadres": 2,
+    "texteCadre": "Next Learn Conditions générales d'utilisation de l'application NextLearn Dernière mise à jour : 8 octobre 2026 Préambule",
+    "canvasPdf": 0,
+    "hauteurViewport": null,
+    "erreurs": []
+  }
+]

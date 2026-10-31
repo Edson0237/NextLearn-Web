@@ -1,129 +1,245 @@
 @use '../../../shared/styles/type';
+@use '../../../shared/styles/tokens' as *;
 
 :host {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: block;
+  min-height: 100dvh;
   background: var(--bg-canvas);
 }
 
 .apropos {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-page) var(--space-xxxl);
+}
 
-  &__entete {
-    flex: none;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-lg) var(--space-lg) var(--space-sm);
+// ── La marque ──────────────────────────────────────────────────────────────
+//
+// Le seul bloc coloré de la page : il dit qui publie l'application, et c'est
+// ce contraste avec le reste, blanc sur ardoise, qui le fait lire en premier.
+
+.apropos__marque {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-md) var(--space-lg);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 55%, var(--secondary) 100%);
+  color: var(--text-on-primary);
+}
+
+.apropos__logo {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  // Un liseré de la couleur du texte : sur le dégradé, le bleu du logo se
+  // confondrait avec son fond.
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--text-on-primary) 35%, transparent);
+}
+
+.apropos__marque-textes {
+  min-width: 0;
+}
+
+.apropos__nom {
+  margin: 0;
+  @include type.nl-h1;
+  color: var(--text-on-primary);
+}
+
+.apropos__accroche {
+  margin: 2px 0 0;
+  @include type.nl-body-sm;
+  color: color-mix(in srgb, var(--text-on-primary) 85%, transparent);
+}
+
+.apropos__version {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 4px 10px;
+  border-radius: var(--radius-pilule);
+  background: color-mix(in srgb, var(--text-on-primary) 16%, transparent);
+  @include type.nl-label-md;
+  color: var(--text-on-primary);
+}
+
+.apropos__intro {
+  margin: 0;
+  @include type.nl-body-lg;
+  color: var(--text-primary);
+}
+
+// ── Les blocs de texte ─────────────────────────────────────────────────────
+
+.apropos__bloc {
+  padding: var(--space-lg);
+  @include carte;
+}
+
+.apropos__titre {
+  margin: 0 0 var(--space-sm);
+  @include type.nl-h3;
+}
+
+.apropos__texte {
+  margin: 0;
+  @include type.nl-body-md;
+  color: var(--text-secondary);
+}
+
+.apropos__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.apropos__titre-section {
+  margin: 0;
+  @include type.nl-h3;
+}
+
+// ── La vignette ────────────────────────────────────────────────────────────
+// La même que partout : un carré teinté, l'icône dedans. Elle emprunte sa
+// teinte à un format de document plutôt que d'en inventer une.
+
+.apropos__vignette {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--teinte-fond);
+  color: var(--teinte);
+
+  &--neutre {
+    --teinte: var(--text-secondary);
+    --teinte-fond: var(--bg-secondary);
   }
+}
 
-  &__titre {
-    @include type.nl-h3;
-    margin: 0;
+// ── Les valeurs ────────────────────────────────────────────────────────────
+
+.apropos__valeurs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.apropos__valeur {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-md);
+  @include carte;
+
+  .apropos__vignette {
+    margin-bottom: var(--space-xs);
   }
+}
 
-  &__corps {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 var(--space-lg) var(--space-xxxl);
+.apropos__valeur-nom {
+  margin: 0;
+  @include type.nl-h4;
+}
+
+.apropos__valeur-corps {
+  margin: 0;
+  @include type.nl-body-sm;
+  color: var(--text-secondary);
+}
+
+// ── L'équipe ───────────────────────────────────────────────────────────────
+
+.apropos__equipe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.apropos__membre {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  @include carte;
+}
+
+.apropos__membre-textes {
+  min-width: 0;
+}
+
+.apropos__membre-nom {
+  margin: 0;
+  @include type.nl-h4;
+}
+
+.apropos__membre-role {
+  margin: 2px 0 0;
+  @include type.nl-label-lg;
+  color: var(--primary);
+}
+
+.apropos__membre-competences {
+  margin: 2px 0 0;
+  @include type.nl-caption;
+}
+
+// ── Nous joindre ───────────────────────────────────────────────────────────
+
+.apropos__coordonnees {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  @include carte;
+  overflow: hidden;
+
+  li + li {
+    border-top: 1px solid var(--border);
   }
+}
 
-  &__brand {
-    @include type.nl-h2;
-    margin: 0 0 var(--space-xs);
-    color: var(--primary);
-  }
+.apropos__coordonnee {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-height: var(--touch-min);
+  padding: var(--space-md);
+  color: var(--text-primary);
+  text-decoration: none;
 
-  &__accroche {
-    font: 1rem/1.3 var(--font-family-body);
-    color: var(--text-secondary);
-    margin: 0 0 var(--space-lg);
-  }
+  &--lien {
+    cursor: pointer;
 
-  &__paragraphe {
-    font: 0.95rem/1.5 var(--font-family-body);
-    color: var(--text-primary);
-    margin: 0 0 var(--space-lg);
-  }
-
-  &__section-title {
-    @include type.nl-h4;
-    margin: var(--space-lg) 0 var(--space-sm);
-  }
-
-  &__valeurs,
-  &__equipe {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  &__valeur,
-  &__membre {
-    padding: var(--space-md);
-    border-radius: var(--radius-md);
-    background: var(--bg-primary);
-  }
-
-  &__valeur-nom,
-  &__membre-nom {
-    display: block;
-    font: 600 0.95rem/1.2 var(--font-family-body);
-    color: var(--text-primary);
-  }
-
-  &__valeur-texte,
-  &__membre-competences {
-    display: block;
-    font: 0.85rem/1.3 var(--font-family-body);
-    color: var(--text-secondary);
-  }
-
-  &__membre-role {
-    display: block;
-    font: 0.8rem/1 var(--font-family-body);
-    color: var(--primary);
-    margin: 2px 0;
-  }
-
-  &__contact {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  &__ligne {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--space-sm) 0;
-    border-bottom: 1px solid var(--border);
-
-    span {
-      color: var(--text-secondary);
-      font: 0.9rem/1 var(--font-family-body);
+    &:active {
+      background: var(--bg-secondary);
     }
 
-    a {
-      color: var(--primary);
-      text-decoration: none;
-      font: 0.9rem/1 var(--font-family-body);
+    > nl-icon {
+      flex: none;
+      color: var(--text-muted);
     }
   }
 }
 
-.nl-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  border: none;
-  background: var(--bg-primary);
+.apropos__coordonnee-textes {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.apropos__coordonnee-libelle {
+  @include type.nl-caption;
+}
+
+.apropos__coordonnee-valeur {
+  @include type.nl-label-lg;
   color: var(--text-primary);
-  cursor: pointer;
+  // Une adresse e-mail longue passe à la ligne plutôt que de sortir de la
+  // carte — c'est le défaut qui faisait déborder « Nom » à l'inscription.
+  overflow-wrap: anywhere;
 }

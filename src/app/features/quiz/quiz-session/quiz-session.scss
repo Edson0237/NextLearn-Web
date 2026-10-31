@@ -46,7 +46,7 @@
 
   &__progress {
     height: 6px;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-pilule);
     background: var(--bg-primary);
     margin-bottom: var(--space-sm);
     overflow: hidden;
@@ -54,7 +54,7 @@
 
   &__progress-bar {
     height: 100%;
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-pilule);
     background: var(--primary);
     transition: width 0.2s ease;
   }
@@ -154,4 +154,65 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
+}
+
+// ── Correction, question par question ───────────────────────────────────────
+.quiz {
+  &__correction {
+    width: 100%;
+    margin-top: var(--space-xxl);
+    text-align: left;
+  }
+
+  &__correction-titre {
+    margin: 0 0 var(--space-md);
+    font: 700 1.0625rem/1.35 var(--font-family-heading);
+    color: var(--text-primary);
+  }
+
+  &__corrige {
+    padding: var(--space-md);
+    margin-bottom: var(--space-entre-elements);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--tertiary);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+
+    &--faux {
+      border-left-color: var(--danger);
+    }
+  }
+
+  &__corrige-entete {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--tertiary);
+
+    .quiz__corrige--faux & {
+      color: var(--danger);
+    }
+  }
+
+  &__corrige-numero {
+    font: 600 0.8125rem/1 var(--font-family-body);
+  }
+
+  &__corrige-enonce {
+    margin: var(--space-sm) 0 0;
+    font: 400 0.9375rem/1.5 var(--font-family-body);
+    color: var(--text-primary);
+  }
+
+  &__corrige-attendu {
+    margin: var(--space-sm) 0 0;
+    font: 600 0.875rem/1.5 var(--font-family-body);
+    color: var(--tertiary);
+  }
+
+  &__corrige-explication {
+    margin: var(--space-xs) 0 0;
+    font: 400 0.875rem/1.5 var(--font-family-body);
+    color: var(--text-secondary);
+  }
 }

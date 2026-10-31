@@ -1,4 +1,8 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Icon } from '../../../shared/ui/icon/icon';
+import { IconName } from '../../../shared/ui/icon/icon-paths';
+import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../../core/router/app-routes';
 
@@ -7,11 +11,14 @@ interface Badge {
 }
 
 interface Diapositive {
-  readonly emoji: string;
+  readonly icone: IconName;
   readonly titre: string;
   readonly corps: string;
+  /** La teinte de la diapositive, prise au jeu de jetons. */
   readonly accent: string;
   readonly accentFonce: string;
+  /** La couleur du texte et de l'icône posés sur l'accent. */
+  readonly encre: string;
   readonly badges: readonly Badge[];
 }
 
@@ -19,11 +26,12 @@ interface Diapositive {
  * Présentation initiale — traduction d'`OnboardingPage`
  * (`lib/domains/auth/presentation/pages/onboarding/onboarding_page.dart`).
  *
- * **Palette gelée, comme côté Flutter** : ces trois diapositives gardent
- * leurs teintes d'origine (bleu vif, ambre, émeraude), pas celles de
- * `_tokens.scss` — le commentaire source est explicite : « ne pas
- * remplacer par AppColors sans revalider le rendu ». D'où un bouton en
- * HTML brut ici plutôt que `nlButton`, dont la couleur suit `--primary`.
+ * **Trois teintes qui racontent** : l'ambre du problème, le bleu NextLearn
+ * de la solution, l'émeraude de l'arrivée. Elles étaient gelées en dur,
+ * recopiées du Flutter — dont un `#1a6fbf` qui n'était le bleu de personne,
+ * ni celui du logo ni celui de l'application. Elles viennent désormais du
+ * jeu de jetons (`--warning`, `--primary`, `--tertiary`), donc suivent le
+ * thème et le bleu de la marque.
  *
  * **Non repris, délibérément** : le sélecteur de langue (`_ChoixLangue`) —
  * il pilote le `l10n` Flutter, qui n'a pas d'équivalent dans ce projet
@@ -37,6 +45,7 @@ interface Diapositive {
  * geste : le navigateur le fait nativement.
  */
 @Component({
+  imports: [TraductionPipe, Icon],
   selector: 'app-onboarding',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,28 +59,40 @@ export class Onboarding {
 
   protected readonly diapositives: readonly Diapositive[] = [
     {
-      emoji: '😤',
-      titre: 'Tes cours éparpillés partout',
-      corps: "WhatsApp, clés USB, groupes Telegram… retrouver un poly prend plus de temps que de l'étudier. Ce n'est plus acceptable.",
-      accent: '#f59e0b',
-      accentFonce: '#b45309',
+      icone: 'folder_open',
+      titre: tr('onboardingTitre1', 'Tes cours éparpillés partout'),
+      corps: tr(
+        'onboardingCorps1',
+        "WhatsApp, clés USB, groupes Telegram… retrouver un poly prend plus de temps que de l'étudier. Ce n'est plus acceptable.",
+      ),
+      accent: 'var(--soleil)',
+      accentFonce: 'var(--soleil-deep)',
+      encre: 'var(--soleil-encre)',
       badges: [{ label: 'WhatsApp' }, { label: 'USB' }],
     },
     {
-      emoji: '📚',
-      titre: 'Une bibliothèque pour tout trouver',
-      corps: 'Cours, TD, synthèses, annales — tout est là, classé, trouvable en 2 secondes. Même sans connexion internet.',
-      accent: '#1a6fbf',
-      accentFonce: '#0b3b73',
-      badges: [{ label: 'Hors ligne' }, { label: '2 sec' }],
+      icone: 'library_books',
+      titre: tr('onboardingTitre2', 'Une bibliothèque pour tout trouver'),
+      corps: tr(
+        'onboardingCorps2',
+        'Cours, TD, synthèses, annales — tout est là, classé, trouvable en 2 secondes. Même sans connexion internet.',
+      ),
+      accent: 'var(--primary)',
+      accentFonce: 'var(--primary-deep)',
+      encre: 'var(--text-on-primary)',
+      badges: [{ label: tr('biblioHorsLigne', 'Hors ligne') }, { label: tr('onboardingBadgeDeuxSec', '2 sec') }],
     },
     {
-      emoji: '🎯',
-      titre: "Rejoins des milliers d'étudiants",
-      corps: 'NextLearn est gratuit, hors ligne, et pensé pour toi. Commence à apprendre mieux, dès maintenant.',
-      accent: '#16b981',
-      accentFonce: '#0d7a56',
-      badges: [{ label: 'Gratuit' }, { label: 'Pour toi' }],
+      icone: 'groups',
+      titre: tr('onboardingTitre3', "Rejoins des milliers d'étudiants"),
+      corps: tr(
+        'onboardingCorps3',
+        'NextLearn est gratuit, hors ligne, et pensé pour toi. Commence à apprendre mieux, dès maintenant.',
+      ),
+      accent: 'var(--tertiary)',
+      accentFonce: 'var(--tertiary-deep)',
+      encre: 'var(--text-on-primary)',
+      badges: [{ label: tr('onboardingBadgeGratuit', 'Gratuit') }, { label: tr('onboardingBadgePourToi', 'Pour toi') }],
     },
   ];
 

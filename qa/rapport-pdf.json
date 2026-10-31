@@ -1,0 +1,26 @@
+{
+  "mesures": [
+    {
+      "apresMs": 3000,
+      "texte": "Lecture",
+      "canvasVisible": 0,
+      "iframeVisible": 0,
+      "coucheTexte": 0
+    },
+    {
+      "apresMs": 6000,
+      "texte": "Lecture",
+      "canvasVisible": 0,
+      "iframeVisible": 0,
+      "coucheTexte": 0
+    },
+    {
+      "apresMs": 12000,
+      "texte": "Lecture",
+      "canvasVisible": 0,
+      "iframeVisible": 0,
+      "coucheTexte": 0
+    }
+  ],
+  "erreurs": []
+}

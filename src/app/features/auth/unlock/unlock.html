@@ -1,9 +1,11 @@
 <div class="nl-unlock">
-  <div class="nl-unlock__avatar">
-    <span>{{ initialesAffichees }}</span>
-  </div>
+  <nl-identite
+    class="nl-unlock__avatar"
+    [initiales]="initialesAffichees"
+    [photoUrl]="photoAffichee"
+    [taille]="84" />
   <h1 class="nl-unlock__titre">{{ accroche }}</h1>
-  <p class="nl-unlock__texte">Entre ton PIN pour rouvrir ton espace</p>
+  <p class="nl-unlock__texte">{{ 'authEntrePinPourRouvrir' | t }}</p>
 
   <nl-pin-input
     [pin]="pin()"
@@ -16,11 +18,16 @@
   />
 
   <div class="nl-unlock__pied">
-    <button type="button" class="nl-unlock__lien" [disabled]="chargement" (click)="allerReinitialisation()">
-      PIN oublié ?
-    </button>
-    <button type="button" class="nl-unlock__lien nl-unlock__lien--discret" [disabled]="chargement" (click)="changerDeCompte()">
-      Ce n'est pas moi
-    </button>
+    <button type="button" class="nl-unlock__lien" [disabled]="chargement" (click)="allerReinitialisation()">{{ 'authPinOublie' | t }}</button>
+    <button type="button" class="nl-unlock__lien nl-unlock__lien--discret" [disabled]="chargement" (click)="changerDeCompte()">{{ 'authCeNestPasMoi' | t }}</button>
   </div>
 </div>
+
+@if (resultat(); as r) {
+  <nl-resultat-pin
+    [etat]="r.etat"
+    [titre]="r.titre"
+    [message]="r.message"
+    (termine)="continuer()"
+    (reessayer)="reessayer()" />
+}

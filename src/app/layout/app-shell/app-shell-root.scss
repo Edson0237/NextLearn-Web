@@ -1,0 +1,58 @@
+@use '../../shared/styles/fonts';
+
+.nl-app {
+  background: var(--bg-canvas);
+  font-family: var(--font-family-body);
+  color: var(--text-primary);
+}
+
+// ── Bandeaux d'état de l'application ────────────────────────────────────────
+//
+// Réseau coupé, nouvelle version, invitation à installer. Ils se posent au-
+// dessus du contenu plutôt que par-dessus : un bandeau flottant masquerait la
+// première ligne de l'écran, et c'est souvent le titre.
+.nl-bandeau {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-page);
+  padding-top: calc(var(--space-sm) + env(safe-area-inset-top));
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: 400 0.875rem/1.4 var(--font-family-body);
+
+  &--maj {
+    background: var(--primary);
+    color: var(--text-on-primary);
+  }
+
+  &__texte {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__action {
+    flex: none;
+    min-height: var(--touch-min);
+    padding: 0 var(--space-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-primary);
+    color: var(--primary);
+    font: 600 0.875rem/1 var(--font-family-body);
+    cursor: pointer;
+  }
+
+  &__fermer {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-min);
+    height: var(--touch-min);
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+}

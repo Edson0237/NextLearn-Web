@@ -1,5 +1,6 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HistoriqueNavigation } from './core/router/historique-navigation';
 import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
 import { GlobalErrorService } from './core/error-handling/global-error.service';
@@ -24,6 +25,8 @@ import { GlobalErrorService } from './core/error-handling/global-error.service';
 })
 export class App {
   private readonly global = inject(GlobalErrorService);
+  /** Instancié dès le démarrage : la pile doit connaître le tout premier écran. */
+  private readonly historique = inject(HistoriqueNavigation);
   protected readonly erreurFatale = this.global.fatal;
   protected readonly modeDebug = isDevMode();
 }

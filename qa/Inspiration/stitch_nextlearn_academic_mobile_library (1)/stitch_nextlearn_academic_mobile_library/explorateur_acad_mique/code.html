@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f7f9fb;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 24;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary-fixed": "#acedff", "surface-container-highest": "#e0e3e5", "error-container": "#ffdad6", "on-tertiary-fixed": "#001f26", "primary-fixed-dim": "#b4c5ff", "on-surface": "#191c1e", "on-tertiary-fixed-variant": "#004e5c", "on-primary-fixed-variant": "#003ea8", "on-primary-container": "#eeefff", "on-tertiary": "#ffffff", "surface-container-low": "#f2f4f6", "on-secondary-fixed": "#131b2e", "inverse-surface": "#2d3133", "on-tertiary-container": "#d7f6ff", "primary-fixed": "#dbe1ff", "on-error-container": "#93000a", "tertiary": "#005e6e", "on-secondary": "#ffffff", "surface-dim": "#d8dadc", "tertiary-fixed-dim": "#4cd7f6", "surface": "#f7f9fb", "inverse-on-surface": "#eff1f3", "inverse-primary": "#b4c5ff", "surface-bright": "#f7f9fb", "secondary-fixed-dim": "#bec6e0", "surface-tint": "#0053db", "on-primary": "#ffffff", "on-error": "#ffffff", "surface-variant": "#e0e3e5", "surface-container-high": "#e6e8ea", "outline-variant": "#c3c6d7", "tertiary-container": "#00788c", "error": "#ba1a1a", "on-surface-variant": "#434655", "on-secondary-container": "#5c647a", "primary": "#004ac6", "primary-container": "#2563eb", "on-primary-fixed": "#00174b", "on-background": "#191c1e", "secondary-fixed": "#dae2fd", "on-secondary-fixed-variant": "#3f465c", "secondary-container": "#dae2fd", "surface-container": "#eceef0", "surface-container-lowest": "#ffffff", "outline": "#737686", "background": "#f7f9fb", "secondary": "#565e74" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "0.75rem", "space-md": "0.75rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "margin": "1rem", "space-lg": "1rem", "space-xl": "1.5rem" }, fontFamily: { "body-md": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"] }, fontSize: { "body-md": ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "400" }], "headline-md": ["20px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "700" }], "headline-lg": ["24px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "700" }], "label-sm": ["10px", { lineHeight: "12px", letterSpacing: "0.06em", fontWeight: "700" }], "body-lg": ["16px", { lineHeight: "24px", letterSpacing: "-0.005em", fontWeight: "400" }], "display-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.03em", fontWeight: "800" }], "label-md": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "700" }], "headline-sm": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-lg": ["13px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "600" }], "body-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.01em", fontWeight: "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-28 px-margin flex flex-col justify-center gap-space-xs"><div class="flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Logo NextLearn" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XY0xrxTi5WuYP5_gYpdcaLT6IkiCAIsu7VpBH18crkAr-1uoWHn53LCPpgp_P9cPbt_4HA4iZj3_8tAJDBqIRBFjXFf5GbDOWK5INKYYRpdY-1f0uEb2OZRkDQjLqfXVu0udyKOZm5BxRR47RQa-iaRxGEax0tocwAGaOxu68bIJE-MQA6FQ3Pf2GmcXpt-RJzR_ZsEdmed5kQzdSYnRjr1zePWnYCYtK3yTY5oYlFAkfH6MmIK7ceVtw"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">NextLearn</span><span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold leading-none mt-0.5">Explorer</span></div></div><div class="flex items-center gap-space-sm"><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container active:scale-95 transition-all"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span></button><div class="relative flex items-center justify-center rounded-full p-0.5 ring-1 ring-outline-variant/30"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXAGA45gvSFgT9nuQWx8L11kuaMhlSSzZLsles15vXY4spTae7mMq7ftpEN2wiFZiSp2b1SmrjHP9ZjbGUsN9Alhu0qOWMr3--m5GOqJJQAhnj8d_4ZKm1OjstJIq60uByCssNoxJqh-sG4oPfpq0l3FqHa_QOF6Wnl2o_g1-v--K3PXbM9qMuMnu5Gv7rb_Gm9camRK5JD8u-Tv5xke3-eeX0CeXPr_6Cg6i-gcKQyZs_GetpodT2cQ"/></div></div></div><div class="flex items-center"><button class="inline-flex items-center gap-space-xs h-7 px-space-md rounded-full bg-surface-container-high hover:bg-surface-container-highest active:scale-98 transition-all text-left max-w-full"><span class="material-symbols-outlined text-primary text-[15px]">school</span><span class="font-label-md text-label-md text-on-surface truncate">Sorbonne Université • L2 Informatique</span><span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span></button></div></div></header><main class="flex flex-col relative w-full pt-28 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="px-margin pt-space-md pb-space-xs flex flex-col gap-space-md">
+<div class="relative w-full">
+<div class="flex items-center h-12 w-full rounded-xl bg-surface-container-lowest shadow-sm px-space-md gap-space-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-secondary text-[22px]">search</span>
+<input class="w-full bg-transparent text-on-surface font-body-md text-body-md outline-none placeholder:text-outline" id="search-input" placeholder="Rechercher cours, partiel, TD..." type="text" value="Licence 2 Informatique"/>
+<button aria-label="Effacer" class="w-7 h-7 flex items-center justify-center rounded-full text-secondary hover:bg-surface-container active:scale-90 transition-all" id="clear-search">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+</button>
+<button class="flex items-center gap-1 h-8 px-space-sm rounded-lg bg-primary/10 text-primary font-label-md text-label-md active:scale-95 transition-all" id="filter-modal-trigger">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Filtres</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar -mx-margin px-margin py-0.5">
+<button class="filter-chip active flex-shrink-0 h-8 px-space-md rounded-full bg-on-surface text-surface font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span>Tous</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface/20 text-[10px]">420</span>
+</button>
+<button class="filter-chip flex-shrink-0 h-8 px-space-md rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px] text-primary">menu_book</span>
+<span>Cours</span>
+</button>
+<button class="filter-chip flex-shrink-0 h-8 px-space-md rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px] text-tertiary">edit_note</span>
+<span>TD/TP</span>
+</button>
+<button class="filter-chip flex-shrink-0 h-8 px-space-md rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px] text-error">assignment_late</span>
+<span>Partiels & Examens</span>
+</button>
+<button class="filter-chip flex-shrink-0 h-8 px-space-md rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px] text-primary">verified</span>
+<span>Corrigés officiels</span>
+</button>
+<button class="filter-chip flex-shrink-0 h-8 px-space-md rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant font-label-md text-label-md flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[16px] text-secondary">psychology</span>
+<span>Fiches mémo</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Unités d'enseignement (UE)</span>
+<button class="font-label-sm text-label-sm text-primary font-bold hover:underline" id="reset-ue-btn">Réinitialiser</button>
+</div>
+<div class="flex gap-space-xs overflow-x-auto no-scrollbar -mx-margin px-margin py-1">
+<button class="ue-pill active flex items-center gap-1.5 h-7 px-space-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md flex-shrink-0 shadow-sm transition-all">
+<span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+<span>INF201: Algo Avancée</span>
+</button>
+<button class="ue-pill flex items-center gap-1.5 h-7 px-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex-shrink-0 transition-all">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>INF202: Architecture x86</span>
+</button>
+<button class="ue-pill flex items-center gap-1.5 h-7 px-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex-shrink-0 transition-all">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>MAT201: Séries & Analyse</span>
+</button>
+<button class="ue-pill flex items-center gap-1.5 h-7 px-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex-shrink-0 transition-all">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>ENG201: Anglais Tech</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface-variant">Résultats :</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">34 documents</span>
+</div>
+<div class="relative">
+<button class="flex items-center gap-1 font-label-md text-label-md text-primary font-bold bg-surface-container-low px-2 py-1 rounded-lg" id="sort-trigger">
+<span class="material-symbols-outlined text-[16px]">sort</span>
+<span id="sort-current-label">Pertinence</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="hidden absolute right-0 top-8 z-40 w-44 rounded-xl bg-surface-container-lowest shadow-xl p-1 flex flex-col gap-0.5" id="sort-menu">
+<button class="sort-option w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-primary bg-primary-fixed/20 font-bold" data-val="Pertinence">Pertinence</button>
+<button class="sort-option w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container" data-val="Plus récents">Plus récents</button>
+<button class="sort-option w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container" data-val="Plus téléchargés">Plus téléchargés</button>
+<button class="sort-option w-full text-left px-3 py-2 rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container" data-val="Meilleures notes">Meilleures notes</button>
+</div>
+</div>
+</div>
+</div>
+<div class="px-margin flex flex-col gap-space-md mt-space-xs pb-16">
+<article class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm relative transition-all active:scale-[0.99]">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed/40 text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">picture_as_pdf</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">INF201</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm">Cours</span>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[12px]">verified</span>
+<span>Vérifié Enseignant</span>
+</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 leading-snug">Cours Complet Arbres B, AVL et Graphes</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>Pr. Laurent Dubois</span>
+<span>•</span>
+<span>Mis à jour il y a 3j</span>
+</p>
+</div>
+</div>
+<button aria-label="Sauvegarder" class="bookmark-btn text-on-surface-variant hover:text-primary active:scale-90 transition-all p-1">
+<span class="material-symbols-outlined text-[22px]">bookmark_border</span>
+</button>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low/70 rounded-xl px-space-md py-2 text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">menu_book</span>
+<span>128 pages</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">attachment</span>
+<span>PDF • 4.8 Mo</span>
+</div>
+<div class="flex items-center gap-1 font-bold text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.9</span>
+<span class="text-on-surface-variant font-normal">(142)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-1">
+<button class="preview-btn flex-1 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Aperçu</span>
+</button>
+<button class="download-btn flex-1 h-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">download_for_offline</span>
+<span>Télécharger</span>
+</button>
+</div>
+</article>
+<article class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm relative transition-all active:scale-[0.99]">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-error-container/60 text-error flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">task_alt</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">INF201</span>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm font-bold">Épreuve + Corrigé</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">2023/2024</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 leading-snug">Corrigé Détaillé Examen Terminal</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>Équipe Pédagogique Sorbonne</span>
+<span>•</span>
+<span>Session 1</span>
+</p>
+</div>
+</div>
+<button aria-label="Sauvegarder" class="bookmark-btn text-on-surface-variant hover:text-primary active:scale-90 transition-all p-1">
+<span class="material-symbols-outlined text-[22px]">bookmark_border</span>
+</button>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low/70 rounded-xl px-space-md py-2 text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">description</span>
+<span>18 pages</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">attachment</span>
+<span>PDF • 1.2 Mo</span>
+</div>
+<div class="flex items-center gap-1 font-bold text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>5.0</span>
+<span class="text-on-surface-variant font-normal">(89 dl)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-1">
+<button class="preview-btn flex-1 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Aperçu</span>
+</button>
+<button class="download-btn flex-1 h-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">download_for_offline</span>
+<span>Télécharger</span>
+</button>
+</div>
+</article>
+<article class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm relative transition-all active:scale-[0.99]">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed/40 text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">calculate</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-fixed font-label-sm text-label-sm font-bold">MAT201</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">TD & Exercices</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Recueil</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 leading-snug">50 Exercices Corrigés Séries Numériques</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>BDE Sciences & Tuteurs L3</span>
+<span>•</span>
+<span>Semestre 3</span>
+</p>
+</div>
+</div>
+<button aria-label="Sauvegarder" class="bookmark-btn text-on-surface-variant hover:text-primary active:scale-90 transition-all p-1">
+<span class="material-symbols-outlined text-[22px]">bookmark_border</span>
+</button>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low/70 rounded-xl px-space-md py-2 text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">format_list_numbered</span>
+<span>45 pages</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">attachment</span>
+<span>PDF • 3.4 Mo</span>
+</div>
+<div class="flex items-center gap-1 font-bold text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.7</span>
+<span class="text-on-surface-variant font-normal">(64)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-1">
+<button class="preview-btn flex-1 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Aperçu</span>
+</button>
+<button class="download-btn flex-1 h-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">download_for_offline</span>
+<span>Télécharger</span>
+</button>
+</div>
+</article>
+<article class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm relative transition-all active:scale-[0.99]">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-start gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed/50 text-on-secondary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">memory</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-bold">INF202</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm font-bold">Fiche Visuelle</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-1 leading-snug">Schémas Assembleur & Micro-processeur x86</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+<span>Club OpenSource Sorbonne</span>
+<span>•</span>
+<span>Synthèse</span>
+</p>
+</div>
+</div>
+<button aria-label="Sauvegarder" class="bookmark-btn text-on-surface-variant hover:text-primary active:scale-90 transition-all p-1">
+<span class="material-symbols-outlined text-[22px]">bookmark_border</span>
+</button>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low/70 rounded-xl px-space-md py-2 text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">layers</span>
+<span>12 pages</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary">attachment</span>
+<span>PDF • 8.1 Mo</span>
+</div>
+<div class="flex items-center gap-1 font-bold text-on-surface">
+<span class="material-symbols-outlined text-[15px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4.8</span>
+<span class="text-on-surface-variant font-normal">(31)</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-1">
+<button class="preview-btn flex-1 h-9 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span>Aperçu</span>
+</button>
+<button class="download-btn flex-1 h-9 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center gap-1 shadow-sm active:scale-98 transition-all">
+<span class="material-symbols-outlined text-[16px]">download_for_offline</span>
+<span>Télécharger</span>
+</button>
+</div>
+</article>
+</div>
+<div class="fixed bottom-20 inset-x-0 z-40 flex justify-center pointer-events-none px-margin">
+<button class="pointer-events-auto flex items-center gap-2 h-11 px-space-lg rounded-full bg-inverse-surface text-inverse-on-surface shadow-xl active:scale-95 transition-all" id="floating-filter-pill">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span class="font-label-md text-label-md font-bold">Filtres avancés</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed-dim"></span>
+<span class="font-label-sm text-label-sm opacity-80">Année, Prof...</span>
+</button>
+</div>
+<div class="hidden fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-xs transition-opacity" id="filter-drawer-backdrop"></div>
+<div class="hidden fixed inset-x-0 bottom-0 z-50 bg-surface-container-lowest rounded-t-3xl max-h-[751px] overflow-y-auto p-margin flex flex-col gap-space-lg shadow-2xl transition-transform" id="filter-drawer">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface">Filtres Académiques</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Précisez vos critères pour Licence 2 Informatique</p>
+</div>
+<button class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface active:scale-90 transition-all" id="close-drawer-btn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider">Année Universitaire</label>
+<div class="grid grid-cols-3 gap-2">
+<button class="h-10 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold flex items-center justify-center">2023 - 2024</button>
+<button class="h-10 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center">2022 - 2023</button>
+<button class="h-10 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md flex items-center justify-center">Archives</button>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider">Enseignant / Responsable UE</label>
+<div class="flex flex-col gap-1.5">
+<label class="flex items-center justify-between p-2 rounded-xl bg-surface-container-low">
+<span class="font-body-md text-body-md text-on-surface">Pr. Laurent Dubois (INF201)</span>
+<input checked="" class="w-4 h-4 accent-primary" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-2 rounded-xl bg-surface-container-low">
+<span class="font-body-md text-body-md text-on-surface">Dr. Marie Moreau (MAT201)</span>
+<input class="w-4 h-4 accent-primary" type="checkbox"/>
+</label>
+<label class="flex items-center justify-between p-2 rounded-xl bg-surface-container-low">
+<span class="font-body-md text-body-md text-on-surface">Pr. Alexandre Chen (INF202)</span>
+<input class="w-4 h-4 accent-primary" type="checkbox"/>
+</label>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-wider">Format du document</label>
+<div class="flex gap-2">
+<button class="flex-1 h-9 rounded-xl bg-primary-fixed text-on-primary-fixed font-label-md text-label-md font-bold">PDF Numérique</button>
+<button class="flex-1 h-9 rounded-xl bg-surface-container text-on-surface font-label-md text-label-md">Manuscrit Scanné</button>
+</div>
+</div>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 h-12 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg active:scale-98 transition-all" id="reset-filters">Effacer tout</button>
+<button class="flex-2 h-12 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg font-bold shadow-md active:scale-98 transition-all" id="apply-filters">Appliquer (34)</button>
+</div>
+</div>
+<div class="fixed top-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 -translate-y-2" id="toast">
+<div class="bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed" id="toast-icon">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-msg">Document sauvegardé</span>
+</div>
+</div>
+</div>
+<script>
+(function() {
+  const searchInput = document.getElementById('search-input');
+  const clearSearchBtn = document.getElementById('clear-search');
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toast-msg');
+  const toastIcon = document.getElementById('toast-icon');
+
+  function showToast(message, iconName = 'check_circle') {
+    if (!toast) return;
+    toastMsg.textContent = message;
+    toastIcon.textContent = iconName;
+    toast.classList.remove('opacity-0', '-translate-y-2');
+    toast.classList.add('opacity-100', 'translate-y-0');
+    setTimeout(() => {
+      toast.classList.add('opacity-0', '-translate-y-2');
+      toast.classList.remove('opacity-100', 'translate-y-0');
+    }, 2400);
+  }
+
+  if (clearSearchBtn && searchInput) {
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchInput.focus();
+      showToast('Recherche réinitialisée', 'info');
+    });
+  }
+
+  const filterChips = document.querySelectorAll('.filter-chip');
+  filterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      filterChips.forEach(c => {
+        c.classList.remove('bg-on-surface', 'text-surface');
+        c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      });
+      chip.classList.add('bg-on-surface', 'text-surface');
+      chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+    });
+  });
+
+  const uePills = document.querySelectorAll('.ue-pill');
+  uePills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      uePills.forEach(p => {
+        p.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        p.classList.add('bg-surface-container', 'text-on-surface');
+        const dot = p.querySelector('span:first-child');
+        if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-outline';
+      });
+      pill.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+      pill.classList.remove('bg-surface-container', 'text-on-surface');
+      const activeDot = pill.querySelector('span:first-child');
+      if (activeDot) activeDot.className = 'w-1.5 h-1.5 rounded-full bg-white';
+    });
+  });
+
+  const resetUeBtn = document.getElementById('reset-ue-btn');
+  if (resetUeBtn) {
+    resetUeBtn.addEventListener('click', () => {
+      uePills.forEach((p, idx) => {
+        if (idx === 0) {
+          p.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+          p.classList.remove('bg-surface-container', 'text-on-surface');
+          const dot = p.querySelector('span:first-child');
+          if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-white';
+        } else {
+          p.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+          p.classList.add('bg-surface-container', 'text-on-surface');
+          const dot = p.querySelector('span:first-child');
+          if (dot) dot.className = 'w-1.5 h-1.5 rounded-full bg-outline';
+        }
+      });
+      showToast('Toutes les UE affichées', 'restart_alt');
+    });
+  }
+
+  const sortTrigger = document.getElementById('sort-trigger');
+  const sortMenu = document.getElementById('sort-menu');
+  const sortLabel = document.getElementById('sort-current-label');
+
+  if (sortTrigger && sortMenu) {
+    sortTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sortMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!sortMenu.contains(e.target) && !sortTrigger.contains(e.target)) {
+        sortMenu.classList.add('hidden');
+      }
+    });
+
+    const sortOptions = document.querySelectorAll('.sort-option');
+    sortOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        const val = opt.getAttribute('data-val');
+        if (sortLabel) sortLabel.textContent = val;
+        sortOptions.forEach(o => {
+          o.classList.remove('text-primary', 'bg-primary-fixed/20', 'font-bold');
+          o.classList.add('text-on-surface');
+        });
+        opt.classList.add('text-primary', 'bg-primary-fixed/20', 'font-bold');
+        opt.classList.remove('text-on-surface');
+        sortMenu.classList.add('hidden');
+        showToast('Trié par : ' + val, 'swap_vert');
+      });
+    });
+  }
+
+  const bookmarkBtns = document.querySelectorAll('.bookmark-btn');
+  bookmarkBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const icon = btn.querySelector('.material-symbols-outlined');
+      const isSaved = icon.textContent === 'bookmark';
+      if (isSaved) {
+        icon.textContent = 'bookmark_border';
+        btn.classList.remove('text-primary');
+        showToast('Retiré de votre bibliothèque', 'bookmark_remove');
+      } else {
+        icon.textContent = 'bookmark';
+        btn.classList.add('text-primary');
+        showToast('Ajouté à votre bibliothèque !', 'bookmark_added');
+      }
+    });
+  });
+
+  const downloadBtns = document.querySelectorAll('.download-btn');
+  downloadBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span><span>Téléchargement...</span>`;
+      setTimeout(() => {
+        btn.innerHTML = `<span class="material-symbols-outlined text-[16px]">cloud_done</span><span>Disponible</span>`;
+        btn.classList.remove('bg-primary');
+        btn.classList.add('bg-tertiary-container');
+        showToast('Fichier disponible hors-ligne', 'download_done');
+      }, 1000);
+    });
+  });
+
+  const previewBtns = document.querySelectorAll('.preview-btn');
+  previewBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showToast('Ouverture du lecteur sécurisé...', 'visibility');
+    });
+  });
+
+  const drawerBackdrop = document.getElementById('filter-drawer-backdrop');
+  const drawer = document.getElementById('filter-drawer');
+  const floatingBtn = document.getElementById('floating-filter-pill');
+  const topFilterTrigger = document.getElementById('filter-modal-trigger');
+  const closeDrawerBtn = document.getElementById('close-drawer-btn');
+  const applyFiltersBtn = document.getElementById('apply-filters');
+  const resetFiltersBtn = document.getElementById('reset-filters');
+
+  function openDrawer() {
+    if (drawerBackdrop && drawer) {
+      drawerBackdrop.classList.remove('hidden');
+      drawer.classList.remove('hidden');
+    }
+  }
+
+  function closeDrawer() {
+    if (drawerBackdrop && drawer) {
+      drawerBackdrop.classList.add('hidden');
+      drawer.classList.add('hidden');
+    }
+  }
+
+  if (floatingBtn) floatingBtn.addEventListener('click', openDrawer);
+  if (topFilterTrigger) topFilterTrigger.addEventListener('click', openDrawer);
+  if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+  if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
+
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener('click', () => {
+      closeDrawer();
+      showToast('Filtres avancés appliqués (34 docs)', 'filter_alt');
+    });
+  }
+
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', () => {
+      closeDrawer();
+      showToast('Filtres réinitialisés', 'refresh');
+    });
+  }
+})();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(15,23,42,0.06)]" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-gutter max-w-md mx-auto"><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-xl text-on-surface-variant transition-colors active:scale-95" data-path="accueil" href="#"><span class="material-symbols-outlined text-[24px]">home</span><span class="font-label-sm text-label-sm">Accueil</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-xl transition-colors active:scale-95 text-primary font-bold" data-path="explorer" href="#"><span class="material-symbols-outlined text-[24px]">explore</span><span class="font-label-sm text-label-sm">Explorer</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-xl text-on-surface-variant transition-colors active:scale-95" data-path="ressource" href="#"><span class="material-symbols-outlined text-[24px]">description</span><span class="font-label-sm text-label-sm">Ressource</span></a><a class="relative flex flex-col items-center justify-center gap-0.5 min-w-[56px] h-12 rounded-xl text-on-surface-variant transition-colors active:scale-95" data-path="ma-bibliotheque" href="#"><div class="relative flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">collections_bookmark</span><span class="absolute -top-1 -right-3.5 px-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-primary text-on-primary font-label-sm text-[9px] font-bold leading-none ring-2 ring-surface">12</span></div><span class="font-label-sm text-label-sm">Bibliothèque</span></a></div></nav></body></html>

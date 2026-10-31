@@ -6,17 +6,17 @@
   border-radius: var(--radius-md);
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--streak-orange) 12%, transparent),
+    color-mix(in srgb, var(--primary) 12%, transparent),
     color-mix(in srgb, var(--secondary) 8%, transparent)
   );
-  border: 1px solid color-mix(in srgb, var(--streak-orange) 24%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
 }
 
 :host(.nl-streak--compact) {
   padding: 5px 10px;
   border-radius: var(--radius-pilule);
-  background: color-mix(in srgb, var(--streak-orange) 8%, transparent);
-  border-color: color-mix(in srgb, var(--streak-orange) 20%, transparent);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 // Rebond a l'entree (Curves.elasticOut, 800ms), une seule fois au montage.
@@ -35,13 +35,11 @@
   to { transform: scale(1); }
 }
 
-.nl-streak__emoji {
-  font-size: 22px;
-  line-height: 1;
-
-  &--sm {
-    font-size: 14px;
-  }
+// La flamme est dessinee, plus ecrite : un emoji change de dessin d'un
+// systeme a l'autre, et les lecteurs d'ecran l'annoncent en toutes lettres.
+.nl-streak__flamme {
+  display: inline-flex;
+  color: var(--primary);
 }
 
 .nl-streak__texte {
@@ -51,7 +49,7 @@
 
 .nl-streak__nombre {
   font: 800 1.0625rem/1.2 var(--font-family);
-  color: var(--streak-orange);
+  color: var(--primary);
 
   &--sm {
     font-size: 0.875rem;
