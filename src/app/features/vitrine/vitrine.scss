@@ -148,13 +148,13 @@ button:focus-visible {
 }
 
 .nl-vit__guide {
-  max-width: 44ch;
+  max-width: 52ch;
   margin: 16px 0 0;
-  padding: 12px 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: var(--primary-soft);
-  color: var(--primary-deep);
-  font-size: 0.9rem;
+  background: var(--bg-primary);
+  text-align: left;
 }
 
 .nl-vit__garanties {

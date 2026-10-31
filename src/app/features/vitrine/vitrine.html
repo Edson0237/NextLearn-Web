@@ -18,11 +18,11 @@
           {{ 'vitrineOuvrir' | t }}
           <nl-icon name="arrow_forward" [size]="20" />
         </a>
-        @if (peutInstaller()) {
+        @if (!installation.dejaInstallee()) {
           <button
             type="button"
             class="nl-vit__bouton nl-vit__bouton--contour"
-            [attr.aria-expanded]="guideIosOuvert()"
+            [attr.aria-expanded]="guideOuvert()"
             (click)="installer()">
             <nl-icon name="download" [size]="20" />
             {{ 'vitrineInstaller' | t }}
@@ -30,8 +30,10 @@
         }
       </div>
 
-      @if (guideIosOuvert() && !installation.peutProposer()) {
-        <p class="nl-vit__guide" role="note">{{ 'vitrineGuideIos' | t }}</p>
+      @if (guideOuvert() && !installation.invitationDisponible()) {
+        <div class="nl-vit__guide">
+          <nl-guide-installation />
+        </div>
       }
 
       <ul class="nl-vit__garanties">

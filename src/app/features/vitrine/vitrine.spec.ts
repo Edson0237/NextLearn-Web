@@ -11,8 +11,9 @@ import { Vitrine } from './vitrine';
 describe('Vitrine', () => {
   const installation = {
     dejaInstallee: signal(false),
-    peutProposer: signal(false),
-    besoinGuideIos: signal(false),
+    invitationDisponible: signal(false),
+    dernierResultat: signal<string | null>(null),
+    environnement: signal({ appareil: 'telephone', systeme: 'ios', navigateur: 'safari' }),
     proposer: vi.fn(async () => true),
   };
 
@@ -29,8 +30,7 @@ describe('Vitrine', () => {
 
   beforeEach(() => {
     installation.dejaInstallee.set(false);
-    installation.peutProposer.set(false);
-    installation.besoinGuideIos.set(false);
+    installation.invitationDisponible.set(false);
     installation.proposer.mockClear();
   });
 
@@ -56,29 +56,28 @@ describe('Vitrine', () => {
     expect(texte).not.toMatch(/télécharger sur (l.)?(app store|google play)/i);
   });
 
-  it('ne propose pas d’installer quand le navigateur ne sait pas le faire', () => {
+  it('propose toujours le guide d’installation tant que l’application n’est pas installée', () => {
     const el: HTMLElement = creer().nativeElement;
-    expect(el.querySelector('.nl-vit__bouton--contour')).toBeNull();
+    expect(el.querySelector('.nl-vit__bouton--contour')).not.toBeNull();
+    // Fermé par défaut : pas de bloc d'instructions tant qu'on ne le demande pas.
+    expect(el.querySelector('.nl-vit__guide')).toBeNull();
   });
 
-  it('propose d’installer sur Android/Chrome, et déclenche l’invitation native', async () => {
-    installation.peutProposer.set(true);
+  it('sur Android/Chrome, déclenche l’invitation native au clic', async () => {
+    installation.invitationDisponible.set(true);
     const fixture = creer();
     const bouton = (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.nl-vit__bouton--contour');
-    expect(bouton).not.toBeNull();
     bouton!.click();
     await fixture.whenStable();
     expect(installation.proposer).toHaveBeenCalledTimes(1);
   });
 
-  it('sur iPhone, explique le geste au lieu de déclencher une invitation qui n’existe pas', async () => {
-    installation.besoinGuideIos.set(true);
+  it('sans invitation native, ouvre le guide au lieu de déclencher quelque chose qui n’existe pas', () => {
     const fixture = creer();
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('.nl-vit__guide')).toBeNull();
     el.querySelector<HTMLButtonElement>('.nl-vit__bouton--contour')!.click();
     fixture.detectChanges();
-    expect(el.querySelector('.nl-vit__guide')).not.toBeNull();
+    expect(el.querySelector('.nl-vit__guide nl-guide-installation')).not.toBeNull();
     expect(installation.proposer).not.toHaveBeenCalled();
   });
 
