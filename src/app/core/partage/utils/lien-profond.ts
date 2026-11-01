@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../network';
+import { API_BASE_URL } from '../../network';
 
 /**
  * Les liens partageables vers un contenu - traduction de `LienProfond`

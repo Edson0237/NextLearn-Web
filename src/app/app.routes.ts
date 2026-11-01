@@ -1,6 +1,6 @@
 import { isDevMode } from '@angular/core';
 import { Routes } from '@angular/router';
-import { LienProfond } from './core/partage/lien-profond';
+import { LienProfond } from './core/partage';
 
 /**
  * Un seul projet, un seul domaine : la vitrine et l'application PWA
