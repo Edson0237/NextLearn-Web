@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../../core/router/auth.guard';
-import { AppRoutes } from '../../core/router/app-routes';
+import { authGuard } from '../../core/router';
+import { AppRoutes } from '../../core/router';
 import { MainShell } from '../main-shell/main-shell';
 import { AppShellRoot } from './app-shell-root';
 

@@ -14,7 +14,7 @@ import { JustificatifType } from '../../../core/references';
 import { AuthService } from '../../../core/auth';
 import { libelleNiveau, niveauCourt } from '../../../core/models';
 import { VERIFICATION_AUCUNE, VerificationState, VerificationStatut, estApprouve, verificationDepuisJson } from '../../../core/models';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 /**
  * Le dépôt du justificatif - pour les comptes dont l'adresse n'est pas celle

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppRoutes } from '../../core/router/app-routes';
+import { AppRoutes } from '../../core/router';
 
 /**
  * Point d'arrivée d'un lien partagé `/d/<id>`.

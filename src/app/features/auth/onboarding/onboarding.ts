@@ -4,7 +4,7 @@ import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 interface Badge {
   readonly label: string;

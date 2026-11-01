@@ -16,7 +16,7 @@ import {
   demandeAction,
   estApprouve,
 } from '../../../core/models';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';
 

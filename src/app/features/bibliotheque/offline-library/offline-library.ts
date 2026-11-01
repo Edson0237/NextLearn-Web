@@ -24,7 +24,7 @@ import {
   DocumentModel,
   DocumentType,
   } from '../../../core/bibliotheque';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 
 /** Les trois façons de retrouver un document qu'on a déjà croisé. */

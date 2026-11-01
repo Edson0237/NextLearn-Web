@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { DemandeOtp, enFile, StatutDemandeOtp } from '../../../core/models';
 import { ParcoursOtp } from '../../../core/models';
 

@@ -17,7 +17,7 @@ import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sh
 import { FeuilleSelectionService, ChoixSelection } from '../../../shared/ui/bottom-sheet/feuille-selection';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { VerrouillageApp } from '../../../core/preferences';
 import { VERSION_APP } from '../../../core/version';
 import { PinDialog } from '../dialogues/pin-dialog/pin-dialog';

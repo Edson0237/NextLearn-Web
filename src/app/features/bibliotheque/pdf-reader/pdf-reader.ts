@@ -9,8 +9,8 @@ import { DocumentsRepository } from '../../../core/bibliotheque';
 import { LectureProgressRepository } from '../../../core/bibliotheque';
 import { ProgressionRepository } from '../../../core/progression';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
-import { AppRoutes } from '../../../core/router/app-routes';
-import { HistoriqueNavigation } from '../../../core/router/historique-navigation';
+import { AppRoutes } from '../../../core/router';
+import { HistoriqueNavigation } from '../../../core/router';
 
 /**
  * Le moteur de rendu de pdf.js, servi depuis notre propre domaine.

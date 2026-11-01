@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppRoutes } from '../../router/app-routes';
+import { AppRoutes } from '../../router/routes/app-routes';
 import { AuthRepository } from '../repositories/auth-repository';
 import { SessionExpiredService } from '../../network';
 import { VerificationService } from '../../verification/verification.service';

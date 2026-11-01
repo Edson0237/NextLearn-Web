@@ -10,7 +10,7 @@ import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { GoogleIdentite } from '../../../core/auth';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models';
 import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models';
 import { FiliereOption, JustificatifType, OptionReference, Universite } from '../../../core/references';

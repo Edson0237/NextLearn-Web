@@ -7,7 +7,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { Button } from '../../../shared/ui/button/button';
 import { RecoursRepository } from '../../../core/recours';
 import { EtatRecours, Recours, RecoursType } from '../../../core/recours';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 @Component({
   selector: 'nl-recours-page',

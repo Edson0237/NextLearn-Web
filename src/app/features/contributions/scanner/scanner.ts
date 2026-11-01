@@ -5,7 +5,7 @@ import { tr } from '../../../core/i18n';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { Numerisation, PageNumerisee, ScanTransfert } from '../../../core/scan/numerisation';
 import { assemblerPdf } from '../../../core/scan/pdf-assembleur';
 import { ReferencesRepository } from '../../../core/references';

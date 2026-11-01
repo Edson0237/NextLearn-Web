@@ -3,14 +3,14 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { CanActivateChildFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { AuthService } from '../auth';
-import { AuthState } from '../auth';
-import { VerificationService } from '../verification/verification.service';
-import { PendingDestinationService } from './pending-destination.service';
-import { estAuthentifie } from '../auth';
-import { ParcoursOtp } from '../models';
-import { bloqueAcces, demandeAction } from '../models';
-import { AppRoutes } from './app-routes';
+import { AuthService } from '../../auth/services/auth.service';
+import { AuthState } from '../../auth/models/auth.model';
+import { VerificationService } from '../../verification/verification.service';
+import { PendingDestinationService } from '../services/pending-destination.service';
+import { estAuthentifie } from '../../auth/models/auth.model';
+import { ParcoursOtp } from '../../models';
+import { bloqueAcces, demandeAction } from '../../models';
+import { AppRoutes } from '../routes/app-routes';
 
 /**
  * Garde de routage applicatif - traduction de `RouterNotifier.redirect`

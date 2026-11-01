@@ -8,7 +8,7 @@ import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { DocumentsRepository } from '../../../core/bibliotheque';
 import { ContexteService } from '../../../core/contexte';
 import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 /** La teinte des dossiers : suit le thème, comme le reste de l'interface. */
 const PALETTE = ['var(--primary)'];

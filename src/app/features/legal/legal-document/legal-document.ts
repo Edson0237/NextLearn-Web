@@ -4,7 +4,7 @@ import { CommonModule, Location } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 type LegalDocKey = 'confidentialite' | 'conditions';
 

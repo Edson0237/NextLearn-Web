@@ -3,10 +3,10 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Location } from '@angular/common';
 import { Router, provideRouter } from '@angular/router';
-import { AppRoutes } from './app-routes';
-import { authGuard } from './auth.guard';
-import { AuthService } from '../auth';
-import { PendingDestinationService } from './pending-destination.service';
+import { AppRoutes } from '../routes/app-routes';
+import { authGuard } from '../guards/auth.guard';
+import { AuthService } from '../../auth';
+import { PendingDestinationService } from '../services/pending-destination.service';
 
 /**
  * Ce que ce test protège : la précédence exacte de `RouterNotifier.redirect`

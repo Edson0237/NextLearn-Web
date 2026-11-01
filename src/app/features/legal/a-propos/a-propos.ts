@@ -5,7 +5,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Avatar } from '../../../shared/ui/avatar/avatar';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { VERSION_APP } from '../../../core/version';
 
 interface Valeur {

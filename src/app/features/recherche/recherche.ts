@@ -11,7 +11,7 @@ import { EmptyState } from '../../shared/ui/empty-state/empty-state';
 import { DocumentsRepository } from '../../core/bibliotheque';
 import { HistoriqueRecherches } from '../../core/recherche';
 import { DocumentModel, DocumentType } from '../../core/bibliotheque';
-import { AppRoutes } from '../../core/router/app-routes';
+import { AppRoutes } from '../../core/router';
 import { TypeDocumentPipe } from '../../shared/ui/type-document/presentation-type-document';
 
 @Component({
