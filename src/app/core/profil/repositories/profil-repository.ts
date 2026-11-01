@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRapportDepuisApi } from '../models/profil.model';
 import { enFailure } from '../../network';
 import { donnees, donneesUtilisateur } from '../../network';
-import { SecureStorageService } from '../../storage/secure-storage.service';
+import { SecureStorageService } from '../../storage';
 import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../../models';
 
 /**

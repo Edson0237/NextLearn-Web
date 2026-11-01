@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { SecureStorageService } from './secure-storage.service';
-import { Langue, NiveauEtude } from '../models';
+import { SecureStorageService } from '../services/secure-storage.service';
+import { Langue, NiveauEtude } from '../../models';
 
 /**
  * Ce que ce test protège : les comparaisons de date (jeton valide tant

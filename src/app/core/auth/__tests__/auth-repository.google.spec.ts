@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AuthRepository } from '../repositories/auth-repository';
-import { SecureStorageService } from '../../storage/secure-storage.service';
+import { SecureStorageService } from '../../storage';
 import { ParcoursOtp } from '../../models';
 
 /**

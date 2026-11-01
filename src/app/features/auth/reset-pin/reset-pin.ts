@@ -4,7 +4,7 @@ import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
-import { SecureStorageService } from '../../../core/storage/secure-storage.service';
+import { SecureStorageService } from '../../../core/storage';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Icon } from '../../../shared/ui/icon/icon';
