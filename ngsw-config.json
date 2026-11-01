@@ -14,7 +14,8 @@
           "/*.css",
           "/*.js",
           "/pdf.worker.min.mjs",
-          "/images/logo-marque.png"
+          "/images/logo-marque.png",
+          "/i18n/*.json"
         ]
       }
     },

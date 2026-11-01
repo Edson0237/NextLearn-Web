@@ -6,6 +6,7 @@ export type Langue = 'fr' | 'en';
 export type PreferenceLangue = Langue | 'systeme';
 
 const CLE = 'nl_langue';
+const PREFIXE_COPIE = 'nl_i18n_';
 
 /**
  * Traductions de l'application.
@@ -100,11 +101,15 @@ export class TraductionService {
         this.http.get<Record<string, string>>(`/i18n/${langue}.json`),
       );
       this.messages.set(messages ?? {});
+      this.garderCopie(langue, messages);
     } catch {
-      // Dictionnaire injoignable : mieux vaut afficher les textes de secours
-      // passés aux appels que de bloquer l'application sur un fichier de
-      // traduction.
-      this.messages.set({});
+      // Dictionnaire injoignable (hors ligne, et le service worker ne l'a pas
+      // encore en cache) : la dernière copie reçue sert de filet. Sans elle,
+      // les écrans qui n'ont pas de texte de secours montraient leurs clés
+      // brutes - « authCreerCompte », « vitrineTitreLigne1 ». À défaut de
+      // copie, mieux vaut afficher les textes de secours passés aux appels que
+      // de bloquer l'application sur un fichier de traduction.
+      this.messages.set(this.lireCopie(langue) ?? {});
     } finally {
       this.pret.set(true);
       document.documentElement.lang = langue;
@@ -214,6 +219,24 @@ export class TraductionService {
       return navigator.language.toLowerCase().startsWith('en') ? 'en' : 'fr';
     } catch {
       return 'fr';
+    }
+  }
+
+  private garderCopie(langue: Langue, messages: Record<string, string> | null): void {
+    if (!messages) return;
+    try {
+      localStorage.setItem(PREFIXE_COPIE + langue, JSON.stringify(messages));
+    } catch {
+      // Stockage plein ou bloqué : le service worker reste la voie principale.
+    }
+  }
+
+  private lireCopie(langue: Langue): Record<string, string> | null {
+    try {
+      const brut = localStorage.getItem(PREFIXE_COPIE + langue);
+      return brut ? (JSON.parse(brut) as Record<string, string>) : null;
+    } catch {
+      return null;
     }
   }
 
