@@ -17,7 +17,7 @@ import { OfflineRepository } from '../../../core/bibliotheque';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation/report.model';
-import { ContexteService } from '../../../core/contexte/contexte.service';
+import { ContexteService } from '../../../core/contexte';
 import { HistoriqueNavigation } from '../../../core/router/historique-navigation';
 import { LienProfond } from '../../../core/partage/lien-profond';
 import {

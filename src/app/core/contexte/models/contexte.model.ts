@@ -1,4 +1,4 @@
-import { DocumentType, typeConnu } from '../bibliotheque';
+import { DocumentType, typeConnu } from '../../bibliotheque';
 
 export interface MatiereDuProgramme {
   readonly id: string;

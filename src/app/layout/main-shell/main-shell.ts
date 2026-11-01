@@ -5,7 +5,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Icon } from '../../shared/ui/icon/icon';
 import { HapticService } from '../../shared/services/haptic';
 import { IconName } from '../../shared/ui/icon/icon-paths';
-import { ContexteService } from '../../core/contexte/contexte.service';
+import { ContexteService } from '../../core/contexte';
 import { StockageHorsLigne } from '../../core/bibliotheque';
 
 interface Onglet {
