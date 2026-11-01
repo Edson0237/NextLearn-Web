@@ -13,11 +13,11 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/network';
-import { TabReuseStrategy } from './core/router';
-import { AppErrorHandler } from './core/error-handling';
+import { authInterceptor } from './core/network/interceptors/auth.interceptor';
+import { TabReuseStrategy } from './core/router/strategies/tab-reuse-strategy';
+import { AppErrorHandler } from './core/error-handling/handlers/app-error-handler';
 import { provideServiceWorker } from '@angular/service-worker';
-import { TraductionService } from './core/i18n';
+import { TraductionService } from './core/i18n/services/traduction.service';
 
 // Sans cet enregistrement, le canal `fr` n'existe pas dans Angular et les
 // tubes `date` et `number` retombent sur `en-US` : les jours de la semaine

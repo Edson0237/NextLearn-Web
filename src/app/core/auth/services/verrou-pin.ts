@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { SecureStorageService } from '../../storage';
+import { SecureStorageService } from '../../storage/services/secure-storage.service';
 
 /**
  * Le blocage temporaire après des PIN erronés, sur cet appareil.

@@ -5,11 +5,11 @@ import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
 import { AuthState } from '../../auth/models/auth.model';
-import { VerificationService } from '../../verification';
+import { VerificationService } from '../../verification/services/verification.service';
 import { PendingDestinationService } from '../services/pending-destination.service';
 import { estAuthentifie } from '../../auth/models/auth.model';
-import { ParcoursOtp } from '../../models';
-import { bloqueAcces, demandeAction } from '../../models';
+import { ParcoursOtp } from '../../models/parcours-otp.model';
+import { bloqueAcces, demandeAction } from '../../models/verification.model';
 import { AppRoutes } from '../routes/app-routes';
 
 /**

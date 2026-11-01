@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRapportDepuisApi } from '../models/profil.model';
-import { enFailure } from '../../network';
-import { donnees, donneesUtilisateur } from '../../network';
-import { SecureStorageService } from '../../storage';
-import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../../models';
+import { enFailure } from '../../network/utils/erreur-api';
+import { donnees, donneesUtilisateur } from '../../network/utils/enveloppe-api';
+import { SecureStorageService } from '../../storage/services/secure-storage.service';
+import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../../models/user.model';
 
 /**
  * Accès réseau au profil - traduction de

@@ -7,7 +7,7 @@ import {
 import { inject } from '@angular/core';
 import { catchError, from, switchMap, throwError, timeout } from 'rxjs';
 import { estCheminSansJeton, estCheminPreAuth, AUTH_PATH, DELAI_EXPIRATION_MS } from '../config/api-config';
-import { SecureStorageService } from '../../storage';
+import { SecureStorageService } from '../../storage/services/secure-storage.service';
 import { SessionExpiredService } from '../services/session-expired.service';
 
 /**
