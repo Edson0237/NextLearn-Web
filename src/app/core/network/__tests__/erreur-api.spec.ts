@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Failure } from '../models';
-import { enFailure } from './erreur-api';
+import { Failure } from '../../models';
+import { enFailure } from '../utils/erreur-api';
 
 describe('enFailure', () => {
   it('garde le statut et le code d’une réponse HTTP en erreur', () => {

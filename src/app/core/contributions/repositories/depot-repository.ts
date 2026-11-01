@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { TypeContenuOption, typeContenuDepuisJson } from '../../references/references.model';
 import { Depot, DepotLicence, depotDepuisJson } from '../models/depot.model';
-import { enFailure } from '../../network/erreur-api';
+import { enFailure } from '../../network';
 
 /**
  * Accès réseau aux dépôts - traduction de `DepotRemoteRepository`

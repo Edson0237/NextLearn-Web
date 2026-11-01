@@ -6,9 +6,9 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, from, switchMap, throwError, timeout } from 'rxjs';
-import { estCheminSansJeton, estCheminPreAuth, AUTH_PATH, DELAI_EXPIRATION_MS } from './api-config';
-import { SecureStorageService } from '../storage/secure-storage.service';
-import { SessionExpiredService } from './session-expired.service';
+import { estCheminSansJeton, estCheminPreAuth, AUTH_PATH, DELAI_EXPIRATION_MS } from '../config/api-config';
+import { SecureStorageService } from '../../storage/secure-storage.service';
+import { SessionExpiredService } from '../services/session-expired.service';
 
 /**
  * Injection du jeton, rafraîchissement silencieux + nouvel essai sur 401 -
