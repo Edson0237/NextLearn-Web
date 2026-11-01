@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, output, signal } from '@ang
 import { TraductionPipe } from '../../../../core/i18n';
 import { tr } from '../../../../core/i18n';
 import { Failure } from '../../../../core/models';
-import { SupportRepository } from '../../../../core/profil/support-repository';
+import { SupportRepository } from '../../../../core/profil';
 import { ToastService } from '../../../../shared/ui/toast/toast';
 
 /** La fenêtre « signaler un problème » : un ticket envoyé à l'équipe d'assistance. */

@@ -7,7 +7,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
-import { SessionAppareil, SessionRepository } from '../../../core/profil/session-repository';
+import { SessionAppareil, SessionRepository } from '../../../core/profil';
 import { Failure } from '../../../core/models';
 
 /**

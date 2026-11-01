@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
-import { SupportRepository, SupportTicket, SupportTicketStatus, libelleStatutTicket } from '../../../core/profil/support-repository';
+import { SupportRepository, SupportTicket, SupportTicketStatus, libelleStatutTicket } from '../../../core/profil';
 import { ReportRepository } from '../../../core/moderation';
 import { CibleSignalement, MonSignalement, StatutSignalement } from '../../../core/moderation';
 import { tr } from '../../../core/i18n';

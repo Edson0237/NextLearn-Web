@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRapportDepuisApi } from './profil.model';
-import { enFailure } from '../network';
-import { donnees, donneesUtilisateur } from '../network';
-import { SecureStorageService } from '../storage/secure-storage.service';
-import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../models';
+import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRapportDepuisApi } from '../models/profil.model';
+import { enFailure } from '../../network';
+import { donnees, donneesUtilisateur } from '../../network';
+import { SecureStorageService } from '../../storage/secure-storage.service';
+import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../../models';
 
 /**
  * Accès réseau au profil - traduction de

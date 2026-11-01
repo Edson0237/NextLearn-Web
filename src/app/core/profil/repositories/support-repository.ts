@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { tr } from '../i18n';
-import { enFailure } from '../network';
+import { tr } from '../../i18n';
+import { enFailure } from '../../network';
 
 export enum SupportTicketStatus {
   open = 'open',
