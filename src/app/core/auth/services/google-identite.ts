@@ -37,12 +37,29 @@ export class GoogleIdentite {
   /** `true` quand Google est configuré côté serveur ET que son script est chargé. */
   readonly disponible = signal(false);
 
+  /** Le serveur a répondu que Google n'est pas configuré : inutile de réessayer. */
+  readonly desactive = signal(false);
+
   private chargement: Promise<boolean> | null = null;
   private reaction: ((jeton: string) => void) | null = null;
 
-  /** Prépare Google ; rend `true` s'il est utilisable. Plusieurs appels, un seul chargement. */
-  preparer(): Promise<boolean> {
-    return (this.chargement ??= this.demarrer());
+  /**
+   * Prépare Google ; rend `true` s'il est utilisable. Plusieurs appels simultanés, un seul chargement.
+   *
+   * Un échec n'est pas mémorisé : serveur en redémarrage, réseau lent, script de Google
+   * arrivé après le délai - tout cela est passager, et le résultat gardé jusqu'au
+   * rechargement faisait disparaître le bouton pour le reste de la visite.
+   * Seul « Google n'est pas configuré » est définitif.
+   */
+  async preparer(): Promise<boolean> {
+    if (this.disponible()) return true;
+    if (this.desactive()) return false;
+    const en_cours = (this.chargement ??= this.demarrer());
+    try {
+      return await en_cours;
+    } finally {
+      if (this.chargement === en_cours) this.chargement = null;
+    }
   }
 
   /** Dessine le bouton Google dans `hote`, et dirige le jeton obtenu vers `surJeton`. */
@@ -65,7 +82,11 @@ export class GoogleIdentite {
 
   private async demarrer(): Promise<boolean> {
     const config = await this.repo.configGoogle();
-    if (!config.enabled || !config.clientId) return false;
+    if (config.injoignable) return false;
+    if (!config.enabled || !config.clientId) {
+      this.desactive.set(true);
+      return false;
+    }
     if (!(await this.attendreScript())) return false;
     window.google!.accounts!.id!.initialize({
       client_id: config.clientId,
@@ -99,7 +120,7 @@ export class GoogleIdentite {
       const debut = Date.now();
       const sonder = (): void => {
         if (window.google?.accounts?.id) return ok(true);
-        if (Date.now() - debut > 10_000) return ok(false);
+        if (Date.now() - debut > 20_000) return ok(false);
         setTimeout(sonder, 150);
       };
       sonder();

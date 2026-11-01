@@ -299,13 +299,15 @@ export class AuthRepository {
   // ── Connexion Google ─────────────────────────────────────────────────────
 
   /** Faut-il proposer « Se connecter avec Google », et avec quel client ? Ne lève jamais. */
-  async configGoogle(): Promise<{ enabled: boolean; clientId?: string }> {
+  async configGoogle(): Promise<{ enabled: boolean; clientId?: string; injoignable?: boolean }> {
     try {
       const data = donnees(await firstValueFrom(this.http.get(`${AUTH_PATH}/google/config`)));
       const clientId = typeof data['clientId'] === 'string' ? data['clientId'] : undefined;
       return { enabled: data['enabled'] === true && !!clientId, clientId };
     } catch {
-      return { enabled: false };
+      // Serveur injoignable ou en cours de redémarrage : ce n'est pas « Google
+      // désactivé », et l'appelant doit pouvoir réessayer.
+      return { enabled: false, injoignable: true };
     }
   }
 

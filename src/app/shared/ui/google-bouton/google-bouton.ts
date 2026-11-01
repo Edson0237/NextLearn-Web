@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, effect, inject, input, output, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, effect, inject, input, output, signal, viewChild } from '@angular/core';
 import { AuthService } from '../../../core/auth';
 import { GoogleIdentite } from '../../../core/auth';
 import { TraductionPipe } from '../../../core/i18n';
@@ -73,8 +73,18 @@ export class GoogleBouton implements OnInit {
     });
   }
 
+  /** Pauses entre les tentatives : le serveur redémarre, ou la connexion est lente. */
+  private static readonly PAUSES_MS = [3_000, 8_000, 15_000, 30_000];
+  private detruit = false;
+  private readonly destruction = inject(DestroyRef).onDestroy(() => (this.detruit = true));
+
   async ngOnInit(): Promise<void> {
-    await this.google.preparer();
+    for (let essai = 0; ; essai++) {
+      if (await this.google.preparer()) return;
+      if (this.google.desactive() || this.detruit || essai >= GoogleBouton.PAUSES_MS.length) return;
+      await new Promise((ok) => setTimeout(ok, GoogleBouton.PAUSES_MS[essai]));
+      if (this.detruit) return;
+    }
   }
 
   private dessiner(): void {
