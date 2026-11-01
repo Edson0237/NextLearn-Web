@@ -9,7 +9,7 @@ import {
   LIBELLES_ECHELLE,
   PreferencesAccessibilite,
 } from '../../../core/preferences/preferences-accessibilite';
-import { StockageHorsLigne } from '../../../core/bibliotheque/stockage-hors-ligne';
+import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n/traduction.service';
 import { PreferenceNotifications } from '../../../core/notifications/preference-notifications';
 import { ToastService } from '../../../shared/ui/toast/toast';

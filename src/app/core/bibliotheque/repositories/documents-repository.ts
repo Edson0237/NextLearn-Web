@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
-import { DocumentModel, documentDepuisApi, DocumentPage, pageDocumentsDepuisApi, DocumentSort } from './document.model';
-import { enFailure } from '../network/erreur-api';
+import { Failure } from '../../models/failure.model';
+import { DocumentModel, documentDepuisApi, DocumentPage, pageDocumentsDepuisApi, DocumentSort } from '../models/document.model';
+import { enFailure } from '../../network/erreur-api';
 
 /**
  * Accès réseau au catalogue de documents - traduction de

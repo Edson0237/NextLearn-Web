@@ -11,10 +11,10 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille-selection';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
-import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
-import { FavorisRepository } from '../../../core/bibliotheque/favoris-repository';
-import { OfflineRepository } from '../../../core/bibliotheque/offline-repository';
-import { StockageHorsLigne } from '../../../core/bibliotheque/stockage-hors-ligne';
+import { DocumentsRepository } from '../../../core/bibliotheque';
+import { FavorisRepository } from '../../../core/bibliotheque';
+import { OfflineRepository } from '../../../core/bibliotheque';
+import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation/report.model';
 import { ContexteService } from '../../../core/contexte/contexte.service';
@@ -23,7 +23,7 @@ import { LienProfond } from '../../../core/partage/lien-profond';
 import {
   DocumentModel,
   DocumentType,
-  } from '../../../core/bibliotheque/document.model';
+  } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 

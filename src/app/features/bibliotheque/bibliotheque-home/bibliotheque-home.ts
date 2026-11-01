@@ -1,4 +1,4 @@
-import { metaDocument, noteDocument } from '../../../core/bibliotheque/document.model';
+import { metaDocument, noteDocument } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { tr } from '../../../core/i18n/traduction.service';
@@ -9,20 +9,20 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DocumentCard, EtiquetteDocument } from '../../../shared/ui/document-card/document-card';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../../shared/ui/search-bar/search-bar';
-import { StockageHorsLigne } from '../../../core/bibliotheque/stockage-hors-ligne';
+import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { libelleNiveau } from '../../../core/models/user.model';
 import { computed } from '@angular/core';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
-import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
+import { DocumentsRepository } from '../../../core/bibliotheque';
 import { FormatsService } from '../../../core/references/formats.service';
 import { ContexteService } from '../../../core/contexte/contexte.service';
 import { AuthService } from '../../../core/auth';
 import {
   DocumentModel,
   DocumentType,
-  } from '../../../core/bibliotheque/document.model';
+  } from '../../../core/bibliotheque';
 import { BottomSheetService } from '../../../shared/ui/bottom-sheet/bottom-sheet';
 import { FiltresSheet, FiltresSheetData, FiltresSheetResultat } from '../filtres-sheet/filtres-sheet';
 import { AppRoutes } from '../../../core/router/app-routes';

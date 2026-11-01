@@ -1,4 +1,4 @@
-import { DocumentType, enregistrerFormatsServeur, typeDocumentDepuisApi } from '../../../core/bibliotheque/document.model';
+import { DocumentType, enregistrerFormatsServeur, typeDocumentDepuisApi } from '../../../core/bibliotheque';
 import { couleurTypeDocument, fondTypeDocument, iconeTypeDocument, presentationType, TypeDocumentPipe } from './presentation-type-document';
 
 describe('présentation d’un type de document', () => {

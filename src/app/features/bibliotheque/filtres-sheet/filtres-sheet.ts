@@ -4,7 +4,7 @@ import { BottomSheetShell } from '../../../shared/ui/bottom-sheet/shell/bottom-s
 import { Icon } from '../../../shared/ui/icon/icon';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { HapticService } from '../../../shared/services/haptic';
-import { DocumentType } from '../../../core/bibliotheque/document.model';
+import { DocumentType } from '../../../core/bibliotheque';
 
 export interface FiltresSheetData {
   readonly formats: readonly { type: DocumentType | null; label: string }[];

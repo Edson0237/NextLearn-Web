@@ -1,4 +1,4 @@
-import { metaDocument, noteDocument } from '../../../core/bibliotheque/document.model';
+import { metaDocument, noteDocument } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
@@ -9,9 +9,9 @@ import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
-import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
+import { DocumentsRepository } from '../../../core/bibliotheque';
 import { ContexteService } from '../../../core/contexte/contexte.service';
-import { DocumentModel, DocumentType } from '../../../core/bibliotheque/document.model';
+import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 

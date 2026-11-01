@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DocumentType, formatServeur, labelTypeDocument, typeConnu } from '../../../core/bibliotheque/document.model';
+import { DocumentType, formatServeur, labelTypeDocument, typeConnu } from '../../../core/bibliotheque';
 import { IconName } from '../icon/icon-paths';
 
 /**

@@ -6,7 +6,7 @@ import { Icon } from '../../shared/ui/icon/icon';
 import { HapticService } from '../../shared/services/haptic';
 import { IconName } from '../../shared/ui/icon/icon-paths';
 import { ContexteService } from '../../core/contexte/contexte.service';
-import { StockageHorsLigne } from '../../core/bibliotheque/stockage-hors-ligne';
+import { StockageHorsLigne } from '../../core/bibliotheque';
 
 interface Onglet {
   readonly route: string;
