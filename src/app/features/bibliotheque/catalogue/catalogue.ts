@@ -6,7 +6,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { DocumentsRepository } from '../../../core/bibliotheque';
-import { ContexteService } from '../../../core/contexte/contexte.service';
+import { ContexteService } from '../../../core/contexte';
 import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router/app-routes';
 

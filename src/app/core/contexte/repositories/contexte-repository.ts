@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { ContexteEtudiant, contexteEtudiantDepuisApi, CONTEXTE_OUVERT } from './contexte.model';
+import { ContexteEtudiant, contexteEtudiantDepuisApi, CONTEXTE_OUVERT } from '../models/contexte.model';
 
 /**
  * Récupère le contexte étudiant (matières, types visibles, fonctionnalités).

@@ -17,7 +17,7 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { DocumentsRepository } from '../../../core/bibliotheque';
 import { FormatsService } from '../../../core/references/formats.service';
-import { ContexteService } from '../../../core/contexte/contexte.service';
+import { ContexteService } from '../../../core/contexte';
 import { AuthService } from '../../../core/auth';
 import {
   DocumentModel,

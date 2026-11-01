@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { ContexteRepository } from './contexte-repository';
-import { ContexteEtudiant, CONTEXTE_OUVERT, typeVisible, fonctionnaliteOuverte, fonctionnaliteFermee } from './contexte.model';
-import { DocumentType } from '../bibliotheque';
+import { ContexteRepository } from '../repositories/contexte-repository';
+import { ContexteEtudiant, CONTEXTE_OUVERT, typeVisible, fonctionnaliteOuverte, fonctionnaliteFermee } from '../models/contexte.model';
+import { DocumentType } from '../../bibliotheque';
 
 /**
  * État réactif du contexte étudiant - traduction de `contexteCourantProvider`.
