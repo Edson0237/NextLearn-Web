@@ -6,9 +6,9 @@ import { Router } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
-import { NotificationsRepository } from '../../../core/notifications/notifications-repository';
-import { NotificationsEtat } from '../../../core/notifications/notifications-etat';
-import { NotificationModel, routeDeNotification } from '../../../core/notifications/notification.model';
+import { NotificationsRepository } from '../../../core/notifications';
+import { NotificationsEtat } from '../../../core/notifications';
+import { NotificationModel, routeDeNotification } from '../../../core/notifications';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 @Component({

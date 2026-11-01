@@ -11,7 +11,7 @@ import {
 } from '../../../core/preferences/preferences-accessibilite';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n';
-import { PreferenceNotifications } from '../../../core/notifications/preference-notifications';
+import { PreferenceNotifications } from '../../../core/notifications';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { FeuilleSelectionService, ChoixSelection } from '../../../shared/ui/bottom-sheet/feuille-selection';

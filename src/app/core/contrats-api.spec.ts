@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { notificationDepuisApi, routeDeNotification } from './notifications/notification.model';
+import { notificationDepuisApi, routeDeNotification } from './notifications';
 import {
   badgeDepuisApi,
   jourDepuisApi,
