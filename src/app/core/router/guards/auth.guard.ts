@@ -5,7 +5,7 @@ import { filter, map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
 import { AuthState } from '../../auth/models/auth.model';
-import { VerificationService } from '../../verification/verification.service';
+import { VerificationService } from '../../verification';
 import { PendingDestinationService } from '../services/pending-destination.service';
 import { estAuthentifie } from '../../auth/models/auth.model';
 import { ParcoursOtp } from '../../models';

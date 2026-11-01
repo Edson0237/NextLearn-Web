@@ -6,8 +6,8 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
-import { VerificationRepository } from '../../../core/verification/verification-repository';
-import { VerificationService } from '../../../core/verification/verification.service';
+import { VerificationRepository } from '../../../core/verification';
+import { VerificationService } from '../../../core/verification';
 import { AuthService } from '../../../core/auth';
 import {
   VERIFICATION_AUCUNE,
