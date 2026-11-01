@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UserModel, utilisateurDepuisCache, utilisateurVersCache } from '../models';
+import { UserModel, utilisateurDepuisCache, utilisateurVersCache } from '../../models';
 
 /**
  * Stockage des jetons et de l'état d'authentification - traduction de

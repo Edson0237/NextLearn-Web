@@ -2,7 +2,7 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { authInterceptor } from '../interceptors/auth.interceptor';
-import { SecureStorageService } from '../../storage/secure-storage.service';
+import { SecureStorageService } from '../../storage';
 import { SessionExpiredService } from '../services/session-expired.service';
 
 /**

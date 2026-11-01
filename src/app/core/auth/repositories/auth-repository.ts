@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_PATH } from '../../network';
-import { SecureStorageService } from '../../storage/secure-storage.service';
+import { SecureStorageService } from '../../storage';
 import { Failure } from '../../models';
 import { Appareil } from '../services/appareil';
 import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../../models';
