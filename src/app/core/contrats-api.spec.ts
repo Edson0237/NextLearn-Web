@@ -10,7 +10,7 @@ import { resultatQuizDepuisApi } from './quiz/quiz.model';
 import { verificationDepuisJson, VerificationStatut, bloqueAcces } from './models';
 import { DocumentType } from './bibliotheque';
 import { couleurTypeDocument } from '../shared/ui/type-document/presentation-type-document';
-import { LienProfond } from './partage/lien-profond';
+import { LienProfond } from './partage';
 
 /**
  * Contrats d'API, épinglés sur des charges utiles **réelles**.
