@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { DepotForm } from './depot-form';
-import { DepotLicence } from '../../../core/contributions/depot.model';
+import { DepotLicence } from '../../../core/contributions';
 
 /**
  * Ce que ce test protège : un dépôt incomplet ne doit jamais partir en

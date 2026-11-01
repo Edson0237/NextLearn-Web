@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
-import { DepotRepository } from '../../../core/contributions/depot-repository';
-import { Depot, DepotStatut, libelleDepotStatut } from '../../../core/contributions/depot.model';
+import { DepotRepository } from '../../../core/contributions';
+import { Depot, DepotStatut, libelleDepotStatut } from '../../../core/contributions';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-skeleton';
 import { Refreshable } from '../../../shared/ui/refreshable/refreshable';
