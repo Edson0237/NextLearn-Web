@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { HistoriqueRecherches } from './recherche/historique-recherches';
+import { HistoriqueRecherches } from './recherche';
 import { EchelleTexte, PreferencesAccessibilite } from './preferences';
 import { TraductionService } from './i18n';
 
