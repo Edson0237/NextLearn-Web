@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { SwUpdate } from '@angular/service-worker';
 import { Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MiseAJourService } from './mise-a-jour.service';
+import { MiseAJourService } from '../services/mise-a-jour.service';
 
 describe('MiseAJourService', () => {
   let versions: Subject<unknown>;

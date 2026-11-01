@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TraductionPipe } from '../../core/i18n';
-import { InstallationService } from '../../core/pwa/installation.service';
+import { InstallationService } from '../../core/pwa';
 import { GuideInstallation } from '../../shared/ui/guide-installation/guide-installation';
 import { Icon } from '../../shared/ui/icon/icon';
 import { IconName } from '../../shared/ui/icon/icon-paths';

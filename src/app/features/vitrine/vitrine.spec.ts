@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { InstallationService } from '../../core/pwa/installation.service';
+import { InstallationService } from '../../core/pwa';
 import { Vitrine } from './vitrine';
 
 /**

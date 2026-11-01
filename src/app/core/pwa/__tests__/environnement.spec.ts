@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { casInstallation } from './cas-installation';
-import { detecterEnvironnement, lireModeAffichage, SourcesEnvironnement } from './environnement';
+import { casInstallation } from '../utils/cas-installation';
+import { detecterEnvironnement, lireModeAffichage, SourcesEnvironnement } from '../utils/environnement';
 
 // Des userAgent réels (ou leurs formes réduites) : la détection doit tenir sur
 // ce que les navigateurs envoient vraiment, pas sur des chaînes idéalisées.
