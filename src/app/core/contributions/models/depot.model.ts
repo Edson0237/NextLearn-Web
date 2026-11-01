@@ -1,4 +1,4 @@
-import { tr } from '../../core/i18n/traduction.service';
+import { tr } from '../../i18n/traduction.service';
 /**
  * Un document proposé par un étudiant, et son sort - traduction de
  * `lib/domains/contributions/domain/models/depot_model.dart`.
