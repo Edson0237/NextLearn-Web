@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
-import { Failure } from '../models/failure.model';
+import { Failure } from '../models';
 import { firstValueFrom } from 'rxjs';
 import { EtatRecours, Recours, etatRecoursDepuisApi, recoursDepuisApi, RecoursType } from './recours.model';
 

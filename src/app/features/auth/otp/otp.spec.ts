@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { Otp } from './otp';
 import { AuthService } from '../../../core/auth';
-import { ParcoursOtp } from '../../../core/models/parcours-otp.model';
+import { ParcoursOtp } from '../../../core/models';
 
 /**
  * Ce que ce test protège : `estConnexion()` doit lire la démarche

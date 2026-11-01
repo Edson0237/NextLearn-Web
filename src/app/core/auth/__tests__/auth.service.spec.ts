@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AuthService } from '../services/auth.service';
-import { NiveauEtude } from '../../models/user.model';
+import { NiveauEtude } from '../../models';
 
 /**
  * Ce que ces tests protègent : le garde de `register()` (des infos

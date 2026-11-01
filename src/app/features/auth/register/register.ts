@@ -11,10 +11,10 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { GoogleIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router/app-routes';
-import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models/domaine.model';
-import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models/user.model';
+import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models';
+import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models';
 import { FiliereOption, JustificatifType, OptionReference, Universite } from '../../../core/references/references.model';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 
 type Statut = 'verrouille' | 'chargement' | 'pret' | 'erreur';
 

@@ -18,7 +18,7 @@ import {
   DocumentModel,
   DocumentType,
   } from '../../core/bibliotheque';
-import { libelleNiveau } from '../../core/models/user.model';
+import { libelleNiveau } from '../../core/models';
 import { DocumentCard, EtiquetteDocument } from '../../shared/ui/document-card/document-card';
 import { AppHeader } from '../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../shared/ui/search-bar/search-bar';

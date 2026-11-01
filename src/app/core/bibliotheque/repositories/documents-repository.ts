@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../../models/failure.model';
+import { Failure } from '../../models';
 import { DocumentModel, documentDepuisApi, DocumentPage, pageDocumentsDepuisApi, DocumentSort } from '../models/document.model';
 import { enFailure } from '../../network/erreur-api';
 

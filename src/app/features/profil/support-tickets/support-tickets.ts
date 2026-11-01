@@ -8,7 +8,7 @@ import { SupportRepository, SupportTicket, SupportTicketStatus, libelleStatutTic
 import { ReportRepository } from '../../../core/moderation/report-repository';
 import { CibleSignalement, MonSignalement, StatutSignalement } from '../../../core/moderation/report.model';
 import { tr } from '../../../core/i18n';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 
 /**
  * Historique des tickets support - traduction de `SupportTicketsPage`

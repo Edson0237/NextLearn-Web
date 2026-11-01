@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
+import { Failure } from '../models';
 import {
   FiliereOption, JustificatifType, MatiereOption, OptionReference, TypeContenuOption, Universite,
   filiereDepuisJson, justificatifTypeDepuisJson, matiereDepuisJson, optionDepuisJson,

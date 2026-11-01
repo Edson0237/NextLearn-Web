@@ -8,7 +8,7 @@ import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { SessionAppareil, SessionRepository } from '../../../core/profil/session-repository';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 
 /**
  * Sessions / appareils connectés - traduction de `SessionsPage`

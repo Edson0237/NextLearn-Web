@@ -9,7 +9,7 @@ import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-ac
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Identite } from '../../../shared/ui/identite/identite';
 import { AppRoutes } from '../../../core/router/app-routes';
-import { initiales } from '../../../core/models/user.model';
+import { initiales } from '../../../core/models';
 
 /**
  * Déverrouillage d'une session active - traduction d'`UnlockPage`

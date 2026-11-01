@@ -10,7 +10,7 @@ import { AuthService } from '../../../core/auth';
 import { ProfilRepository } from '../../../core/profil/profil-repository';
 import { SuppressionRapport } from '../../../core/profil/profil.model';
 import { AppRoutes } from '../../../core/router/app-routes';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 
 /**
  * Suppression du compte en deux étapes - traduction de `DeleteAccountPage`

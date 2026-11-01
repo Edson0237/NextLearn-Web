@@ -1,4 +1,4 @@
-import { Cycle, NiveauEtude, libelleNiveau, niveauDepuisTexte, utilisateurDepuisApi } from './user.model';
+import { Cycle, NiveauEtude, libelleNiveau, niveauDepuisTexte, utilisateurDepuisApi } from '../user.model';
 
 /**
  * Ce que ce test protège : la tolérance à l'ancienne notation (L1..M2),

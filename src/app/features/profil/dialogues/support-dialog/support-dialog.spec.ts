@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SupportRepository } from '../../../../core/profil/support-repository';
 import { ToastService } from '../../../../shared/ui/toast/toast';
-import { Failure } from '../../../../core/models/failure.model';
+import { Failure } from '../../../../core/models';
 import { SupportDialog } from './support-dialog';
 
 describe('SupportDialog', () => {

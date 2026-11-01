@@ -11,8 +11,8 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { Badge } from '../../../shared/ui/badge/badge';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { SettingsList } from '../settings-list/settings-list';
-import { Failure } from '../../../core/models/failure.model';
-import { nomComplet, initiales, libelleNiveau } from '../../../core/models/user.model';
+import { Failure } from '../../../core/models';
+import { nomComplet, initiales, libelleNiveau } from '../../../core/models';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { AppRoutes } from '../../../core/router/app-routes';
 
