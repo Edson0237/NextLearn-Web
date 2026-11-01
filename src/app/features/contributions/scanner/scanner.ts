@@ -6,8 +6,8 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { AppRoutes } from '../../../core/router';
-import { Numerisation, PageNumerisee, ScanTransfert } from '../../../core/scan/numerisation';
-import { assemblerPdf } from '../../../core/scan/pdf-assembleur';
+import { Numerisation, PageNumerisee, ScanTransfert } from '../../../core/scan';
+import { assemblerPdf } from '../../../core/scan';
 import { ReferencesRepository } from '../../../core/references';
 
 /**

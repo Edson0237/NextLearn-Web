@@ -11,7 +11,7 @@ import { niveauCourt } from '../../../core/models';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Failure } from '../../../core/models';
-import { ScanTransfert } from '../../../core/scan/numerisation';
+import { ScanTransfert } from '../../../core/scan';
 import { AppRoutes } from '../../../core/router';
 
 /**
