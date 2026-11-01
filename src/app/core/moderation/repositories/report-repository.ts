@@ -8,8 +8,8 @@ import {
   MonSignalement,
   monSignalementDepuisApi,
   motifDepuisApi,
-} from './report.model';
-import { enFailure } from '../network/erreur-api';
+} from '../models/report.model';
+import { enFailure } from '../../network/erreur-api';
 
 /**
  * Signalement de contenu - traduction de `ReportRemoteRepository`
