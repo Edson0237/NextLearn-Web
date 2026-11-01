@@ -17,7 +17,7 @@ import { GuideInstallation } from '../../../shared/ui/guide-installation/guide-i
     <div class="page"><nl-guide-installation /></div>
   `,
   styles: `
-    :host { display: block; min-height: 100dvh; background: var(--bg-canvas); }
+    :host { display: block; min-height: var(--ecran-haut, 100dvh); background: var(--bg-canvas); }
     .page { padding: var(--space-lg) var(--space-page) var(--space-xxxl); }
   `,
 })
