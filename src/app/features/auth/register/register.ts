@@ -2,14 +2,14 @@ import { computed, ChangeDetectionStrategy, Component, effect, inject, signal, u
 import { tr } from '../../../core/i18n/traduction.service';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
-import { AuthRepository } from '../../../core/auth/auth-repository';
+import { AuthService } from '../../../core/auth';
+import { AuthRepository } from '../../../core/auth';
 import { ReferencesRepository } from '../../../core/references/references-repository';
 import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille-selection';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
-import { GoogleIdentite } from '../../../core/auth/google-identite';
+import { GoogleIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models/domaine.model';
 import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models/user.model';

@@ -1,9 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AuthRepository } from './auth-repository';
-import { SecureStorageService } from '../storage/secure-storage.service';
-import { ParcoursOtp } from '../models/parcours-otp.model';
+import { AuthRepository } from '../repositories/auth-repository';
+import { SecureStorageService } from '../../storage/secure-storage.service';
+import { ParcoursOtp } from '../../models/parcours-otp.model';
 
 /**
  * Ce que ces tests protègent : « Se connecter avec Google » n'ouvre une session

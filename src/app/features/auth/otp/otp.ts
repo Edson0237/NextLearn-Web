@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, OnDestr
 import { tr } from '../../../core/i18n/traduction.service';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router/app-routes';

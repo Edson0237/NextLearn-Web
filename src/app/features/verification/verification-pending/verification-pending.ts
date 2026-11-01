@@ -8,7 +8,7 @@ import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { VerificationRepository } from '../../../core/verification/verification-repository';
 import { VerificationService } from '../../../core/verification/verification.service';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import {
   VERIFICATION_AUCUNE,
   VerificationState,

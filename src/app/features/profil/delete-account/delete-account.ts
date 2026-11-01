@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { ToastService } from '../../../shared/ui/toast/toast';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { ProfilRepository } from '../../../core/profil/profil-repository';
 import { SuppressionRapport } from '../../../core/profil/profil.model';
 import { AppRoutes } from '../../../core/router/app-routes';

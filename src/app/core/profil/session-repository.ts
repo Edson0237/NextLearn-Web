@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Appareil } from '../auth/appareil';
+import { Appareil } from '../auth';
 import { enFailure } from '../network/erreur-api';
 
 /** Un appareil connecté au compte. */

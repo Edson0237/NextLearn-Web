@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { InstallationService } from '../../../core/pwa/installation.service';
 import { FavorisEtat } from '../../../shared/services/favoris-etat';
 import { ThemeService, ThemeMode } from '../../../shared/services/theme';

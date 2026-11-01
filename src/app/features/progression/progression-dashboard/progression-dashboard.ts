@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { libelleNiveau } from '../../../core/models/user.model';
 import { ProgressionRepository } from '../../../core/progression/progression-repository';
 import { ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession } from '../../../core/progression/progression.model';

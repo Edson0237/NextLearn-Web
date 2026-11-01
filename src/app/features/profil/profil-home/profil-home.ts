@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild
 import { tr } from '../../../core/i18n/traduction.service';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { ProfilRepository } from '../../../core/profil/profil-repository';
 import { ProfilStats } from '../../../core/profil/profil.model';
 import { Avatar } from '../../../shared/ui/avatar/avatar';

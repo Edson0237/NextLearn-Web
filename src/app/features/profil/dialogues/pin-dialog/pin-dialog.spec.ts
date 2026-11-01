@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth';
 import { ToastService } from '../../../../shared/ui/toast/toast';
 import { PinDialog } from './pin-dialog';
 

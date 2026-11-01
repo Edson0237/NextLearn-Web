@@ -11,7 +11,7 @@ import { VerificationRepository } from '../../../core/verification/verification-
 import { VerificationService } from '../../../core/verification/verification.service';
 import { ReferencesRepository } from '../../../core/references/references-repository';
 import { JustificatifType } from '../../../core/references/references.model';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { libelleNiveau, niveauCourt } from '../../../core/models/user.model';
 import { VERIFICATION_AUCUNE, VerificationState, VerificationStatut, estApprouve, verificationDepuisJson } from '../../../core/models/verification.model';
 import { AppRoutes } from '../../../core/router/app-routes';

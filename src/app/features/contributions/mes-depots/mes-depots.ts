@@ -11,7 +11,7 @@ import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Failure } from '../../../core/models/failure.model';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { libelleNiveau } from '../../../core/models/user.model';
 import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
 

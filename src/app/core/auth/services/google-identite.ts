@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { AuthRepository } from './auth-repository';
+import { AuthRepository } from '../repositories/auth-repository';
 
 /** Ce que nous utilisons de Google Identity Services (le script `accounts.google.com/gsi/client`). */
 interface GoogleId {

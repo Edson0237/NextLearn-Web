@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } 
 import { TraductionPipe } from '../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../core/auth';
 import { DocumentsRepository } from '../../core/bibliotheque/documents-repository';
 import { ProfilRepository } from '../../core/profil/profil-repository';
 import { FormatsService } from '../../core/references/formats.service';

@@ -8,9 +8,9 @@ import { GuideInstallation } from '../../shared/ui/guide-installation/guide-inst
 import { ReseauService } from '../../core/network/reseau.service';
 import { MiseAJourService } from '../../core/pwa/mise-a-jour.service';
 import { InstallationService } from '../../core/pwa/installation.service';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../core/auth';
 import { PreferenceNotifications } from '../../core/notifications/preference-notifications';
-import { estAuthentifie } from '../../core/auth/auth.model';
+import { estAuthentifie } from '../../core/auth';
 
 /**
  * Racine de toute l'application sous `/app` - le point d'entrée des styles
