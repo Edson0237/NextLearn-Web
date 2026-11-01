@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { Failure } from '../../../core/models';
-import { ReportRepository } from '../../../core/moderation/report-repository';
-import { CibleSignalement } from '../../../core/moderation/report.model';
+import { ReportRepository } from '../../../core/moderation';
+import { CibleSignalement } from '../../../core/moderation';
 import { FeuilleActionService } from '../bottom-sheet/feuille-action';
 import { FeuilleSelectionService } from '../bottom-sheet/feuille-selection';
 import { ToastService } from '../toast/toast';
