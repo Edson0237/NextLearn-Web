@@ -1,5 +1,5 @@
 import { DestroyRef, Injectable, computed, inject, signal } from '@angular/core';
-import { Environnement, ModeAffichage, detecterEnvironnement, lireModeAffichage, lireSourcesNavigateur } from './environnement';
+import { Environnement, ModeAffichage, detecterEnvironnement, lireModeAffichage, lireSourcesNavigateur } from '../utils/environnement';
 
 /** L'événement Chrome, absent des types standard du DOM. */
 interface InvitationInstallation extends Event {

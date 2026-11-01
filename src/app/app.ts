@@ -4,8 +4,8 @@ import { HistoriqueNavigation } from './core/router/historique-navigation';
 import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
 import { GlobalErrorService } from './core/error-handling';
-import { InstallationService } from './core/pwa/installation.service';
-import { MiseAJourService } from './core/pwa/mise-a-jour.service';
+import { InstallationService } from './core/pwa';
+import { MiseAJourService } from './core/pwa';
 
 /**
  * Coque racine, réduite au routage depuis que la vitrine et l'application

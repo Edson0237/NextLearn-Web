@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { InstallationService } from './installation.service';
+import { InstallationService } from '../services/installation.service';
 
 /** Une invitation `beforeinstallprompt` simulée, avec le choix que l'utilisateur fera. */
 function invitation(issue: 'accepted' | 'dismissed' | 'erreur') {

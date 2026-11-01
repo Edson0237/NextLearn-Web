@@ -1,4 +1,4 @@
-import { CasInstallation } from '../../../core/pwa/cas-installation';
+import { CasInstallation } from '../../../core/pwa';
 import { IconName } from '../icon/icon-paths';
 
 /** Une étape du guide : une clé de traduction, et l'icône du geste quand il en a une. */
