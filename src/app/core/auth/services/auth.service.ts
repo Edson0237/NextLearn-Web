@@ -5,7 +5,7 @@ import { AuthRepository } from '../repositories/auth-repository';
 import { SessionExpiredService } from '../../network';
 import { VerificationService } from '../../verification/verification.service';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
-import { VerrouillageApp } from '../../preferences/verrouillage-app';
+import { VerrouillageApp } from '../../preferences';
 import { Cycle, NiveauEtude, NiveauxDuCycle } from '../../models';
 import { ProfilGoogle, ReponseGoogle } from '../repositories/auth-repository';
 import { ParcoursOtp } from '../../models';
