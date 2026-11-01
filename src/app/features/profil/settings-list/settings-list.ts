@@ -8,7 +8,7 @@ import {
   EchelleTexte,
   LIBELLES_ECHELLE,
   PreferencesAccessibilite,
-} from '../../../core/preferences/preferences-accessibilite';
+} from '../../../core/preferences';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n';
 import { PreferenceNotifications } from '../../../core/notifications';
@@ -18,7 +18,7 @@ import { FeuilleSelectionService, ChoixSelection } from '../../../shared/ui/bott
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router/app-routes';
-import { VerrouillageApp } from '../../../core/preferences/verrouillage-app';
+import { VerrouillageApp } from '../../../core/preferences';
 import { VERSION_APP } from '../../../core/version';
 import { PinDialog } from '../dialogues/pin-dialog/pin-dialog';
 import { SupportDialog } from '../dialogues/support-dialog/support-dialog';

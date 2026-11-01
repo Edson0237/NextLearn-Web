@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { HistoriqueRecherches } from './recherche/historique-recherches';
-import { EchelleTexte, PreferencesAccessibilite } from './preferences/preferences-accessibilite';
+import { EchelleTexte, PreferencesAccessibilite } from './preferences';
 import { TraductionService } from './i18n';
 
 /**
