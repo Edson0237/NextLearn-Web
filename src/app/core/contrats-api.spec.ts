@@ -5,7 +5,7 @@ import {
   jourDepuisApi,
   matiereDepuisApi,
   statsDepuisApi,
-} from './progression/progression.model';
+} from './progression';
 import { resultatQuizDepuisApi } from './quiz/quiz.model';
 import { verificationDepuisJson, VerificationStatut, bloqueAcces } from './models';
 import { DocumentType } from './bibliotheque';
