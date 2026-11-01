@@ -15,7 +15,7 @@ import { provideRouter, RouteReuseStrategy } from '@angular/router';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/network/auth.interceptor';
 import { TabReuseStrategy } from './core/router/tab-reuse-strategy';
-import { AppErrorHandler } from './core/error-handling/app-error-handler';
+import { AppErrorHandler } from './core/error-handling';
 import { provideServiceWorker } from '@angular/service-worker';
 import { TraductionService } from './core/i18n/traduction.service';
 
