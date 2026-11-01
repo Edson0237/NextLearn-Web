@@ -1,4 +1,4 @@
-import { validerPin } from './pin-policy';
+import { validerPin } from '../services/pin-policy';
 
 /**
  * Seul le format est contrôlé : l'utilisateur choisit librement son code,

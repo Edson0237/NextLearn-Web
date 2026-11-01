@@ -3,7 +3,7 @@ import { provideHttpClientTesting, HttpTestingController } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ProfilHome } from './profil-home';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { UserModel, NiveauEtude, Cycle, Langue } from '../../../core/models/user.model';
 
 function tick(): Promise<void> {

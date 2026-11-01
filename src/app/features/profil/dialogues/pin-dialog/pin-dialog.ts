@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { TraductionPipe } from '../../../../core/i18n/t.pipe';
 import { tr } from '../../../../core/i18n/traduction.service';
-import { AuthService } from '../../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth';
 import { ToastService } from '../../../../shared/ui/toast/toast';
 
 /**

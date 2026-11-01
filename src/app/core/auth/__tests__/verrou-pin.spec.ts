@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { VerrouPin } from './verrou-pin';
+import { VerrouPin } from '../services/verrou-pin';
 
 /**
  * Une horloge qui ne pardonne pas une erreur d'un cran : 30 s, 1 min, 2 min,

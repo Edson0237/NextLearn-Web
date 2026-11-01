@@ -1,17 +1,17 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppRoutes } from '../router/app-routes';
-import { AuthRepository } from './auth-repository';
-import { SessionExpiredService } from '../network/session-expired.service';
-import { VerificationService } from '../verification/verification.service';
-import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from './auth.model';
-import { VerrouillageApp } from '../preferences/verrouillage-app';
-import { Cycle, NiveauEtude, NiveauxDuCycle } from '../models/user.model';
-import { ProfilGoogle, ReponseGoogle } from './auth-repository';
-import { ParcoursOtp } from '../models/parcours-otp.model';
-import { StatutDemandeOtp } from '../models/demande-otp.model';
-import { Failure } from '../models/failure.model';
-import { ProfilRepository } from '../profil/profil-repository';
+import { AppRoutes } from '../../router/app-routes';
+import { AuthRepository } from '../repositories/auth-repository';
+import { SessionExpiredService } from '../../network/session-expired.service';
+import { VerificationService } from '../../verification/verification.service';
+import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
+import { VerrouillageApp } from '../../preferences/verrouillage-app';
+import { Cycle, NiveauEtude, NiveauxDuCycle } from '../../models/user.model';
+import { ProfilGoogle, ReponseGoogle } from '../repositories/auth-repository';
+import { ParcoursOtp } from '../../models/parcours-otp.model';
+import { StatutDemandeOtp } from '../../models/demande-otp.model';
+import { Failure } from '../../models/failure.model';
+import { ProfilRepository } from '../../profil/profil-repository';
 import { VerrouPin } from './verrou-pin';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */

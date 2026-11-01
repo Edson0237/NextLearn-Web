@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { tr } from '../../../core/i18n/traduction.service';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
-import { BiometricService } from '../../../core/auth/biometric.service';
+import { AuthService } from '../../../core/auth';
+import { BiometricService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Identite } from '../../../shared/ui/identite/identite';

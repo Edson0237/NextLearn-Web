@@ -18,7 +18,7 @@ import { Button } from '../../../shared/ui/button/button';
 import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
 import { FormatsService } from '../../../core/references/formats.service';
 import { ContexteService } from '../../../core/contexte/contexte.service';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import {
   DocumentModel,
   DocumentType,

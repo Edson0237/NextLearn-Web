@@ -2,7 +2,7 @@ import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../core/auth';
 import { SecureStorageService } from '../../../core/storage/secure-storage.service';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';

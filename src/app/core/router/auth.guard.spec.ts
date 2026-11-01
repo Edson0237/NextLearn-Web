@@ -5,7 +5,7 @@ import { Location } from '@angular/common';
 import { Router, provideRouter } from '@angular/router';
 import { AppRoutes } from './app-routes';
 import { authGuard } from './auth.guard';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth';
 import { PendingDestinationService } from './pending-destination.service';
 
 /**
