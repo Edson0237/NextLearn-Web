@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assemblerPdf } from './pdf-assembleur';
+import { assemblerPdf } from '../utils/pdf-assembleur';
 
 const jpeg = (n: number) => new Uint8Array([0xff, 0xd8, ...Array.from({ length: n }, (_, i) => i % 250), 0xff, 0xd9]);
 const texte = (b: Uint8Array) => new TextDecoder('latin1').decode(b);

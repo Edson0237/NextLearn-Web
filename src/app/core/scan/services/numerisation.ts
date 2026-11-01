@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { PageJpeg } from './pdf-assembleur';
+import { PageJpeg } from '../utils/pdf-assembleur';
 
 /** Côté le plus long d'une page numérisée : assez pour lire un cours, assez léger pour le réseau. */
 const COTE_MAX = 2000;
