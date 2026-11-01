@@ -32,7 +32,7 @@ describe('Register - cascade académique', () => {
         provideRouter([]),
         { provide: FeuilleSelectionService, useValue: { ouvrir } },
         // Google n'est pas l'objet de ces tests : le bouton reste muet, sans requête de configuration.
-        { provide: GoogleIdentite, useValue: { disponible: signal(false), preparer: async () => false } },
+        { provide: GoogleIdentite, useValue: { disponible: signal(false), desactive: signal(true), preparer: async () => false } },
       ],
     });
     const fixture = TestBed.createComponent(Register);

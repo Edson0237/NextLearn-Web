@@ -41,7 +41,8 @@ describe('AuthRepository - connexion Google', () => {
   it('reste muet quand le serveur est injoignable : l’écran garde le parcours par code', async () => {
     const c = repo.configGoogle();
     http.expectOne('/api/auth/google/config').error(new ProgressEvent('error'));
-    expect(await c).toEqual({ enabled: false });
+    // « Injoignable » n'est pas « désactivé » : l'appelant peut réessayer.
+    expect(await c).toEqual({ enabled: false, injoignable: true });
   });
 
   it('authenticated : ouvre la session et envoie l’appareil avec le jeton', async () => {
