@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { FavorisRepository } from '../../core/bibliotheque/favoris-repository';
+import { FavorisRepository } from '../../core/bibliotheque';
 import { ToastService } from '../ui/toast/toast';
 import { tr } from '../../core/i18n/traduction.service';
 

@@ -1,4 +1,4 @@
-import { metaDocument, noteDocument } from '../../core/bibliotheque/document.model';
+import { metaDocument, noteDocument } from '../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { TraductionPipe } from '../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
@@ -8,9 +8,9 @@ import { DocumentCard } from '../../shared/ui/document-card/document-card';
 import { IconName } from '../../shared/ui/icon/icon-paths';
 import { Icon } from '../../shared/ui/icon/icon';
 import { EmptyState } from '../../shared/ui/empty-state/empty-state';
-import { DocumentsRepository } from '../../core/bibliotheque/documents-repository';
+import { DocumentsRepository } from '../../core/bibliotheque';
 import { HistoriqueRecherches } from '../../core/recherche/historique-recherches';
-import { DocumentModel, DocumentType } from '../../core/bibliotheque/document.model';
+import { DocumentModel, DocumentType } from '../../core/bibliotheque';
 import { AppRoutes } from '../../core/router/app-routes';
 import { TypeDocumentPipe } from '../../shared/ui/type-document/presentation-type-document';
 

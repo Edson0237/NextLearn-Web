@@ -1,4 +1,4 @@
-import { DocumentType, documentDepuisApi, labelTypeDocument, typeDocumentDepuisApi, typeConnu, enregistrerFormatsServeur } from './document.model';
+import { DocumentType, documentDepuisApi, labelTypeDocument, typeDocumentDepuisApi, typeConnu, enregistrerFormatsServeur } from '../models/document.model';
 
 describe('DocumentModel', () => {
   it('parse un document depuis l\'API et résout les références', () => {

@@ -1,4 +1,4 @@
-import { metaDocument, noteDocument } from '../../../core/bibliotheque/document.model';
+import { metaDocument, noteDocument } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { tr } from '../../../core/i18n/traduction.service';
@@ -12,18 +12,18 @@ import { SearchBar } from '../../../shared/ui/search-bar/search-bar';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { SectionHeader } from '../../../shared/ui/section-header/section-header';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
-import { OfflineRepository } from '../../../core/bibliotheque/offline-repository';
-import { StockageHorsLigne } from '../../../core/bibliotheque/stockage-hors-ligne';
-import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
-import { FavorisRepository } from '../../../core/bibliotheque/favoris-repository';
+import { OfflineRepository } from '../../../core/bibliotheque';
+import { StockageHorsLigne } from '../../../core/bibliotheque';
+import { DocumentsRepository } from '../../../core/bibliotheque';
+import { FavorisRepository } from '../../../core/bibliotheque';
 import {
   LectureProgress,
   LectureProgressRepository,
-} from '../../../core/bibliotheque/lecture-progress-repository';
+} from '../../../core/bibliotheque';
 import {
   DocumentModel,
   DocumentType,
-  } from '../../../core/bibliotheque/document.model';
+  } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 

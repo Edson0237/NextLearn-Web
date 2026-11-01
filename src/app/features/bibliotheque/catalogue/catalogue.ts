@@ -5,9 +5,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
-import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
+import { DocumentsRepository } from '../../../core/bibliotheque';
 import { ContexteService } from '../../../core/contexte/contexte.service';
-import { DocumentModel, DocumentType } from '../../../core/bibliotheque/document.model';
+import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 /** La teinte des dossiers : suit le thème, comme le reste de l'interface. */

@@ -5,10 +5,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { DocumentsRepository } from '../../../core/bibliotheque/documents-repository';
-import { LectureProgressRepository } from '../../../core/bibliotheque/lecture-progress-repository';
+import { DocumentsRepository } from '../../../core/bibliotheque';
+import { LectureProgressRepository } from '../../../core/bibliotheque';
 import { ProgressionRepository } from '../../../core/progression/progression-repository';
-import { StockageHorsLigne } from '../../../core/bibliotheque/stockage-hors-ligne';
+import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { HistoriqueNavigation } from '../../../core/router/historique-navigation';
 

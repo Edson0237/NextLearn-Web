@@ -1,10 +1,10 @@
-import { metaDocument, noteDocument } from '../../core/bibliotheque/document.model';
+import { metaDocument, noteDocument } from '../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TraductionPipe } from '../../core/i18n/t.pipe';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
-import { DocumentsRepository } from '../../core/bibliotheque/documents-repository';
+import { DocumentsRepository } from '../../core/bibliotheque';
 import { ProfilRepository } from '../../core/profil/profil-repository';
 import { FormatsService } from '../../core/references/formats.service';
 import { ContexteRepository } from '../../core/contexte/contexte-repository';
@@ -13,11 +13,11 @@ import {
   LectureProgress,
   LectureProgressRepository,
   pourcentageLu,
-} from '../../core/bibliotheque/lecture-progress-repository';
+} from '../../core/bibliotheque';
 import {
   DocumentModel,
   DocumentType,
-  } from '../../core/bibliotheque/document.model';
+  } from '../../core/bibliotheque';
 import { libelleNiveau } from '../../core/models/user.model';
 import { DocumentCard, EtiquetteDocument } from '../../shared/ui/document-card/document-card';
 import { AppHeader } from '../../shared/ui/app-header/app-header';

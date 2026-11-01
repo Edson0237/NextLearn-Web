@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { DocumentModel, documentDepuisApi } from './document.model';
-import { enFailure } from '../network/erreur-api';
+import { DocumentModel, documentDepuisApi } from '../models/document.model';
+import { enFailure } from '../../network/erreur-api';
 
 /**
  * Gestion des favoris - traduction de `FavorisRemoteRepository`.

@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { DocumentsRepository } from './documents-repository';
+import { DocumentsRepository } from '../repositories/documents-repository';
 
 describe('DocumentsRepository', () => {
   beforeEach(() => {

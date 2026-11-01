@@ -1,4 +1,4 @@
-import { tr } from '../i18n/traduction.service';
+import { tr } from '../../i18n/traduction.service';
 /**
  * Modèle Document - traduction de `DocumentModel`
  * (`lib/domains/bibliotheque/domain/models/document_model.dart`).
