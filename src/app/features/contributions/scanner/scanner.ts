@@ -8,7 +8,7 @@ import { ToastService } from '../../../shared/ui/toast/toast';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { Numerisation, PageNumerisee, ScanTransfert } from '../../../core/scan/numerisation';
 import { assemblerPdf } from '../../../core/scan/pdf-assembleur';
-import { ReferencesRepository } from '../../../core/references/references-repository';
+import { ReferencesRepository } from '../../../core/references';
 
 /**
  * Numériser un document - traduction de `ScannerService` / `_scanner` de

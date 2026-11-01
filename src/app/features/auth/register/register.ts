@@ -4,7 +4,7 @@ import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { AuthRepository } from '../../../core/auth';
-import { ReferencesRepository } from '../../../core/references/references-repository';
+import { ReferencesRepository } from '../../../core/references';
 import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille-selection';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
@@ -13,7 +13,7 @@ import { GoogleIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models';
 import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models';
-import { FiliereOption, JustificatifType, OptionReference, Universite } from '../../../core/references/references.model';
+import { FiliereOption, JustificatifType, OptionReference, Universite } from '../../../core/references';
 import { Failure } from '../../../core/models';
 
 type Statut = 'verrouille' | 'chargement' | 'pret' | 'erreur';

@@ -16,7 +16,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { DocumentsRepository } from '../../../core/bibliotheque';
-import { FormatsService } from '../../../core/references/formats.service';
+import { FormatsService } from '../../../core/references';
 import { ContexteService } from '../../../core/contexte';
 import { AuthService } from '../../../core/auth';
 import {

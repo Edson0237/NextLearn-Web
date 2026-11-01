@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { ReferencesRepository } from './references-repository';
-import { DocumentType, enregistrerFormatsServeur } from '../bibliotheque';
+import { ReferencesRepository } from '../repositories/references-repository';
+import { DocumentType, enregistrerFormatsServeur } from '../../bibliotheque';
 
 /** Un format de ressource tel que l'administration le propose. */
 export interface FormatPropose {
