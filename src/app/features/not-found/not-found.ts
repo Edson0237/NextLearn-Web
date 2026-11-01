@@ -34,7 +34,7 @@ import { ThemeService } from '../../shared/services/theme';
   styles: [
     `
       .nl-404 {
-        min-height: 100dvh;
+        min-height: var(--ecran-haut, 100dvh);
         display: flex;
         align-items: center;
         justify-content: center;

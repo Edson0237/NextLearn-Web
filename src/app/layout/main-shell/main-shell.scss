@@ -3,7 +3,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: var(--ecran-haut, 100dvh);
   background: var(--bg-canvas);
 }
 

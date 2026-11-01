@@ -1,6 +1,6 @@
 :host {
   display: block;
-  height: 100dvh;
+  height: var(--ecran-haut, 100dvh);
 }
 
 .nl-splash {

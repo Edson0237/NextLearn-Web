@@ -10,7 +10,7 @@
   align-items: center;
   text-align: center;
   padding: var(--space-xxl);
-  min-height: 100dvh;
+  min-height: var(--ecran-haut, 100dvh);
   justify-content: center;
   background: var(--bg-canvas);
   font-family: var(--font-family-body);

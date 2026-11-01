@@ -16,6 +16,13 @@
   // `100dvh` (dynamic viewport height) suit la hauteur réelle.
   min-height: 100dvh;
 
+  // La hauteur réellement disponible aux écrans : la fenêtre moins les zones
+  // sûres que `.nl-app` réserve en padding. Un écran calé sur `100dvh` seul
+  // dépasse d'autant (encoche + barre d'accueil, environ 80 px sur iPhone en
+  // application installée) : le bas du contenu sort de l'écran et il faut
+  // tirer la page vers le haut pour le voir.
+  --ecran-haut: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+
   // La zone visible contourne l'encoche et la barre d'accueil. Sans
   // `viewport-fit=cover` dans `index.html`, ces variables restent à 0 et ce
   // padding est sans effet - inoffensif, pas une dépendance cachée.

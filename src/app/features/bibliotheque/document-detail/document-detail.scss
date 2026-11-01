@@ -3,14 +3,14 @@
 
 :host {
   display: block;
-  min-height: 100dvh;
+  min-height: var(--ecran-haut, 100dvh);
   background: var(--bg-canvas);
 }
 
 .doc-detail {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: var(--ecran-haut, 100dvh);
 }
 
 // ── Barre supérieure ───────────────────────────────────────────────────────

@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100dvh;
+  min-height: var(--ecran-haut, 100dvh);
   padding: var(--space-xxxl) var(--space-xxl) var(--space-xxl);
   background: var(--bg-canvas);
   text-align: center;

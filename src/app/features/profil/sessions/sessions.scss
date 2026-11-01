@@ -1,7 +1,7 @@
 
 :host {
   display: block;
-  min-height: 100vh;
+  min-height: var(--ecran-haut, 100dvh);
   background: var(--bg-canvas);
 }
 
