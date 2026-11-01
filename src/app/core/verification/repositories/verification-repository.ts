@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { VerificationState, verificationDepuisJson } from '../models';
+import { VerificationState, verificationDepuisJson } from '../../models';
 
 @Injectable({ providedIn: 'root' })
 export class VerificationRepository {
