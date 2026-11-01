@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { SupportRepository } from '../../../../core/profil/support-repository';
+import { SupportRepository } from '../../../../core/profil';
 import { ToastService } from '../../../../shared/ui/toast/toast';
 import { Failure } from '../../../../core/models';
 import { SupportDialog } from './support-dialog';

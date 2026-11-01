@@ -11,7 +11,7 @@ import { ProfilGoogle, ReponseGoogle } from '../repositories/auth-repository';
 import { ParcoursOtp } from '../../models';
 import { StatutDemandeOtp } from '../../models';
 import { Failure } from '../../models';
-import { ProfilRepository } from '../../profil/profil-repository';
+import { ProfilRepository } from '../../profil/repositories/profil-repository';
 import { VerrouPin } from './verrou-pin';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
