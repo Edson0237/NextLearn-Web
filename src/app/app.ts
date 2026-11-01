@@ -1,11 +1,11 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HistoriqueNavigation } from './core/router';
+import { HistoriqueNavigation } from './core/router/services/historique-navigation';
 import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
-import { GlobalErrorService } from './core/error-handling';
-import { InstallationService } from './core/pwa';
-import { MiseAJourService } from './core/pwa';
+import { GlobalErrorService } from './core/error-handling/services/global-error.service';
+import { InstallationService } from './core/pwa/services/installation.service';
+import { MiseAJourService } from './core/pwa/services/mise-a-jour.service';
 
 /**
  * Coque racine, réduite au routage depuis que la vitrine et l'application

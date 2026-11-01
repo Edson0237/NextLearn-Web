@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { VERIFICATION_AUCUNE, VerificationState, verificationDepuisJson } from '../../models';
+import { VERIFICATION_AUCUNE, VerificationState, verificationDepuisJson } from '../../models/verification.model';
 
 /**
  * État du dossier de vérification académique - traduction minimale de

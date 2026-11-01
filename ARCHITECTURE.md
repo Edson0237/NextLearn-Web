@@ -59,6 +59,16 @@ src/app/
 │       auth · bibliotheque · epreuves · contributions · profil · progression · quiz · recherche ·
 │       recours · references · moderation · notifications · partage · scan · verification · contexte
 │
+│   Chaque dossier de `core/<feature>/` est rangé par **rôle technique** :
+│       models/          types, interfaces, enums, mappers (`*.model.ts`)
+│       repositories/    appels HTTP vers le backend (`*-repository.ts`)
+│       services/        logique métier et état (`*.service.ts`, règles applicatives)
+│       __tests__/       tous les `*.spec.ts` de la feature
+│       index.ts         barrel : l'API publique consommée hors de la feature
+│   et, quand un fichier n'entre dans aucun de ces rôles, un dossier dédié : `utils/` (fonctions pures),
+│   `config/`, `interceptors/`, `guards/`, `routes/`, `strategies/`, `pipes/`, `handlers/`.
+│   `core/models/` est déjà le dossier des modèles transverses : il garde ses fichiers à plat.
+│
 ├── shared/                                        ─── réutilisable, avec interface ───
 │   ├── ui/              composants : bouton, carte de document, feuilles glissantes (CDK), toast,
 │   │                    barre de page, champ PIN, icônes (Lucide), type-document (présentation)…
@@ -222,3 +232,11 @@ Détection de 16 userAgent, choix de procédure, service (invitation, acceptatio
 
 ### Reste à vérifier sur de vrais appareils (non fait)
 Installation réelle sur Android/Chrome (bouton natif), Chrome et Edge de bureau, iPhone/iPad Safari (« Sur l'écran d'accueil »), Safari macOS 17+ (« Ajouter au Dock »), Samsung Internet, Firefox Android. Les intitulés de menu sont ceux connus à la date de rédaction et peuvent différer selon la version ; Chrome n'émet `beforeinstallprompt` qu'une fois ses critères d'installabilité remplis, et le service worker n'est actif qu'en build de production.
+
+## 9. Barrels de `core/<feature>/index.ts`
+
+- Un barrel n'exporte que ce que le reste de l'application consomme. Hors de la feature, on importe `../core/auth`, pas `../core/auth/services/auth.service`.
+- **Deux exceptions, qui importent le fichier directement** :
+  1. **Les fichiers du chemin de démarrage** (`app.ts`, `app.config.ts`, `app.routes.ts` et ce qu'ils tirent à leur tour). Un barrel est évalué en entier : importer `core/router` depuis `app.ts` rapatriait la garde d'authentification, donc `AuthService` et les dépôts, dans le premier chargement (378 → 414 kB). Rien n'a changé pour les écrans chargés à la demande.
+  2. **Un import entre deux features de `core/` qui fermerait un cycle** (par ex. `auth.service` ↔ `profil`). Cycles contrôlés au niveau des fichiers : 0 avant, 0 après.
+- Après avoir ajouté un import dans un fichier de démarrage, vérifier la taille du bundle initial (`ng build`).
