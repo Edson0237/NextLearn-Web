@@ -4,8 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import {
   ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession,
   statsDepuisApi, badgeDepuisApi, sessionDepuisApi, jourDepuisApi, matiereDepuisApi,
-} from './progression.model';
-import { enFailure } from '../network';
+} from '../models/progression.model';
+import { enFailure } from '../../network';
 
 @Injectable({ providedIn: 'root' })
 export class ProgressionRepository {

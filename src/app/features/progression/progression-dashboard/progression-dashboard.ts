@@ -7,8 +7,8 @@ import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-numb
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { AuthService } from '../../../core/auth';
 import { libelleNiveau } from '../../../core/models';
-import { ProgressionRepository } from '../../../core/progression/progression-repository';
-import { ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession } from '../../../core/progression/progression.model';
+import { ProgressionRepository } from '../../../core/progression';
+import { ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession } from '../../../core/progression';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 @Component({
