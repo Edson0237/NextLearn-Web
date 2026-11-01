@@ -1,8 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
-import { Failure } from '../models';
+import { Failure } from '../../models';
 import { firstValueFrom } from 'rxjs';
-import { EtatRecours, Recours, etatRecoursDepuisApi, recoursDepuisApi, RecoursType } from './recours.model';
+import { EtatRecours, Recours, etatRecoursDepuisApi, recoursDepuisApi, RecoursType } from '../models/recours.model';
 
 @Injectable({ providedIn: 'root' })
 export class RecoursRepository {

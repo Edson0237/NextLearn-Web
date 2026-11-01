@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Button } from '../../../shared/ui/button/button';
-import { RecoursRepository } from '../../../core/recours/recours-repository';
-import { EtatRecours, Recours, RecoursType } from '../../../core/recours/recours.model';
+import { RecoursRepository } from '../../../core/recours';
+import { EtatRecours, Recours, RecoursType } from '../../../core/recours';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 @Component({
