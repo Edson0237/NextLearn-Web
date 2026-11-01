@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Button } from '../../../shared/ui/button/button';
-import { QuizRepository } from '../../../core/quiz/quiz-repository';
-import { QuizAnswerDetail, QuizModel, QuizQuestion, QuizSubmitResult } from '../../../core/quiz/quiz.model';
+import { QuizRepository } from '../../../core/quiz';
+import { QuizAnswerDetail, QuizModel, QuizQuestion, QuizSubmitResult } from '../../../core/quiz';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 @Component({

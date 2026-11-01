@@ -6,7 +6,7 @@ import {
   matiereDepuisApi,
   statsDepuisApi,
 } from './progression';
-import { resultatQuizDepuisApi } from './quiz/quiz.model';
+import { resultatQuizDepuisApi } from './quiz';
 import { verificationDepuisJson, VerificationStatut, bloqueAcces } from './models';
 import { DocumentType } from './bibliotheque';
 import { couleurTypeDocument } from '../shared/ui/type-document/presentation-type-document';

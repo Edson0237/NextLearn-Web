@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models';
-import { QuizModel, QuizSubmitResult, quizDepuisApi, resultatQuizDepuisApi } from './quiz.model';
+import { Failure } from '../../models';
+import { QuizModel, QuizSubmitResult, quizDepuisApi, resultatQuizDepuisApi } from '../models/quiz.model';
 
 @Injectable({ providedIn: 'root' })
 export class QuizRepository {
