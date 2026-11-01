@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { tr } from '../../../core/i18n/traduction.service';
+import { tr } from '../../../core/i18n';
 import { Button } from '../../../shared/ui/button/button';
 import { Card } from '../../../shared/ui/card/card';
 import { Chip } from '../../../shared/ui/chip/chip';

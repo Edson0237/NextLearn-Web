@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
-import { TraductionService } from './traduction.service';
+import { TraductionService } from '../services/traduction.service';
 
 /**
  * `{{ 'authEmail' | t }}` - le texte d'une clé, dans la langue courante.

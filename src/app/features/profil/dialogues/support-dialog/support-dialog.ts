@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
-import { TraductionPipe } from '../../../../core/i18n/t.pipe';
-import { tr } from '../../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../../core/i18n';
+import { tr } from '../../../../core/i18n';
 import { Failure } from '../../../../core/models/failure.model';
 import { SupportRepository } from '../../../../core/profil/support-repository';
 import { ToastService } from '../../../../shared/ui/toast/toast';

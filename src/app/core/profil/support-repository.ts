@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { tr } from '../i18n/traduction.service';
+import { tr } from '../i18n';
 import { enFailure } from '../network/erreur-api';
 
 export enum SupportTicketStatus {

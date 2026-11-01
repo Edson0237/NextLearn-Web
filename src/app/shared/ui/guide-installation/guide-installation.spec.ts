@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Environnement } from '../../../core/pwa/environnement';
 import { InstallationService } from '../../../core/pwa/installation.service';
-import { TraductionService } from '../../../core/i18n/traduction.service';
+import { TraductionService } from '../../../core/i18n';
 import { GuideInstallation } from './guide-installation';
 
 /**

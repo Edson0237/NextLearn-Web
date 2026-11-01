@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { CasInstallation, casInstallation, navigateursProposes } from '../../../core/pwa/cas-installation';
 import { Environnement, Navigateur, Systeme } from '../../../core/pwa/environnement';
 import { InstallationService } from '../../../core/pwa/installation.service';

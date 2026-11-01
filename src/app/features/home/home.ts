@@ -1,6 +1,6 @@
 import { metaDocument, noteDocument } from '../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
-import { TraductionPipe } from '../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
@@ -24,7 +24,7 @@ import { AppHeader } from '../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../shared/ui/search-bar/search-bar';
 import { SectionHeader } from '../../shared/ui/section-header/section-header';
 import { Badge } from '../../shared/ui/badge/badge';
-import { tr } from '../../core/i18n/traduction.service';
+import { tr } from '../../core/i18n';
 import { FeuilleSelectionService } from '../../shared/ui/bottom-sheet/feuille-selection';
 import { Icon } from '../../shared/ui/icon/icon';
 import { EmptyState } from '../../shared/ui/empty-state/empty-state';

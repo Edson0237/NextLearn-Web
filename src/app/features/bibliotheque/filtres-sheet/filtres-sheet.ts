@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { BottomSheetRef, BOTTOM_SHEET_DATA } from '../../../shared/ui/bottom-sheet/bottom-sheet';
 import { BottomSheetShell } from '../../../shared/ui/bottom-sheet/shell/bottom-sheet-shell';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { HapticService } from '../../../shared/services/haptic';
 import { DocumentType } from '../../../core/bibliotheque';
 

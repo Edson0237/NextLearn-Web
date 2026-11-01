@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { ThemeService } from '../../shared/services/theme';
 import { OfflineBanner } from '../../shared/ui/offline-banner/offline-banner';
 import { Icon } from '../../shared/ui/icon/icon';
-import { TraductionPipe } from '../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../core/i18n';
 import { GuideInstallation } from '../../shared/ui/guide-installation/guide-installation';
 import { ReseauService } from '../../core/network/reseau.service';
 import { MiseAJourService } from '../../core/pwa/mise-a-jour.service';

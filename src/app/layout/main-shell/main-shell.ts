@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { tr } from '../../core/i18n/traduction.service';
-import { TraductionPipe } from '../../core/i18n/t.pipe';
+import { tr } from '../../core/i18n';
+import { TraductionPipe } from '../../core/i18n';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Icon } from '../../shared/ui/icon/icon';
 import { HapticService } from '../../shared/services/haptic';

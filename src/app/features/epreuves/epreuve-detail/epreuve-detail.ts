@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { tr } from '../../../core/i18n/traduction.service';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { tr } from '../../../core/i18n';
+import { TraductionPipe } from '../../../core/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves';
 import { EpreuveModel, TypeEpreuve } from '../../../core/epreuves';

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { tr } from '../../../core/i18n/traduction.service';
+import { tr } from '../../../core/i18n';
 import { Failure } from '../../../core/models/failure.model';
 import { ReportRepository } from '../../../core/moderation/report-repository';
 import { CibleSignalement } from '../../../core/moderation/report.model';

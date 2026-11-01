@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, effect, inject, input, output, signal, viewChild } from '@angular/core';
 import { AuthService } from '../../../core/auth';
 import { GoogleIdentite } from '../../../core/auth';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { ResultatPin } from '../resultat-pin/resultat-pin';
 
 /**

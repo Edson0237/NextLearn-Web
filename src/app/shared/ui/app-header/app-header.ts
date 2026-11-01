@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { NotificationsEtat } from '../../../core/notifications/notifications-etat';
 import { Icon } from '../icon/icon';
 import { Avatar } from '../avatar/avatar';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 
 /**
  * L'en-tête de l'application.

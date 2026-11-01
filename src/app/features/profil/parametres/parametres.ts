@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { Location } from '@angular/common';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { SettingsList } from '../settings-list/settings-list';
