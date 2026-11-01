@@ -4,7 +4,7 @@ import { Icon } from '../icon/icon';
 import { IconName } from '../icon/icon-paths';
 import { Badge } from '../badge/badge';
 import { Pressable } from '../../directives/pressable';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 
 /** Une métadonnée de la ligne du bas - pages, poids, date, téléchargements. */
 export interface MetaDocument {

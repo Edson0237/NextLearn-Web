@@ -1,6 +1,6 @@
 import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { SecureStorageService } from '../../../core/storage/secure-storage.service';

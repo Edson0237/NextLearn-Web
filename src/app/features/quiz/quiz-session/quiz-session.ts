@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';

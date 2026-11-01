@@ -1,6 +1,6 @@
 import { metaDocument, noteDocument } from '../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { TraductionPipe } from '../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';

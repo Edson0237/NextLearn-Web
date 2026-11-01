@@ -2,7 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { TraductionService } from './traduction.service';
+import { TraductionService } from '../services/traduction.service';
 
 describe('TraductionService hors ligne', () => {
   let http: HttpTestingController;

@@ -1,8 +1,8 @@
 import { metaDocument, noteDocument } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
-import { tr } from '../../../core/i18n/traduction.service';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { tr } from '../../../core/i18n';
+import { TraductionPipe } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';

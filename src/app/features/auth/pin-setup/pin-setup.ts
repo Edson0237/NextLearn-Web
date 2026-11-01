@@ -1,7 +1,7 @@
 import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { tr } from '../../../core/i18n/traduction.service';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { tr } from '../../../core/i18n';
+import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { validerPin } from '../../../core/auth';

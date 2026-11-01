@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { FavorisRepository } from '../../core/bibliotheque';
 import { ToastService } from '../ui/toast/toast';
-import { tr } from '../../core/i18n/traduction.service';
+import { tr } from '../../core/i18n';
 
 /**
  * Les ressources mises en favoris, partagées par tous les écrans.

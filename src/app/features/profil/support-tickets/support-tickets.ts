@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { Location } from '@angular/common';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
@@ -7,7 +7,7 @@ import { ToastService } from '../../../shared/ui/toast/toast';
 import { SupportRepository, SupportTicket, SupportTicketStatus, libelleStatutTicket } from '../../../core/profil/support-repository';
 import { ReportRepository } from '../../../core/moderation/report-repository';
 import { CibleSignalement, MonSignalement, StatutSignalement } from '../../../core/moderation/report.model';
-import { tr } from '../../../core/i18n/traduction.service';
+import { tr } from '../../../core/i18n';
 import { Failure } from '../../../core/models/failure.model';
 
 /**

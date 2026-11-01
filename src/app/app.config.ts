@@ -17,7 +17,7 @@ import { authInterceptor } from './core/network/auth.interceptor';
 import { TabReuseStrategy } from './core/router/tab-reuse-strategy';
 import { AppErrorHandler } from './core/error-handling';
 import { provideServiceWorker } from '@angular/service-worker';
-import { TraductionService } from './core/i18n/traduction.service';
+import { TraductionService } from './core/i18n';
 
 // Sans cet enregistrement, le canal `fr` n'existe pas dans Angular et les
 // tubes `date` et `number` retombent sur `en-US` : les jours de la semaine

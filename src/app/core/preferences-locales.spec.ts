@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { HistoriqueRecherches } from './recherche/historique-recherches';
 import { EchelleTexte, PreferencesAccessibilite } from './preferences/preferences-accessibilite';
-import { TraductionService } from './i18n/traduction.service';
+import { TraductionService } from './i18n';
 
 /**
  * Les trois réglages que la PWA gardait sur l'appareil sans jamais les

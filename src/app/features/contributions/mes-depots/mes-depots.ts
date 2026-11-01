@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { DepotRepository } from '../../../core/contributions';
 import { Depot, DepotStatut, libelleDepotStatut } from '../../../core/contributions';

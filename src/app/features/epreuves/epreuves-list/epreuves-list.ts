@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves';
 import { EpreuveModel, TypeEpreuve, typeEpreuveVersApi } from '../../../core/epreuves';

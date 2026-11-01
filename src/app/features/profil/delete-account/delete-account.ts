@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { tr } from '../../../core/i18n/traduction.service';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { tr } from '../../../core/i18n';
+import { TraductionPipe } from '../../../core/i18n';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { IconName } from '../../../shared/ui/icon/icon-paths';

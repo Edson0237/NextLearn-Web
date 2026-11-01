@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
-import { tr } from '../../../core/i18n/traduction.service';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
+import { tr } from '../../../core/i18n';
+import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../../core/router/app-routes';
 

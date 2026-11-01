@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { TraductionPipe } from '../../../core/i18n/t.pipe';
-import { tr } from '../../../core/i18n/traduction.service';
+import { TraductionPipe } from '../../../core/i18n';
+import { tr } from '../../../core/i18n';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';

@@ -10,7 +10,7 @@ import {
   PreferencesAccessibilite,
 } from '../../../core/preferences/preferences-accessibilite';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
-import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n/traduction.service';
+import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n';
 import { PreferenceNotifications } from '../../../core/notifications/preference-notifications';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
