@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { NotificationsRepository } from './notifications-repository';
+import { NotificationsRepository } from '../repositories/notifications-repository';
 
 /**
  * Le nombre de notifications non lues - **une seule source**, lue par toutes

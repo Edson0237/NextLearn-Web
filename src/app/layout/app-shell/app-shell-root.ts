@@ -9,7 +9,7 @@ import { ReseauService } from '../../core/network';
 import { MiseAJourService } from '../../core/pwa/mise-a-jour.service';
 import { InstallationService } from '../../core/pwa/installation.service';
 import { AuthService } from '../../core/auth';
-import { PreferenceNotifications } from '../../core/notifications/preference-notifications';
+import { PreferenceNotifications } from '../../core/notifications';
 import { estAuthentifie } from '../../core/auth';
 
 /**

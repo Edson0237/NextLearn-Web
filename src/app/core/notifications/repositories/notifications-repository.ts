@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { NotificationModel, notificationDepuisApi } from './notification.model';
+import { NotificationModel, notificationDepuisApi } from '../models/notification.model';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsRepository {

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { NotificationsEtat } from '../../../core/notifications/notifications-etat';
+import { NotificationsEtat } from '../../../core/notifications';
 import { Icon } from '../icon/icon';
 import { Avatar } from '../avatar/avatar';
 import { TraductionPipe } from '../../../core/i18n';
