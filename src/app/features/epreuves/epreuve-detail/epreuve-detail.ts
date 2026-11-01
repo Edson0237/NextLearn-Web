@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { tr } from '../../../core/i18n/traduction.service';
 import { TraductionPipe } from '../../../core/i18n/t.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EpreuvesRepository } from '../../../core/epreuves/epreuves-repository';
-import { EpreuveModel, TypeEpreuve } from '../../../core/epreuves/epreuve.model';
+import { EpreuvesRepository } from '../../../core/epreuves';
+import { EpreuveModel, TypeEpreuve } from '../../../core/epreuves';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Badge } from '../../../shared/ui/badge/badge';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';

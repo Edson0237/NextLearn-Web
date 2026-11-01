@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models/failure.model';
-import { EpreuveModel, epreuveDepuisJson } from './epreuve.model';
-import { enFailure } from '../network/erreur-api';
+import { Failure } from '../../models/failure.model';
+import { EpreuveModel, epreuveDepuisJson } from '../models/epreuve.model';
+import { enFailure } from '../../network/erreur-api';
 
 /**
  * Accès réseau aux épreuves - traduction d'`EpreuveRemoteRepository`

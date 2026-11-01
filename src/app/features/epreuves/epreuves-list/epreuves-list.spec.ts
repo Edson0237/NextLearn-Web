@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { EpreuvesList } from './epreuves-list';
-import { TypeEpreuve } from '../../../core/epreuves/epreuve.model';
+import { TypeEpreuve } from '../../../core/epreuves';
 
 /**
  * Ce que ce test protège : un sujet de nature inconnue (`typeEpreuve`
