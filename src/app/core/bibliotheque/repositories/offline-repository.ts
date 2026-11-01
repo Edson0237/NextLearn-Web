@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { enFailure } from '../../network/erreur-api';
+import { enFailure } from '../../network';
 
 /**
  * Gestion des documents hors-ligne - traduction de `OfflineRemoteRepository`.

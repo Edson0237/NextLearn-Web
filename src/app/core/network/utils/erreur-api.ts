@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { isDevMode } from '@angular/core';
-import { Failure } from '../models';
+import { Failure } from '../../models';
 
 /**
  * Traduit ce qu'un appel réseau a levé en `Failure`, le seul type d'erreur que

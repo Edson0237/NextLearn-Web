@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { AUTH_PATH } from '../../network/api-config';
+import { AUTH_PATH } from '../../network';
 import { SecureStorageService } from '../../storage/secure-storage.service';
 import { Failure } from '../../models';
 import { Appareil } from '../services/appareil';
@@ -9,8 +9,8 @@ import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDe
 import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../../models';
 import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../../models';
 import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../../models';
-import { enFailure } from '../../network/erreur-api';
-import { donnees } from '../../network/enveloppe-api';
+import { enFailure } from '../../network';
+import { donnees } from '../../network';
 
 /** Durée de repli hors ligne quand aucune échéance n'a encore été mise en cache. */
 const OTP_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;

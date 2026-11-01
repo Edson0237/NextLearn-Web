@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRapportDepuisApi } from './profil.model';
-import { enFailure } from '../network/erreur-api';
-import { donnees, donneesUtilisateur } from '../network/enveloppe-api';
+import { enFailure } from '../network';
+import { donnees, donneesUtilisateur } from '../network';
 import { SecureStorageService } from '../storage/secure-storage.service';
 import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../models';
 

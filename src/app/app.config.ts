@@ -13,7 +13,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter, RouteReuseStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/network/auth.interceptor';
+import { authInterceptor } from './core/network';
 import { TabReuseStrategy } from './core/router/tab-reuse-strategy';
 import { AppErrorHandler } from './core/error-handling';
 import { provideServiceWorker } from '@angular/service-worker';

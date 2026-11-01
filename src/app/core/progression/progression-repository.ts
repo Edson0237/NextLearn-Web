@@ -5,7 +5,7 @@ import {
   ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession,
   statsDepuisApi, badgeDepuisApi, sessionDepuisApi, jourDepuisApi, matiereDepuisApi,
 } from './progression.model';
-import { enFailure } from '../network/erreur-api';
+import { enFailure } from '../network';
 
 @Injectable({ providedIn: 'root' })
 export class ProgressionRepository {

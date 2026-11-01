@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { estCheminPreAuth } from '../network/api-config';
+import { estCheminPreAuth } from '../network/config/api-config';
 
 /**
  * Erreur unifiée exposée par les services au reste de l'application -

@@ -1,9 +1,9 @@
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { authInterceptor } from './auth.interceptor';
-import { SecureStorageService } from '../storage/secure-storage.service';
-import { SessionExpiredService } from './session-expired.service';
+import { authInterceptor } from '../interceptors/auth.interceptor';
+import { SecureStorageService } from '../../storage/secure-storage.service';
+import { SessionExpiredService } from '../services/session-expired.service';
 
 /**
  * Ce que ce test protège : les deux comportements les plus faciles à

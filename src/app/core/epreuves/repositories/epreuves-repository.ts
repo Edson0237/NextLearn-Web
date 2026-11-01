@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Failure } from '../../models';
 import { EpreuveModel, epreuveDepuisJson } from '../models/epreuve.model';
-import { enFailure } from '../../network/erreur-api';
+import { enFailure } from '../../network';
 
 /**
  * Accès réseau aux épreuves - traduction d'`EpreuveRemoteRepository`

@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../router/app-routes';
 import { AuthRepository } from '../repositories/auth-repository';
-import { SessionExpiredService } from '../../network/session-expired.service';
+import { SessionExpiredService } from '../../network';
 import { VerificationService } from '../../verification/verification.service';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/verrouillage-app';

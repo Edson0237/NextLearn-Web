@@ -1,4 +1,4 @@
-import { donnees, donneesUtilisateur } from './enveloppe-api';
+import { donnees, donneesUtilisateur } from '../utils/enveloppe-api';
 
 describe('enveloppe de l’API', () => {
   it('ouvre l’enveloppe { data }', () => {
