@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { estErreurBenigne } from './erreur-benigne';
+import { estErreurBenigne } from '../utils/erreur-benigne';
 
 describe('estErreurBenigne', () => {
   it('Safari : « Load failed » quand la feuille Partager suspend la page', () => {

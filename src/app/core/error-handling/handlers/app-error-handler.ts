@@ -1,6 +1,6 @@
 import { ErrorHandler, Injectable, inject } from '@angular/core';
-import { GlobalErrorService } from './global-error.service';
-import { estErreurBenigne } from './erreur-benigne';
+import { GlobalErrorService } from '../services/global-error.service';
+import { estErreurBenigne } from '../utils/erreur-benigne';
 
 /** Après un retour sur la page, les requêtes coupées par la suspension échouent encore un instant. */
 const DELAI_RETOUR_MS = 2000;
