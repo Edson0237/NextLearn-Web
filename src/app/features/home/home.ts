@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
 import { DocumentsRepository } from '../../core/bibliotheque';
 import { ProfilRepository } from '../../core/profil';
-import { FormatsService } from '../../core/references/formats.service';
+import { FormatsService } from '../../core/references';
 import { ContexteRepository } from '../../core/contexte';
 import { CONTEXTE_OUVERT, MatiereDuProgramme, typeVisible, fonctionnaliteFermee } from '../../core/contexte';
 import {

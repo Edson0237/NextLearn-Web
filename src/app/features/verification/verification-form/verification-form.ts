@@ -9,8 +9,8 @@ import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { VerificationRepository } from '../../../core/verification/verification-repository';
 import { VerificationService } from '../../../core/verification/verification.service';
-import { ReferencesRepository } from '../../../core/references/references-repository';
-import { JustificatifType } from '../../../core/references/references.model';
+import { ReferencesRepository } from '../../../core/references';
+import { JustificatifType } from '../../../core/references';
 import { AuthService } from '../../../core/auth';
 import { libelleNiveau, niveauCourt } from '../../../core/models';
 import { VERIFICATION_AUCUNE, VerificationState, VerificationStatut, estApprouve, verificationDepuisJson } from '../../../core/models';

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { TypeContenuOption, typeContenuDepuisJson } from '../../references/references.model';
+import { TypeContenuOption, typeContenuDepuisJson } from '../../references';
 import { Depot, DepotLicence, depotDepuisJson } from '../models/depot.model';
 import { enFailure } from '../../network';
 

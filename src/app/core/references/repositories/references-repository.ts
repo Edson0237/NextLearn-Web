@@ -1,12 +1,12 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { Failure } from '../models';
+import { Failure } from '../../models';
 import {
   FiliereOption, JustificatifType, MatiereOption, OptionReference, TypeContenuOption, Universite,
   filiereDepuisJson, justificatifTypeDepuisJson, matiereDepuisJson, optionDepuisJson,
   typeContenuDepuisJson, universiteDepuisJson,
-} from './references.model';
+} from '../models/references.model';
 
 /**
  * Accès réseau aux référentiels - traduction de `ReferencesRemoteRepository`
