@@ -9,7 +9,7 @@ import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-
 import { Refreshable } from '../../../shared/ui/refreshable/refreshable';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Failure } from '../../../core/models';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 interface Filtre {
   readonly matiereId?: string;

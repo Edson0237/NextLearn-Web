@@ -14,7 +14,7 @@ import { SettingsList } from '../settings-list/settings-list';
 import { Failure } from '../../../core/models';
 import { nomComplet, initiales, libelleNiveau } from '../../../core/models';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 /**
  * Onglet Profil - traduction de `ProfilHomePage`

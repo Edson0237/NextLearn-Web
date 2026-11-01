@@ -8,7 +8,7 @@ import { validerPin } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 /**
  * Création du PIN - traduction de `PinSetupPage`

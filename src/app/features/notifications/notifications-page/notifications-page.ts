@@ -9,7 +9,7 @@ import { Button } from '../../../shared/ui/button/button';
 import { NotificationsRepository } from '../../../core/notifications';
 import { NotificationsEtat } from '../../../core/notifications';
 import { NotificationModel, routeDeNotification } from '../../../core/notifications';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 @Component({
   selector: 'nl-notifications-page',

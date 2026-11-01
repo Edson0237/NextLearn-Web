@@ -18,13 +18,13 @@ import { StockageHorsLigne } from '../../../core/bibliotheque';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation';
 import { ContexteService } from '../../../core/contexte';
-import { HistoriqueNavigation } from '../../../core/router/historique-navigation';
+import { HistoriqueNavigation } from '../../../core/router';
 import { LienProfond } from '../../../core/partage';
 import {
   DocumentModel,
   DocumentType,
   } from '../../../core/bibliotheque';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 
 @Component({

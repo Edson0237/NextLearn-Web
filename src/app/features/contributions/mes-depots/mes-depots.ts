@@ -9,7 +9,7 @@ import { Refreshable } from '../../../shared/ui/refreshable/refreshable';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Failure } from '../../../core/models';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { AuthService } from '../../../core/auth';
 import { libelleNiveau } from '../../../core/models';

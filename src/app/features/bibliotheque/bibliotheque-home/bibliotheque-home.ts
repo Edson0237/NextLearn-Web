@@ -25,7 +25,7 @@ import {
   } from '../../../core/bibliotheque';
 import { BottomSheetService } from '../../../shared/ui/bottom-sheet/bottom-sheet';
 import { FiltresSheet, FiltresSheetData, FiltresSheetResultat } from '../filtres-sheet/filtres-sheet';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 
 /** En deçà, la saisie ne filtre pas encore (et ne compte donc pas comme filtre). */

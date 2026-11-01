@@ -79,7 +79,7 @@ for (const [v, ou] of orphelines) {
 // code après connexion, qui rendait l'application inutilisable.
 //
 // `navigateByUrl('/app/' + AppRoutes.X)` prend le chemin tel quel.
-const routes = lire('src/app/core/router/app-routes.ts');
+const routes = lire('src/app/core/router/routes/app-routes.ts');
 const valeurs = new Map(
   [...routes.matchAll(/static readonly (\w+)\s*=\s*'([^']*)'/g)].map((m) => [m[1], m[2]]),
 );

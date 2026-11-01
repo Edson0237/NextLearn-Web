@@ -1,6 +1,6 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HistoriqueNavigation } from './core/router/historique-navigation';
+import { HistoriqueNavigation } from './core/router';
 import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
 import { GlobalErrorService } from './core/error-handling';

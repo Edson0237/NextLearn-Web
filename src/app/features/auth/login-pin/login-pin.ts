@@ -7,7 +7,7 @@ import { SecureStorageService } from '../../../core/storage/secure-storage.servi
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Identite } from '../../../shared/ui/identite/identite';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { initiales } from '../../../core/models';
 
 /**

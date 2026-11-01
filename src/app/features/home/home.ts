@@ -30,7 +30,7 @@ import { Icon } from '../../shared/ui/icon/icon';
 import { EmptyState } from '../../shared/ui/empty-state/empty-state';
 import { Button } from '../../shared/ui/button/button';
 import { AnimatedNumber } from '../../shared/ui/animated-number/animated-number';
-import { AppRoutes } from '../../core/router/app-routes';
+import { AppRoutes } from '../../core/router';
 import { presentationType, TypeDocumentPipe } from '../../shared/ui/type-document/presentation-type-document';
 
 /** Une lecture en cours, avec le document qu'elle désigne. */

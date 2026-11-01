@@ -9,7 +9,7 @@ import { ToastService } from '../../../shared/ui/toast/toast';
 import { AuthService } from '../../../core/auth';
 import { ProfilRepository } from '../../../core/profil';
 import { SuppressionRapport } from '../../../core/profil';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { Failure } from '../../../core/models';
 
 /**

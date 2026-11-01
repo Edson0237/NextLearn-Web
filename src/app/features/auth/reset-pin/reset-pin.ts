@@ -8,7 +8,7 @@ import { SecureStorageService } from '../../../core/storage/secure-storage.servi
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 import { ParcoursOtp } from '../../../core/models';
 import { estAuthentifie } from '../../../core/auth';
 import { validerPin } from '../../../core/auth';

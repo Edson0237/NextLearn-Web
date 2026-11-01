@@ -6,7 +6,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { Button } from '../../../shared/ui/button/button';
 import { QuizRepository } from '../../../core/quiz';
 import { QuizAnswerDetail, QuizModel, QuizQuestion, QuizSubmitResult } from '../../../core/quiz';
-import { AppRoutes } from '../../../core/router/app-routes';
+import { AppRoutes } from '../../../core/router';
 
 @Component({
   selector: 'nl-quiz-session',
