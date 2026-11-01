@@ -3,7 +3,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AuthRepository } from '../repositories/auth-repository';
 import { SecureStorageService } from '../../storage/secure-storage.service';
-import { ParcoursOtp } from '../../models/parcours-otp.model';
+import { ParcoursOtp } from '../../models';
 
 /**
  * Ce que ce test protège : la fenêtre de reprise d'une démarche OTP (15

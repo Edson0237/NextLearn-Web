@@ -7,10 +7,10 @@ import { DepotRepository } from '../../../core/contributions';
 import { ReferencesRepository } from '../../../core/references/references-repository';
 import { DepotLicence, LICENCES_PROPOSEES, anneesAcademiquesProposees } from '../../../core/contributions';
 import { TypeContenuOption, MatiereOption } from '../../../core/references/references.model';
-import { niveauCourt } from '../../../core/models/user.model';
+import { niveauCourt } from '../../../core/models';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 import { ScanTransfert } from '../../../core/scan/numerisation';
 import { AppRoutes } from '../../../core/router/app-routes';
 

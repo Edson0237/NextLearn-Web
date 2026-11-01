@@ -1,6 +1,6 @@
-import { Cycle, NiveauEtude, UserModel } from '../../models/user.model';
-import { DemandeOtp } from '../../models/demande-otp.model';
-import { ParcoursOtp } from '../../models/parcours-otp.model';
+import { Cycle, NiveauEtude, UserModel } from '../../models';
+import { DemandeOtp } from '../../models';
+import { ParcoursOtp } from '../../models';
 
 /** Justificatif retenu le temps de l'inscription, jusqu'à la validation du PIN. */
 /**

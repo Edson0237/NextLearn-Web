@@ -8,11 +8,11 @@ import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-
 import { Refreshable } from '../../../shared/ui/refreshable/refreshable';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 import { AppRoutes } from '../../../core/router/app-routes';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { AuthService } from '../../../core/auth';
-import { libelleNiveau } from '../../../core/models/user.model';
+import { libelleNiveau } from '../../../core/models';
 import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
 
 /** Une tranche de la barre de répartition : un statut, son compte, sa part. */

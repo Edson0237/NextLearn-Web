@@ -8,7 +8,7 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-skeleton';
 import { Refreshable } from '../../../shared/ui/refreshable/refreshable';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 interface Filtre {

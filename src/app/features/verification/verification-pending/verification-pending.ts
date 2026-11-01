@@ -15,7 +15,7 @@ import {
   VerificationStatut,
   demandeAction,
   estApprouve,
-} from '../../../core/models/verification.model';
+} from '../../../core/models';
 import { AppRoutes } from '../../../core/router/app-routes';
 
 type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';

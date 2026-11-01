@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { tr } from '../../../core/i18n';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 import { ReportRepository } from '../../../core/moderation/report-repository';
 import { CibleSignalement } from '../../../core/moderation/report.model';
 import { FeuilleActionService } from '../bottom-sheet/feuille-action';

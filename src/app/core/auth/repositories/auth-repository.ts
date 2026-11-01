@@ -3,12 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_PATH } from '../../network/api-config';
 import { SecureStorageService } from '../../storage/secure-storage.service';
-import { Failure } from '../../models/failure.model';
+import { Failure } from '../../models';
 import { Appareil } from '../services/appareil';
-import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../../models/user.model';
-import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../../models/demande-otp.model';
-import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../../models/parcours-otp.model';
-import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../../models/domaine.model';
+import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../../models';
+import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../../models';
+import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../../models';
+import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../../models';
 import { enFailure } from '../../network/erreur-api';
 import { donnees } from '../../network/enveloppe-api';
 

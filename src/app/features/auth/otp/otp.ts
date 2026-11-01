@@ -6,8 +6,8 @@ import { AuthService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router/app-routes';
-import { DemandeOtp, enFile, StatutDemandeOtp } from '../../../core/models/demande-otp.model';
-import { ParcoursOtp } from '../../../core/models/parcours-otp.model';
+import { DemandeOtp, enFile, StatutDemandeOtp } from '../../../core/models';
+import { ParcoursOtp } from '../../../core/models';
 
 /** La file se réveille à la minute ; interroger plus souvent ne montrerait
  * rien de neuf. */

@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Home } from './home';
 import { AuthService } from '../../core/auth';
-import { NiveauEtude, Cycle, Langue, UserModel } from '../../core/models/user.model';
+import { NiveauEtude, Cycle, Langue, UserModel } from '../../core/models';
 
 function tick(): Promise<void> {
   return new Promise((r) => setTimeout(r, 0));

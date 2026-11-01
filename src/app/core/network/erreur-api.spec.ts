@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Failure } from '../models/failure.model';
+import { Failure } from '../models';
 import { enFailure } from './erreur-api';
 
 describe('enFailure', () => {

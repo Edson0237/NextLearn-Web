@@ -6,7 +6,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { AuthService } from '../../../core/auth';
-import { libelleNiveau } from '../../../core/models/user.model';
+import { libelleNiveau } from '../../../core/models';
 import { ProgressionRepository } from '../../../core/progression/progression-repository';
 import { ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession } from '../../../core/progression/progression.model';
 import { AppRoutes } from '../../../core/router/app-routes';

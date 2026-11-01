@@ -8,8 +8,8 @@ import { AuthState } from '../auth';
 import { VerificationService } from '../verification/verification.service';
 import { PendingDestinationService } from './pending-destination.service';
 import { estAuthentifie } from '../auth';
-import { ParcoursOtp } from '../../core/models/parcours-otp.model';
-import { bloqueAcces, demandeAction } from '../models/verification.model';
+import { ParcoursOtp } from '../models';
+import { bloqueAcces, demandeAction } from '../models';
 import { AppRoutes } from './app-routes';
 
 /**

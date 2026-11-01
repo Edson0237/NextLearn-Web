@@ -5,7 +5,7 @@ import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRappo
 import { enFailure } from '../network/erreur-api';
 import { donnees, donneesUtilisateur } from '../network/enveloppe-api';
 import { SecureStorageService } from '../storage/secure-storage.service';
-import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../models/user.model';
+import { NiveauxDuCycle, niveauxDuCycleDepuisApi, UserModel, utilisateurDepuisApi } from '../models';
 
 /**
  * Accès réseau au profil - traduction de

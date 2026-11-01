@@ -10,7 +10,7 @@ import { DocumentCard, EtiquetteDocument } from '../../../shared/ui/document-car
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../../shared/ui/search-bar/search-bar';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
-import { libelleNiveau } from '../../../core/models/user.model';
+import { libelleNiveau } from '../../../core/models';
 import { computed } from '@angular/core';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';

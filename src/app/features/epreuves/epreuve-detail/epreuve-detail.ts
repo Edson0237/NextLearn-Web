@@ -8,7 +8,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { Badge } from '../../../shared/ui/badge/badge';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
-import { Failure } from '../../../core/models/failure.model';
+import { Failure } from '../../../core/models';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation/report.model';
 import { AppRoutes } from '../../../core/router/app-routes';

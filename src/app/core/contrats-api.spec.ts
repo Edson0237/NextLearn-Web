@@ -7,7 +7,7 @@ import {
   statsDepuisApi,
 } from './progression/progression.model';
 import { resultatQuizDepuisApi } from './quiz/quiz.model';
-import { verificationDepuisJson, VerificationStatut, bloqueAcces } from './models/verification.model';
+import { verificationDepuisJson, VerificationStatut, bloqueAcces } from './models';
 import { DocumentType } from './bibliotheque';
 import { couleurTypeDocument } from '../shared/ui/type-document/presentation-type-document';
 import { LienProfond } from './partage/lien-profond';

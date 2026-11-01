@@ -6,11 +6,11 @@ import { SessionExpiredService } from '../../network/session-expired.service';
 import { VerificationService } from '../../verification/verification.service';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/verrouillage-app';
-import { Cycle, NiveauEtude, NiveauxDuCycle } from '../../models/user.model';
+import { Cycle, NiveauEtude, NiveauxDuCycle } from '../../models';
 import { ProfilGoogle, ReponseGoogle } from '../repositories/auth-repository';
-import { ParcoursOtp } from '../../models/parcours-otp.model';
-import { StatutDemandeOtp } from '../../models/demande-otp.model';
-import { Failure } from '../../models/failure.model';
+import { ParcoursOtp } from '../../models';
+import { StatutDemandeOtp } from '../../models';
+import { Failure } from '../../models';
 import { ProfilRepository } from '../../profil/profil-repository';
 import { VerrouPin } from './verrou-pin';
 
