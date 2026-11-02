@@ -66,7 +66,8 @@ export class TelechargementEtat {
     this.marquer(this.enCours, doc.id, true);
     try {
       const url = (await this.docs.urlLecture(doc.id).catch(() => null)) ?? doc.urlPdf;
-      if (!url) {
+      // Une clé de stockage nue (sans http) n'est pas un lien : l'ouvrir renverrait la PWA elle-même.
+      if (!url || !/^https?:\/\//i.test(url)) {
         this.toast.erreur(tr('pwaPasDeFichierAssocie', 'Ce document n’a pas de fichier associé.'));
         return;
       }

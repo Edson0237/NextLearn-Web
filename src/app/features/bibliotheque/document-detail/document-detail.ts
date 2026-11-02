@@ -14,6 +14,7 @@ import { DocumentsRepository } from '../../../core/bibliotheque';
 import { FavorisRepository } from '../../../core/bibliotheque';
 import { OfflineRepository } from '../../../core/bibliotheque';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
+import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation';
 import { HistoriqueNavigation } from '../../../core/router';
@@ -33,6 +34,7 @@ import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-
   styleUrl: './document-detail.scss',
 })
 export class DocumentDetail implements OnInit {
+  protected readonly telechargements = inject(TelechargementEtat);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly docsRepo = inject(DocumentsRepository);
@@ -55,6 +57,7 @@ export class DocumentDetail implements OnInit {
   private docId = '';
 
   async ngOnInit(): Promise<void> {
+    void this.telechargements.initialiser();
     this.docId = this.route.snapshot.paramMap.get('id') ?? '';
     await this.load();
   }
@@ -134,6 +137,28 @@ export class DocumentDetail implements OnInit {
     } catch {
       this.noteDonnee.set(avant);
       this.toast.erreur(tr('pwaNoteNonEnregistree', 'La note n’a pas pu être enregistrée.'));
+    }
+  }
+
+  protected telecharger(): Promise<void> {
+    const doc = this.document();
+    return doc ? this.telechargements.telecharger(doc) : Promise.resolve();
+  }
+
+  protected iconeTelechargement(id: string): IconName {
+    switch (this.telechargements.etat(id)) {
+      case 'fait': return 'check_circle';
+      case 'encours': return 'sync';
+      default: return 'download';
+    }
+  }
+
+  protected libelleTelechargement(id: string): string {
+    switch (this.telechargements.etat(id)) {
+      case 'fait': return tr('dlTelechargeCourt', 'Téléchargé');
+      case 'encours': return tr('chargementEnCours', 'Chargement en cours');
+      case 'lance': return tr('dlLanceCourt', 'Téléchargement lancé');
+      default: return tr('actionTelecharger', 'Télécharger');
     }
   }
 

@@ -119,6 +119,15 @@
           <nl-icon [name]="isFavori() ? 'bookmark' : 'bookmark_outline'" [size]="18" />
           <span>{{ 'homeFavoris' | t }}</span>
         </button>
+        <button
+          type="button"
+          class="doc-detail__secondaire"
+          [class.doc-detail__secondaire--actif]="telechargements.etat(doc.id) === 'fait'"
+          [disabled]="telechargements.etat(doc.id) === 'encours'"
+          (click)="telecharger()">
+          <nl-icon [name]="iconeTelechargement(doc.id)" [size]="18" />
+          <span>{{ libelleTelechargement(doc.id) }}</span>
+        </button>
         <button type="button" class="doc-detail__secondaire" (click)="signaler()">
           <nl-icon name="warning" [size]="18" />
           <span>{{ 'docSignalerCeDocument' | t }}</span>

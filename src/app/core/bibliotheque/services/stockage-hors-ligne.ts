@@ -69,6 +69,11 @@ export class StockageHorsLigne {
       await this.demanderPersistance();
       const reponse = await fetch(url, { credentials: 'omit' });
       if (!reponse.ok) return false;
+      // Une page HTML ou du JSON n'est pas un document : l'hébergeur (ou le
+      // repli de l'application) répond parfois 200 avec une page d'erreur, et
+      // l'enregistrer ferait croire à un téléchargement réussi.
+      const type = reponse.headers.get('content-type') ?? '';
+      if (/text\/html|application\/json/i.test(type)) return false;
       const cache = await caches.open(NOM_CACHE);
       await cache.put(PREFIXE + encodeURIComponent(documentId), reponse);
       this.ids.set(new Set([...this.ids(), documentId]));

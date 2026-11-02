@@ -1,9 +1,8 @@
-import { ConsentementsCases } from '../../../shared/ui/consentements/consentements';
 import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService, Consentements } from '../../../core/auth';
+import { AuthService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router';
@@ -32,7 +31,7 @@ const PERIODE_SONDAGE_MS = 30_000;
 @Component({
   selector: 'app-otp',
   standalone: true,
-  imports: [TraductionPipe, Icon, ConsentementsCases],
+  imports: [TraductionPipe, Icon],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './otp.html',
   styleUrl: './otp.scss',
@@ -42,7 +41,6 @@ export class Otp implements OnDestroy {
 
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
-  protected readonly cons = inject(Consentements);
   private readonly feuilles = inject(FeuilleActionService);
   private readonly isLogin2faParRoute = inject(ActivatedRoute).snapshot.data['isLogin2fa'] === true;
 

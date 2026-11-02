@@ -181,26 +181,3 @@
   cursor: pointer;
 }
 
-.nl-loginpin__consent {
-  width: 100%;
-  margin: 0 0 16px;
-  padding: 14px 16px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-secondary);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  p {
-    margin: 0;
-    font: 600 0.875rem/1.4 var(--font-family-body);
-    color: var(--text-primary);
-  }
-}
-
-// Google ne se désactive pas : tant que les cases demandées ne sont pas cochées,
-// le geste est neutralisé (et le serveur refuserait la session de toute façon).
-.nl-loginpin__google--bloque {
-  opacity: 0.5;
-  pointer-events: none;
-}
