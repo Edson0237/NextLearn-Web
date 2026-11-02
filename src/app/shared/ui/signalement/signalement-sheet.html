@@ -1,0 +1,60 @@
+<nl-bottom-sheet-shell>
+  <div class="nl-sig__entete">
+    <p class="nl-sig__titre">{{ data.titre }}</p>
+    <button type="button" class="nl-sig__fermer" [attr.aria-label]="'actionFermer' | t" (click)="ref.close(undefined)">
+      <nl-icon name="close" [size]="20" />
+    </button>
+  </div>
+
+  <ul class="nl-sig__liste" role="radiogroup" [attr.aria-label]="data.titre">
+    @for (m of data.motifs; track m.code) {
+      <li>
+        <button
+          type="button"
+          role="radio"
+          class="nl-sig__ligne"
+          [class.nl-sig__ligne--choisie]="motif() === m.code"
+          [attr.aria-checked]="motif() === m.code"
+          (click)="choisir(m.code)">
+          <span class="nl-sig__texte">
+            <span class="nl-sig__libelle">{{ m.label }}</span>
+            @if (m.description) {
+              <span class="nl-sig__description">{{ m.description }}</span>
+            }
+          </span>
+          @if (motif() === m.code) {
+            <nl-icon name="check" [size]="18" />
+          }
+        </button>
+      </li>
+    }
+  </ul>
+
+  @if (autre()) {
+    <div class="nl-sig__explication">
+      <label for="nl-sig-explication" class="nl-sig__etiquette">{{ 'signalementExpliquerLabel' | t }}</label>
+      <textarea
+        id="nl-sig-explication"
+        class="nl-sig__champ"
+        rows="4"
+        [attr.maxlength]="longueurMax"
+        [placeholder]="'signalementExpliquerPlaceholder' | t"
+        [attr.aria-invalid]="tentative() && !explicationValide()"
+        [ngModel]="explication()"
+        (ngModelChange)="explication.set($event)"></textarea>
+      <span class="nl-sig__compteur">{{ explication().length }} / {{ longueurMax }}</span>
+    </div>
+  }
+
+  @if (erreur(); as cle) {
+    <p class="nl-sig__erreur" role="alert">{{ cle | t }}</p>
+  }
+
+  <p class="nl-sig__info">
+    {{ masquant() ? ('signalementMasquageImmediat' | t) : data.information }}
+  </p>
+
+  <div class="nl-sig__actions">
+    <button type="button" class="nl-sig__envoyer" (click)="envoyer()">{{ 'signalementEnvoyer' | t }}</button>
+  </div>
+</nl-bottom-sheet-shell>

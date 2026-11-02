@@ -3,8 +3,8 @@ import { tr } from '../../../core/i18n';
 import { Failure } from '../../../core/models';
 import { ReportRepository } from '../../../core/moderation';
 import { CibleSignalement } from '../../../core/moderation';
-import { FeuilleActionService } from '../bottom-sheet/feuille-action';
-import { FeuilleSelectionService } from '../bottom-sheet/feuille-selection';
+import { BottomSheetService } from '../bottom-sheet/bottom-sheet';
+import { SignalementSaisi, SignalementSheet, SignalementSheetData } from './signalement-sheet';
 import { ToastService } from '../toast/toast';
 
 /**
@@ -18,8 +18,7 @@ import { ToastService } from '../toast/toast';
 @Injectable({ providedIn: 'root' })
 export class SignalementFlux {
   private readonly reports = inject(ReportRepository);
-  private readonly selections = inject(FeuilleSelectionService);
-  private readonly actions = inject(FeuilleActionService);
+  private readonly sheets = inject(BottomSheetService);
   private readonly toast = inject(ToastService);
 
   async signaler(cibleType: CibleSignalement, cibleId: string): Promise<void> {
@@ -31,34 +30,45 @@ export class SignalementFlux {
       return;
     }
 
-    const motif = await this.selections.ouvrir<string>({
-      title: cibleType === CibleSignalement.epreuve
-        ? tr('epreuveSignaler', 'Signaler cette épreuve')
-        : tr('docSignaler', 'Signaler ce document'),
-      choices: catalogue.motifs.map((m) => ({ value: m.code, label: m.label, description: m.description })),
-      emptyMessage: tr('pwaAucunMotifDisponible', 'Aucun motif disponible.'),
-    });
-    if (!motif) return;
+    const titre = cibleType === CibleSignalement.epreuve
+      ? tr('epreuveSignaler', 'Signaler cette épreuve')
+      : tr('docSignaler', 'Signaler ce document');
+    if (catalogue.motifs.length === 0) {
+      this.toast.erreur(tr('pwaAucunMotifDisponible', 'Aucun motif disponible.'));
+      return;
+    }
 
-    const choisi = catalogue.motifs.find((m) => m.code === motif);
-    const confirme = await this.actions.confirmer({
-      title: tr('pwaEnvoyerSignalementQuestion', 'Envoyer ce signalement ?'),
-      description: choisi?.masquageImmediat
-        ? 'Ce motif retire le contenu immédiatement, le temps qu’un modérateur statue.'
-        : `Un modérateur examinera ce signalement sous ${catalogue.slaHeures} h.`,
-      confirmLabel: tr('pwaSignaler', 'Signaler'),
-      cancelLabel: tr('actionAnnuler', 'Annuler'),
-      destructive: true,
-    });
-    if (!confirme) return;
+    let saisie: SignalementSaisi | undefined;
+    // Après un échec récupérable la feuille se rouvre avec ce qui était saisi :
+    // réécrire une explication de dix lignes parce que le réseau a flanché
+    // pousserait à renoncer.
+    for (;;) {
+      saisie = await this.sheets.open<SignalementSheet, SignalementSaisi>(SignalementSheet, {
+        titre,
+        motifs: catalogue.motifs.map((m) => ({ code: m.code, label: m.label, description: m.description })),
+        motifsMasquants: catalogue.motifs.filter((m) => m.masquageImmediat).map((m) => m.code),
+        information: `Un modérateur examinera ce signalement sous ${catalogue.slaHeures} h.`,
+        motifInitial: saisie?.motif,
+        explicationInitiale: saisie?.commentaire,
+      } satisfies SignalementSheetData).result;
+      if (!saisie) return;
 
-    try {
-      const resultat = await this.reports.signaler({ cibleType, cibleId, motif });
-      this.toast.succes(resultat.message);
-    } catch (e) {
-      // `Failure` masque volontairement les messages bruts du serveur : on
-      // dit ici, selon le statut, ce que l'étudiant peut comprendre et faire.
-      this.toast.erreur(this.messagePour(e));
+      try {
+        const resultat = await this.reports.signaler({
+          cibleType,
+          cibleId,
+          motif: saisie.motif,
+          commentaire: saisie.commentaire,
+        });
+        this.toast.succes(resultat.message);
+        return;
+      } catch (e) {
+        // `Failure` masque volontairement les messages bruts du serveur : on
+        // dit ici, selon le statut, ce que l'étudiant peut comprendre et faire.
+        this.toast.erreur(this.messagePour(e));
+        const statut = e instanceof Failure ? e.statusCode : undefined;
+        if (statut === 409 || statut === 404 || statut === 403) return;
+      }
     }
   }
 

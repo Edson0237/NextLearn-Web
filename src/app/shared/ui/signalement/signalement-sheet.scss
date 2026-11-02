@@ -1,0 +1,144 @@
+.nl-sig__entete {
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 20px;
+  margin-bottom: 8px;
+}
+
+.nl-sig__titre {
+  flex: 1;
+  margin: 0;
+  font: 700 1.0625rem/1.35 var(--font-family);
+  color: var(--text-primary);
+}
+
+.nl-sig__fermer {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nl-sig__liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nl-sig__ligne {
+  width: 100%;
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--primary);
+
+  &:active {
+    background: var(--bg-secondary);
+  }
+
+  &--choisie {
+    background: var(--primary-soft);
+  }
+}
+
+.nl-sig__texte {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.nl-sig__libelle {
+  font: 400 1rem/1.4 var(--font-family-body);
+  color: var(--text-primary);
+}
+
+.nl-sig__ligne--choisie .nl-sig__libelle {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.nl-sig__description {
+  font: 400 0.75rem/1.5 var(--font-family-body);
+  color: var(--text-muted);
+}
+
+.nl-sig__explication {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 20px 0;
+}
+
+.nl-sig__etiquette {
+  font: 600 0.875rem/1.4 var(--font-family-body);
+  color: var(--text-primary);
+}
+
+.nl-sig__champ {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 96px;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  border: 1.5px solid var(--border);
+  background: var(--bg-primary, transparent);
+  font: 400 1rem/1.5 var(--font-family-body); // 16 px : iOS ne zoome pas au focus
+  color: var(--text-primary);
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--danger);
+  }
+}
+
+.nl-sig__compteur {
+  align-self: flex-end;
+  font: 400 0.75rem var(--font-family-body);
+  color: var(--text-muted);
+}
+
+.nl-sig__erreur {
+  margin: 8px 20px 0;
+  font: 500 0.875rem/1.4 var(--font-family-body);
+  color: var(--danger);
+}
+
+.nl-sig__info {
+  margin: 12px 20px 0;
+  font: 400 0.75rem/1.5 var(--font-family-body);
+  color: var(--text-muted);
+}
+
+.nl-sig__actions {
+  padding: 12px 20px 16px;
+}
+
+.nl-sig__envoyer {
+  width: 100%;
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: var(--radius-pilule);
+  background: var(--danger);
+  color: var(--text-on-primary);
+  font: 600 1rem var(--font-family-body);
+  cursor: pointer;
+}
