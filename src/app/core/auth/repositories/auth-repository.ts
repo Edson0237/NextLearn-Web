@@ -445,6 +445,15 @@ export class AuthRepository {
     this.storage.clearAll();
   }
 
+  /** L'adresse du compte vient de changer côté serveur : la copie locale la suit. */
+  majEmailLocal(email: string): UserModel | null {
+    const u = this.storage.getUser();
+    if (!u) return null;
+    const maj = { ...u, email };
+    this.storage.saveUser(maj);
+    return maj;
+  }
+
   // ── Session restaurée au démarrage ──────────────────────────────────────
   getCurrentUser(): UserModel | null {
     return this.storage.getUser();

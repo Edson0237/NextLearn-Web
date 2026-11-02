@@ -46,6 +46,7 @@ export abstract class AppRoutes {
 
   // ── Signalements ─────────────────────────────────────────────────────────
   static readonly supportTickets = 'support/tickets';
+  static readonly changerEmail = 'compte/email';
   /** Écran dédié, pas une modale - exigence Apple 5.1.1(v). */
   static readonly deleteAccount = 'profil/supprimer-compte';
   static readonly parametres = 'profil/parametres';

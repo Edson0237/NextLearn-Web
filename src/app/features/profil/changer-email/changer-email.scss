@@ -1,0 +1,276 @@
+:host {
+  display: block;
+  min-height: var(--ecran-haut, 100dvh);
+  background: var(--bg-canvas);
+}
+
+.nl-mail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg) var(--space-page) var(--space-xxxl);
+}
+
+.nl-mail__etapes {
+  display: flex;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 600 0.75rem/1.3 var(--font-family-body);
+  color: var(--text-muted);
+
+  li {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+
+  span {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--border-strong);
+    background: var(--bg-primary);
+  }
+}
+
+.nl-mail__etape--active {
+  color: var(--primary);
+
+  span {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--text-on-primary);
+  }
+}
+
+.nl-mail__etape--faite span {
+  border-color: var(--type-corrige);
+  background: var(--type-corrige-soft);
+  color: var(--type-corrige);
+}
+
+.nl-mail__carte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--space-lg);
+  border-radius: 14px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+
+  p {
+    margin: 0;
+    font: 400 0.9rem/1.5 var(--font-family-body);
+    color: var(--text-secondary);
+  }
+
+  &--info {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  &--ok {
+    align-items: center;
+    text-align: center;
+    background: var(--type-corrige-soft);
+    color: var(--type-corrige);
+  }
+}
+
+.nl-mail__libelle {
+  font: 600 0.75rem var(--font-family-body);
+  color: var(--text-muted);
+}
+
+.nl-mail__adresse {
+  font: 700 1.05rem/1.3 var(--font-family);
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.nl-mail__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  font: 600 0.75rem var(--font-family-body);
+
+  &--ok {
+    background: var(--type-corrige-soft);
+    color: var(--type-corrige);
+  }
+}
+
+.nl-mail__titre {
+  margin: 0;
+  font: 700 1.05rem/1.3 var(--font-family);
+  color: var(--text-primary);
+}
+
+.nl-mail__aide {
+  margin: 0;
+  font: 400 0.9rem/1.5 var(--font-family-body);
+  color: var(--text-secondary);
+}
+
+.nl-mail__etat {
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.nl-mail__message {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.nl-mail__champ {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font: 600 0.85rem var(--font-family-body);
+  color: var(--text-primary);
+
+  input {
+    min-height: 48px;
+    padding: 0 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-primary);
+    font: 400 1rem var(--font-family-body); // 16 px : iOS ne zoome pas au focus
+    color: var(--text-primary);
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+  }
+}
+
+.nl-mail__code {
+  text-align: center;
+  letter-spacing: 0.4em;
+  font-size: 1.4rem !important;
+}
+
+.nl-mail__methodes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  legend {
+    margin-bottom: 6px;
+    font: 600 0.85rem var(--font-family-body);
+    color: var(--text-primary);
+  }
+}
+
+.nl-mail__methode {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  cursor: pointer;
+
+  input {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+  }
+
+  span {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  strong {
+    font: 600 0.9rem var(--font-family-body);
+    color: var(--text-primary);
+  }
+
+  small {
+    font: 400 0.78rem/1.4 var(--font-family-body);
+    color: var(--text-muted);
+  }
+}
+
+.nl-mail__google {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.nl-mail__erreur {
+  margin: 0;
+  font: 500 0.85rem/1.4 var(--font-family-body);
+  color: var(--danger);
+}
+
+.nl-mail__barre {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-sm);
+}
+
+.nl-mail__principal,
+.nl-mail__secondaire {
+  min-height: 52px;
+  padding: 0 var(--space-lg);
+  border-radius: 14px;
+  font: 600 1rem var(--font-family-body);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+}
+
+.nl-mail__principal {
+  border: none;
+  background: var(--primary);
+  color: var(--text-on-primary);
+}
+
+.nl-mail__secondaire {
+  border: 1px solid var(--border-strong);
+  background: var(--bg-primary);
+  color: var(--primary);
+}
+
+.nl-mail__lien {
+  align-self: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font: 600 0.9rem var(--font-family-body);
+  text-decoration: underline;
+  cursor: pointer;
+
+  &--discret {
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+}
