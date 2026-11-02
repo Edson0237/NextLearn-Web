@@ -1271,5 +1271,7 @@
   "signalementMasquageImmediat": "This reason hides the content immediately until a moderator decides.",
   "registerGoogleTexte": "Use your school address or your personal Google address.",
   "registerAutreAdresse": "You can also use another personal address, such as Yahoo or Outlook: a verification code will be sent to you by email.",
-  "pwaActions": "Actions"
+  "pwaActions": "Actions",
+  "googleIndisponible": "Google sign-in is temporarily unavailable. You can continue with your email address.",
+  "reglageVerrouillageSansPin": "Create a PIN first, it will be asked at every launch"
 }
