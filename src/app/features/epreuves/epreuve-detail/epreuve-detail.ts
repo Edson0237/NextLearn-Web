@@ -4,7 +4,7 @@ import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves';
-import { EpreuveModel, TypeEpreuve } from '../../../core/epreuves';
+import { EpreuveModel, TypeEpreuve, typeEpreuveCle } from '../../../core/epreuves';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Badge } from '../../../shared/ui/badge/badge';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
@@ -38,6 +38,7 @@ import { AppRoutes } from '../../../core/router';
 })
 export class EpreuveDetail {
   protected readonly TypeEpreuve = TypeEpreuve;
+  protected readonly typeCle = typeEpreuveCle;
 
   private readonly repo = inject(EpreuvesRepository);
   private readonly toast = inject(ToastService);

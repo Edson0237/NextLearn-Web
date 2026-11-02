@@ -18,6 +18,12 @@
         [class.nl-epl__segment--actif]="filtre().type === TypeEpreuve.sn"
         (click)="setType(TypeEpreuve.sn)"
       >{{ 'epreuveTypeSn' | t }}</button>
+      <button
+        type="button"
+        class="nl-epl__segment"
+        [class.nl-epl__segment--actif]="filtre().type === TypeEpreuve.rattrapage"
+        (click)="setType(TypeEpreuve.rattrapage)"
+      >{{ 'epreuveTypeRat' | t }}</button>
     </div>
 
     <div class="nl-epl__matieres">

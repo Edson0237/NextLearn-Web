@@ -35,6 +35,34 @@ describe('EpreuvesList - filtrage', () => {
   const cc = { _id: '2', matiere: 'Algo', annee: 2023, universite: 'ISJ', niveau: 'N3', matiereId: 'm1', typeEpreuve: 'CC' };
   const sn = { _id: '3', matiere: 'Réseaux', annee: 2021, universite: 'ISJ', niveau: 'N3', matiereId: 'm2', typeEpreuve: 'SN', avecCorrige: true };
 
+  const rat = { _id: '4', matiere: 'Algo', annee: 2023, universite: 'ISJ', niveau: 'N3', matiereId: 'm1', typeEpreuve: 'RATTRAPAGE' };
+
+  it('le filtre Rattrapage ne ramène que les rattrapages', async () => {
+    const c = await creer([sansType, cc, sn, rat]);
+    c['setType'](TypeEpreuve.rattrapage);
+    expect(c['filtrees']().map((e: { id: string }) => e.id)).toEqual(['4']);
+  });
+
+  it('les filtres CC et SN ne ramènent pas les rattrapages', async () => {
+    const c = await creer([sansType, cc, sn, rat]);
+    c['setType'](TypeEpreuve.cc);
+    expect(c['filtrees']().map((e: { id: string }) => e.id)).toEqual(['2']);
+    c['setType'](TypeEpreuve.sn);
+    expect(c['filtrees']().map((e: { id: string }) => e.id)).toEqual(['3']);
+  });
+
+  it('« Tous » ramène aussi les rattrapages', async () => {
+    const c = await creer([sansType, cc, sn, rat]);
+    expect(c['filtrees']().map((e: { id: string }) => e.id)).toContain('4');
+  });
+
+  it('la pastille d’un rattrapage est courte : RAT', async () => {
+    const c = await creer([rat]);
+    expect(c['typeApi'](TypeEpreuve.rattrapage)).toBe('RAT');
+    expect(c['typeApi'](TypeEpreuve.cc)).toBe('CC');
+    expect(c['typeApi'](TypeEpreuve.sn)).toBe('SN');
+  });
+
   it('« Tous » (pas de filtre de nature) ramène le fonds sans nature connue', async () => {
     const c = await creer([sansType, cc, sn]);
     expect(c['filtrees']().map((e: { id: string }) => e.id)).toEqual(['2', '1', '3']);

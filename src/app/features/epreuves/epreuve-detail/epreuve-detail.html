@@ -83,7 +83,7 @@
             @if (ep.typeEpreuve) {
               <div class="nl-epd__ligne">
                 <span>{{ 'communTypeDocument' | t }}</span>
-                <strong>{{ (ep.typeEpreuve === TypeEpreuve.cc ? 'epreuveTypeCc' : 'epreuveTypeSn') | t }}</strong>
+                <strong>{{ typeCle(ep.typeEpreuve) | t }}</strong>
               </div>
             }
             <div class="nl-epd__ligne">
