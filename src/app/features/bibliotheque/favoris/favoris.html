@@ -16,9 +16,10 @@
       </div>
     } @else if (documents().length === 0) {
       <nl-empty-state
-        icon="bookmark_outline"
         [title]="'favorisAucun' | t"
-        [subtitle]="'pwaAjouteDocumentsPourRetrouver' | t" />
+        [subtitle]="'pwaAjouteDocumentsPourRetrouver' | t">
+        <nl-icon icon name="bookmark_outline" [size]="28" />
+      </nl-empty-state>
     } @else {
       <div class="favoris__liste">
         @for (doc of documents(); track doc.id; let i = $index) {

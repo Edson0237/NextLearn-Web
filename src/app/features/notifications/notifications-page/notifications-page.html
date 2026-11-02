@@ -19,9 +19,10 @@
       </div>
     } @else if (notifications().length === 0) {
       <nl-empty-state
-        icon="notifications"
         [title]="'notifsAucune' | t"
-        [subtitle]="'pwaVousEtesAJour' | t" />
+        [subtitle]="'pwaVousEtesAJour' | t">
+        <nl-icon icon name="notifications" [size]="28" />
+      </nl-empty-state>
     } @else {
       <div class="notifs__liste">
         @for (n of notifications(); track n.id; let i = $index) {
