@@ -48,6 +48,8 @@
         <input type="email" inputmode="email" autocomplete="email" autocapitalize="off" [value]="nouvelEmail()" (input)="surEmail($event)" [disabled]="occupe()" />
       </label>
 
+      <p class="nl-mail__aide">{{ 'emailRegleEcole' | t }}</p>
+
       <fieldset class="nl-mail__methodes">
         <legend>{{ 'emailMethodeTitre' | t }}</legend>
         <label class="nl-mail__methode">
