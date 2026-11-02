@@ -36,6 +36,8 @@
   pointer-events: none;
 
   polygon {
+    // Le contour glisse d'une mesure à l'autre au lieu de sauter.
+    transition: points 160ms linear;
     fill: rgba(80, 200, 140, 0.18);
     stroke: #50c88c;
     stroke-width: 0.006;
@@ -123,4 +125,21 @@
 
 .cam__espace {
   width: 1px;
+}
+
+.cam__auto {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font: 600 0.8rem var(--font-family-body);
+  cursor: pointer;
 }

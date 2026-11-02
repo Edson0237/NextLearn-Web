@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, inject, output, signal, viewChild } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n';
-import { Numerisation, Quad } from '../../../core/scan';
+import { COTE_TEMPS_REEL, DetectionTempsReel, Numerisation, Quad, StabilisateurCoins } from '../../../core/scan';
 import { Icon } from '../../../shared/ui/icon/icon';
 
 type EtatCamera = 'demarrage' | 'prete' | 'refusee' | 'indisponible' | 'interrompue';
@@ -23,6 +23,12 @@ type EtatCamera = 'demarrage' | 'prete' | 'refusee' | 'indisponible' | 'interrom
     <div class="cam">
       <div class="cam__scene">
         <video #video class="cam__video" playsinline muted autoplay></video>
+        @if (etat() === 'prete') {
+          <button type="button" class="cam__auto" role="switch" [attr.aria-checked]="num.autoCadrage()" (click)="basculerAuto()">
+            <nl-icon [name]="num.autoCadrage() ? 'check_circle' : 'radio_button_unchecked'" [size]="16" />
+            {{ 'scanCadrageAuto' | t }}
+          </button>
+        }
         @if (coins(); as c) {
           <svg class="cam__contour" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">
             <polygon [attr.points]="points(c)" />
@@ -39,7 +45,8 @@ type EtatCamera = 'demarrage' | 'prete' | 'refusee' | 'indisponible' | 'interrom
       </div>
       <p class="cam__statut" role="status">
         @if (etat() === 'prete') {
-          {{ (coins() ? 'scanPageReperee' : 'scanCherchePage') | t }}
+          @if (!num.autoCadrage()) { {{ 'scanCadrageAutoOff' | t }} }
+          @else { {{ (coins() ? 'scanPageReperee' : 'scanCherchePage') | t }} }
         }
       </p>
       <div class="cam__barre">
@@ -62,7 +69,9 @@ type EtatCamera = 'demarrage' | 'prete' | 'refusee' | 'indisponible' | 'interrom
   styleUrl: './camera-scan.scss',
 })
 export class CameraScan implements OnInit {
-  private readonly num = inject(Numerisation);
+  protected readonly num = inject(Numerisation);
+  private readonly detection = inject(DetectionTempsReel);
+  private readonly stabilisateur = new StabilisateurCoins();
   private readonly video = viewChild.required<ElementRef<HTMLVideoElement>>('video');
 
   /** Une photo prise. */
@@ -76,7 +85,7 @@ export class CameraScan implements OnInit {
   protected readonly capture = signal(false);
 
   private flux: MediaStream | null = null;
-  private minuterie: ReturnType<typeof setInterval> | undefined;
+  private minuterie: ReturnType<typeof setTimeout> | undefined;
 
   private readonly surVisibilite = (): void => {
     // Un appel, un changement d'application : le système coupe la caméra. On
@@ -100,6 +109,7 @@ export class CameraScan implements OnInit {
   }
 
   protected async demarrer(): Promise<void> {
+    this.arrete = false;
     this.etat.set('demarrage');
     if (!navigator.mediaDevices?.getUserMedia) {
       this.etat.set('indisponible');
@@ -114,7 +124,7 @@ export class CameraScan implements OnInit {
       v.srcObject = this.flux;
       await v.play();
       this.etat.set('prete');
-      this.minuterie = setInterval(() => this.chercherPage(), 300);
+      this.boucle();
       // Si le système coupe le flux (autre application), on le sait.
       this.flux.getVideoTracks()[0]?.addEventListener('ended', () => {
         this.arreter();
@@ -126,10 +136,70 @@ export class CameraScan implements OnInit {
     }
   }
 
-  private chercherPage(): void {
+  /**
+   * Une mesure à la fois, au rythme du flux vidéo plutôt qu'à heure fixe, et jamais en
+   * retard : si la précédente n'est pas finie, l'image est sautée. Le dessin à
+   * 160 px et la détection (dans un Worker) coûtent quelques millisecondes ; le fil
+   * principal n'est plus sollicité que pour copier une petite image.
+   */
+  private boucle(): void {
+    if (this.arrete) return;
+    const planifier = (): void => {
+      const v = this.video().nativeElement;
+      if (typeof v.requestVideoFrameCallback === 'function') v.requestVideoFrameCallback(() => void this.mesurer(planifier));
+      else this.minuterie = setTimeout(() => void this.mesurer(planifier), 120);
+    };
+    planifier();
+  }
+
+  private derniereMesure = 0;
+  private arrete = false;
+  private petit: HTMLCanvasElement | null = null;
+
+  private async mesurer(suite: () => void): Promise<void> {
+    if (this.arrete) return;
     const v = this.video().nativeElement;
-    if (v.readyState < 2) return;
-    this.coins.set(this.num.detecter(v));
+    const maintenant = performance.now();
+    // Six mesures par seconde suffisent à suivre une page : au-delà, on ne gagne que de la chauffe.
+    if (this.num.autoCadrage() && v.readyState >= 2 && maintenant - this.derniereMesure >= 160) {
+      this.derniereMesure = maintenant;
+      const image = this.imageReduite(v);
+      const promesse = image ? this.detection.detecter(image) : undefined;
+      if (promesse) {
+        const mesure = await promesse;
+        if (this.arrete) return;
+        this.coins.set(this.stabilisateur.mettre(mesure, performance.now()));
+      }
+    } else if (!this.num.autoCadrage() && this.coins()) {
+      this.stabilisateur.reinitialiser();
+      this.coins.set(null);
+    }
+    suite();
+  }
+
+  /** L'image de la caméra ramenée à la définition de détection, sur un canevas réutilisé. */
+  private imageReduite(v: HTMLVideoElement): ImageData | null {
+    if (!v.videoWidth) return null;
+    const echelle = COTE_TEMPS_REEL / Math.max(v.videoWidth, v.videoHeight);
+    const w = Math.max(1, Math.round(v.videoWidth * echelle));
+    const h = Math.max(1, Math.round(v.videoHeight * echelle));
+    this.petit ??= document.createElement('canvas');
+    if (this.petit.width !== w || this.petit.height !== h) {
+      this.petit.width = w;
+      this.petit.height = h;
+    }
+    const ctx = this.petit.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(v, 0, 0, w, h);
+    return ctx.getImageData(0, 0, w, h);
+  }
+
+  protected basculerAuto(): void {
+    this.num.definirAutoCadrage(!this.num.autoCadrage());
+    if (!this.num.autoCadrage()) {
+      this.stabilisateur.reinitialiser();
+      this.coins.set(null);
+    }
   }
 
   protected points(c: Quad): string {
@@ -155,8 +225,11 @@ export class CameraScan implements OnInit {
   }
 
   private arreter(): void {
-    clearInterval(this.minuterie);
+    this.arrete = true;
+    clearTimeout(this.minuterie);
     this.minuterie = undefined;
+    this.detection.arreter();
+    this.stabilisateur.reinitialiser();
     this.flux?.getTracks().forEach((t) => t.stop());
     this.flux = null;
     this.coins.set(null);
