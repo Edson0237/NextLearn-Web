@@ -3,7 +3,7 @@ import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves';
-import { EpreuveModel, TypeEpreuve, typeEpreuveVersApi } from '../../../core/epreuves';
+import { EpreuveModel, TypeEpreuve, typeEpreuveCourt } from '../../../core/epreuves';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-skeleton';
 import { Refreshable } from '../../../shared/ui/refreshable/refreshable';
@@ -99,7 +99,7 @@ export class EpreuvesList {
   }
 
   protected typeApi(t: TypeEpreuve): string {
-    return typeEpreuveVersApi(t);
+    return typeEpreuveCourt(t);
   }
 
   protected setType(t: TypeEpreuve | undefined): void {

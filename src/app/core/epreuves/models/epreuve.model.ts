@@ -5,6 +5,8 @@
 export enum TypeEpreuve {
   cc = 'cc',
   sn = 'sn',
+  /** Session de rattrapage (normale ou spéciale). */
+  rattrapage = 'rattrapage',
   /** Tout le fonds publié avant l'introduction du champ : un fait, pas un
    * repli commode. Ne ressort que sous « Tous ». */
   indefini = 'indefini',
@@ -13,11 +15,26 @@ export enum TypeEpreuve {
 const TYPE_API: Readonly<Record<TypeEpreuve, string>> = {
   [TypeEpreuve.cc]: 'CC',
   [TypeEpreuve.sn]: 'SN',
+  [TypeEpreuve.rattrapage]: 'RATTRAPAGE',
   [TypeEpreuve.indefini]: '',
 };
 
 export function typeEpreuveVersApi(t: TypeEpreuve): string {
   return TYPE_API[t];
+}
+
+/** Libellé court d'une pastille de liste : CC, SN, RAT. */
+export function typeEpreuveCourt(t: TypeEpreuve): string {
+  return t === TypeEpreuve.rattrapage ? 'RAT' : TYPE_API[t];
+}
+
+/** Clé de traduction du libellé complet d'un type. */
+export function typeEpreuveCle(t: TypeEpreuve): string {
+  switch (t) {
+    case TypeEpreuve.cc: return 'epreuveTypeCc';
+    case TypeEpreuve.rattrapage: return 'epreuveTypeRat';
+    default: return 'epreuveTypeSn';
+  }
 }
 
 export function typeEpreuveDepuisApi(brut: unknown): TypeEpreuve | undefined {
@@ -26,6 +43,7 @@ export function typeEpreuveDepuisApi(brut: unknown): TypeEpreuve | undefined {
   switch (code) {
     case 'CC': return TypeEpreuve.cc;
     case 'SN': return TypeEpreuve.sn;
+    case 'RATTRAPAGE': return TypeEpreuve.rattrapage;
     default: return undefined;
   }
 }
