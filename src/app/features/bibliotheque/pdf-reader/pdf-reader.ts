@@ -1,3 +1,4 @@
+import { NotificationsEtat } from '../../../core/notifications';
 import { ChangeDetectionStrategy, Component, OnDestroy, inject, OnInit, signal } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
@@ -76,9 +77,13 @@ export class PdfReader implements OnInit, OnDestroy {
   /** URL d'objet d'une copie locale, à révoquer en sortant. */
   private urlObjet: string | null = null;
 
+  private readonly notifEtat = inject(NotificationsEtat);
+
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
     this.documentId.set(id);
+    // Ouvert directement (lien, notification, historique) : consulté, donc plus « nouveau ».
+    if (id) void this.notifEtat.marquerRessourceLue('document', id);
     if (!id) {
       this.error.set('Document non spécifié.');
       this.loading.set(false);
