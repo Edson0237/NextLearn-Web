@@ -1,5 +1,6 @@
+import { Fraicheur } from '../../../shared/services/fraicheur';
 import { metaDocument, noteDocument } from '../../../core/bibliotheque';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, untracked, computed, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { TraductionPipe } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
@@ -24,6 +25,9 @@ import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-
   styleUrl: './matiere.scss',
 })
 export class Matiere implements OnInit {
+  private readonly fraicheur = inject(Fraicheur);
+  private premierTick = true;
+
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly docsRepo = inject(DocumentsRepository);
@@ -40,6 +44,17 @@ export class Matiere implements OnInit {
     return this.documents().filter((d) => d.matiereId === id);
   });
 
+  constructor() {
+    // Relecture silencieuse quand l'application revient, que la connexion revient, ou toutes les cinq minutes.
+    effect(() => {
+      this.fraicheur.tick();
+      untracked(() => {
+        if (this.premierTick) { this.premierTick = false; return; }
+        void this.load(true);
+      });
+    });
+  }
+
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id') ?? '';
     this.matiereId.set(id);
@@ -48,15 +63,18 @@ export class Matiere implements OnInit {
     await this.load();
   }
 
-  async load(): Promise<void> {
-    this.loading.set(true);
-    this.error.set(null);
+  async load(silencieux = false): Promise<void> {
+    if (!silencieux) {
+      this.loading.set(true);
+      this.error.set(null);
+    }
     try {
       const docs = await this.docsRepo.getDocuments();
       this.documents.set(docs);
       const first = docs.find((d) => d.matiereId === this.matiereId());
       if (first) this.matiereNom.set(first.matiere);
     } catch (e) {
+      if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set('Impossible de charger les documents.');
     } finally {
       this.loading.set(false);

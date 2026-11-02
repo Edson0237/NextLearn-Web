@@ -1,6 +1,7 @@
+import { Fraicheur } from '../../shared/services/fraicheur';
 import { TelechargementEtat } from '../../shared/services/telechargement-etat';
 import { metaDocument, noteDocument } from '../../core/bibliotheque';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, untracked, computed, inject, OnInit, signal } from '@angular/core';
 import { TraductionPipe } from '../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -53,6 +54,9 @@ interface Reprise {
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
+  private readonly fraicheur = inject(Fraicheur);
+  private premierTick = true;
+
   protected readonly telechargements = inject(TelechargementEtat);
   private readonly router = inject(Router);
   private readonly selections = inject(FeuilleSelectionService);
@@ -162,14 +166,27 @@ export class Home implements OnInit {
     if (choisi) this.openBibliotheque(choisi);
   }
 
+  constructor() {
+    // Relecture silencieuse quand l'application revient, que la connexion revient, ou toutes les cinq minutes.
+    effect(() => {
+      this.fraicheur.tick();
+      untracked(() => {
+        if (this.premierTick) { this.premierTick = false; return; }
+        void this.load(true);
+      });
+    });
+  }
+
   async ngOnInit(): Promise<void> {
     void this.telechargements.initialiser();
     await this.load();
   }
 
-  async load(): Promise<void> {
-    this.loading.set(true);
-    this.error.set(null);
+  async load(silencieux = false): Promise<void> {
+    if (!silencieux) {
+      this.loading.set(true);
+      this.error.set(null);
+    }
     try {
       const [rec, pop, recents, stats, contexte, progression] = await Promise.all([
         this.docsRepo.getRecommended(),
@@ -189,6 +206,7 @@ export class Home implements OnInit {
       this.contexte.set(contexte);
       this.reprises.set(this.composerReprises(progression, [...rec, ...pop, ...recents]));
     } catch {
+      if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set("Impossible de charger l'accueil.");
     } finally {
       this.loading.set(false);

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Fraicheur } from '../../../shared/services/fraicheur';
+import { ChangeDetectionStrategy, Component, effect, untracked, computed, inject, OnInit, signal } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -33,6 +34,9 @@ const CatalogueMode = {
   styleUrl: './catalogue.scss',
 })
 export class Catalogue implements OnInit {
+  private readonly fraicheur = inject(Fraicheur);
+  private premierTick = true;
+
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly docsRepo = inject(DocumentsRepository);
@@ -90,18 +94,32 @@ export class Catalogue implements OnInit {
     return PALETTE[rang % PALETTE.length];
   }
 
+  constructor() {
+    // Relecture silencieuse quand l'application revient, que la connexion revient, ou toutes les cinq minutes.
+    effect(() => {
+      this.fraicheur.tick();
+      untracked(() => {
+        if (this.premierTick) { this.premierTick = false; return; }
+        void this.load(true);
+      });
+    });
+  }
+
   async ngOnInit(): Promise<void> {
     await this.load();
   }
 
-  async load(): Promise<void> {
-    this.loading.set(true);
-    this.error.set(null);
+  async load(silencieux = false): Promise<void> {
+    if (!silencieux) {
+      this.loading.set(true);
+      this.error.set(null);
+    }
     try {
       const docs = await this.docsRepo.getDocuments();
       this.documents.set(docs);
       this.groupMatieres(docs);
     } catch (e) {
+      if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set('Impossible de charger le catalogue.');
     } finally {
       this.loading.set(false);
