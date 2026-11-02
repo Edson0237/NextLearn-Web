@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild, ElementRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked, viewChild, ElementRef } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { ProfilRepository } from '../../../core/profil';
+import { StockageHorsLigne } from '../../../core/bibliotheque';
+import { Fraicheur } from '../../../shared/services/fraicheur';
 import { ProfilStats } from '../../../core/profil';
 import { Avatar } from '../../../shared/ui/avatar/avatar';
 import { AnimatedNumber } from '../../../shared/ui/animated-number/animated-number';
@@ -37,6 +39,8 @@ export class ProfilHome {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly repo = inject(ProfilRepository);
+  private readonly stockage = inject(StockageHorsLigne);
+  private readonly fraicheur = inject(Fraicheur);
   private readonly actions = inject(FeuilleActionService);
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('avatarInput');
 
@@ -87,17 +91,43 @@ export class ProfilHome {
   protected readonly statutStats = signal<'chargement' | 'pret' | 'erreur'>('chargement');
   protected readonly erreurStats = signal('');
 
+  /**
+   * Les documents hors ligne : ceux qui sont **réellement sur cet appareil**.
+   *
+   * Le chiffre venait du serveur (les documents marqués hors ligne, tous appareils
+   * confondus), lu une fois à la création de l'écran - or le profil est un onglet
+   * que le routeur garde monté : retirer un document de la section hors ligne ne
+   * changeait rien ici. L'inventaire local est un signal, il suit sur-le-champ ;
+   * le chiffre du serveur ne sert que quand le navigateur n'a pas de stockage local.
+   */
+  protected readonly horsLigne = computed(() =>
+    this.stockage.disponible ? this.stockage.ids().size : this.stats().docsTelecharges,
+  );
+
   constructor() {
+    void this.stockage.rafraichir();
     void this.chargerStats();
+    // Les autres chiffres (jours de suite, documents lus, heures) se relisent en silence
+    // au retour dans l'application et quand l'inventaire change.
+    let premier = true;
+    effect(() => {
+      this.fraicheur.tick();
+      this.stockage.ids();
+      untracked(() => {
+        if (premier) { premier = false; return; }
+        void this.chargerStats(true);
+      });
+    });
   }
 
-  private async chargerStats(): Promise<void> {
-    this.statutStats.set('chargement');
+  private async chargerStats(silencieux = false): Promise<void> {
+    if (!silencieux) this.statutStats.set('chargement');
     try {
       const stats = await this.repo.getStats();
       this.stats.set(stats);
       this.statutStats.set('pret');
     } catch (e) {
+      if (silencieux) return; // une relecture passagère ne remplace pas ce qui est affiché
       this.erreurStats.set(e instanceof Failure ? e.message : 'Chargement impossible.');
       this.statutStats.set('erreur');
     }
