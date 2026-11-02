@@ -8,6 +8,8 @@ import { ReferencesRepository } from '../../../core/references';
 import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille-selection';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { ConsentementsCases } from '../../../shared/ui/consentements/consentements';
+import { Consentements } from '../../../core/auth';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { GoogleIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router';
@@ -47,7 +49,7 @@ const CHARGEMENT: Cascade<never> = { statut: 'chargement', items: [], erreur: ''
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [TraductionPipe, Icon, GoogleBouton],
+  imports: [TraductionPipe, Icon, GoogleBouton, ConsentementsCases],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register.html',
   styleUrl: './register.scss',
@@ -72,7 +74,11 @@ export class Register {
    * dans quelle catégorie il se trouve.
    */
   protected readonly sansEmailInstitutionnel = computed(() => this.domaine().etat === EtatDomaine.refuse);
-  protected readonly consent = signal(false);
+  private readonly consentements = inject(Consentements);
+  /** Les deux documents sont acceptés : le serveur vérifie, ceci ne fait que guider l'écran. */
+  protected readonly consent = this.consentements.toutCoche;
+  /** Après une tentative sans acceptation, le rappel s'affiche. */
+  protected readonly tentativeSansConsent = signal(false);
   protected readonly domaine = signal<ReponseDomaine>(DOMAINE_VIDE);
   private rebondDomaine: ReturnType<typeof setTimeout> | undefined;
 
@@ -131,7 +137,6 @@ export class Register {
         this.prenom.set(profil.prenom);
         this.nom.set(profil.nom);
         this.email.set(profil.email);
-        this.consent.set(true); // l'inscription par Google vaut acceptation affichée à l'écran précédent
         this.etape.set(1);
       });
     });
@@ -380,6 +385,7 @@ export class Register {
       return;
     }
     if (!this.consent()) {
+      this.tentativeSansConsent.set(true);
       this.toast.info(tr('pwaAccepterConditions', 'Merci d’accepter les conditions pour continuer.'));
       return;
     }
@@ -399,6 +405,12 @@ export class Register {
       return;
     }
     if (this.modeGoogle()) {
+      // Google a prouvé l'adresse, pas le consentement : les deux cases restent exigées.
+      if (!this.consent()) {
+        this.tentativeSansConsent.set(true);
+        this.toast.info(tr('pwaAccepterConditions', 'Merci d’accepter les conditions pour continuer.'));
+        return;
+      }
       await this.terminerInscriptionGoogle();
       return;
     }

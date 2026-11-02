@@ -1,9 +1,10 @@
 import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
+import { ConsentementsCases } from '../../../shared/ui/consentements/consentements';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth';
+import { AuthService, Consentements } from '../../../core/auth';
 import { validerPin } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
@@ -20,7 +21,7 @@ import { AppRoutes } from '../../../core/router';
 @Component({
   selector: 'app-pin-setup',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Icon, ResultatPin],
+  imports: [TraductionPipe, PinInput, Icon, ResultatPin, ConsentementsCases],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pin-setup.html',
   styleUrl: './pin-setup.scss',
@@ -28,6 +29,7 @@ import { AppRoutes } from '../../../core/router';
 export class PinSetup {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  protected readonly cons = inject(Consentements);
   private readonly feuilles = inject(FeuilleActionService);
 
   private pin = '';

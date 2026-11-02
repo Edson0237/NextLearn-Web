@@ -13,12 +13,21 @@
       <nl-google-bouton texte="signin_with" />
     </section>
   } @else {
-    <div class="nl-loginpin__google">
+    <div class="nl-loginpin__google" [class.nl-loginpin__google--bloque]="cons.requis() && !cons.toutCoche()">
       <nl-google-bouton texte="signin_with" />
     </div>
     @if (!google.desactive()) {
       <p class="nl-loginpin__ou"><span>{{ 'googleOu' | t }}</span></p>
     }
+  }
+
+  @if (cons.requis()) {
+    <!-- Le serveur n'ouvre pas de session sans acceptation : les cases apparaissent
+         alors, et Google reste voilé tant qu'elles ne sont pas cochées. -->
+    <section class="nl-loginpin__consent" role="status">
+      <p>{{ 'consentRequisConnexion' | t }}</p>
+      <nl-consentements />
+    </section>
   }
 
   @if (etape() === 'email') {
