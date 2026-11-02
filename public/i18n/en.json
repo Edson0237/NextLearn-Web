@@ -1360,5 +1360,6 @@
   "emailChangeeAide": "Your account, documents and favourites are unchanged. Use this address to sign in with a code.",
   "actionTerminer": "Done",
   "scanCadrageAuto": "Auto framing",
-  "scanCadrageAutoOff": "Auto framing off: crop by hand after capture"
+  "scanCadrageAutoOff": "Auto framing off: crop by hand after capture",
+  "emailRegleEcole": "You can use your school address or a personal address (Gmail, Yahoo…). An address from another institution is not accepted."
 }

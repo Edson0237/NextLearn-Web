@@ -1360,5 +1360,6 @@
   "emailChangeeAide": "Ton compte, tes documents et tes favoris sont inchangés. Utilise cette adresse pour te connecter par code.",
   "actionTerminer": "Terminer",
   "scanCadrageAuto": "Cadrage auto",
-  "scanCadrageAutoOff": "Cadrage automatique désactivé : cadre à la main après la prise"
+  "scanCadrageAutoOff": "Cadrage automatique désactivé : cadre à la main après la prise",
+  "emailRegleEcole": "Tu peux utiliser l’adresse de ton école ou une adresse personnelle (Gmail, Yahoo…). L’adresse d’un autre établissement n’est pas acceptée."
 }
