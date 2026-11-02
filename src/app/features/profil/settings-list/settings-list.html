@@ -40,7 +40,10 @@
 </section>
 
 @if (modalPinVisible()) {
-  <nl-pin-dialog [aUnPin]="aUnPin()" (ferme)="modalPinVisible.set(false)" />
+  <nl-pin-dialog
+    [aUnPin]="aUnPin()"
+    (enregistre)="pinCree()"
+    (ferme)="modalPinVisible.set(false); verrouAttendu = false" />
 }
 
 @if (modalSupportVisible()) {

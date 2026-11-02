@@ -1271,5 +1271,7 @@
   "signalementMasquageImmediat": "Ce motif retire le contenu immédiatement, le temps qu’un modérateur statue.",
   "registerGoogleTexte": "Utilise ton adresse institutionnelle ou ton adresse Google personnelle.",
   "registerAutreAdresse": "Tu peux aussi utiliser une autre adresse personnelle, par exemple Yahoo ou Outlook : un code de vérification te sera envoyé par e-mail.",
-  "pwaActions": "Actions"
+  "pwaActions": "Actions",
+  "googleIndisponible": "Connexion avec Google momentanément indisponible. Tu peux continuer avec ton adresse e-mail.",
+  "reglageVerrouillageSansPin": "Crée d’abord un code PIN, il te sera demandé à chaque ouverture"
 }

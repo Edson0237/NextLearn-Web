@@ -62,4 +62,20 @@ describe('PinDialog', () => {
     expect(ferme).toBe(false);
     expect(c.erreur()).toBe('PIN actuel incorrect');
   });
+
+  it('n’émet « enregistre » qu’après un enregistrement réussi', async () => {
+    const { c, saisir } = creer(false);
+    saisir('nouveau', '4821'); saisir('confirmation', '4821');
+    let enregistre = 0;
+    c.enregistre.subscribe(() => enregistre++);
+
+    auth.changerPin.mockResolvedValueOnce(null);
+    await c.valider();
+    expect(enregistre).toBe(0);
+    expect(c.erreur()).toBeDefined();
+
+    auth.changerPin.mockResolvedValueOnce(0);
+    await c.valider();
+    expect(enregistre).toBe(1);
+  });
 });

@@ -27,6 +27,8 @@ export class PinDialog {
   /** Le compte a-t-il déjà un PIN ? Sinon, la fenêtre sert à en créer un. */
   readonly aUnPin = input(true);
   readonly ferme = output<void>();
+  /** Émis seulement quand le serveur a enregistré le code (jamais sur un échec). */
+  readonly enregistre = output<void>();
 
   protected readonly ancien = signal('');
   protected readonly nouveau = signal('');
@@ -70,6 +72,7 @@ export class PinDialog {
       this.erreur.set(this.auth.state().error ?? 'Changement impossible.');
       return;
     }
+    this.enregistre.emit();
     this.ferme.emit();
     this.toast.succes(
       !avaitUnPin

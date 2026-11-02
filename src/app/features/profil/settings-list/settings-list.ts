@@ -152,16 +152,18 @@ export class SettingsList implements OnInit {
               : tr('pinFacultatifAide', 'Facultatif : protège l’ouverture de l’application'),
             action: () => this.ouvrirPinChange(),
           },
-          // Le verrou demande le PIN à l'ouverture : sans PIN, il n'a rien à demander.
-          ...(this.aUnPin()
-            ? [{
-                icone: 'lock_open' as const,
-                titre: tr('reglageVerrouillage', 'Verrouiller l’application'),
-                sousTitre: tr('reglageVerrouillageAide', 'Demander le PIN à chaque ouverture'),
-                bascule: () => this.verrouillage.actif(),
-                action: () => this.verrouillage.definir(!this.verrouillage.actif()),
-              }]
-            : []),
+          // Le verrou demande le PIN à l'ouverture : sans PIN, activer le verrou
+          // commence par en créer un (saisie, confirmation), et le réglage ne
+          // s'active qu'une fois le code enregistré par le serveur.
+          {
+            icone: 'lock_open' as const,
+            titre: tr('reglageVerrouillage', 'Verrouiller l’application'),
+            sousTitre: this.aUnPin()
+              ? tr('reglageVerrouillageAide', 'Demander le PIN à chaque ouverture')
+              : tr('reglageVerrouillageSansPin', 'Crée d’abord un code PIN, il te sera demandé à chaque ouverture'),
+            bascule: () => this.verrouillage.actif(),
+            action: () => this.basculerVerrou(),
+          },
           {
             icone: 'devices', titre: tr('sessionsTitre', 'Appareils connectés'), sousTitre: tr('pwaGererSessions', 'Gérer tes sessions actives'),
             action: () => void this.router.navigateByUrl('/app/' + AppRoutes.sessions),
@@ -330,7 +332,30 @@ export class SettingsList implements OnInit {
     if (choisi) this.theme.set(choisi);
   }
 
+  /** Vrai quand la fenêtre PIN est ouverte pour activer le verrou, pas pour changer le code. */
+  protected verrouAttendu = false;
+
+  private basculerVerrou(): void {
+    if (this.verrouillage.actif()) {
+      this.verrouillage.definir(false);
+      return;
+    }
+    if (this.aUnPin()) {
+      this.verrouillage.definir(true);
+      return;
+    }
+    this.verrouAttendu = true;
+    this.modalPinVisible.set(true);
+  }
+
+  /** Le code vient d'être enregistré : seulement maintenant, le verrou s'active. */
+  protected pinCree(): void {
+    if (this.verrouAttendu) this.verrouillage.definir(true);
+    this.verrouAttendu = false;
+  }
+
   private ouvrirPinChange(): void {
+    this.verrouAttendu = false;
     this.modalPinVisible.set(true);
   }
 
