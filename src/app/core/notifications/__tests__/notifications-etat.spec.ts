@@ -61,4 +61,18 @@ describe('NotificationsEtat', () => {
     window.dispatchEvent(new Event('online'));
     await vi.waitFor(() => expect(etat.nonLues()).toBe(7));
   });
+
+  it('relit le compte au battement tant que l’application est affichée', async () => {
+    vi.useFakeTimers();
+    try {
+      repo.getUnreadCount.mockResolvedValue(1);
+      const neuf = TestBed.inject(NotificationsEtat);
+      await neuf.rafraichir();
+      repo.getUnreadCount.mockResolvedValue(4);
+      await vi.advanceTimersByTimeAsync(31_000);
+      expect(neuf.nonLues()).toBe(4);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

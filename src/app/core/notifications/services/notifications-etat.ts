@@ -1,4 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { NotificationsRepository } from '../repositories/notifications-repository';
 
 /**
@@ -26,9 +28,13 @@ import { NotificationsRepository } from '../repositories/notifications-repositor
  *   premier plan - de nouvelles notifications ont pu arriver pendant qu'on
  *   regardait ailleurs.
  */
+/** Intervalle de relecture du compte tant que l'application est affichée. */
+const BATTEMENT_MS = 30_000;
+
 @Injectable({ providedIn: 'root' })
 export class NotificationsEtat {
   private readonly repo = inject(NotificationsRepository);
+  private readonly router = inject(Router, { optional: true });
 
   private readonly _nonLues = signal(0);
   readonly nonLues = this._nonLues.asReadonly();
@@ -96,11 +102,16 @@ export class NotificationsEtat {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') void this.rafraichir();
     });
-    // Le retour du réseau, et un battement lent tant que l'application est affichée :
-    // de nouvelles notifications peuvent arriver sans qu'on quitte l'écran.
+    // Le retour du réseau, et un battement tant que l'application est affichée : une
+    // ressource publiée pendant qu'on regarde l'écran doit allumer la pastille sans
+    // geste (30 s : une requête de comptage, légère, pas de rechargement de liste).
     window.addEventListener('online', () => void this.rafraichir());
     setInterval(() => {
       if (document.visibilityState === 'visible') void this.rafraichir();
-    }, 2 * 60_000);
+    }, BATTEMENT_MS);
+    // Chaque changement d'écran relit le compte : c'est le moment où on le regarde.
+    this.router?.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => void this.rafraichir());
   }
 }
