@@ -403,3 +403,11 @@ input[type='email'] {
     background: var(--border);
   }
 }
+
+// Juste au-dessus du bouton Google : lisible, centré comme lui.
+.nl-reg__aide-google {
+  margin: 0 0 8px;
+  text-align: center;
+  font: 500 0.875rem/1.45 var(--font-family-body);
+  color: var(--text-secondary);
+}
