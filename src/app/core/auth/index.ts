@@ -8,3 +8,4 @@ export { AuthService } from './services/auth.service';
 export { BiometricService } from './services/biometric.service';
 export { GoogleIdentite } from './services/google-identite';
 export { validerPin } from './services/pin-policy';
+export { Consentements } from './services/consentements';

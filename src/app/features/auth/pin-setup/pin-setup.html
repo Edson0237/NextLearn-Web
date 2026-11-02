@@ -15,6 +15,10 @@
       {{ confirmant() ? 'Saisis à nouveau ton code à 4 chiffres' : 'Ce code te permettra de te connecter rapidement' }}
     </p>
 
+    @if (cons.requis()) {
+      <nl-consentements [afficherRappel]="true" />
+    }
+
     <nl-pin-input
       [pin]="saisieActuelle()"
       [error]="erreur()"

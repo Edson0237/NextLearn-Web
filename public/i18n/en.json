@@ -1273,5 +1273,11 @@
   "registerAutreAdresse": "You can also use another personal address, such as Yahoo or Outlook: a verification code will be sent to you by email.",
   "pwaActions": "Actions",
   "googleIndisponible": "Google sign-in is temporarily unavailable. You can continue with your email address.",
-  "reglageVerrouillageSansPin": "Create a PIN first, it will be asked at every launch"
+  "reglageVerrouillageSansPin": "Create a PIN first, it will be asked at every launch",
+  "consentTitre": "Legal documents",
+  "consentJAccepte": "I accept",
+  "consentPolitiqueNom": "the privacy policy",
+  "consentConditionsNom": "the terms of use",
+  "consentRappel": "Accept both documents to continue.",
+  "consentRequisConnexion": "To continue, accept the privacy policy and the terms of use."
 }

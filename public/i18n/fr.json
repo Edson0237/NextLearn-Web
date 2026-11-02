@@ -1273,5 +1273,11 @@
   "registerAutreAdresse": "Tu peux aussi utiliser une autre adresse personnelle, par exemple Yahoo ou Outlook : un code de vérification te sera envoyé par e-mail.",
   "pwaActions": "Actions",
   "googleIndisponible": "Connexion avec Google momentanément indisponible. Tu peux continuer avec ton adresse e-mail.",
-  "reglageVerrouillageSansPin": "Crée d’abord un code PIN, il te sera demandé à chaque ouverture"
+  "reglageVerrouillageSansPin": "Crée d’abord un code PIN, il te sera demandé à chaque ouverture",
+  "consentTitre": "Documents juridiques",
+  "consentJAccepte": "J’accepte",
+  "consentPolitiqueNom": "la politique de confidentialité",
+  "consentConditionsNom": "les conditions d’utilisation",
+  "consentRappel": "Accepte les deux documents pour continuer.",
+  "consentRequisConnexion": "Pour continuer, accepte la politique de confidentialité et les conditions d’utilisation."
 }

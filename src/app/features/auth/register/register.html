@@ -23,7 +23,15 @@
         @if (!google.desactive()) {
           <p class="nl-reg__aide-google">{{ 'registerGoogleTexte' | t }}</p>
         }
-        <nl-google-bouton texte="signup_with" />
+        <div class="nl-reg__google" [class.nl-reg__google--bloque]="!consent()">
+          <nl-google-bouton texte="signup_with" />
+          @if (!consent()) {
+            <!-- Google ne se désactive pas : ce voile arrête le geste, et le serveur
+                 refuse de toute façon une session sans consentement. -->
+            <button type="button" class="nl-reg__google-voile" [attr.aria-label]="'consentRappel' | t"
+                    (click)="tentativeSansConsent.set(true)"></button>
+          }
+        </div>
         @if (!google.desactive()) {
           <p class="nl-reg__ou"><span>{{ 'googleOu' | t }}</span></p>
         }
@@ -72,11 +80,7 @@
           }
         }
 
-        <label class="nl-reg__consent">
-          <input type="checkbox" [checked]="consent()" (change)="consent.set(coche($event))" />
-          <span>{{ 'consentLu' | t }}<a href="/confidentialite/" target="_blank" rel="noopener">{{ 'consentPolitique' | t }}</a>{{ 'consentEtLes' | t }}<a href="/conditions/" target="_blank" rel="noopener">{{ 'consentConditions' | t }}</a>.
-          </span>
-        </label>
+        <nl-consentements [afficherRappel]="tentativeSansConsent()" />
 
         @if (domaine().google) {
           <!-- Adresse gérée par Google : le code par e-mail n'est plus proposé, la
@@ -160,6 +164,10 @@
             <span class="nl-reg__cascade-label">{{ 'communFiliere' | t }}</span>
             <span class="nl-reg__cascade-valeur">{{ filiereNom() || 'Choisir…' }}</span>
           </button>
+        }
+
+        @if (modeGoogle() && !consent()) {
+          <nl-consentements [afficherRappel]="tentativeSansConsent()" />
         }
 
         <button type="button" class="nl-reg__cta" [disabled]="chargement()" (click)="suivant()">

@@ -411,3 +411,21 @@ input[type='email'] {
   font: 500 0.875rem/1.45 var(--font-family-body);
   color: var(--text-secondary);
 }
+
+// Google ne peut pas être désactivé : tant que les documents ne sont pas acceptés,
+// un voile transparent reçoit le geste à sa place.
+.nl-reg__google {
+  position: relative;
+
+  &--bloque :first-child {
+    opacity: 0.55;
+  }
+}
+
+.nl-reg__google-voile {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: transparent;
+  cursor: not-allowed;
+}

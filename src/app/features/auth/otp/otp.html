@@ -76,6 +76,9 @@
         @if (erreur()) {
           <p class="nl-otp__erreur">{{ erreur() }}</p>
         }
+        @if (cons.requis()) {
+          <nl-consentements [afficherRappel]="true" />
+        }
 
         <button type="button" class="nl-otp__lien" (click)="renvoyer()">{{ 'otpRenvoyerCode' | t }}</button>
         <button type="button" class="nl-otp__lien nl-otp__lien--discret" (click)="demanderAbandon()">

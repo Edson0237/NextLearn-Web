@@ -105,7 +105,7 @@ function messagePour(
   // Les refus de la connexion Google disent eux aussi ce qu'il faut faire
   // (utiliser son adresse d'établissement, contacter un administrateur) et ne
   // révèlent rien de protégé.
-  if (code === 'domain_not_allowed' || code === 'account_banned' || code === 'use_google_auth') {
+  if (code === 'domain_not_allowed' || code === 'account_banned' || code === 'use_google_auth' || code === 'consent_required') {
     const message = duServeur?.trim();
     if (message && message.length > 0 && message.length <= 240) return message;
   }

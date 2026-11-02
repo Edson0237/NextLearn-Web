@@ -5,12 +5,16 @@ import { AUTH_PATH } from '../../network/config/api-config';
 import { SecureStorageService } from '../../storage/services/secure-storage.service';
 import { Failure } from '../../models/failure.model';
 import { Appareil } from '../services/appareil';
+import { Consentements } from '../services/consentements';
 import { UserModel, Cycle, NiveauEtude, cycleVersApi, niveauCourt, utilisateurDepuisApi } from '../../models/user.model';
 import { DemandeOtp, demandeOtpDepuisJson, CycleVerification, cycleVerificationDepuisJson, EtatVerification } from '../../models/demande-otp.model';
 import { ParcoursOtp, parcoursOtpDepuisCode, DUREE_REPRISABLE_OTP_MS } from '../../models/parcours-otp.model';
 import { EtatDomaine, ReponseDomaine, reponseDomaineDepuisJson } from '../../models/domaine.model';
 import { enFailure } from '../../network/utils/erreur-api';
 import { donnees } from '../../network/utils/enveloppe-api';
+
+/** Les routes d'authentification qui peuvent créer une session. */
+const OUVRENT_UNE_SESSION: ReadonlySet<string> = new Set(['/setup-pin', '/login', '/google', '/google/inscription', '/verify-2fa']);
 
 /** Durée de repli hors ligne quand aucune échéance n'a encore été mise en cache. */
 const OTP_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
@@ -68,6 +72,7 @@ export class AuthRepository {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(SecureStorageService);
   private readonly appareil = inject(Appareil);
+  private readonly consentements = inject(Consentements);
 
   /** L'état de la dernière demande de code, tel que le serveur l'a rendu. */
   derniereDemandeOtp: DemandeOtp | null = null;
@@ -83,10 +88,21 @@ export class AuthRepository {
 
   private async poster(chemin: string, corps: unknown): Promise<Record<string, unknown>> {
     try {
-      const reponse = await firstValueFrom(this.http.post(`${AUTH_PATH}${chemin}`, corps));
-      return donnees(reponse);
+      // Les demandes qui peuvent ouvrir une session portent les versions lues des
+      // documents juridiques : le serveur les exige, quel que soit le parcours.
+      // Sans case cochée, rien à attendre : la requête part sans détour.
+      const consentements = OUVRENT_UNE_SESSION.has(chemin) && this.consentements.toutCoche()
+        ? await this.consentements.declarer()
+        : undefined;
+      const envoye = consentements ? { ...(corps as object), consentements } : corps;
+      const reponse = await firstValueFrom(this.http.post(`${AUTH_PATH}${chemin}`, envoye));
+      const data = donnees(reponse);
+      if (OUVRENT_UNE_SESSION.has(chemin)) this.consentements.requis.set(false);
+      return data;
     } catch (e) {
-      throw enFailure(e);
+      const echec = enFailure(e);
+      if (echec.code === 'consent_required') this.consentements.exigerAffichage();
+      throw echec;
     }
   }
 
