@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { NotificationsEtat } from './notifications-etat';
 
 /**
  * Configuration Firebase du client web, servie depuis `public/`.
@@ -64,6 +65,7 @@ export type EtatPush =
 @Injectable({ providedIn: 'root' })
 export class PushService {
   private readonly http = inject(HttpClient);
+  private readonly compteNonLues = inject(NotificationsEtat);
 
   readonly etat = signal<EtatPush>('inactif');
 
@@ -118,6 +120,8 @@ export class PushService {
       // Message reçu alors que l'application est au premier plan : le
       // navigateur n'affiche rien de lui-même dans ce cas.
       onMessage(messagerie, (charge) => {
+        // Une notification vient d'arriver : la pastille s'allume à l'instant, sans attendre le battement.
+        void this.compteNonLues.rafraichir();
         const titre = charge.notification?.title;
         if (!titre) return;
         try {
