@@ -1,0 +1,144 @@
+<nl-page-bar [titre]="'emailTitre' | t" (retour)="retour()" />
+
+<div class="nl-mail">
+  @if (etapeActive() > 0) {
+    <ol class="nl-mail__etapes" aria-label="{{ 'emailEtapes' | t }}">
+      @if (avecPreuve()) {
+        <li [class.nl-mail__etape--active]="etapeActive() === 1" [class.nl-mail__etape--faite]="etapeActive() > 1">
+          <span>1</span>{{ 'emailEtapePreuve' | t }}
+        </li>
+      }
+      <li [class.nl-mail__etape--active]="etapeActive() === 2" [class.nl-mail__etape--faite]="etapeActive() > 2">
+        <span>{{ avecPreuve() ? 2 : 1 }}</span>{{ 'emailEtapeNouvelle' | t }}
+      </li>
+      <li [class.nl-mail__etape--active]="etapeActive() === 3">
+        <span>{{ avecPreuve() ? 3 : 2 }}</span>{{ 'emailEtapeTermine' | t }}
+      </li>
+    </ol>
+  }
+
+  @switch (ecran()) {
+    @case ('chargement') {
+      <p class="nl-mail__etat" role="status">{{ 'chargementEnCours' | t }}</p>
+    }
+
+    @case ('erreur') {
+      <p class="nl-mail__erreur" role="alert">{{ erreur() }}</p>
+      <button type="button" class="nl-mail__principal" (click)="ngOnInit()">{{ 'actionReessayer' | t }}</button>
+    }
+
+    @case ('accueil') {
+      @if (statut(); as s) {
+        <section class="nl-mail__carte">
+          <span class="nl-mail__libelle">{{ 'emailActuelle' | t }}</span>
+          <strong class="nl-mail__adresse">{{ s.email }}</strong>
+          <span class="nl-mail__badge" [class.nl-mail__badge--ok]="s.verifie">
+            <nl-icon [name]="s.verifie ? 'check_circle' : 'warning'" [size]="16" />
+            {{ (s.verifie ? 'emailVerifiee' : 'emailNonVerifiee') | t }}
+          </span>
+        </section>
+        <p class="nl-mail__aide">{{ 'emailAideChangement' | t }}</p>
+        <button type="button" class="nl-mail__principal" (click)="commencer()">{{ 'emailModifier' | t }}</button>
+      }
+    }
+
+    @case ('formulaire') {
+      <label class="nl-mail__champ">
+        <span>{{ 'emailNouvelle' | t }}</span>
+        <input type="email" inputmode="email" autocomplete="email" autocapitalize="off" [value]="nouvelEmail()" (input)="surEmail($event)" [disabled]="occupe()" />
+      </label>
+
+      <fieldset class="nl-mail__methodes">
+        <legend>{{ 'emailMethodeTitre' | t }}</legend>
+        <label class="nl-mail__methode">
+          <input type="radio" name="methode" [checked]="methode() === 'ancienne_adresse'" (change)="methode.set('ancienne_adresse')" />
+          <span><strong>{{ 'emailMethodeCode' | t }}</strong><small>{{ 'emailMethodeCodeAide' | t }}</small></span>
+        </label>
+        @if (statut()?.methodes?.google) {
+          <label class="nl-mail__methode">
+            <input type="radio" name="methode" [checked]="methode() === 'google'" (change)="methode.set('google')" />
+            <span><strong>{{ 'emailMethodeGoogle' | t }}</strong><small>{{ 'emailMethodeGoogleAide' | t }}</small></span>
+          </label>
+        }
+        <label class="nl-mail__methode">
+          <input type="radio" name="methode" [checked]="methode() === 'ancienne_inaccessible'" (change)="methode.set('ancienne_inaccessible')" />
+          <span><strong>{{ 'emailMethodeInaccessible' | t }}</strong><small>{{ 'emailMethodeInaccessibleAide' | t }}</small></span>
+        </label>
+      </fieldset>
+
+      @if (erreur()) { <p class="nl-mail__erreur" role="alert">{{ erreur() }}</p> }
+      <div class="nl-mail__barre">
+        <button type="button" class="nl-mail__secondaire" (click)="ecran.set('accueil')" [disabled]="occupe()">{{ 'actionAnnuler' | t }}</button>
+        <button type="button" class="nl-mail__principal" (click)="demarrer()" [disabled]="!emailValide() || occupe()">
+          {{ (occupe() ? 'chargementEnCours' : 'docContinuer') | t }}
+        </button>
+      </div>
+    }
+
+    @case ('preuve') {
+      @if (demande(); as d) {
+        @if (d.methode === 'google') {
+          <h2 class="nl-mail__titre">{{ 'emailGoogleTitre' | t }}</h2>
+          <p class="nl-mail__aide">{{ 'emailGoogleAide' | t }}</p>
+          <div #hoteGoogle class="nl-mail__google"></div>
+          @if (google.desactive()) { <p class="nl-mail__erreur" role="alert">{{ 'googleIndisponible' | t }}</p> }
+        } @else {
+          <h2 class="nl-mail__titre">{{ 'emailPreuveTitre' | t }}</h2>
+          <p class="nl-mail__aide">{{ 'emailPreuveAide' | t }}</p>
+          <label class="nl-mail__champ">
+            <span>{{ 'emailCode' | t }}</span>
+            <input class="nl-mail__code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" [value]="code()" (input)="surCode($event)" [disabled]="occupe()" />
+          </label>
+          @if (d.tentativesRestantes !== undefined && d.tentativesRestantes < 5) {
+            <p class="nl-mail__aide">{{ 'emailTentatives' | t: { nombre: d.tentativesRestantes } }}</p>
+          }
+          @if (erreur()) { <p class="nl-mail__erreur" role="alert">{{ erreur() }}</p> }
+          <button type="button" class="nl-mail__principal" (click)="verifierPreuve()" [disabled]="!codeComplet() || occupe()">{{ 'emailVerifier' | t }}</button>
+          <button type="button" class="nl-mail__lien" (click)="renvoyer()" [disabled]="occupe()">{{ 'otpRenvoyerCode' | t }}</button>
+        }
+        @if (d.methode === 'google' && erreur()) { <p class="nl-mail__erreur" role="alert">{{ erreur() }}</p> }
+        <button type="button" class="nl-mail__lien nl-mail__lien--discret" (click)="annuler()" [disabled]="occupe()">{{ 'emailAbandonner' | t }}</button>
+      }
+    }
+
+    @case ('nouvelle') {
+      @if (demande(); as d) {
+        <h2 class="nl-mail__titre">{{ 'emailNouvelleTitre' | t }}</h2>
+        <p class="nl-mail__aide">{{ 'emailNouvelleAide' | t: { adresse: d.nouvelEmail } }}</p>
+        <label class="nl-mail__champ">
+          <span>{{ 'emailCode' | t }}</span>
+          <input class="nl-mail__code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" [value]="code()" (input)="surCode($event)" [disabled]="occupe()" />
+        </label>
+        @if (d.tentativesRestantes !== undefined && d.tentativesRestantes < 5) {
+          <p class="nl-mail__aide">{{ 'emailTentatives' | t: { nombre: d.tentativesRestantes } }}</p>
+        }
+        @if (erreur()) { <p class="nl-mail__erreur" role="alert">{{ erreur() }}</p> }
+        <button type="button" class="nl-mail__principal" (click)="confirmer()" [disabled]="!codeComplet() || occupe()">{{ 'emailConfirmer' | t }}</button>
+        <button type="button" class="nl-mail__lien" (click)="renvoyer()" [disabled]="occupe()">{{ 'otpRenvoyerCode' | t }}</button>
+        <button type="button" class="nl-mail__lien nl-mail__lien--discret" (click)="annuler()" [disabled]="occupe()">{{ 'emailAbandonner' | t }}</button>
+      }
+    }
+
+    @case ('attente') {
+      @if (demande(); as d) {
+        <section class="nl-mail__carte nl-mail__carte--info" role="status">
+          <nl-icon name="schedule" [size]="24" />
+          <strong>{{ (d.prochaineEtape === 'justificatifs' ? 'emailJustificatifsTitre' : 'emailAttenteTitre') | t }}</strong>
+          <p>{{ 'emailAttenteAide' | t: { adresse: d.nouvelEmail } }}</p>
+          @if (d.messageAdmin) { <p class="nl-mail__message">{{ d.messageAdmin }}</p> }
+        </section>
+        <button type="button" class="nl-mail__lien nl-mail__lien--discret" (click)="annuler()" [disabled]="occupe()">{{ 'emailAnnulerDemande' | t }}</button>
+      }
+    }
+
+    @case ('succes') {
+      <section class="nl-mail__carte nl-mail__carte--ok" role="status">
+        <nl-icon name="check_circle" [size]="32" />
+        <strong>{{ 'emailChangee' | t }}</strong>
+        <span class="nl-mail__adresse">{{ adresseFinale() }}</span>
+        <p>{{ 'emailChangeeAide' | t }}</p>
+      </section>
+      <button type="button" class="nl-mail__principal" (click)="retour()">{{ 'actionTerminer' | t }}</button>
+    }
+  }
+</div>

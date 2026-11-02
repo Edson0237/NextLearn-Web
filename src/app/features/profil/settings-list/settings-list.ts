@@ -137,8 +137,8 @@ export class SettingsList implements OnInit {
         titre: tr('profilCompte', 'Compte'),
         lignes: [
           {
-            icone: 'alternate_email', titre: tr('aproposLigneEmail', 'E-mail'), sousTitre: tr('pwaRattacheeEcole', 'Rattachée à ton école'),
-            valeur: u?.email, action: () => void 0,
+            icone: 'alternate_email', titre: tr('aproposLigneEmail', 'E-mail'), sousTitre: tr('emailModifierAide', 'Voir et modifier mon adresse e-mail'),
+            valeur: u?.email, action: () => void this.router.navigateByUrl('/app/' + AppRoutes.changerEmail),
           },
           {
             icone: 'school', titre: tr('docNiveau', 'Niveau'), sousTitre: tr('pwaPromotionActuelle', 'Ta promotion actuelle'),

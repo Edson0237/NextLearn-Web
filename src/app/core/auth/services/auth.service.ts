@@ -51,6 +51,12 @@ export class AuthService {
     this._state.set({ ...this._state(), ...partiel });
   }
 
+  /** L'adresse e-mail du compte a changé : l'état et la copie locale la reprennent. */
+  majEmail(email: string): void {
+    const user = this.repo.majEmailLocal(email);
+    if (user) this.patch({ user });
+  }
+
   private async init(): Promise<void> {
     const minSplash = attendre(SPLASH_MIN_MS);
     try {

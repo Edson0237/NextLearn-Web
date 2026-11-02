@@ -91,6 +91,11 @@ export const APP_SHELL_ROUTES: Routes = [
           ),
       },
       {
+        path: AppRoutes.changerEmail,
+        loadComponent: () =>
+          import('../../features/profil/changer-email/changer-email').then((m) => m.ChangerEmail),
+      },
+      {
         path: AppRoutes.supportTickets,
         loadComponent: () =>
           import('../../features/profil/support-tickets/support-tickets').then((m) => m.SupportTickets),
