@@ -1,0 +1,10 @@
+/* Les workers n'ont ni DOM ni `window` : leur propre configuration de types. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/worker",
+    "lib": ["es2022", "webworker"],
+    "types": []
+  },
+  "include": ["src/**/*.worker.ts"]
+}

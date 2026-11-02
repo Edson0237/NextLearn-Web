@@ -9,6 +9,7 @@ const COTE_MAX = 2000;
 /** Définition de travail de la photo : au-delà, on ne gagne que du temps de calcul. */
 const COTE_SOURCE = 2400;
 const QUALITE_JPEG = 0.85;
+const CLE_AUTO_CADRAGE = 'nl_scan_cadrage_auto';
 
 /** Une page prise ou importée, gardée en mémoire pour pouvoir la recadrer, la retourner ou la retoucher. */
 export interface PageNumerisee {
@@ -53,12 +54,37 @@ export class Numerisation {
   /** Les réglages donnés à une nouvelle page : ceux de la dernière retouche « pour toutes les pages ». */
   readonly reglagesParDefaut = signal<Reglages>(REGLAGES_PAR_DEFAUT);
 
+  /**
+   * Le cadrage automatique : repérer la page pendant la prise de vue et la recadrer
+   * après. Actif par défaut, et désactivable - pour qui préfère prendre la photo
+   * telle quelle et cadrer à la main. Le choix est gardé d'une visite à l'autre.
+   */
+  readonly autoCadrage = signal(this.lireAutoCadrage());
+
+  definirAutoCadrage(actif: boolean): void {
+    this.autoCadrage.set(actif);
+    try {
+      localStorage.setItem(CLE_AUTO_CADRAGE, actif ? '1' : '0');
+    } catch {
+      // Stockage indisponible : le réglage vaut pour cette session.
+    }
+  }
+
+  private lireAutoCadrage(): boolean {
+    try {
+      return localStorage.getItem(CLE_AUTO_CADRAGE) !== '0';
+    } catch {
+      return true;
+    }
+  }
+
   /** Crée une page depuis une photo ; la page y est cherchée automatiquement. */
   async creer(fichier: File): Promise<PageNumerisee> {
     // `from-image` applique l'orientation EXIF : sans elle, une photo prise en
     // portrait arrive couchée.
     const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
-    const coins = this.detecter(source);
+    // Désactivé : la photo est prise telle quelle, plein cadre, à recadrer à la main si besoin.
+    const coins = this.autoCadrage() ? this.detecter(source) : null;
     return this.rendre({
       id: this.prochainId++,
       source,

@@ -1358,5 +1358,7 @@
   "emailAttenteAide": "Your new address ({adresse}) is verified. An administrator is reviewing your request: your current address only changes once approved.",
   "emailChangee": "Email address changed",
   "emailChangeeAide": "Your account, documents and favourites are unchanged. Use this address to sign in with a code.",
-  "actionTerminer": "Done"
+  "actionTerminer": "Done",
+  "scanCadrageAuto": "Auto framing",
+  "scanCadrageAutoOff": "Auto framing off: crop by hand after capture"
 }

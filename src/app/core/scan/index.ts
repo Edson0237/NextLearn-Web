@@ -9,3 +9,5 @@ export type { Point, Quad } from './utils/geometrie';
 export { detecterCoins } from './utils/detection-bords';
 export { REGLAGES_PAR_DEFAUT } from './utils/filtres-image';
 export type { ModeScan, Reglages } from './utils/filtres-image';
+export { DetectionTempsReel, COTE_TEMPS_REEL } from './services/detection-temps-reel';
+export { StabilisateurCoins } from './utils/stabilisation';

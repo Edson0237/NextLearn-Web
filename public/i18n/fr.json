@@ -1358,5 +1358,7 @@
   "emailAttenteAide": "Ta nouvelle adresse ({adresse}) est vérifiée. Un administrateur examine ta demande : ton adresse actuelle ne change qu’après sa validation.",
   "emailChangee": "Adresse e-mail modifiée",
   "emailChangeeAide": "Ton compte, tes documents et tes favoris sont inchangés. Utilise cette adresse pour te connecter par code.",
-  "actionTerminer": "Terminer"
+  "actionTerminer": "Terminer",
+  "scanCadrageAuto": "Cadrage auto",
+  "scanCadrageAutoOff": "Cadrage automatique désactivé : cadre à la main après la prise"
 }

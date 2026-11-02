@@ -3,14 +3,21 @@ import { aire, Pixels, Point, Quad, quadValide } from './geometrie';
 /** Définition à laquelle on cherche : assez fine pour les bords, assez petite pour tenir dans une image de caméra. */
 export const COTE_DETECTION = 240;
 
-/** Niveaux de gris (0 à 255) d'une image, légèrement flou pour ignorer le grain. */
-function grises(img: Pixels): Uint8Array {
+/**
+ * Niveaux de gris (0 à 255) d'une image.
+ *
+ * `flou` : un lissage 3×3 qui ignore le grain d'une photo. Le temps réel s'en
+ * passe : l'image y est déjà réduite (donc moyennée) et le lissage coûtait à lui
+ * seul plus de la moitié de la détection.
+ */
+function grises(img: Pixels, flou: boolean): Uint8Array {
   const { data, width: w, height: h } = img;
   const brut = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) {
-    brut[i] = (data[i * 4] * 299 + data[i * 4 + 1] * 587 + data[i * 4 + 2] * 114) / 1000;
+    brut[i] = (data[i * 4] * 77 + data[i * 4 + 1] * 150 + data[i * 4 + 2] * 29) >> 8;
   }
-  const flou = new Uint8Array(w * h);
+  if (!flou) return brut;
+  const lisse = new Uint8Array(w * h);
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       let s = 0;
@@ -24,10 +31,10 @@ function grises(img: Pixels): Uint8Array {
           n++;
         }
       }
-      flou[y * w + x] = s / n;
+      lisse[y * w + x] = s / n;
     }
   }
-  return flou;
+  return lisse;
 }
 
 /** Seuil d'Otsu : celui qui sépare le mieux deux populations de gris. */
@@ -134,10 +141,10 @@ function quatreCoins(hull: readonly Point[]): [Point, Point, Point, Point] {
  * chargé, page qui touche le bord, peu de contraste - elle rend `null` et
  * l'écran propose le cadrage à la main, sans rien deviner.
  */
-export function detecterCoins(img: Pixels): Quad | null {
+export function detecterCoins(img: Pixels, options: { flou?: boolean } = {}): Quad | null {
   const { width: w, height: h } = img;
   if (w < 20 || h < 20) return null;
-  const gris = grises(img);
+  const gris = grises(img, options.flou ?? true);
   const seuil = seuilOtsu(gris);
 
   let meilleur: { quad: Quad; score: number } | null = null;
