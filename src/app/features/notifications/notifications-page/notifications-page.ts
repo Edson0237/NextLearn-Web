@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { TraductionPipe, tr } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
@@ -33,9 +33,23 @@ export class NotificationsPage implements OnInit {
     await this.load();
   }
 
-  async load(): Promise<void> {
-    this.loading.set(true);
-    this.error.set(null);
+  constructor() {
+    // Une ressource consultée ailleurs a pu marquer des notifications comme lues : la liste suit.
+    let premier = true;
+    effect(() => {
+      this.etat.version();
+      untracked(() => {
+        if (premier) { premier = false; return; }
+        void this.load(true);
+      });
+    });
+  }
+
+  async load(silencieux = false): Promise<void> {
+    if (!silencieux) {
+      this.loading.set(true);
+      this.error.set(null);
+    }
     try {
       const list = await this.notifRepo.getNotifications();
       this.notifications.set(list);
@@ -43,6 +57,7 @@ export class NotificationsPage implements OnInit {
       // compte de la cloche soit celui du serveur et non un chiffre ancien.
       void this.etat.rafraichir();
     } catch (e) {
+      if (silencieux) return;
       this.error.set('Impossible de charger les notifications.');
     } finally {
       this.loading.set(false);

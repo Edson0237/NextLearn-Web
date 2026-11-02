@@ -1,3 +1,4 @@
+import { NotificationsEtat } from '../../../core/notifications';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
@@ -57,6 +58,8 @@ export class EpreuveDetail {
     return this.signalement.signaler(CibleSignalement.epreuve, this.id);
   }
 
+  private readonly notifEtat = inject(NotificationsEtat);
+
   constructor() {
     void this.charger();
   }
@@ -71,6 +74,8 @@ export class EpreuveDetail {
       }
       this.epreuve.set(ep);
       this.statut.set('pret');
+      // Consultée : les notifications qui l'annonçaient ne sont plus « nouvelles ».
+      void this.notifEtat.marquerRessourceLue('epreuve', this.id);
     } catch (e) {
       this.erreur.set(e instanceof Failure ? e.message : 'Erreur de chargement.');
       this.statut.set('erreur');

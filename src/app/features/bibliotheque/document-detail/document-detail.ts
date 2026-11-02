@@ -1,3 +1,4 @@
+import { NotificationsEtat } from '../../../core/notifications';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
@@ -35,6 +36,7 @@ import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-
 })
 export class DocumentDetail implements OnInit {
   protected readonly telechargements = inject(TelechargementEtat);
+  private readonly notifEtat = inject(NotificationsEtat);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly docsRepo = inject(DocumentsRepository);
@@ -78,7 +80,11 @@ export class DocumentDetail implements OnInit {
       // réellement lisible sur celui-ci.
       await this.stockage.rafraichir();
       this.isOffline.set(offlineIds.has(this.docId) || this.stockage.ids().has(this.docId));
-      if (doc) void this.docsRepo.recordView(doc.id);
+      if (doc) {
+        void this.docsRepo.recordView(doc.id);
+        // Consulté : les notifications qui l'annonçaient ne sont plus « nouvelles ».
+        void this.notifEtat.marquerRessourceLue('document', doc.id);
+      }
     } catch {
       this.error.set('Impossible de charger ce document.');
     } finally {

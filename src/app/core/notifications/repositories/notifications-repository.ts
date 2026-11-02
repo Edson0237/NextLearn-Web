@@ -24,6 +24,13 @@ export class NotificationsRepository {
     await firstValueFrom(this.http.put(`/api/notifications/${id}/read`, {}));
   }
 
+  /** La ressource a été consultée : le serveur marque lues les notifications qui l'annonçaient. */
+  async marquerRessourceLue(type: 'document' | 'epreuve', id: string): Promise<number | null> {
+    const reponse = await firstValueFrom(this.http.post('/api/notifications/read-by-resource', { type, id }));
+    const data = (reponse as Record<string, unknown>)?.['data'] as Record<string, unknown> | undefined;
+    return typeof data?.['nonLues'] === 'number' ? data['nonLues'] : null;
+  }
+
   async markAllAsRead(): Promise<void> {
     await firstValueFrom(this.http.put('/api/notifications/read-all', {}));
   }

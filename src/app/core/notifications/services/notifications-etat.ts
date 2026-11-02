@@ -33,6 +33,14 @@ export class NotificationsEtat {
   private readonly _nonLues = signal(0);
   readonly nonLues = this._nonLues.asReadonly();
 
+  private readonly _version = signal(0);
+  /**
+   * Change quand l'état des notifications a bougé **ailleurs que dans leur page**
+   * (une ressource consultée en a marqué certaines comme lues) : la liste, si elle
+   * est affichée ou gardée montée, se relit alors en silence.
+   */
+  readonly version = this._version.asReadonly();
+
   private enCours: Promise<void> | null = null;
   private ecoute = false;
 
@@ -54,6 +62,24 @@ export class NotificationsEtat {
     return this.enCours;
   }
 
+  /**
+   * Une ressource vient d'être consultée : les notifications qui l'annonçaient ne sont
+   * plus « nouvelles ». Le compte exact revient du serveur ; en cas d'échec (hors
+   * ligne), on resynchronisera au retour du réseau plutôt que de deviner.
+   */
+  async marquerRessourceLue(type: 'document' | 'epreuve', id: string): Promise<void> {
+    try {
+      const restantes = await this.repo.marquerRessourceLue(type, id);
+      if (restantes !== null) {
+        const avant = this._nonLues();
+        this._nonLues.set(restantes);
+        if (restantes !== avant) this._version.update((v) => v + 1);
+      }
+    } catch {
+      // Hors ligne ou serveur muet : le prochain retour au premier plan ou du réseau resynchronise.
+    }
+  }
+
   /** Une notification vient d'être lue. */
   retirer(nombre = 1): void {
     this._nonLues.update((n) => Math.max(0, n - nombre));
@@ -70,5 +96,11 @@ export class NotificationsEtat {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') void this.rafraichir();
     });
+    // Le retour du réseau, et un battement lent tant que l'application est affichée :
+    // de nouvelles notifications peuvent arriver sans qu'on quitte l'écran.
+    window.addEventListener('online', () => void this.rafraichir());
+    setInterval(() => {
+      if (document.visibilityState === 'visible') void this.rafraichir();
+    }, 2 * 60_000);
   }
 }
