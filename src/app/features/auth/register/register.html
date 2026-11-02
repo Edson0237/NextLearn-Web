@@ -20,6 +20,9 @@
         <!-- Google d'abord : pour une adresse d'établissement, c'est la voie la plus
              courte, sans code à recopier. Rien ne s'affiche si Google n'est pas
              configuré. -->
+        @if (google.disponible()) {
+          <p class="nl-reg__aide-google">{{ 'registerGoogleTexte' | t }}</p>
+        }
         <nl-google-bouton texte="signup_with" />
         @if (google.disponible()) {
           <p class="nl-reg__ou"><span>{{ 'googleOu' | t }}</span></p>
@@ -46,10 +49,10 @@
           />
         </label>
 
-        <!-- Pour qui n'a pas d'adresse d'établissement : où aller, avant même de saisir. -->
-        @if (domaine().etat === 'vide' || domaine().etat === 'formatInvalide') {
-          <p class="nl-reg__aide-domaine">{{ 'registerAideHorsDomaine' | t }}</p>
-        }
+        <!-- Visible avant la fin de l'inscription, quel que soit l'état de la saisie :
+             une adresse personnelle n'est pas un refus, c'est une vérification. -->
+        <p class="nl-reg__aide-domaine">{{ 'registerAutreAdresse' | t }}</p>
+        <p class="nl-reg__aide-domaine">{{ 'registerAideHorsDomaine' | t }}</p>
         @switch (domaine().etat) {
           @case ('verification') {
             <p class="nl-reg__etat-domaine nl-reg__etat-domaine--neutre">{{ 'pwaVerificationEnCours' | t }}</p>
