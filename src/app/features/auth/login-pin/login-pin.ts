@@ -2,8 +2,8 @@ import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
-import { AuthService, Consentements, GoogleIdentite } from '../../../core/auth';
-import { ConsentementsCases } from '../../../shared/ui/consentements/consentements';
+import { AuthService, GoogleIdentite } from '../../../core/auth';
+import { MentionsLegales } from '../../../shared/ui/consentements/mentions-legales';
 import { SecureStorageService } from '../../../core/storage';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
@@ -25,7 +25,7 @@ import { initiales } from '../../../core/models';
 @Component({
   selector: 'app-login-pin',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Identite, ResultatPin, GoogleBouton, ConsentementsCases],
+  imports: [TraductionPipe, PinInput, Identite, ResultatPin, GoogleBouton, MentionsLegales],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login-pin.html',
   styleUrl: './login-pin.scss',
@@ -34,7 +34,6 @@ export class LoginPin {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   protected readonly google = inject(GoogleIdentite);
-  protected readonly cons = inject(Consentements);
   private readonly storage = inject(SecureStorageService);
 
   private readonly utilisateurCache = this.storage.getUser();

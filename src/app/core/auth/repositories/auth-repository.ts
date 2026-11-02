@@ -86,22 +86,21 @@ export class AuthRepository {
     return this.derniereDemandeOtp;
   }
 
-  private async poster(chemin: string, corps: unknown): Promise<Record<string, unknown>> {
+  private async poster(chemin: string, corps: unknown, reessayer = true): Promise<Record<string, unknown>> {
+    const ouvreUneSession = OUVRENT_UNE_SESSION.has(chemin);
+    // Un compte qui a déjà tout accepté n'a rien à déclarer : la demande part sans
+    // détour. Sinon le serveur refuse, et la demande repart avec les versions.
+    const consentements = ouvreUneSession ? this.consentements.versionsConnues() : undefined;
     try {
-      // Les demandes qui peuvent ouvrir une session portent les versions lues des
-      // documents juridiques : le serveur les exige, quel que soit le parcours.
-      // Sans case cochée, rien à attendre : la requête part sans détour.
-      const consentements = OUVRENT_UNE_SESSION.has(chemin) && this.consentements.toutCoche()
-        ? await this.consentements.declarer()
-        : undefined;
       const envoye = consentements ? { ...(corps as object), consentements } : corps;
       const reponse = await firstValueFrom(this.http.post(`${AUTH_PATH}${chemin}`, envoye));
-      const data = donnees(reponse);
-      if (OUVRENT_UNE_SESSION.has(chemin)) this.consentements.requis.set(false);
-      return data;
+      return donnees(reponse);
     } catch (e) {
       const echec = enFailure(e);
-      if (echec.code === 'consent_required') this.consentements.exigerAffichage();
+      // Parti avant que les versions n'arrivent : une fois chargées, on retente une fois.
+      if (ouvreUneSession && reessayer && echec.code === 'consent_required' && (await this.consentements.charger())) {
+        return this.poster(chemin, corps, false);
+      }
       throw echec;
     }
   }
