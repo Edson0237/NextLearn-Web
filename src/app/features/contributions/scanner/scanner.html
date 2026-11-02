@@ -1,77 +1,147 @@
 <nl-page-bar [titre]="'scanTitre' | t" (retour)="retour()" />
 
 <div class="nl-scan">
-  <p class="nl-scan__aide">{{ 'scanAide' | t }}</p>
+  @switch (etape()) {
+    @case ('pages') {
+      <p class="nl-scan__aide">{{ 'scanAide' | t }}</p>
 
-  <!-- Deux entrées : la caméra (sur téléphone, ouvre l'appareil photo), et la
-       galerie pour des pages déjà photographiées. -->
-  <div class="nl-scan__actions">
-    <label class="nl-scan__action nl-scan__action--principale" [class.nl-scan__action--occupee]="occupe()">
-      <input type="file" accept="image/*" capture="environment" hidden [disabled]="occupe()" (change)="surFichiers($event)" />
-      <nl-icon name="photo_camera" [size]="22" />
-      <span>{{ (nombre() === 0 ? 'scanPrendre' : 'scanAjouterPage') | t }}</span>
-    </label>
-    <label class="nl-scan__action" [class.nl-scan__action--occupee]="occupe()">
-      <input type="file" accept="image/*" multiple hidden [disabled]="occupe()" (change)="surFichiers($event)" />
-      <nl-icon name="photo_library" [size]="22" />
-      <span>{{ 'scanGalerie' | t }}</span>
-    </label>
-  </div>
+      <!-- Trois entrées : la caméra, des photos déjà prises, ou un PDF prêt. -->
+      <div class="nl-scan__actions">
+        <button type="button" class="nl-scan__action nl-scan__action--principale" [disabled]="occupe()" (click)="ouvrirCamera()">
+          <nl-icon name="photo_camera" [size]="22" />
+          <span>{{ (nombre() === 0 ? 'scanScannerCamera' : 'scanAjouterPage') | t }}</span>
+        </button>
+        <label class="nl-scan__action" [class.nl-scan__action--occupee]="occupe()">
+          <input type="file" accept="image/*" multiple hidden [disabled]="occupe()" (change)="surFichiers($event)" />
+          <nl-icon name="photo_library" [size]="22" />
+          <span>{{ 'scanGalerie' | t }}</span>
+        </label>
+        <label class="nl-scan__action">
+          <input type="file" accept="application/pdf" hidden (change)="surPdf($event)" />
+          <nl-icon name="picture_as_pdf" [size]="22" />
+          <span>{{ 'scanImporterPdf' | t }}</span>
+        </label>
+      </div>
+      <!-- L'appareil photo du système : repli quand la caméra intégrée n'est pas disponible. -->
+      <input #champSysteme type="file" accept="image/*" capture="environment" hidden (change)="surFichiers($event)" />
 
-  @if (occupe()) {
-    <p class="nl-scan__etat" role="status">{{ 'scanTraitement' | t }}</p>
-  }
+      @if (occupe()) {
+        <p class="nl-scan__etat" role="status">{{ 'scanTraitement' | t }}</p>
+      }
 
-  @if (nombre() > 0) {
-    <button
-      type="button"
-      class="nl-scan__bascule"
-      role="switch"
-      [attr.aria-checked]="num.ameliorer()"
-      [disabled]="occupe()"
-      (click)="basculerAmelioration()">
-      <span class="nl-scan__bascule-textes">
-        <strong>{{ 'scanAmeliorer' | t }}</strong>
-        <small>{{ 'scanAmeliorerAide' | t }}</small>
-      </span>
-      <span class="nl-scan__interrupteur" [class.nl-scan__interrupteur--actif]="num.ameliorer()" aria-hidden="true">
-        <span class="nl-scan__interrupteur-pastille"></span>
-      </span>
-    </button>
-
-    <ol class="nl-scan__pages">
-      @for (p of pages(); track p.id; let i = $index) {
-        <li class="nl-scan__page">
-          <img [src]="p.apercu" [alt]="'scanPageN' | t: { numero: i + 1 }" />
-          <span class="nl-scan__numero">{{ i + 1 }}</span>
-          <div class="nl-scan__outils">
-            @if (i > 0) {
-              <button type="button" (click)="monter(i)" [attr.aria-label]="'scanMonter' | t">
-                <nl-icon name="chevron_left" [size]="18" />
+      @if (nombre() > 0) {
+        <ol class="nl-scan__pages">
+          @for (p of pages(); track p.id; let i = $index) {
+            <li class="nl-scan__page">
+              <button type="button" class="nl-scan__vignette" (click)="ouvrirEdition(p)" [attr.aria-label]="'scanRecadrer' | t">
+                <img [src]="p.apercu" [alt]="'scanPageN' | t: { numero: i + 1 }" />
               </button>
-            }
-            <button type="button" (click)="tourner(p)" [attr.aria-label]="'scanTourner' | t">
-              <nl-icon name="refresh" [size]="18" />
-            </button>
-            <button type="button" (click)="retirer(p)" [attr.aria-label]="'scanRetirer' | t">
-              <nl-icon name="delete" [size]="18" />
-            </button>
-          </div>
-        </li>
-      }
-    </ol>
+              <span class="nl-scan__numero">{{ i + 1 }}</span>
+              @if (!p.detectee && p.coins[0].x === 0 && p.coins[2].x === 1) {
+                <span class="nl-scan__pastille">{{ 'scanPleinCadre' | t }}</span>
+              }
+              <div class="nl-scan__outils">
+                <button type="button" (click)="deplacer(i, -1)" [disabled]="i === 0" [attr.aria-label]="'scanMonter' | t">
+                  <nl-icon name="chevron_left" [size]="18" />
+                </button>
+                <button type="button" (click)="deplacer(i, 1)" [disabled]="i === nombre() - 1" [attr.aria-label]="'scanDescendre' | t">
+                  <nl-icon name="chevron_right" [size]="18" />
+                </button>
+                <button type="button" (click)="tourner(p)" [attr.aria-label]="'scanTourner' | t">
+                  <nl-icon name="refresh" [size]="18" />
+                </button>
+                <button type="button" (click)="ouvrirEdition(p)" [attr.aria-label]="'scanRecadrer' | t">
+                  <nl-icon name="tune" [size]="18" />
+                </button>
+                <button type="button" (click)="retirer(p)" [attr.aria-label]="'scanRetirer' | t">
+                  <nl-icon name="delete" [size]="18" />
+                </button>
+              </div>
+            </li>
+          }
+        </ol>
 
-    <button type="button" class="nl-scan__terminer" [disabled]="occupe() || assemblage()" (click)="terminer()">
-      @if (assemblage()) {
-        {{ 'scanAssemblage' | t }}
-      } @else {
-        {{ 'scanTerminer' | t: { nombre: nombre() } }}
+        <button type="button" class="nl-scan__terminer" [disabled]="occupe() || assemblage()" (click)="apercu()">
+          @if (assemblage()) {
+            {{ 'scanAssemblage' | t }}
+          } @else {
+            {{ 'scanApercuPdf' | t: { nombre: nombre() } }}
+          }
+        </button>
+      } @else if (!occupe()) {
+        <div class="nl-scan__vide">
+          <nl-icon name="upload_file" [size]="32" />
+          <p>{{ 'scanVide' | t }}</p>
+        </div>
       }
-    </button>
-  } @else if (!occupe()) {
-    <div class="nl-scan__vide">
-      <nl-icon name="upload_file" [size]="32" />
-      <p>{{ 'scanVide' | t }}</p>
-    </div>
+    }
+
+    @case ('edition') {
+      @if (editee(); as page) {
+        <h2 class="nl-scan__titre-section">{{ 'scanRecadrer' | t }}</h2>
+        <nl-recadrage
+          [source]="page.apercuSource"
+          [depart]="page.coins"
+          (change)="surCoins($event)"
+          (detecter)="redetecter()" />
+
+        <div class="nl-scan__modes" role="radiogroup" [attr.aria-label]="'scanMode' | t">
+          @for (m of modes; track m.code) {
+            <button
+              type="button"
+              role="radio"
+              class="nl-scan__mode"
+              [class.nl-scan__mode--actif]="page.reglages.mode === m.code"
+              [attr.aria-checked]="page.reglages.mode === m.code"
+              (click)="surReglage({ mode: m.code })">
+              {{ m.cle | t }}
+            </button>
+          }
+        </div>
+
+        <label class="nl-scan__curseur">
+          <span>{{ 'scanLuminosite' | t }}</span>
+          <input type="range" min="-100" max="100" step="1" [value]="page.reglages.luminosite" (input)="surCurseur('luminosite', $event)" />
+        </label>
+        <label class="nl-scan__curseur">
+          <span>{{ 'scanContraste' | t }}</span>
+          <input type="range" min="-50" max="100" step="1" [value]="page.reglages.contraste" (input)="surCurseur('contraste', $event)" />
+        </label>
+
+        <div class="nl-scan__resultat">
+          <span class="nl-scan__resultat-titre">{{ 'scanResultat' | t }}</span>
+          <img [src]="page.apercu" alt="" />
+        </div>
+
+        <button type="button" class="nl-scan__lien" (click)="appliquerATous()">{{ 'scanAppliquerATous' | t }}</button>
+
+        <div class="nl-scan__barre">
+          <button type="button" class="nl-scan__secondaire" (click)="fermerEdition(true)">{{ 'actionAnnuler' | t }}</button>
+          <button type="button" class="nl-scan__terminer" (click)="fermerEdition(false)">{{ 'scanValiderPage' | t }}</button>
+        </div>
+      }
+    }
+
+    @case ('apercu') {
+      @if (resume(); as r) {
+        <div class="nl-scan__bilan" role="status">
+          <nl-icon name="check_circle" [size]="22" />
+          <span>{{ 'scanBilan' | t: { pages: r.pages, taille: taille(r.octets) } }}</span>
+        </div>
+        <ol class="nl-scan__apercu">
+          @for (p of pages(); track p.id; let i = $index) {
+            <li><img [src]="p.apercu" [alt]="'scanPageN' | t: { numero: i + 1 }" /><span>{{ i + 1 }}</span></li>
+          }
+        </ol>
+        <div class="nl-scan__barre">
+          <button type="button" class="nl-scan__secondaire" (click)="etape.set('pages')">{{ 'scanModifier' | t }}</button>
+          <button type="button" class="nl-scan__terminer" (click)="utiliser()">{{ 'scanUtiliserDocument' | t }}</button>
+        </div>
+      }
+    }
   }
 </div>
+
+@if (camera()) {
+  <nl-camera-scan (photo)="surPhotoCamera($event)" (fermer)="camera.set(false)" (systeme)="utiliserSysteme()" />
+}

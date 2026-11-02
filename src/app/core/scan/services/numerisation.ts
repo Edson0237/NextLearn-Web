@@ -1,59 +1,107 @@
 import { Injectable, signal } from '@angular/core';
 import { PageJpeg } from '../utils/pdf-assembleur';
+import { COTE_DETECTION, detecterCoins } from '../utils/detection-bords';
+import { PLEIN_CADRE, Pixels, Quad, quadValide, redresser, tailleSortie } from '../utils/geometrie';
+import { appliquerReglages, pivoter, REGLAGES_PAR_DEFAUT, Reglages } from '../utils/filtres-image';
 
 /** Côté le plus long d'une page numérisée : assez pour lire un cours, assez léger pour le réseau. */
 const COTE_MAX = 2000;
-const QUALITE_JPEG = 0.82;
+/** Définition de travail de la photo : au-delà, on ne gagne que du temps de calcul. */
+const COTE_SOURCE = 2400;
+const QUALITE_JPEG = 0.85;
 
-/** Une page prise ou importée, gardée en mémoire pour pouvoir la retourner ou la rééclaircir. */
+/** Une page prise ou importée, gardée en mémoire pour pouvoir la recadrer, la retourner ou la retoucher. */
 export interface PageNumerisee {
   readonly id: number;
   /** L'image d'origine, une fois orientée : on repart d'elle à chaque retouche. */
   readonly source: ImageBitmap;
+  /** Les quatre coins de la page sur la photo (0 à 1). Plein cadre quand rien n'a été repéré. */
+  readonly coins: Quad;
+  /** Les coins viennent de la détection automatique (sinon : plein cadre ou ajustés à la main). */
+  readonly detectee: boolean;
   /** Quarts de tour dans le sens horaire (0 à 3). */
   readonly rotation: number;
-  /** Adresse d'aperçu (`blob:`), à libérer quand la page disparaît. */
+  readonly reglages: Reglages;
+  /** Adresse d'aperçu de la page rendue (`blob:`), à libérer quand la page disparaît. */
   readonly apercu: string;
+  /** Adresse de la photo entière, pour l'écran de recadrage. */
+  readonly apercuSource: string;
   readonly largeur: number;
   readonly hauteur: number;
   readonly octets: Uint8Array;
 }
 
+/** Ce qu'on peut changer sur une page ; le reste est recalculé à partir de la photo d'origine. */
+export interface Retouche {
+  readonly coins?: Quad;
+  readonly detectee?: boolean;
+  readonly rotation?: number;
+  readonly reglages?: Reglages;
+}
+
 /**
  * Le scanner de documents de la PWA.
  *
- * L'application mobile passe par ML Kit (détection des bords, redressement).
- * Le navigateur n'en a pas l'équivalent : on prend donc la photo avec la
- * caméra du téléphone (`<input capture>`), puis on la **traite** ici - mise à
- * l'échelle, rotation, et un traitement « document » (niveaux de gris,
- * contraste relevé) qui rend un cahier photographié lisible et léger.
+ * Tout se passe sur l'appareil : la photo est orientée, la page y est repérée
+ * (quatre coins), redressée (perspective), éclaircie (mode, luminosité,
+ * contraste) puis encodée en JPEG. Aucune image ne quitte le téléphone avant
+ * l'envoi du PDF final, et aucune bibliothèque de vision n'est téléchargée.
  */
 @Injectable({ providedIn: 'root' })
 export class Numerisation {
   private prochainId = 1;
-  /** Le traitement « document » : actif par défaut, comme la détection de bords du mobile. */
-  readonly ameliorer = signal(true);
+  /** Les réglages donnés à une nouvelle page : ceux de la dernière retouche « pour toutes les pages ». */
+  readonly reglagesParDefaut = signal<Reglages>(REGLAGES_PAR_DEFAUT);
 
+  /** Crée une page depuis une photo ; la page y est cherchée automatiquement. */
   async creer(fichier: File): Promise<PageNumerisee> {
     // `from-image` applique l'orientation EXIF : sans elle, une photo prise en
     // portrait arrive couchée.
     const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
-    return this.rendre(this.prochainId++, source, 0);
+    const coins = this.detecter(source);
+    return this.rendre({
+      id: this.prochainId++,
+      source,
+      coins: coins ?? PLEIN_CADRE,
+      detectee: coins !== null,
+      rotation: 0,
+      reglages: this.reglagesParDefaut(),
+      apercuSource: await this.apercuSource(source),
+    });
   }
 
-  /** Refait le rendu d'une page (rotation, traitement) à partir de son image d'origine. */
-  async retoucher(page: PageNumerisee, rotation: number): Promise<PageNumerisee> {
+  /** Cherche la page dans une image ; `null` quand la détection n'est pas sûre. */
+  detecter(source: ImageBitmap | HTMLCanvasElement | HTMLVideoElement): Quad | null {
+    const w = source instanceof HTMLVideoElement ? source.videoWidth : source.width;
+    const h = source instanceof HTMLVideoElement ? source.videoHeight : source.height;
+    if (!w || !h) return null;
+    const echelle = Math.min(1, COTE_DETECTION / Math.max(w, h));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(w * echelle));
+    canvas.height = Math.max(1, Math.round(h * echelle));
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return null;
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+    return detecterCoins(ctx.getImageData(0, 0, canvas.width, canvas.height));
+  }
+
+  /** Refait le rendu d'une page avec la retouche demandée, à partir de sa photo d'origine. */
+  async retoucher(page: PageNumerisee, retouche: Retouche): Promise<PageNumerisee> {
     URL.revokeObjectURL(page.apercu);
-    return this.rendre(page.id, page.source, ((rotation % 4) + 4) % 4);
-  }
-
-  /** Refait le rendu avec le réglage courant du traitement. */
-  async retraiter(page: PageNumerisee): Promise<PageNumerisee> {
-    return this.retoucher(page, page.rotation);
+    return this.rendre({
+      id: page.id,
+      source: page.source,
+      coins: retouche.coins ?? page.coins,
+      detectee: retouche.detectee ?? page.detectee,
+      rotation: retouche.rotation !== undefined ? ((retouche.rotation % 4) + 4) % 4 : page.rotation,
+      reglages: retouche.reglages ?? page.reglages,
+      apercuSource: page.apercuSource,
+    });
   }
 
   liberer(page: PageNumerisee): void {
     URL.revokeObjectURL(page.apercu);
+    URL.revokeObjectURL(page.apercuSource);
     page.source.close();
   }
 
@@ -61,35 +109,54 @@ export class Numerisation {
     return { octets: page.octets, largeur: page.largeur, hauteur: page.hauteur };
   }
 
-  private async rendre(id: number, source: ImageBitmap, rotation: number): Promise<PageNumerisee> {
-    const echelle = Math.min(1, COTE_MAX / Math.max(source.width, source.height));
-    const w = Math.round(source.width * echelle);
-    const h = Math.round(source.height * echelle);
-    const couche = rotation % 2 === 1;
+  private async apercuSource(source: ImageBitmap): Promise<string> {
+    const echelle = Math.min(1, 1400 / Math.max(source.width, source.height));
     const canvas = document.createElement('canvas');
-    canvas.width = couche ? h : w;
-    canvas.height = couche ? w : h;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Le navigateur ne sait pas dessiner l’image.');
+    canvas.width = Math.round(source.width * echelle);
+    canvas.height = Math.round(source.height * echelle);
+    canvas.getContext('2d')?.drawImage(source, 0, 0, canvas.width, canvas.height);
+    return URL.createObjectURL(await this.versBlob(canvas, 0.8));
+  }
 
-    // Fond blanc : un JPEG n'a pas de transparence.
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    if (this.ameliorer()) ctx.filter = 'grayscale(1) contrast(1.35) brightness(1.08)';
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate((rotation * Math.PI) / 2);
-    ctx.drawImage(source, -w / 2, -h / 2, w, h);
-
-    const blob = await new Promise<Blob>((ok, ko) =>
-      canvas.toBlob((b) => (b ? ok(b) : ko(new Error('Encodage de la page impossible.'))), 'image/jpeg', QUALITE_JPEG),
+  private versBlob(canvas: HTMLCanvasElement, qualite: number): Promise<Blob> {
+    return new Promise<Blob>((ok, ko) =>
+      canvas.toBlob((b) => (b ? ok(b) : ko(new Error('Encodage de la page impossible.'))), 'image/jpeg', qualite),
     );
+  }
+
+  private async rendre(base: Omit<PageNumerisee, 'apercu' | 'largeur' | 'hauteur' | 'octets'>): Promise<PageNumerisee> {
+    const { source } = base;
+    const echelle = Math.min(1, COTE_SOURCE / Math.max(source.width, source.height));
+    const sw = Math.max(1, Math.round(source.width * echelle));
+    const sh = Math.max(1, Math.round(source.height * echelle));
+    const canvas = document.createElement('canvas');
+    canvas.width = sw;
+    canvas.height = sh;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) throw new Error('Le navigateur ne sait pas dessiner l’image.');
+    ctx.drawImage(source, 0, 0, sw, sh);
+    const photo: Pixels = ctx.getImageData(0, 0, sw, sh);
+
+    // Des coins dégénérés (déplacés n'importe comment) ne doivent jamais faire échouer le rendu.
+    const coins = quadValide(base.coins) ? base.coins : PLEIN_CADRE;
+    const { largeur, hauteur } = tailleSortie(coins, sw, sh, COTE_MAX);
+    const droite = redresser(photo, coins, largeur, hauteur) ?? redresser(photo, PLEIN_CADRE, sw, sh) ?? photo;
+    appliquerReglages(droite, base.reglages);
+    const finale = pivoter(droite, base.rotation);
+
+    const sortie = document.createElement('canvas');
+    sortie.width = finale.width;
+    sortie.height = finale.height;
+    const sctx = sortie.getContext('2d');
+    if (!sctx) throw new Error('Le navigateur ne sait pas dessiner l’image.');
+    sctx.putImageData(new ImageData(new Uint8ClampedArray(finale.data), finale.width, finale.height), 0, 0);
+    const blob = await this.versBlob(sortie, QUALITE_JPEG);
     return {
-      id,
-      source,
-      rotation,
+      ...base,
+      coins,
       apercu: URL.createObjectURL(blob),
-      largeur: canvas.width,
-      hauteur: canvas.height,
+      largeur: finale.width,
+      hauteur: finale.height,
       octets: new Uint8Array(await blob.arrayBuffer()),
     };
   }
