@@ -16,7 +16,9 @@
     <div class="nl-loginpin__google">
       <nl-google-bouton texte="signin_with" />
     </div>
-    <p class="nl-loginpin__ou"><span>{{ 'googleOu' | t }}</span></p>
+    @if (!google.desactive()) {
+      <p class="nl-loginpin__ou"><span>{{ 'googleOu' | t }}</span></p>
+    }
   }
 
   @if (etape() === 'email') {

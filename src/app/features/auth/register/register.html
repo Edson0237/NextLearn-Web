@@ -20,11 +20,11 @@
         <!-- Google d'abord : pour une adresse d'établissement, c'est la voie la plus
              courte, sans code à recopier. Rien ne s'affiche si Google n'est pas
              configuré. -->
-        @if (google.disponible()) {
+        @if (!google.desactive()) {
           <p class="nl-reg__aide-google">{{ 'registerGoogleTexte' | t }}</p>
         }
         <nl-google-bouton texte="signup_with" />
-        @if (google.disponible()) {
+        @if (!google.desactive()) {
           <p class="nl-reg__ou"><span>{{ 'googleOu' | t }}</span></p>
         }
 
