@@ -119,9 +119,8 @@ export class DesignCatalog {
 
   protected async ouvrirListeActions(): Promise<void> {
     const valeur = await this.feuilleAction.choisir<string>({
-      title: tr('docPartager', 'Partager'),
+      title: tr('pwaActions', 'Actions'),
       options: [
-        { label: tr('pwaCopierLien', 'Copier le lien'), value: 'copier', icon: 'description' },
         { label: tr('pwaSignaler', 'Signaler'), value: 'signaler', icon: 'error', destructive: true },
       ],
     });

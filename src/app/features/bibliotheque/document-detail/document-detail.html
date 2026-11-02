@@ -1,12 +1,5 @@
 <div class="doc-detail">
-  <nl-page-bar [titre]="'navRessource' | t" (retour)="goBack()">
-    <button type="button" (click)="share()" [attr.aria-label]="'docPartager' | t">
-      <nl-icon name="share" [size]="20" />
-    </button>
-    <button type="button" (click)="signaler()" [attr.aria-label]="'pwaSignaler' | t">
-      <nl-icon name="warning" [size]="20" />
-    </button>
-  </nl-page-bar>
+  <nl-page-bar [titre]="'navRessource' | t" (retour)="goBack()" />
 
   @if (loading()) {
     <div class="doc-detail__corps" aria-busy="true" aria-live="polite">
@@ -120,31 +113,16 @@
         <button
           type="button"
           class="doc-detail__secondaire"
-          [disabled]="telechargement()"
-          (click)="telecharger()">
-          <nl-icon name="download" [size]="18" />
-          <span>{{ telechargement() ? ('chargementEnCours' | t) : ('actionTelecharger' | t) }}</span>
-        </button>
-        <button
-          type="button"
-          class="doc-detail__secondaire"
           [class.doc-detail__secondaire--actif]="isFavori()"
           [attr.aria-label]="(isFavori() ? 'docRetirerFavoris' : 'docAjouterFavoris') | t"
           (click)="toggleFavori()">
           <nl-icon [name]="isFavori() ? 'bookmark' : 'bookmark_outline'" [size]="18" />
           <span>{{ 'homeFavoris' | t }}</span>
         </button>
-        @if (horsLigneOuvert()) {
-          <button
-            type="button"
-            class="doc-detail__secondaire"
-            [class.doc-detail__secondaire--actif]="isOffline()"
-            [disabled]="miseHorsLigne()"
-            (click)="toggleOffline()">
-            <nl-icon [name]="isOffline() ? 'cloud_done' : 'cloud_download'" [size]="18" />
-            <span>{{ isOffline() ? ('pwaRetirerHorsLigne' | t) : ('biblioHorsLigne' | t) }}</span>
-          </button>
-        }
+        <button type="button" class="doc-detail__secondaire" (click)="signaler()">
+          <nl-icon name="warning" [size]="18" />
+          <span>{{ 'docSignalerCeDocument' | t }}</span>
+        </button>
       </div>
 
       @if (doc.description) {
