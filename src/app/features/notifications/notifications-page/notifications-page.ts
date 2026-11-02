@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
-import { TraductionPipe } from '../../../core/i18n';
+import { TraductionPipe, tr } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Icon } from '../../../shared/ui/icon/icon';
@@ -8,7 +8,8 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { NotificationsRepository } from '../../../core/notifications';
 import { NotificationsEtat } from '../../../core/notifications';
-import { NotificationModel, routeDeNotification } from '../../../core/notifications';
+import { categorieDeNotification, NotificationModel, routeDeNotification } from '../../../core/notifications';
+import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { AppRoutes } from '../../../core/router';
 
 @Component({
@@ -85,6 +86,36 @@ export class NotificationsPage implements OnInit {
     if (typeof lien === 'string' && /^https?:\/\//.test(lien)) {
       window.open(lien, '_blank', 'noopener');
     }
+  }
+
+  protected iconeDe(n: NotificationModel): IconName {
+    switch (categorieDeNotification(n)) {
+      case 'document': return 'description';
+      case 'decision': return 'gavel';
+      case 'support': return 'support_agent';
+      default: return 'notifications';
+    }
+  }
+
+  protected libelleCategorie(n: NotificationModel): string {
+    switch (categorieDeNotification(n)) {
+      case 'document': return tr('notifsCatDocument', 'Nouveau document');
+      case 'decision': return tr('notifsCatDecision', 'Décision');
+      case 'support': return tr('notifsCatSupport', 'Support');
+      default: return tr('notifsCatInfo', 'Information');
+    }
+  }
+
+  /** « Aujourd'hui, 14:30 », « Hier », « 12 oct. » : la date réelle, pas seulement une tranche. */
+  protected quand(dateStr: string): string {
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return '';
+    const maintenant = new Date();
+    const debutJour = new Date(maintenant.getFullYear(), maintenant.getMonth(), maintenant.getDate());
+    const heure = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    if (d >= debutJour) return `${tr('notifsAujourdhui', 'Aujourd’hui')}, ${heure}`;
+    if (d >= new Date(debutJour.getTime() - 24 * 60 * 60 * 1000)) return `${tr('notifsHier', 'Hier')}, ${heure}`;
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: d.getFullYear() === maintenant.getFullYear() ? undefined : 'numeric' });
   }
 
   protected groupTitle(dateStr: string): string {

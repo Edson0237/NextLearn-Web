@@ -65,3 +65,18 @@ export function routeDeNotification(n: NotificationModel): string | null {
 
   return null;
 }
+
+export type CategorieNotification = 'document' | 'decision' | 'support' | 'info';
+
+/**
+ * Ce dont parle une notification, pour la distinguer d'un coup d'œil : un
+ * nouveau document, une décision qui te concerne, une réponse du support.
+ * Déduit du type et de la `categorie` que le serveur pose dans `metadata` ;
+ * ce qu'il ne dit pas reste `info`, jamais deviné.
+ */
+export function categorieDeNotification(n: NotificationModel): CategorieNotification {
+  if (n.type === 'SUPPORT') return 'support';
+  if (n.metadata['categorie'] === 'decision') return 'decision';
+  if (n.type === 'NOUVEAU_COURS' || n.type === 'EPREUVE') return 'document';
+  return 'info';
+}

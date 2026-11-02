@@ -76,6 +76,24 @@
     }
   }
 
+  &__vignette {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  &__categorie {
+    font: 600 0.6875rem/1 var(--font-family-body);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
   &__dot {
     flex: none;
     width: 10px;
