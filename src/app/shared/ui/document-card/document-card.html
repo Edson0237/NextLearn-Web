@@ -80,9 +80,13 @@
           type="button"
           class="nl-doc-card__action"
           [class.nl-doc-card__action--destructive]="actionDestructive()"
-          [attr.aria-label]="actionLibelle()"
+          [class.nl-doc-card__action--fait]="actionEtat() === 'fait'"
+          [class.nl-doc-card__action--encours]="actionEtat() === 'encours'"
+          [attr.aria-label]="libelleAction()"
+          [attr.title]="libelleAction()"
+          [disabled]="actionEtat() === 'encours'"
           (click)="declencherAction($event)">
-          <nl-icon [name]="icone" [size]="18" />
+          <nl-icon [name]="iconeAction()" [size]="18" />
         </button>
       }
     </div>

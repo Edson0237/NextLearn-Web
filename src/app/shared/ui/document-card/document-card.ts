@@ -4,7 +4,7 @@ import { Icon } from '../icon/icon';
 import { IconName } from '../icon/icon-paths';
 import { Badge } from '../badge/badge';
 import { Pressable } from '../../directives/pressable';
-import { TraductionPipe } from '../../../core/i18n';
+import { TraductionPipe, tr } from '../../../core/i18n';
 
 /** Une métadonnée de la ligne du bas - pages, poids, date, téléchargements. */
 export interface MetaDocument {
@@ -113,6 +113,11 @@ export class DocumentCard {
    * l'écran d'à côté - deux gestes opposés sous le même rond bleu.
    */
   readonly actionDestructive = input(false);
+  /**
+   * Avancement du téléchargement que porte l'action : l'icône et le nom
+   * accessible suivent ce que l'application sait réellement du fichier.
+   */
+  readonly actionEtat = input<'repos' | 'encours' | 'lance' | 'fait'>('repos');
 
   readonly activate = output<void>();
   readonly action = output<void>();
@@ -138,6 +143,24 @@ export class DocumentCard {
   protected noteAffichee(): string {
     const n = this.note();
     return n == null ? '' : n.toFixed(1);
+  }
+
+  protected iconeAction(): IconName {
+    switch (this.actionEtat()) {
+      case 'fait': return 'check_circle';
+      case 'encours': return 'sync';
+      case 'lance': return 'schedule';
+      default: return this.actionIcone() ?? 'download';
+    }
+  }
+
+  protected libelleAction(): string {
+    switch (this.actionEtat()) {
+      case 'fait': return tr('dlTelechargeCourt', 'Téléchargé');
+      case 'encours': return tr('chargementEnCours', 'Chargement en cours');
+      case 'lance': return tr('dlLanceCourt', 'Téléchargement lancé');
+      default: return this.actionLibelle();
+    }
   }
 
   protected declencherAction(evenement: Event): void {

@@ -1,3 +1,4 @@
+import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
 import { metaDocument, noteDocument } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
@@ -43,6 +44,7 @@ const SEUIL_TEXTE = 2;
   styleUrl: './bibliotheque-home.scss',
 })
 export class BibliothequeHome implements OnInit {
+  protected readonly telechargements = inject(TelechargementEtat);
   private readonly router = inject(Router);
   private readonly docsRepo = inject(DocumentsRepository);
   private readonly contexte = inject(ContexteService);
@@ -147,6 +149,7 @@ export class BibliothequeHome implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    void this.telechargements.initialiser();
     // L'inventaire local dit quelles cartes porteront la marque « hors
     // ligne » : il se lit sans réseau, donc avant la liste.
     await this.stockage.rafraichir();
@@ -254,16 +257,8 @@ export class BibliothequeHome implements OnInit {
     return this.stockage.ids().has(doc.id);
   }
 
-  protected async telecharger(doc: DocumentModel): Promise<void> {
-    const url = (await this.docsRepo.urlLecture(doc.id).catch(() => null)) ?? doc.urlPdf;
-    if (!url) return;
-    void this.docsRepo.recordDownload(doc.id);
-    const lien = window.document.createElement('a');
-    lien.href = url;
-    lien.download = `${doc.titre}.pdf`;
-    lien.rel = 'noopener';
-    lien.target = '_blank';
-    lien.click();
+  protected telecharger(doc: DocumentModel): Promise<void> {
+    return this.telechargements.telecharger(doc);
   }
 
   protected reinitialiser(): void {

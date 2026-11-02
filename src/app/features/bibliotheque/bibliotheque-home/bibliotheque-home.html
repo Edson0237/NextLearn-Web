@@ -112,6 +112,7 @@
             [offline]="estHorsLigne(doc)"
             actionIcone="download"
             [actionLibelle]="'actionTelecharger' | t"
+            [actionEtat]="telechargements.etat(doc.id)"
             (action)="telecharger(doc)"
             (activate)="openDocument(doc)" />
         }
