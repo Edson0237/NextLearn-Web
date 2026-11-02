@@ -111,4 +111,78 @@ describe('MiseAJourService', () => {
     window.dispatchEvent(new Event('online'));
     expect(sw.checkForUpdate).toHaveBeenCalledTimes(2);
   });
+
+  describe('première occasion sûre', () => {
+    async function prepareeEtEnAttente(chemin = '/app/home') {
+      history.replaceState({}, '', chemin);
+      const s = creer();
+      window.dispatchEvent(new Event('pointerdown'));
+      prete();
+      await vide();
+      expect(s.disponible()).toBe(true);
+      expect(recharger).not.toHaveBeenCalled();
+      return s;
+    }
+
+    it('un changement d’écran applique la version prête, sans geste de l’utilisateur', async () => {
+      const s = await prepareeEtEnAttente();
+      s.appliquerSiMomentSur('/app/bibliotheque');
+      await vide();
+      expect(sw.activateUpdate).toHaveBeenCalledTimes(1);
+      expect(recharger).toHaveBeenCalledTimes(1);
+    });
+
+    it('jamais sur un écran de saisie : scanner, dépôt, inscription, connexion, changement d’adresse', async () => {
+      const s = await prepareeEtEnAttente();
+      for (const url of ['/app/depots/scanner', '/app/depots/nouveau', '/app/register/otp', '/app/login', '/app/verification', '/app/compte/email?x=1']) {
+        s.appliquerSiMomentSur(url);
+      }
+      await vide();
+      expect(recharger).not.toHaveBeenCalled();
+      expect(s.disponible()).toBe(true); // le bandeau reste proposé
+    });
+
+    it('rien à appliquer : un changement d’écran ne recharge pas', async () => {
+      history.replaceState({}, '', '/app/home');
+      const s = creer();
+      s.appliquerSiMomentSur('/app/bibliotheque');
+      await vide();
+      expect(recharger).not.toHaveBeenCalled();
+    });
+
+    it('le retour dans l’application après une absence applique la version prête', async () => {
+      const s = await prepareeEtEnAttente();
+      vi.useFakeTimers({ toFake: ['Date'] });
+      try {
+        Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+        document.dispatchEvent(new Event('visibilitychange'));
+        vi.setSystemTime(Date.now() + 60_000);
+        Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+        document.dispatchEvent(new Event('visibilitychange'));
+      } finally {
+        vi.useRealTimers();
+      }
+      await vide();
+      expect(recharger).toHaveBeenCalledTimes(1);
+      expect(s).toBeTruthy();
+    });
+
+    it('un simple va-et-vient de quelques secondes ne recharge pas', async () => {
+      await prepareeEtEnAttente();
+      Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+      Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+      await vide();
+      expect(recharger).not.toHaveBeenCalled();
+    });
+
+    it('jamais deux rechargements automatiques à moins d’une minute', async () => {
+      const s = await prepareeEtEnAttente();
+      sessionStorage.setItem('nl_maj_rechargee_a', String(Date.now()));
+      s.appliquerSiMomentSur('/app/bibliotheque');
+      await vide();
+      expect(recharger).not.toHaveBeenCalled();
+    });
+  });
 });

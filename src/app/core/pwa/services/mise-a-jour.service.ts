@@ -1,10 +1,27 @@
 import { DestroyRef, Injectable, inject, signal } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
+import { filter } from 'rxjs';
 
 const CLE_RECHARGEMENT = 'nl_maj_rechargee_a';
 /** En deçà, un second rechargement automatique serait une boucle : on affiche le bandeau. */
 const DELAI_ANTI_BOUCLE_MS = 60_000;
-const VERIFICATION_PERIODIQUE_MS = 30 * 60_000;
+const VERIFICATION_PERIODIQUE_MS = 10 * 60_000;
+/** Entre deux vérifications déclenchées par un changement d'écran. */
+const DELAI_ENTRE_VERIFICATIONS_MS = 2 * 60_000;
+/** Absence minimale (écran éteint, autre application) pour que le retour compte comme un « moment sûr ». */
+const ABSENCE_MIN_MS = 15_000;
+
+/**
+ * Les écrans où l'on saisit quelque chose qu'un rechargement perdrait : le scanner (les pages
+ * sont en mémoire), le formulaire de dépôt, les parcours d'inscription et de connexion, le
+ * dossier de vérification, le changement d'adresse. La mise à jour y attend, elle s'applique
+ * à l'écran suivant.
+ */
+const ZONES_SENSIBLES = [
+  '/app/depots/nouveau', '/app/depots/scanner', '/app/register', '/app/login', '/app/verification',
+  '/app/compte/email', '/app/onboarding',
+];
 
 /**
  * Mise à jour de l'application installée.
@@ -23,8 +40,12 @@ const VERIFICATION_PERIODIQUE_MS = 30 * 60_000;
  *   suite : il n'y a rien à perdre, et c'est ce qui rattrape le visiteur
  *   qui rouvre le site.
  * - **Une fois qu'il a commencé à interagir dans l'application**, on ne recharge
- *   pas d'autorité : une page qui se recharge fait perdre un formulaire en
- *   cours de saisie. Le bandeau propose la mise à jour, l'utilisateur décide.
+ *   pas au milieu d'un geste : une page qui se recharge fait perdre un formulaire en
+ *   cours de saisie. La version prête est alors appliquée **d'elle-même au premier
+ *   moment sûr** - un changement d'écran, ou le retour dans l'application après une
+ *   absence - sauf sur les écrans de saisie (scanner, formulaire de dépôt,
+ *   inscription, connexion, vérification, changement d'adresse), où le bandeau
+ *   propose la mise à jour et l'utilisateur décide.
  * - **Jamais deux rechargements automatiques à moins d'une minute** : si une
  *   version défectueuse relançait la mise à jour en boucle, mieux vaut un
  *   bandeau qu'une page qui clignote.
@@ -39,11 +60,14 @@ const VERIFICATION_PERIODIQUE_MS = 30 * 60_000;
 @Injectable({ providedIn: 'root' })
 export class MiseAJourService {
   private readonly updates = inject(SwUpdate, { optional: true });
+  private readonly router = inject(Router, { optional: true });
 
   /** Vrai dès qu'une version plus récente est prête et n'a pas pu être appliquée d'office. */
   readonly disponible = signal(false);
 
   private interagi = false;
+  private masqueDepuis: number | null = null;
+  private derniereVerification = 0;
 
   constructor() {
     if (!this.updates?.isEnabled) return;
@@ -67,10 +91,19 @@ export class MiseAJourService {
     ];
 
     const verifier = (): void => {
+      this.derniereVerification = Date.now();
       void updates.checkForUpdate().catch(() => undefined);
     };
     const auRetour = (): void => {
-      if (document.visibilityState === 'visible') verifier();
+      if (document.visibilityState === 'hidden') {
+        this.masqueDepuis = Date.now();
+        return;
+      }
+      const absence = this.masqueDepuis === null ? 0 : Date.now() - this.masqueDepuis;
+      this.masqueDepuis = null;
+      verifier();
+      // Revenir d'une absence est un moment sûr : personne n'est au milieu d'un geste.
+      if (absence >= ABSENCE_MIN_MS) this.appliquerSiMomentSur(location.pathname);
     };
     const marquerInteraction = (): void => {
       this.interagi = true;
@@ -83,8 +116,18 @@ export class MiseAJourService {
     const minuteur = setInterval(verifier, VERIFICATION_PERIODIQUE_MS);
     verifier();
 
+    // Un changement d'écran est l'autre moment sûr : la version prête s'applique, et c'est
+    // aussi l'occasion de regarder s'il en existe une nouvelle (au plus toutes les deux minutes).
+    const navigation = this.router?.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => {
+        this.appliquerSiMomentSur(e.urlAfterRedirects);
+        if (Date.now() - this.derniereVerification > DELAI_ENTRE_VERIFICATIONS_MS) verifier();
+      });
+
     inject(DestroyRef).onDestroy(() => {
       abonnements.forEach((a) => a.unsubscribe());
+      navigation?.unsubscribe();
       document.removeEventListener('visibilitychange', auRetour);
       window.removeEventListener('online', verifier);
       window.removeEventListener('pointerdown', marquerInteraction);
@@ -105,6 +148,20 @@ export class MiseAJourService {
       // Rien à activer (déjà fait, ou service worker occupé) : on recharge quand même.
     }
     this.recharger();
+  }
+
+  /**
+   * Une version est prête et n'a pas été appliquée : si l'écran n'est pas un écran de saisie,
+   * c'est maintenant. Appelée à chaque changement d'écran et au retour dans l'application.
+   */
+  appliquerSiMomentSur(url: string): void {
+    if (!this.disponible() || this.rechargeRecemment() || this.zoneSensible(url)) return;
+    void this.appliquer(true);
+  }
+
+  private zoneSensible(url: string): boolean {
+    const chemin = url.split(/[?#]/)[0];
+    return ZONES_SENSIBLES.some((z) => chemin === z || chemin.startsWith(z + '/'));
   }
 
   protected recharger(): void {
