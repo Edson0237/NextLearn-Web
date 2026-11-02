@@ -1,6 +1,7 @@
+import { Fraicheur } from '../../../shared/services/fraicheur';
 import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
 import { metaDocument, noteDocument } from '../../../core/bibliotheque';
-import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
@@ -44,6 +45,9 @@ const SEUIL_TEXTE = 2;
   styleUrl: './bibliotheque-home.scss',
 })
 export class BibliothequeHome implements OnInit {
+  private readonly fraicheur = inject(Fraicheur);
+  private premierTick = true;
+
   protected readonly telechargements = inject(TelechargementEtat);
   private readonly router = inject(Router);
   private readonly docsRepo = inject(DocumentsRepository);
@@ -114,6 +118,15 @@ export class BibliothequeHome implements OnInit {
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
 
   constructor() {
+    // Relecture silencieuse quand l'application revient, que la connexion revient, ou toutes les cinq minutes.
+    effect(() => {
+      this.fraicheur.tick();
+      untracked(() => {
+        if (this.premierTick) { this.premierTick = false; return; }
+        void this.load(true);
+      });
+    });
+
     // Le type demandé par l'accueil (« Accès rapide ») arrive en paramètre
     // d'URL : il survit ainsi au rechargement et se partage, là où l'état de
     // navigation d'Angular disparaît au premier F5.
@@ -156,13 +169,16 @@ export class BibliothequeHome implements OnInit {
     await this.load();
   }
 
-  async load(): Promise<void> {
-    this.loading.set(true);
-    this.error.set(null);
+  async load(silencieux = false): Promise<void> {
+    if (!silencieux) {
+      this.loading.set(true);
+      this.error.set(null);
+    }
     try {
       const docs = await this.docsRepo.getDocuments();
       this.documents.set(docs);
     } catch (e) {
+      if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set('Impossible de charger les documents.');
     } finally {
       this.loading.set(false);
