@@ -123,6 +123,21 @@ for (const f of [...fichiers.filter((f) => f.endsWith('.html')), 'public/i18n/fr
   });
 }
 
+// ── États vides : l'icône se **projette** ──────────────────────────────────
+//
+// `nl-empty-state` n'a pas d'entrée `icon` : l'icône est le contenu projeté
+// (`<nl-icon icon name="…">`). Écrite en attribut (`icon="search"`), elle ne
+// produit aucune erreur de compilation et n'affiche rien - quatre écrans
+// vides sont restés sans pastille pour cette raison.
+for (const f of fichiers.filter((f) => f.endsWith('.html'))) {
+  for (const m of lire(f).matchAll(/<nl-empty-state\b[^>]*>/g)) {
+    if (/\sicon=["']/.test(m[0])) {
+      const ligne = lire(f).slice(0, m.index).split('\n').length;
+      problemes.push(`${f}:${ligne} : nl-empty-state avec un attribut icon - l'icône se projette (<nl-icon icon name="…" />)`);
+    }
+  }
+}
+
 if (problemes.length) {
   console.error(`${problemes.length} problème(s) :`);
   for (const p of problemes) console.error('  ' + p);
@@ -132,3 +147,4 @@ console.log(`Clés i18n : ${cles.size} employées, catalogues de ${Object.keys(f
 console.log(`Variables CSS : ${definies.size} définies, aucune orpheline.`);
 console.log(`Routes : ${plusieursSegments.size} à plusieurs segments, toutes naviguées par URL.`);
 console.log('Icônes : aucune écrite en caractère.');
+console.log('États vides : icône projetée partout.');
