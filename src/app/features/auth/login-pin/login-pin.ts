@@ -2,7 +2,7 @@ import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth';
+import { AuthService, GoogleIdentite } from '../../../core/auth';
 import { SecureStorageService } from '../../../core/storage';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
@@ -32,6 +32,7 @@ import { initiales } from '../../../core/models';
 export class LoginPin {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  protected readonly google = inject(GoogleIdentite);
   private readonly storage = inject(SecureStorageService);
 
   private readonly utilisateurCache = this.storage.getUser();

@@ -25,6 +25,17 @@ import { ResultatPin } from '../resultat-pin/resultat-pin';
   imports: [TraductionPipe, ResultatPin],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
+    @if (!google.disponible() && !google.desactive()) {
+      <!-- Google se charge, ou n'a pas répondu : la place est réservée pour que
+           le formulaire ne saute pas, et le parcours par e-mail reste utilisable. -->
+      <div class="nl-gbtn" [attr.aria-busy]="!indisponible()">
+        @if (indisponible()) {
+          <p class="nl-gbtn__erreur nl-gbtn__erreur--neutre" role="status">{{ 'googleIndisponible' | t }}</p>
+        } @else {
+          <div class="nl-gbtn__squelette" aria-hidden="true"></div>
+        }
+      </div>
+    }
     @if (google.disponible()) {
       <div class="nl-gbtn">
         <div #hote class="nl-gbtn__hote" [class.nl-gbtn__hote--attente]="auth.state().isLoading"></div>
@@ -46,6 +57,10 @@ import { ResultatPin } from '../resultat-pin/resultat-pin';
     .nl-gbtn__hote { min-height: 44px; display: flex; justify-content: center; transition: opacity 150ms; }
     .nl-gbtn__hote--attente { opacity: 0.5; pointer-events: none; }
     .nl-gbtn__erreur { margin: 0; text-align: center; font-size: 0.85rem; line-height: 1.4; color: var(--danger); }
+    .nl-gbtn__erreur--neutre { color: var(--text-muted); }
+    .nl-gbtn__squelette { width: min(100%, 320px); height: 44px; border-radius: var(--radius-pilule, 22px); background: var(--bg-secondary); animation: nl-gbtn-pouls 1.4s ease-in-out infinite; }
+    @keyframes nl-gbtn-pouls { 50% { opacity: 0.5; } }
+    @media (prefers-reduced-motion: reduce) { .nl-gbtn__squelette { animation: none; } }
     .nl-gbtn__attente { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
   `],
 })
@@ -60,6 +75,8 @@ export class GoogleBouton implements OnInit {
   readonly refus = output<string>();
 
   protected readonly erreur = signal<string | null>(null);
+  /** Toutes les tentatives ont échoué : on le dit, sans bloquer le reste de la page. */
+  protected readonly indisponible = signal(false);
   /** Un compte banni ou suspendu : refus plein écran. */
   protected readonly refusCompte = signal<string | null>(null);
   private readonly hote = viewChild<ElementRef<HTMLElement>>('hote');
@@ -81,7 +98,13 @@ export class GoogleBouton implements OnInit {
   async ngOnInit(): Promise<void> {
     for (let essai = 0; ; essai++) {
       if (await this.google.preparer()) return;
-      if (this.google.desactive() || this.detruit || essai >= GoogleBouton.PAUSES_MS.length) return;
+      if (this.google.desactive() || this.detruit) return;
+      if (essai >= GoogleBouton.PAUSES_MS.length) {
+        this.indisponible.set(true);
+        return;
+      }
+      // Dit « indisponible » dès le premier échec, et continue d'essayer en arrière-plan.
+      this.indisponible.set(true);
       await new Promise((ok) => setTimeout(ok, GoogleBouton.PAUSES_MS[essai]));
       if (this.detruit) return;
     }

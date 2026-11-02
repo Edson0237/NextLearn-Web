@@ -16,6 +16,8 @@ import { VerrouPin } from './verrou-pin';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
 const SPLASH_MIN_MS = 1500;
+/** Sans session à restaurer, le splash ne sert qu'à éviter un clignotement. */
+const SPLASH_MIN_SANS_SESSION_MS = 200;
 
 function attendre(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
@@ -60,7 +62,10 @@ export class AuthService {
         // qui vient de quitter l'application pour relever son code doit
         // retrouver l'écran où il l'attendait, pas l'écran de connexion.
         const parcours = this.repo.parcoursOtpEnCours() ?? undefined;
-        await minSplash;
+        // Personne à reconnecter : l'écran de marque n'a rien à masquer, et
+        // faire attendre quelqu'un qui vient se connecter est un délai pur.
+        // Il ne reste, au plus, que le temps de ne pas clignoter.
+        await attendre(SPLASH_MIN_SANS_SESSION_MS);
         this._state.set({ ...ETAT_INITIAL, isInitializing: false, isFirstLaunch: isFirst, parcoursOtp: parcours });
         return;
       }
