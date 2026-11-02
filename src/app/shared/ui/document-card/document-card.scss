@@ -158,6 +158,18 @@
   // Retirer n'est pas télécharger : le rond cobalt est réservé à ce qui
   // ajoute. Le fond teinté plutôt que plein garde le geste discret - c'est
   // une action de ménage, pas l'action principale de la carte.
+  // Fichier présent sur l'appareil : le rond plein cède la place à un fond
+  // teinté, pour que « déjà fait » se distingue de « à faire » d'un coup d'œil.
+  &--fait {
+    background: var(--type-corrige-soft);
+    color: var(--type-corrige);
+  }
+
+  &--encours {
+    opacity: 0.7;
+    cursor: progress;
+  }
+
   &--destructive {
     background: var(--danger-soft);
     color: var(--danger);

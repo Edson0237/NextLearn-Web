@@ -1,3 +1,4 @@
+import { TelechargementEtat } from '../../shared/services/telechargement-etat';
 import { metaDocument, noteDocument } from '../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TraductionPipe } from '../../core/i18n';
@@ -52,6 +53,7 @@ interface Reprise {
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
+  protected readonly telechargements = inject(TelechargementEtat);
   private readonly router = inject(Router);
   private readonly selections = inject(FeuilleSelectionService);
   private readonly auth = inject(AuthService);
@@ -161,6 +163,7 @@ export class Home implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    void this.telechargements.initialiser();
     await this.load();
   }
 
@@ -234,16 +237,8 @@ export class Home implements OnInit {
    * C'est le geste qu'on répète - et l'obliger à passer par un écran de plus
    * était le reproche principal fait à l'ancienne liste.
    */
-  protected async telecharger(doc: DocumentModel): Promise<void> {
-    const url = (await this.docsRepo.urlLecture(doc.id).catch(() => null)) ?? doc.urlPdf;
-    if (!url) return;
-    void this.docsRepo.recordDownload(doc.id);
-    const lien = window.document.createElement('a');
-    lien.href = url;
-    lien.download = `${doc.titre}.pdf`;
-    lien.rel = 'noopener';
-    lien.target = '_blank';
-    lien.click();
+  protected telecharger(doc: DocumentModel): Promise<void> {
+    return this.telechargements.telecharger(doc);
   }
 
   protected openDocument(doc: DocumentModel): void {
