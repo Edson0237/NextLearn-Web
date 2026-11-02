@@ -1276,5 +1276,12 @@
   "reglageVerrouillageSansPin": "Crée d’abord un code PIN, il te sera demandé à chaque ouverture",
   "consentPolitiqueNom": "la politique de confidentialité",
   "consentConditionsNom": "les conditions d’utilisation",
-  "mentionsDebut": "En t’inscrivant ou en te connectant, tu acceptes "
+  "mentionsDebut": "En t’inscrivant ou en te connectant, tu acceptes ",
+  "notifsCatDocument": "Nouveau document",
+  "notifsCatDecision": "Décision",
+  "notifsCatSupport": "Support",
+  "notifsCatInfo": "Information",
+  "notifsAujourdhui": "Aujourd’hui",
+  "notifsHier": "Hier",
+  "notifsNonLue": "Non lue"
 }

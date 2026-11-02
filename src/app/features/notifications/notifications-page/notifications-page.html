@@ -29,12 +29,18 @@
             class="notifs__item"
             [class.notifs__item--unread]="!n.lu"
             (click)="open(n)">
-            <div class="notifs__dot"></div>
+            <span class="notifs__vignette" aria-hidden="true">
+              <nl-icon [name]="iconeDe(n)" [size]="20" />
+            </span>
             <div class="notifs__content">
+              <span class="notifs__categorie">{{ libelleCategorie(n) }}</span>
               <span class="notifs__title">{{ n.titre }}</span>
               <span class="notifs__message">{{ n.corps }}</span>
-              <span class="notifs__date">{{ groupTitle(n.createdAt) }}</span>
+              <span class="notifs__date">{{ quand(n.createdAt) }}</span>
             </div>
+            @if (!n.lu) {
+              <span class="notifs__dot" [attr.aria-label]="'notifsNonLue' | t"></span>
+            }
           </button>
         }
       </div>

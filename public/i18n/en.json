@@ -1276,5 +1276,12 @@
   "reglageVerrouillageSansPin": "Create a PIN first, it will be asked at every launch",
   "consentPolitiqueNom": "the privacy policy",
   "consentConditionsNom": "the terms of use",
-  "mentionsDebut": "By signing up or signing in, you accept "
+  "mentionsDebut": "By signing up or signing in, you accept ",
+  "notifsCatDocument": "New document",
+  "notifsCatDecision": "Decision",
+  "notifsCatSupport": "Support",
+  "notifsCatInfo": "Information",
+  "notifsAujourdhui": "Today",
+  "notifsHier": "Yesterday",
+  "notifsNonLue": "Unread"
 }
