@@ -30,7 +30,7 @@
         <header class="nl-epd__entete">
           <div class="nl-epd__etiquettes">
             <nl-badge ton="primaire" icone="assignment" [capitales]="true">
-              {{ 'epreuveDeLAnnee' | t: { annee: ep.annee } }}
+              {{ 'epreuveDeLAnnee' | t: { annee: ep.anneeAcademique ?? ep.annee } }}
             </nl-badge>
             @if (ep.niveau) {
               <nl-badge [capitales]="true">{{ ep.niveau }}</nl-badge>
@@ -98,12 +98,14 @@
             }
             <div class="nl-epd__ligne">
               <span>{{ 'docAnnee' | t }}</span>
-              <strong>{{ ep.annee }}</strong>
+              <strong>{{ ep.anneeAcademique ?? ep.annee }}</strong>
             </div>
-            <div class="nl-epd__ligne">
-              <span>{{ 'docDuree' | t }}</span>
-              <strong>{{ 'epreuvesMinutes' | t: { minutes: ep.dureeMinutes } }}</strong>
-            </div>
+            @if (ep.dureeMinutes) {
+              <div class="nl-epd__ligne">
+                <span>{{ 'docDuree' | t }}</span>
+                <strong>{{ 'epreuvesMinutes' | t: { minutes: ep.dureeMinutes } }}</strong>
+              </div>
+            }
             <div class="nl-epd__ligne">
               <span>{{ 'epreuvesCorrige' | t }}</span>
               <strong>{{ (ep.avecCorrige ? 'epreuveDisponible' : 'epreuveNonDisponible') | t }}</strong>

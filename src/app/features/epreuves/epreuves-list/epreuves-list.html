@@ -48,7 +48,7 @@
       >
         <option value="">{{ 'docAnnee' | t }}</option>
         @for (a of annees(); track a) {
-          <option [value]="a">{{ a }}</option>
+          <option [value]="a">{{ libelleAnnee(a) }}</option>
         }
       </select>
 
@@ -88,7 +88,7 @@
               <button [nlCascadeEnter]="i" type="button" class="nl-epl__carte" (click)="ouvrir(ep.id)">
                 <div class="nl-epl__annee">
                   <nl-icon name="history_edu" [size]="17" />
-                  <span>{{ ep.annee }}</span>
+                  <span>{{ ep.anneeAcademique ?? ep.annee }}</span>
                 </div>
                 <div class="nl-epl__infos">
                   <div class="nl-epl__ligne-titre">
@@ -99,8 +99,10 @@
                   </div>
                   <p class="nl-epl__source">{{ ep.enseigne || ep.universite }}</p>
                   <div class="nl-epl__meta">
-                    <span>{{ ep.dureeMinutes }} min</span>
-                    <span>·</span>
+                    @if (ep.dureeMinutes) {
+                      <span>{{ ep.dureeMinutes }} min</span>
+                      <span>·</span>
+                    }
                     <span>{{ ep.niveau }}</span>
                     @if (ep.avecCorrige) {
                       <span class="nl-epl__meta-corrige">· Corrigé</span>
