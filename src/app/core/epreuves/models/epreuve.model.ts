@@ -55,7 +55,10 @@ export interface EpreuveModel {
   readonly annee: number;
   readonly universite: string;
   readonly niveau: string;
-  readonly dureeMinutes: number;
+  /** Absente quand la durée est inconnue : jamais 0, jamais une valeur inventée. */
+  readonly dureeMinutes?: number;
+  /** « 2023-2024 » ; `annee` en est l'année de début. Facultative. */
+  readonly anneeAcademique?: string;
   readonly avecCorrige: boolean;
   readonly urlPdf: string;
   readonly urlCorrigePdf?: string;
@@ -71,6 +74,23 @@ export interface EpreuveModel {
   readonly vues: number;
   readonly telechargements: number;
   readonly noteMoyenne: number;
+}
+
+/**
+ * Une durée connue est un nombre de minutes strictement positif ; tout le reste (absente, `null`,
+ * vide, 0, illisible) est « inconnue ». `Number(null)` vaut 0 : sans cette garde, une épreuve sans
+ * durée s'affichait « 0 min », c'est-à-dire une affirmation fausse.
+ */
+export function dureeValide(brut: unknown): number | undefined {
+  if (brut == null || brut === '') return undefined;
+  const n = typeof brut === 'number' ? brut : Number(brut);
+  return Number.isFinite(n) && n > 0 ? Math.round(n) : undefined;
+}
+
+export function anneeAcademiqueValide(brut: unknown): string | undefined {
+  const t = typeof brut === 'string' ? brut.trim() : '';
+  const m = t.match(/^(\d{4})-(\d{4})$/);
+  return m && Number(m[2]) === Number(m[1]) + 1 ? t : undefined;
 }
 
 function texteOuNul(brut: unknown): string | undefined {
@@ -97,7 +117,8 @@ export function epreuveDepuisJson(json: Record<string, unknown>): EpreuveModel {
     annee: Number(json['annee']),
     universite: universiteRef.nom ?? (universiteRef.id ? `Université #${universiteRef.id}` : 'Université'),
     niveau: String(json['niveau'] ?? ''),
-    dureeMinutes: Number(json['dureeMinutes'] ?? 0),
+    dureeMinutes: dureeValide(json['dureeMinutes']),
+    anneeAcademique: anneeAcademiqueValide(json['anneeAcademique']),
     avecCorrige: json['avecCorrige'] === true,
     urlPdf: typeof json['urlPdf'] === 'string' ? json['urlPdf'] : '',
     urlCorrigePdf: typeof json['urlCorrigePdf'] === 'string' ? json['urlCorrigePdf'] : undefined,

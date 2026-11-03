@@ -72,6 +72,11 @@ export class EpreuvesList {
     return [...valeurs].sort((a, b) => b - a);
   });
 
+  /** « 2023-2024 » quand une épreuve de cette année la porte, sinon l'année seule. */
+  protected libelleAnnee(annee: number): string {
+    return this.toutes().find((e) => e.annee === annee && e.anneeAcademique)?.anneeAcademique ?? String(annee);
+  }
+
   protected readonly filtreActif = computed(() => {
     const f = this.filtre();
     return f.matiereId != null || f.annee != null || f.avecCorrige != null || f.type != null;

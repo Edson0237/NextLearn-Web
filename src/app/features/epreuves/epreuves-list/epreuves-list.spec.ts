@@ -56,6 +56,20 @@ describe('EpreuvesList - filtrage', () => {
     expect(c['filtrees']().map((e: { id: string }) => e.id)).toContain('4');
   });
 
+  it('libellé d’année : « 2023-2024 » si l’épreuve la porte, sinon l’année seule', async () => {
+    const avec = { _id: '5', matiere: 'Algo', annee: 2023, anneeAcademique: '2023-2024', universite: 'ISJ', niveau: 'N3', matiereId: 'm1' };
+    const c = await creer([avec, sansType]);
+    expect(c['libelleAnnee'](2023)).toBe('2023-2024');
+    expect(c['libelleAnnee'](2022)).toBe('2022');
+  });
+
+  it('une épreuve sans durée est listée normalement (aucune valeur inventée)', async () => {
+    const sansDuree = { _id: '6', matiere: 'Algo', annee: 2023, universite: 'ISJ', niveau: 'N3', matiereId: 'm1', dureeMinutes: null };
+    const c = await creer([sansDuree]);
+    expect(c['filtrees']()).toHaveLength(1);
+    expect(c['filtrees']()[0].dureeMinutes).toBeUndefined();
+  });
+
   it('la pastille d’un rattrapage est courte : RAT', async () => {
     const c = await creer([rat]);
     expect(c['typeApi'](TypeEpreuve.rattrapage)).toBe('RAT');
