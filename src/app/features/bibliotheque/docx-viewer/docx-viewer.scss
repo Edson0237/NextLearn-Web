@@ -1,0 +1,93 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.nl-docx-viewer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  background: var(--bg-secondary);
+
+  &__etat {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    padding: var(--space-lg);
+    text-align: center;
+
+    &--erreur {
+      color: var(--danger);
+    }
+  }
+
+  &__conteneur {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &--masque {
+      display: none;
+    }
+
+    // Personnalisation et intégration du rendu docx-preview
+    :deep(.docx-wrapper),
+    :deep(.nl-docx-wrapper) {
+      background: transparent !important;
+      padding: var(--space-md) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+      min-width: 100% !important;
+
+      @media (max-width: 640px) {
+        padding: var(--space-xs) !important;
+      }
+
+      > section.docx,
+      > section.nl-docx {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        box-shadow: var(--shadow-md) !important;
+        margin-bottom: var(--space-md) !important;
+        box-sizing: border-box !important;
+
+        @media (max-width: 640px) {
+          margin-bottom: var(--space-sm) !important;
+          width: 100% !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          padding: 16px !important;
+        }
+
+        // Tables et grilles responsives
+        table {
+          max-width: 100% !important;
+          overflow-x: auto !important;
+          display: block !important;
+          word-break: normal !important;
+        }
+
+        // Images et graphiques responsifs
+        img,
+        svg {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+      }
+    }
+  }
+}

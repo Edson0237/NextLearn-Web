@@ -8,3 +8,10 @@ export { LectureProgressRepository, pourcentageLu } from './repositories/lecture
 export type { LectureProgress } from './repositories/lecture-progress-repository';
 export { OfflineRepository } from './repositories/offline-repository';
 export { StockageHorsLigne } from './services/stockage-hors-ligne';
+export {
+  detecterFormatDocument,
+  detecterFormatParEntete,
+  detecterFormatParMime,
+  detecterFormatParUrl,
+} from './utils/detection-format';
+export type { FormatDocument } from './utils/detection-format';

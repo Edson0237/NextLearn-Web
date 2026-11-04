@@ -143,6 +143,7 @@ export class DocumentsRepository {
       return url || null;
     } catch (e) {
       if (e instanceof Failure && e.compteNonValide) throw e;
+      if (e instanceof Failure && e.code === 'DOCUMENT_UNAVAILABLE') throw e;
       return null;
     }
   }
