@@ -116,6 +116,12 @@ function messagePour(
     return "Votre compte n'est pas encore validé.";
   }
 
+  if (code === 'DOCUMENT_UNAVAILABLE') {
+    const message = duServeur?.trim();
+    if (message && message.length > 0 && message.length <= 240) return message;
+    return 'Document non disponible / à réuploader';
+  }
+
   if (!estCheminPreAuth(chemin)) return messageParDefaut(statusCode);
   if (statusCode !== 401 && statusCode !== 422) return messageParDefaut(statusCode);
 

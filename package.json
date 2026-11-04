@@ -26,6 +26,7 @@
     "@angular/service-worker": "^21.2.0",
     "@firebase/app": "^0.13.2",
     "@firebase/messaging": "^0.12.23",
+    "docx-preview": "^0.4.1",
     "ng2-pdf-viewer": "^10.4.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

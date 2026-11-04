@@ -1,5 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { DocumentModel, DocumentsRepository, OfflineRepository, StockageHorsLigne } from '../../core/bibliotheque';
+import {
+  DocumentModel,
+  DocumentsRepository,
+  OfflineRepository,
+  StockageHorsLigne,
+  detecterFormatDocument,
+} from '../../core/bibliotheque';
 import { tr } from '../../core/i18n';
 import { ToastService } from '../ui/toast/toast';
 
@@ -102,18 +108,20 @@ export class TelechargementEtat {
   private async deposerSurAppareil(doc: DocumentModel): Promise<void> {
     const local = await this.stockage.urlLocale(doc.id);
     if (!local) return;
-    this.cliquer(local, doc.titre);
+    const format = detecterFormatDocument({ url: doc.urlPdf });
+    this.cliquer(local, doc.titre, false, format);
     setTimeout(() => URL.revokeObjectURL(local), 60_000);
   }
 
   private lancerParLeNavigateur(doc: DocumentModel, url: string): void {
-    this.cliquer(url, doc.titre, true);
+    const format = detecterFormatDocument({ url: doc.urlPdf || url });
+    this.cliquer(url, doc.titre, true, format);
   }
 
-  private cliquer(href: string, titre: string, autreOnglet = false): void {
+  private cliquer(href: string, titre: string, autreOnglet = false, extension = 'pdf'): void {
     const lien = window.document.createElement('a');
     lien.href = href;
-    lien.download = `${titre}.pdf`;
+    lien.download = `${titre}.${extension}`;
     lien.rel = 'noopener';
     if (autreOnglet) lien.target = '_blank';
     lien.click();

@@ -1,0 +1,18 @@
+<div class="nl-docx-viewer">
+  @if (chargement()) {
+    <p class="nl-docx-viewer__etat">{{ 'pdfChargement' | t }}</p>
+  } @else if (messageErreur(); as err) {
+    <div class="nl-docx-viewer__etat nl-docx-viewer__etat--erreur">
+      <p>{{ err }}</p>
+    </div>
+  }
+
+  <div
+    #docxContainer
+    class="nl-docx-viewer__conteneur"
+    [class.nl-docx-viewer__conteneur--masque]="chargement() || !!messageErreur()"
+    tabindex="0"
+    role="region"
+    aria-label="Document Word">
+  </div>
+</div>

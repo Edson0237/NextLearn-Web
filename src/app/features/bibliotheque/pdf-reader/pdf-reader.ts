@@ -1,12 +1,14 @@
 import { NotificationsEtat } from '../../../core/notifications';
 import { ChangeDetectionStrategy, Component, OnDestroy, inject, OnInit, signal } from '@angular/core';
+import { Failure } from '../../../core/models';
 import { TraductionPipe } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { DocumentsRepository } from '../../../core/bibliotheque';
+import { DocxViewer } from '../docx-viewer/docx-viewer';
+import { DocumentsRepository, detecterFormatDocument } from '../../../core/bibliotheque';
 import { LectureProgressRepository } from '../../../core/bibliotheque';
 import { ProgressionRepository } from '../../../core/progression';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
@@ -42,7 +44,7 @@ const DUREE_MINIMALE_SESSION_S = 5;
 @Component({
   selector: 'nl-pdf-reader',
   standalone: true,
-  imports: [TraductionPipe, CommonModule, Icon, PdfViewerModule],
+  imports: [TraductionPipe, CommonModule, Icon, PdfViewerModule, DocxViewer],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pdf-reader.html',
   styleUrl: './pdf-reader.scss',
@@ -62,6 +64,7 @@ export class PdfReader implements OnInit, OnDestroy {
   protected readonly url = signal<string | undefined>(undefined);
   protected readonly safeUrl = signal<SafeResourceUrl | null>(null);
   protected readonly fallback = signal(false);
+  protected readonly format = signal<'pdf' | 'docx'>('pdf');
   protected readonly documentId = signal<string>('');
   /** Page affichée, et nombre total une fois le document analysé. */
   protected readonly page = signal(1);
@@ -105,6 +108,17 @@ export class PdfReader implements OnInit, OnDestroy {
     const locale = await this.stockage.urlLocale(id);
     if (locale) {
       this.urlObjet = locale;
+      try {
+        const probe = await fetch(locale);
+        const buffer = await probe.arrayBuffer();
+        const formatDetecte = detecterFormatDocument({
+          octets: buffer.slice(0, 8),
+          url: locale,
+        });
+        this.format.set(formatDetecte);
+      } catch {
+        this.format.set('pdf');
+      }
       this.setUrl(locale);
       void this.docsRepo.recordView(id);
       this.loading.set(false);
@@ -113,21 +127,30 @@ export class PdfReader implements OnInit, OnDestroy {
 
     try {
       const fresh = await this.docsRepo.urlLecture(id);
-      const finalUrl = fresh || this.route.snapshot.queryParamMap.get('url') || undefined;
-      if (finalUrl) {
-        this.setUrl(finalUrl);
-        void this.docsRepo.recordView(id);
-      } else {
+      const queryUrl = this.route.snapshot.queryParamMap.get('url') || undefined;
+      const finalUrl = fresh || queryUrl;
+      let urlCible: string | undefined = finalUrl;
+      if (!urlCible) {
         const doc = await this.docsRepo.getById(id);
         if (doc?.urlPdf) {
-          this.setUrl(doc.urlPdf);
-          void this.docsRepo.recordView(id);
-        } else {
-          this.error.set('Impossible d\'obtenir l\'URL du document.');
+          urlCible = doc.urlPdf;
         }
       }
+
+      if (urlCible) {
+        const formatDetecte = detecterFormatDocument({ url: urlCible });
+        this.format.set(formatDetecte);
+        this.setUrl(urlCible);
+        void this.docsRepo.recordView(id);
+      } else {
+        this.error.set('Impossible d\'obtenir l\'URL du document.');
+      }
     } catch (e) {
-      this.error.set('Impossible d\'ouvrir le document.');
+      if (e instanceof Failure) {
+        this.error.set(e.message);
+      } else {
+        this.error.set('Impossible d\'ouvrir le document.');
+      }
     } finally {
       this.loading.set(false);
     }
@@ -136,9 +159,24 @@ export class PdfReader implements OnInit, OnDestroy {
   private setUrl(url: string): void {
     this.url.set(url);
     this.safeUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
-    this.fallbackTimeout = setTimeout(() => {
-      this.fallback.set(true);
-    }, 8000);
+    if (this.format() === 'docx') {
+      this.clearFallbackTimeout();
+    } else {
+      this.fallbackTimeout = setTimeout(() => {
+        this.fallback.set(true);
+      }, 8000);
+    }
+  }
+
+  protected surTotalPagesDocx(total: number): void {
+    this.clearFallbackTimeout();
+    if (total > 0) this.totalPages.set(total);
+  }
+
+  protected onDocxError(message: string): void {
+    console.error('[PdfReader] erreur lecteur DOCX intégré', message);
+    this.clearFallbackTimeout();
+    this.error.set(message || 'Impossible d\'afficher ce document Word.');
   }
 
   protected goBack(): void {

@@ -23,26 +23,36 @@
     </div>
   } @else if (url()) {
     <div class="pdf-reader__viewport">
-      @if (fallback()) {
-        <iframe
-          class="pdf-reader__frame"
-          [src]="safeUrl()"
-          [attr.title]="'pwaLecteurPdf' | t"
-          allowfullscreen></iframe>
-      } @else {
-        <pdf-viewer
-          [src]="url()"
-          [page]="page()"
-          [render-text]="true"
-          [original-size]="false"
-          [fit-to-page]="false"
-          [autoresize]="true"
-          [show-all]="true"
-          style="width: 100%; height: 100%;"
-          (onError)="onError($event)"
-          (after-load-complete)="onLoaded($event)"
+      @if (format() === 'docx') {
+        <nl-docx-viewer
+          [url]="url()"
+          [pageInitiale]="page()"
           (pageChange)="surChangementDePage($event)"
+          (totalCount)="surTotalPagesDocx($event)"
+          (erreur)="onDocxError($event)"
         />
+      } @else {
+        @if (fallback()) {
+          <iframe
+            class="pdf-reader__frame"
+            [src]="safeUrl()"
+            [attr.title]="'pwaLecteurPdf' | t"
+            allowfullscreen></iframe>
+        } @else {
+          <pdf-viewer
+            [src]="url()"
+            [page]="page()"
+            [render-text]="true"
+            [original-size]="false"
+            [fit-to-page]="false"
+            [autoresize]="true"
+            [show-all]="true"
+            style="width: 100%; height: 100%;"
+            (onError)="onError($event)"
+            (after-load-complete)="onLoaded($event)"
+            (pageChange)="surChangementDePage($event)"
+          />
+        }
       }
     </div>
   }
