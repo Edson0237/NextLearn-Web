@@ -62,6 +62,17 @@
       <button type="button" class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine" (click)="openCatalogue()">
         {{ 'biblioCatalogueLien' | t }}<nl-icon name="chevron_right" [size]="14" />
       </button>
+      <button type="button" class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine" (click)="openOffline()">
+        <nl-icon name="cloud_done" [size]="14" />
+        Mes téléchargements ({{ nombreHorsLigne() }})
+      </button>
+    </div>
+  } @else if (nombreHorsLigne() > 0) {
+    <div class="nl-biblio__matieres">
+      <button type="button" class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine" (click)="openOffline()">
+        <nl-icon name="cloud_done" [size]="14" />
+        Mes téléchargements ({{ nombreHorsLigne() }})
+      </button>
     </div>
   }
 

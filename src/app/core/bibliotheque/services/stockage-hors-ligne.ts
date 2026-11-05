@@ -1,208 +1,1130 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { SecureStorageService } from '../../storage/services/secure-storage.service';
+import { DocumentModel, DocumentType, typeDocumentDepuisApi } from '../models/document.model';
+import {
+  detecterFormatDocument,
+  detecterFormatParEntete,
+} from '../utils/detection-format';
 
-const NOM_CACHE = 'nl-documents-hors-ligne';
-/** Préfixe d'URL interne : le cache est indexé par requête, pas par clé libre. */
-const PREFIXE = '/__nl-offline__/';
-/** Les métadonnées du document, rangées à côté du fichier. */
-const PREFIXE_FICHE = '/__nl-offline-fiche__/';
+const NOM_BASE_IDB = 'nl-stockage-local-db';
+const VERSION_BASE_IDB = 1;
+const STORE_DOCUMENTS = 'documents_locaux';
+
+/** Ancien Cache Storage conservé uniquement pour migration transparente au premier lancement. */
+const NOM_CACHE_HERITE = 'nl-documents-hors-ligne';
+const PREFIXE_CLE_HERITE = '/__nl-offline__/';
+const PREFIXE_FICHE_HERITE = '/__nl-offline-fiche__/';
+
+export type EtatStockageLocal = 'complet' | 'en_cours' | 'interrompu' | 'erreur';
+
+export type RaisonEchecStockage =
+  | 'quota'
+  | 'reseau'
+  | 'integrite'
+  | 'annule'
+  | 'non_authentifie'
+  | 'inconnu';
 
 /**
- * Les documents réellement disponibles hors ligne.
+ * Structure complète stockée dans IndexedDB pour chaque document téléchargé.
+ * Isolée logiquement par utilisateur via la clé composite `${userId}:${id}`.
+ */
+export interface EnregistrementDocumentLocal {
+  readonly cle: string;
+  readonly id: string;
+  readonly userId: string;
+  readonly nom: string;
+  readonly format: 'pdf' | 'docx';
+  readonly mimeType: string;
+  readonly tailleOctets: number;
+  readonly dateTelechargement: string;
+  readonly version: string;
+  readonly contenu: ArrayBuffer;
+  readonly etat: EtatStockageLocal;
+  readonly fiche?: Record<string, unknown>;
+}
+
+/**
+ * Projection légère exposée à l'interface utilisateur (sans le tampon binaire `contenu`
+ * pour ne pas alourdir les signaux Angular en mémoire vive).
+ */
+export interface InfoDocumentLocal {
+  readonly id: string;
+  readonly userId: string;
+  readonly nom: string;
+  readonly format: 'pdf' | 'docx';
+  readonly mimeType: string;
+  readonly tailleOctets: number;
+  readonly dateTelechargement: string;
+  readonly version: string;
+  readonly etat: EtatStockageLocal;
+  readonly document?: DocumentModel;
+}
+
+export interface LectureLocaleDocument {
+  readonly id: string;
+  readonly url: string;
+  readonly format: 'pdf' | 'docx';
+  readonly mimeType: string;
+  readonly nom: string;
+  readonly tailleOctets: number;
+  readonly dateTelechargement: string;
+  readonly version: string;
+}
+
+export interface OptionsEnregistrementLocal {
+  readonly signal?: AbortSignal;
+  readonly onProgression?: (pourcentage: number) => void;
+  readonly version?: string;
+}
+
+export interface ResultatEnregistrementLocal {
+  readonly ok: boolean;
+  readonly raison?: RaisonEchecStockage;
+  readonly info?: InfoDocumentLocal;
+}
+
+/** Calcule un identifiant de version déterministe à partir des métadonnées du document. */
+export function calculerVersionDocument(doc?: Partial<DocumentModel> | null): string {
+  if (!doc) return 'v1';
+  const date =
+    doc.dateAjout instanceof Date && !Number.isNaN(doc.dateAjout.getTime())
+      ? doc.dateAjout.toISOString()
+      : String(doc.dateAjout ?? '');
+  const taille = typeof doc.tailleMb === 'number' ? doc.tailleMb.toFixed(3) : '0';
+  const pages = typeof doc.pages === 'number' ? doc.pages : 0;
+  return `${date}|${taille}|${pages}`;
+}
+
+/** Formate une taille en octets de manière lisible (Ko / Mo). */
+export function formaterTailleOctets(octets: number): string {
+  if (!Number.isFinite(octets) || octets <= 0) return '0 Ko';
+  if (octets < 1024) return `${octets} o`;
+  const ko = octets / 1024;
+  if (ko < 1024) return `${Math.round(ko)} Ko`;
+  const mo = octets / (1024 * 1024);
+  return `${mo.toFixed(1).replace('.', ',')} Mo`;
+}
+
+function mimePourFormat(format: 'pdf' | 'docx', mimeServeur?: string | null): string {
+  if (format === 'docx') {
+    return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  }
+  if (mimeServeur && /application\/pdf/i.test(mimeServeur)) {
+    return 'application/pdf';
+  }
+  return 'application/pdf';
+}
+
+function estErreurQuota(err: unknown): boolean {
+  if (!err) return false;
+  if (typeof DOMException !== 'undefined' && err instanceof DOMException) {
+    return (
+      err.name === 'QuotaExceededError' ||
+      err.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+      err.code === 22 ||
+      err.code === 1014
+    );
+  }
+  const nom = (err as { name?: string })?.name ?? '';
+  const message = (err as { message?: string })?.message ?? '';
+  return (
+    /QuotaExceededError|NS_ERROR_DOM_QUOTA_REACHED/i.test(nom) ||
+    /quota/i.test(message)
+  );
+}
+
+function estErreurAnnulation(err: unknown): boolean {
+  if (!err) return false;
+  const nom = (err as { name?: string })?.name ?? '';
+  return nom === 'AbortError';
+}
+
+function ficheVersObjet(doc: DocumentModel, tailleOctets?: number): Record<string, unknown> {
+  const tailleMbCalculee =
+    tailleOctets && tailleOctets > 0
+      ? Math.round((tailleOctets / (1024 * 1024)) * 100) / 100
+      : doc.tailleMb;
+  return {
+    id: doc.id,
+    titre: doc.titre,
+    description: doc.description,
+    type: doc.type,
+    matiere: doc.matiere,
+    enseignant: doc.enseignant,
+    universite: doc.universite,
+    niveau: doc.niveau,
+    semestre: doc.semestre,
+    dureeMinutes: doc.dureeMinutes,
+    avecCorrige: doc.avecCorrige,
+    urlCorrigePdf: doc.urlCorrigePdf,
+    anneeAcademique: doc.anneeAcademique,
+    tailleMb: doc.tailleMb > 0 ? doc.tailleMb : tailleMbCalculee,
+    pages: doc.pages,
+    urlPdf: doc.urlPdf,
+    thumbnailUrl: doc.thumbnailUrl,
+    dateAjout: doc.dateAjout instanceof Date ? doc.dateAjout.toISOString() : String(doc.dateAjout ?? ''),
+    vues: doc.vues,
+    telechargements: doc.telechargements,
+    noteMoyenne: doc.noteMoyenne,
+    matiereId: doc.matiereId,
+    enseignantId: doc.enseignantId,
+    universiteId: doc.universiteId,
+  };
+}
+
+function objetVersFiche(json: Record<string, unknown>, tailleOctets?: number): DocumentModel {
+  const tailleMbJson = typeof json['tailleMb'] === 'number' ? json['tailleMb'] : 0;
+  const tailleMbRepli =
+    tailleOctets && tailleOctets > 0
+      ? Math.round((tailleOctets / (1024 * 1024)) * 100) / 100
+      : 0;
+  return {
+    id: String(json['id'] ?? ''),
+    titre: String(json['titre'] ?? ''),
+    description: String(json['description'] ?? ''),
+    type: typeDocumentDepuisApi(String(json['type'] ?? DocumentType.autre)),
+    matiere: String(json['matiere'] ?? 'Matière'),
+    enseignant: String(json['enseignant'] ?? 'Non renseigné'),
+    universite: String(json['universite'] ?? 'Non renseignée'),
+    niveau: String(json['niveau'] ?? ''),
+    semestre: json['semestre'] ? String(json['semestre']) : undefined,
+    dureeMinutes: typeof json['dureeMinutes'] === 'number' ? json['dureeMinutes'] : undefined,
+    avecCorrige: json['avecCorrige'] === true,
+    urlCorrigePdf: json['urlCorrigePdf'] ? String(json['urlCorrigePdf']) : undefined,
+    anneeAcademique: String(json['anneeAcademique'] ?? ''),
+    tailleMb: tailleMbJson > 0 ? tailleMbJson : tailleMbRepli,
+    pages: typeof json['pages'] === 'number' ? json['pages'] : 0,
+    urlPdf: String(json['urlPdf'] ?? ''),
+    thumbnailUrl: json['thumbnailUrl'] ? String(json['thumbnailUrl']) : undefined,
+    dateAjout: json['dateAjout'] ? new Date(String(json['dateAjout'])) : new Date(),
+    vues: typeof json['vues'] === 'number' ? json['vues'] : 0,
+    telechargements: typeof json['telechargements'] === 'number' ? json['telechargements'] : 0,
+    noteMoyenne: typeof json['noteMoyenne'] === 'number' ? json['noteMoyenne'] : 0,
+    matiereId: json['matiereId'] ? String(json['matiereId']) : undefined,
+    enseignantId: json['enseignantId'] ? String(json['enseignantId']) : undefined,
+    universiteId: json['universiteId'] ? String(json['universiteId']) : undefined,
+  };
+}
+
+function versInfoDocumentLocal(rec: EnregistrementDocumentLocal): InfoDocumentLocal {
+  const document = rec.fiche ? objetVersFiche(rec.fiche, rec.tailleOctets) : undefined;
+  return {
+    id: rec.id,
+    userId: rec.userId,
+    nom: rec.nom,
+    format: rec.format,
+    mimeType: rec.mimeType,
+    tailleOctets: rec.tailleOctets,
+    dateTelechargement: rec.dateTelechargement,
+    version: rec.version,
+    etat: rec.etat,
+    document,
+  };
+}
+
+/**
+ * Stockage local persistant basé sur IndexedDB pour les documents (PDF et DOCX)
+ * téléchargés dans NextLearn PWA.
  *
- * `OfflineRepository` ne fait que marquer des identifiants **côté serveur** :
- * utile pour retrouver sa liste d'un appareil à l'autre, inutile sans réseau -
- * et c'est précisément là qu'on en a besoin. Côté Flutter, le fichier est
- * téléchargé puis rangé dans une boîte Hive ; ici il va dans le Cache Storage,
- * le seul stockage du navigateur fait pour des réponses HTTP entières.
- *
- * Pourquoi le Cache Storage et pas IndexedDB : on y range une **réponse**, pas
- * une donnée. Elle se relit telle quelle, garde son type MIME, et se sert
- * directement à pdf.js via une URL d'objet - sans sérialisation intermédiaire.
- *
- * Limite assumée : le navigateur peut évincer ce cache sous pression de
- * stockage, et iOS Safari le fait plus volontiers qu'Android. L'application
- * demande donc la persistance (`navigator.storage.persist`) sans en dépendre :
- * un document évincé se retélécharge, il n'est jamais perdu.
+ * Garanties :
+ * - Stockage binaire (`ArrayBuffer`) + métadonnées complètes dans IndexedDB (`nl-stockage-local-db`).
+ * - Isolation logique stricte par utilisateur (`userId`) : chaque utilisateur ne voit et ne
+ *   peut ouvrir que ses propres documents téléchargés.
+ * - Conservation des documents lors de la déconnexion (`logout`) : la déconnexion masque
+ *   simplement la portée active sans supprimer les fichiers d'IndexedDB ; à la reconnexion,
+ *   l'utilisateur retrouve immédiatement ses documents.
+ * - Nettoyage automatique au démarrage des enregistrements temporaires ou interrompus
+ *   (`etat !== 'complet'`), sans jamais supprimer un document complet sans accord explicite.
+ * - Révocation propre des `Blob URL` créées via `URL.createObjectURL()`.
  */
 @Injectable({ providedIn: 'root' })
 export class StockageHorsLigne {
-  /** Identifiants réellement présents sur cet appareil. */
-  readonly ids = signal<ReadonlySet<string>>(new Set());
+  private readonly secureStorage = inject(SecureStorageService);
 
-  private pret: Promise<void> | null = null;
+  private readonly _ids = signal<ReadonlySet<string>>(new Set());
+  private readonly _fiches = signal<readonly DocumentModel[]>([]);
+  private readonly _enregistrements = signal<readonly InfoDocumentLocal[]>([]);
 
-  /** Le navigateur sait-il faire ? (pas de Cache Storage hors HTTPS/localhost) */
-  get disponible(): boolean {
-    return typeof caches !== 'undefined';
+  /** Vrai si le stockage local (IndexedDB ou repli mémoire/cache) est disponible. */
+  readonly disponible = true;
+
+  /** Les identifiants des documents complets disponibles localement pour l'utilisateur actif. */
+  readonly ids = this._ids.asReadonly();
+
+  /** Les fiches complètes des documents enregistrés localement pour l'utilisateur actif. */
+  readonly fiches = this._fiches.asReadonly();
+
+  /** Les métadonnées détaillées (taille exacte, format, date, version) des documents locaux. */
+  readonly enregistrements = this._enregistrements.asReadonly();
+
+  /**
+   * Portée utilisateur définie explicitement par `AuthRepository` / `AuthService` ou les tests :
+   * - `undefined` : non définie explicitement (résolution automatique via `SecureStorageService`)
+   * - `null` : utilisateur explicitement déconnecté (aucun document visible, rien n'est supprimé)
+   * - `string` : identifiant de l'utilisateur connecté
+   */
+  private utilisateurExplicite: string | null | undefined = undefined;
+
+  /** Promesse de connexion IndexedDB mise en cache. */
+  private dbPromise: Promise<IDBDatabase | null> | null = null;
+
+  /**
+   * Repli en mémoire vive lorsque IndexedDB est indisponible ou bloqué
+   * (ex. environnement de test minimaliste ou navigation ultra-restreinte).
+   */
+  private readonly memoireFallback = new Map<string, EnregistrementDocumentLocal>();
+
+  /** Suivi des Blob URLs créées afin de garantir leur révocation (`URL.revokeObjectURL`). */
+  private readonly urlsParDocument = new Map<string, Set<string>>();
+  private readonly toutesUrlsActives = new Set<string>();
+
+  /** Indique si la migration depuis l'ancien Cache Storage a déjà été vérifiée. */
+  private migrationHeriteeVerifiee = false;
+
+  constructor() {
+    void this.initialiserAuDemarrage();
   }
 
-  /** Relit l'inventaire local. À appeler avant d'afficher une liste. */
-  async rafraichir(): Promise<void> {
-    if (!this.disponible) return;
-    this.pret ??= this.inventorier();
-    await this.pret;
+  private async initialiserAuDemarrage(): Promise<void> {
+    await this.nettoyerFichiersTemporaires();
+    await this.inventorier();
   }
 
-  private async inventorier(): Promise<void> {
-    try {
-      const cache = await caches.open(NOM_CACHE);
-      const cles = await cache.keys();
-      const ids = new Set<string>();
-      for (const requete of cles) {
-        const chemin = new URL(requete.url).pathname;
-        if (chemin.startsWith(PREFIXE)) ids.add(decodeURIComponent(chemin.slice(PREFIXE.length)));
+  /**
+   * Résout l'identifiant de l'utilisateur actif.
+   * Rend `null` si l'utilisateur s'est explicitement déconnecté.
+   */
+  utilisateurActif(): string | null {
+    if (this.utilisateurExplicite !== undefined) {
+      return this.utilisateurExplicite;
+    }
+    const user = this.secureStorage.getUser();
+    if (user?.id) {
+      return user.id;
+    }
+    return 'anonyme';
+  }
+
+  /**
+   * Change l'utilisateur actif (ex. à la connexion, restauration de session ou déconnexion).
+   * Lors d'une déconnexion (`userId = null`), révoque les URLs Blob en cours et vide
+   * la vue courante sans supprimer aucun document dans IndexedDB.
+   */
+  async definirUtilisateur(userId: string | null): Promise<void> {
+    const Normalise = userId && userId.trim().length > 0 ? userId.trim() : null;
+    if (this.utilisateurExplicite === Normalise) {
+      await this.inventorier();
+      return;
+    }
+    this.revoquerToutesUrlsLocales();
+    this.utilisateurExplicite = Normalise;
+    await this.inventorier();
+  }
+
+  private cleComposite(userId: string, documentId: string): string {
+    return `${userId}:${documentId}`;
+  }
+
+  // ── Accès bas niveau IndexedDB (avec repli mémoire transparent) ──────────
+
+  private ouvrirBase(): Promise<IDBDatabase | null> {
+    if (this.dbPromise) return this.dbPromise;
+    if (typeof indexedDB === 'undefined' || !indexedDB) {
+      return Promise.resolve(null);
+    }
+
+    this.dbPromise = new Promise<IDBDatabase | null>((resolve) => {
+      try {
+        const requete = indexedDB.open(NOM_BASE_IDB, VERSION_BASE_IDB);
+
+        requete.onupgradeneeded = () => {
+          const db = requete.result;
+          if (!db.objectStoreNames.contains(STORE_DOCUMENTS)) {
+            const store = db.createObjectStore(STORE_DOCUMENTS, { keyPath: 'cle' });
+            store.createIndex('par_utilisateur', 'userId', { unique: false });
+            store.createIndex('par_document', 'id', { unique: false });
+            store.createIndex('par_etat', 'etat', { unique: false });
+          }
+        };
+
+        requete.onsuccess = () => {
+          const db = requete.result;
+          db.onversionchange = () => {
+            db.close();
+            this.dbPromise = null;
+          };
+          resolve(db);
+        };
+
+        requete.onerror = () => {
+          this.dbPromise = null;
+          resolve(null);
+        };
+
+        requete.onblocked = () => {
+          this.dbPromise = null;
+          resolve(null);
+        };
+      } catch {
+        this.dbPromise = null;
+        resolve(null);
       }
-      this.ids.set(ids);
-    } catch {
-      this.ids.set(new Set());
+    });
+
+    return this.dbPromise;
+  }
+
+  private async ecrireEnregistrement(rec: EnregistrementDocumentLocal): Promise<void> {
+    const db = await this.ouvrirBase();
+    if (!db) {
+      this.memoireFallback.set(rec.cle, rec);
+      return;
     }
+
+    await new Promise<void>((resolve, reject) => {
+      try {
+        const tx = db.transaction(STORE_DOCUMENTS, 'readwrite');
+        const store = tx.objectStore(STORE_DOCUMENTS);
+        const req = store.put(rec);
+        req.onerror = () => reject(req.error);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error ?? req.error);
+        tx.onabort = () => reject(tx.error ?? new Error('Transaction IndexedDB annulée'));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  private async lireEnregistrement(cle: string): Promise<EnregistrementDocumentLocal | null> {
+    const db = await this.ouvrirBase();
+    if (!db) {
+      return this.memoireFallback.get(cle) ?? null;
+    }
+
+    return new Promise<EnregistrementDocumentLocal | null>((resolve) => {
+      try {
+        const tx = db.transaction(STORE_DOCUMENTS, 'readonly');
+        const store = tx.objectStore(STORE_DOCUMENTS);
+        const req = store.get(cle);
+        req.onsuccess = () => {
+          resolve((req.result as EnregistrementDocumentLocal | undefined) ?? null);
+        };
+        req.onerror = () => resolve(this.memoireFallback.get(cle) ?? null);
+      } catch {
+        resolve(this.memoireFallback.get(cle) ?? null);
+      }
+    });
+  }
+
+  private async supprimerEnregistrementParCle(cle: string): Promise<void> {
+    this.memoireFallback.delete(cle);
+    const db = await this.ouvrirBase();
+    if (!db) return;
+
+    await new Promise<void>((resolve) => {
+      try {
+        const tx = db.transaction(STORE_DOCUMENTS, 'readwrite');
+        const store = tx.objectStore(STORE_DOCUMENTS);
+        store.delete(cle);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => resolve();
+        tx.onabort = () => resolve();
+      } catch {
+        resolve();
+      }
+    });
+  }
+
+  private async listerEnregistrementsUtilisateur(
+    userId: string,
+  ): Promise<EnregistrementDocumentLocal[]> {
+    const db = await this.ouvrirBase();
+    if (!db) {
+      return [...this.memoireFallback.values()].filter((r) => r.userId === userId);
+    }
+
+    return new Promise<EnregistrementDocumentLocal[]>((resolve) => {
+      try {
+        const tx = db.transaction(STORE_DOCUMENTS, 'readonly');
+        const store = tx.objectStore(STORE_DOCUMENTS);
+        if (store.indexNames.contains('par_utilisateur')) {
+          const index = store.index('par_utilisateur');
+          const req = index.getAll(IDBKeyRange.only(userId));
+          req.onsuccess = () => {
+            const res = Array.isArray(req.result)
+              ? (req.result as EnregistrementDocumentLocal[])
+              : [];
+            resolve(res);
+          };
+          req.onerror = () => resolve([]);
+        } else {
+          const req = store.getAll();
+          req.onsuccess = () => {
+            const tous = Array.isArray(req.result)
+              ? (req.result as EnregistrementDocumentLocal[])
+              : [];
+            resolve(tous.filter((r) => r.userId === userId));
+          };
+          req.onerror = () => resolve([]);
+        }
+      } catch {
+        resolve([]);
+      }
+    });
+  }
+
+  private async listerTousEnregistrements(): Promise<EnregistrementDocumentLocal[]> {
+    const db = await this.ouvrirBase();
+    if (!db) {
+      return [...this.memoireFallback.values()];
+    }
+
+    return new Promise<EnregistrementDocumentLocal[]>((resolve) => {
+      try {
+        const tx = db.transaction(STORE_DOCUMENTS, 'readonly');
+        const store = tx.objectStore(STORE_DOCUMENTS);
+        const req = store.getAll();
+        req.onsuccess = () => {
+          resolve(
+            Array.isArray(req.result) ? (req.result as EnregistrementDocumentLocal[]) : [],
+          );
+        };
+        req.onerror = () => resolve([]);
+      } catch {
+        resolve([]);
+      }
+    });
+  }
+
+  // ── Nettoyage des fichiers temporaires & migration ───────────────────────
+
+  /**
+   * Supprime tous les enregistrements incomplets (`en_cours`, `interrompu`, `erreur`)
+   * laissés par un téléchargement interrompu ou une fermeture brutale de l'application.
+   * Ne supprime jamais un document dont l'état est `'complet'`.
+   */
+  async nettoyerFichiersTemporaires(): Promise<number> {
+    const tous = await this.listerTousEnregistrements();
+    let supprimes = 0;
+    for (const rec of tous) {
+      if (rec.etat !== 'complet' || !rec.contenu || rec.tailleOctets <= 0) {
+        await this.supprimerEnregistrementParCle(rec.cle);
+        supprimes++;
+      }
+    }
+    return supprimes;
   }
 
   /**
-   * Télécharge le document et le range. Rend `false` si le navigateur ne sait
-   * pas faire ou si le fichier n'a pas pu être récupéré - l'appelant décide
-   * alors quoi dire, plutôt que de laisser croire à une réussite.
+   * Migration transparente et unique des documents qui auraient été enregistrés
+   * dans l'ancien Cache Storage (`nl-documents-hors-ligne`) vers IndexedDB.
    */
-  async enregistrer(documentId: string, url: string): Promise<boolean> {
-    if (!this.disponible || !url) return false;
-    try {
-      await this.demanderPersistance();
-      const reponse = await fetch(url, { credentials: 'omit' });
-      if (!reponse.ok) return false;
-      // Une page HTML ou du JSON n'est pas un document : l'hébergeur (ou le
-      // repli de l'application) répond parfois 200 avec une page d'erreur, et
-      // l'enregistrer ferait croire à un téléchargement réussi.
-      const type = reponse.headers.get('content-type') ?? '';
-      if (/text\/html|application\/json/i.test(type)) return false;
-      const cache = await caches.open(NOM_CACHE);
-      await cache.put(PREFIXE + encodeURIComponent(documentId), reponse);
-      this.ids.set(new Set([...this.ids(), documentId]));
-      return true;
-    } catch {
-      return false;
-    }
-  }
+  private async migrerCacheHeriteSiNecessaire(userId: string): Promise<void> {
+    if (this.migrationHeriteeVerifiee) return;
+    this.migrationHeriteeVerifiee = true;
 
-  /**
-   * Range la fiche du document à côté de son fichier.
-   *
-   * Sans elle, la bibliothèque hors ligne connaissait des identifiants sans
-   * savoir ce qu'ils désignent : il fallait interroger le serveur pour
-   * afficher un titre, c'est-à-dire être en ligne pour lire une liste de
-   * documents hors ligne.
-   */
-  async enregistrerFiche(documentId: string, fiche: unknown): Promise<void> {
-    if (!this.disponible) return;
+    if (typeof caches === 'undefined') return;
     try {
-      const cache = await caches.open(NOM_CACHE);
-      await cache.put(
-        PREFIXE_FICHE + encodeURIComponent(documentId),
-        new Response(JSON.stringify(fiche), {
-          headers: { 'content-type': 'application/json' },
-        }),
-      );
-    } catch {
-      // La fiche manquera ; le fichier, lui, reste lisible.
-    }
-  }
-
-  /**
-   * Toutes les fiches rangées localement, telles qu'elles ont été
-   * enregistrées - c'est-à-dire **déjà analysées**. Les repasser dans le
-   * parseur d'API les déformerait : `matiereId` y est redevenu une simple
-   * chaîne, et la matière s'afficherait « Matière ».
-   */
-  async fiches(): Promise<Record<string, unknown>[]> {
-    if (!this.disponible) return [];
-    try {
-      const cache = await caches.open(NOM_CACHE);
+      const existe = await caches.has(NOM_CACHE_HERITE);
+      if (!existe) return;
+      const cache = await caches.open(NOM_CACHE_HERITE);
       const cles = await cache.keys();
-      const fiches: Record<string, unknown>[] = [];
-      for (const requete of cles) {
-        if (!new URL(requete.url).pathname.startsWith(PREFIXE_FICHE)) continue;
-        const reponse = await cache.match(requete);
-        if (!reponse) continue;
-        try {
-          fiches.push((await reponse.json()) as Record<string, unknown>);
-        } catch {
-          continue;
+      if (cles.length === 0) return;
+
+      const fichesHeritees = new Map<string, Record<string, unknown>>();
+      for (const req of cles) {
+        const chemin = new URL(req.url).pathname;
+        if (chemin.startsWith(PREFIXE_FICHE_HERITE)) {
+          const docId = decodeURIComponent(chemin.slice(PREFIXE_FICHE_HERITE.length));
+          const rep = await cache.match(req);
+          if (rep) {
+            try {
+              const json = (await rep.json()) as Record<string, unknown>;
+              if (json && typeof json === 'object') fichesHeritees.set(docId, json);
+            } catch {
+              // Fiche illisible ignorée
+            }
+          }
         }
       }
-      return fiches;
+
+      for (const req of cles) {
+        const chemin = new URL(req.url).pathname;
+        if (!chemin.startsWith(PREFIXE_CLE_HERITE)) continue;
+        const docId = decodeURIComponent(chemin.slice(PREFIXE_CLE_HERITE.length));
+        if (!docId) continue;
+
+        const cle = this.cleComposite(userId, docId);
+        const dejaPresent = await this.lireEnregistrement(cle);
+        if (dejaPresent && dejaPresent.etat === 'complet') continue;
+
+        const rep = await cache.match(req);
+        if (!rep) continue;
+        const octets = await rep.arrayBuffer();
+        if (octets.byteLength === 0) continue;
+
+        const format = detecterFormatDocument({
+          octets,
+          typeMime: rep.headers.get('content-type'),
+        });
+        const ficheJson = fichesHeritees.get(docId);
+        const rec: EnregistrementDocumentLocal = {
+          cle,
+          id: docId,
+          userId,
+          nom: String(ficheJson?.['titre'] ?? `Document ${docId}`),
+          format,
+          mimeType: mimePourFormat(format, rep.headers.get('content-type')),
+          tailleOctets: octets.byteLength,
+          dateTelechargement: new Date().toISOString(),
+          version: 'v1',
+          contenu: octets,
+          etat: 'complet',
+          fiche: ficheJson,
+        };
+        await this.ecrireEnregistrement(rec);
+      }
+
+      await caches.delete(NOM_CACHE_HERITE);
     } catch {
-      return [];
+      // Migration non bloquante
     }
   }
 
-  /** Une URL d'objet utilisable par le lecteur, ou `null` si absent du cache. */
-  async urlLocale(documentId: string): Promise<string | null> {
-    if (!this.disponible) return null;
-    try {
-      const cache = await caches.open(NOM_CACHE);
-      const reponse = await cache.match(PREFIXE + encodeURIComponent(documentId));
-      if (!reponse) return null;
-      return URL.createObjectURL(await reponse.blob());
-    } catch {
-      return null;
+  // ── Inventaire et vérification de disponibilité ──────────────────────────
+
+  private async inventorier(): Promise<void> {
+    const userId = this.utilisateurActif();
+    if (!userId) {
+      this._ids.set(new Set());
+      this._fiches.set([]);
+      this._enregistrements.set([]);
+      return;
     }
+
+    await this.migrerCacheHeriteSiNecessaire(userId);
+
+    const bruts = await this.listerEnregistrementsUtilisateur(userId);
+    const complets = bruts
+      .filter((r) => r.etat === 'complet' && r.tailleOctets > 0 && !!r.contenu)
+      .sort((a, b) => (a.dateTelechargement < b.dateTelechargement ? 1 : -1));
+
+    const idsSet = new Set<string>();
+    const fichesList: DocumentModel[] = [];
+    const infosList: InfoDocumentLocal[] = [];
+
+    for (const rec of complets) {
+      idsSet.add(rec.id);
+      const info = versInfoDocumentLocal(rec);
+      infosList.push(info);
+      if (info.document) {
+        fichesList.push(info.document);
+      }
+    }
+
+    this._ids.set(idsSet);
+    this._fiches.set(fichesList);
+    this._enregistrements.set(infosList);
   }
 
-  async supprimer(documentId: string): Promise<void> {
-    if (!this.disponible) return;
-    try {
-      const cache = await caches.open(NOM_CACHE);
-      await cache.delete(PREFIXE + encodeURIComponent(documentId));
-      await cache.delete(PREFIXE_FICHE + encodeURIComponent(documentId));
-      const restants = new Set(this.ids());
-      restants.delete(documentId);
-      this.ids.set(restants);
-    } catch {
-      // Rien à faire : le document restera listé, et le prochain inventaire
-      // rétablira la vérité.
-    }
+  /** Relit l'état d'IndexedDB pour l'utilisateur courant. */
+  async rafraichir(): Promise<void> {
+    await this.inventorier();
   }
 
-  /** Vide tout - l'action « Libérer de l'espace » des réglages. */
-  async viderTout(): Promise<void> {
-    if (!this.disponible) return;
+  /**
+   * Vérifie si un document est disponible hors ligne pour l'utilisateur actif.
+   * Si `versionAttendue` est fournie, vérifie également que la version locale correspond.
+   */
+  async estDisponible(id: string, versionAttendue?: string): Promise<boolean> {
+    const userId = this.utilisateurActif();
+    if (!userId || !id) return false;
+    const rec = await this.lireEnregistrement(this.cleComposite(userId, id));
+    if (!rec || rec.etat !== 'complet' || !rec.contenu || rec.tailleOctets <= 0) {
+      return false;
+    }
+    if (versionAttendue && rec.version !== versionAttendue) {
+      return false;
+    }
+    return true;
+  }
+
+  /** Retourne les métadonnées locales d'un document pour l'utilisateur actif, ou `null`. */
+  infoDocument(id: string): InfoDocumentLocal | null {
+    return this._enregistrements().find((e) => e.id === id) ?? null;
+  }
+
+  /**
+   * Vérifie l'intégrité binaire d'un fichier téléchargé :
+   * - Taille strictement positive
+   * - Correspondance avec `Content-Length` si communiqué par le serveur
+   * - Signature binaire valide (`%PDF-` pour PDF ou `PK\x03\x04` pour DOCX)
+   */
+  verifierIntegriteBinaire(
+    octets: ArrayBuffer,
+    options?: { tailleAttendue?: number | null; typeMime?: string | null; url?: string | null },
+  ): { valide: boolean; format: 'pdf' | 'docx' } {
+    if (!octets || octets.byteLength < 4) {
+      return { valide: false, format: 'pdf' };
+    }
+
+    const tailleAttendue = options?.tailleAttendue ?? null;
+    if (
+      typeof tailleAttendue === 'number' &&
+      Number.isFinite(tailleAttendue) &&
+      tailleAttendue > 0 &&
+      octets.byteLength !== tailleAttendue
+    ) {
+      return { valide: false, format: 'pdf' };
+    }
+
+    const entete = new Uint8Array(octets, 0, Math.min(8, octets.byteLength));
+    const formatEntete = detecterFormatParEntete(entete);
+    if (formatEntete === 'pdf' || formatEntete === 'docx') {
+      return { valide: true, format: formatEntete };
+    }
+
+    // Rejeter explicitement les réponses HTML ou JSON déguisées
+    const debutTexte = new TextDecoder('utf-8', { fatal: false })
+      .decode(new Uint8Array(octets, 0, Math.min(64, octets.byteLength)))
+      .trim()
+      .toLowerCase();
+    if (
+      debutTexte.startsWith('<!doctype') ||
+      debutTexte.startsWith('<html') ||
+      debutTexte.startsWith('<?xml') ||
+      debutTexte.startsWith('{') ||
+      debutTexte.startsWith('[')
+    ) {
+      return { valide: false, format: 'pdf' };
+    }
+
+    return { valide: false, format: 'pdf' };
+  }
+
+  // ── Téléchargement et enregistrement dans IndexedDB ──────────────────────
+
+  /**
+   * Télécharge un document depuis son URL signée Cloudflare R2, suit la progression
+   * flux par flux, vérifie l'intégrité du fichier et l'enregistre dans IndexedDB.
+   */
+  async telechargerEtEnregistrer(
+    id: string,
+    url: string,
+    fiche?: DocumentModel,
+    options?: OptionsEnregistrementLocal,
+  ): Promise<ResultatEnregistrementLocal> {
+    const userId = this.utilisateurActif();
+    if (!userId) {
+      return { ok: false, raison: 'non_authentifie' };
+    }
+
+    const version = options?.version ?? calculerVersionDocument(fiche);
+    const cle = this.cleComposite(userId, id);
+
+    // Éviter tout téléchargement en double si la même version complète existe déjà
+    const existant = await this.lireEnregistrement(cle);
+    if (
+      existant &&
+      existant.etat === 'complet' &&
+      existant.tailleOctets > 0 &&
+      existant.contenu &&
+      existant.version === version
+    ) {
+      if (fiche && !existant.fiche) {
+        const enrichi: EnregistrementDocumentLocal = {
+          ...existant,
+          nom: fiche.titre || existant.nom,
+          fiche: ficheVersObjet(fiche, existant.tailleOctets),
+        };
+        await this.ecrireEnregistrement(enrichi);
+        await this.inventorier();
+        return { ok: true, info: versInfoDocumentLocal(enrichi) };
+      }
+      options?.onProgression?.(100);
+      await this.inventorier();
+      return { ok: true, info: versInfoDocumentLocal(existant) };
+    }
+
+    // Marqueur temporaire 'en_cours' (sera remplacé par 'complet' ou nettoyé en cas d'échec)
+    const marqueurEnCours: EnregistrementDocumentLocal = {
+      cle,
+      id,
+      userId,
+      nom: fiche?.titre ?? `Document ${id}`,
+      format: 'pdf',
+      mimeType: 'application/pdf',
+      tailleOctets: 0,
+      dateTelechargement: new Date().toISOString(),
+      version,
+      contenu: new ArrayBuffer(0),
+      etat: 'en_cours',
+      fiche: fiche ? ficheVersObjet(fiche) : undefined,
+    };
+
     try {
-      await caches.delete(NOM_CACHE);
-      this.ids.set(new Set());
-      this.pret = null;
-    } catch {
-      // idem
+      await this.ecrireEnregistrement(marqueurEnCours);
+    } catch (err) {
+      if (estErreurQuota(err)) {
+        return { ok: false, raison: 'quota' };
+      }
+    }
+
+    try {
+      options?.onProgression?.(5);
+      const reponse = await fetch(url, {
+        mode: 'cors',
+        credentials: 'omit',
+        signal: options?.signal,
+      });
+
+      if (!reponse.ok) {
+        await this.supprimerEnregistrementParCle(cle);
+        return { ok: false, raison: 'reseau' };
+      }
+
+      const typeMime = reponse.headers.get('content-type') ?? '';
+      if (/text\/html|application\/json/i.test(typeMime)) {
+        await this.supprimerEnregistrementParCle(cle);
+        return { ok: false, raison: 'integrite' };
+      }
+
+      const longueurHeader = reponse.headers.get('content-length');
+      const tailleAttendue =
+        longueurHeader && /^\d+$/.test(longueurHeader.trim())
+          ? Number(longueurHeader.trim())
+          : null;
+
+      const octets = await this.lireFluxAvecProgression(
+        reponse,
+        tailleAttendue,
+        options?.onProgression,
+        options?.signal,
+      );
+
+      const verification = this.verifierIntegriteBinaire(octets, {
+        tailleAttendue,
+        typeMime,
+        url,
+      });
+
+      if (!verification.valide) {
+        await this.supprimerEnregistrementParCle(cle);
+        return { ok: false, raison: 'integrite' };
+      }
+
+      const formatFinal = verification.format;
+      const mimeFinal = mimePourFormat(formatFinal, typeMime);
+      const enregistrementComplet: EnregistrementDocumentLocal = {
+        cle,
+        id,
+        userId,
+        nom: fiche?.titre || `Document ${id}`,
+        format: formatFinal,
+        mimeType: mimeFinal,
+        tailleOctets: octets.byteLength,
+        dateTelechargement: new Date().toISOString(),
+        version,
+        contenu: octets,
+        etat: 'complet',
+        fiche: fiche ? ficheVersObjet(fiche, octets.byteLength) : existant?.fiche,
+      };
+
+      await this.ecrireEnregistrement(enregistrementComplet);
+      options?.onProgression?.(100);
+      await this.inventorier();
+
+      return {
+        ok: true,
+        info: versInfoDocumentLocal(enregistrementComplet),
+      };
+    } catch (err) {
+      // Toujours nettoyer l'enregistrement 'en_cours' si le téléchargement échoue ou est annulé
+      await this.supprimerEnregistrementParCle(cle);
+      // Si une ancienne version complète existait avant la tentative de mise à jour, la restaurer
+      if (existant && existant.etat === 'complet' && existant.tailleOctets > 0) {
+        try {
+          await this.ecrireEnregistrement(existant);
+          await this.inventorier();
+        } catch {
+          // Ignoré
+        }
+      }
+
+      if (estErreurAnnulation(err) || options?.signal?.aborted) {
+        return { ok: false, raison: 'annule' };
+      }
+      if (estErreurQuota(err)) {
+        return { ok: false, raison: 'quota' };
+      }
+      return { ok: false, raison: 'reseau' };
     }
   }
 
   /**
-   * Place occupée et place totale, en octets, telles que le navigateur les
-   * estime. `null` quand il ne sait pas - Safari ne répond pas toujours, et
-   * une jauge vaut mieux absente qu'inventée.
+   * Lit le corps de la réponse HTTP en suivant la progression réelle via `ReadableStream`
+   * lorsque disponible, avec repli sur `reponse.arrayBuffer()`.
    */
-  async estimation(): Promise<{ utilise: number; total: number } | null> {
-    try {
-      const mesure = await navigator.storage?.estimate?.();
-      if (!mesure?.quota) return null;
-      return { utilise: mesure.usage ?? 0, total: mesure.quota };
-    } catch {
-      return null;
+  private async lireFluxAvecProgression(
+    reponse: Response,
+    tailleAttendue: number | null,
+    onProgression?: (pourcentage: number) => void,
+    signal?: AbortSignal,
+  ): Promise<ArrayBuffer> {
+    if (!reponse.body || typeof reponse.body.getReader !== 'function') {
+      onProgression?.(50);
+      const buffer = await reponse.arrayBuffer();
+      onProgression?.(95);
+      return buffer;
     }
+
+    const lecteur = reponse.body.getReader();
+    const morceaux: Uint8Array[] = [];
+    let recu = 0;
+
+    try {
+      while (true) {
+        if (signal?.aborted) {
+          await lecteur.cancel();
+          const abortErr = new Error('Téléchargement interrompu');
+          abortErr.name = 'AbortError';
+          throw abortErr;
+        }
+
+        const { done, value } = await lecteur.read();
+        if (done) break;
+        if (value && value.byteLength > 0) {
+          morceaux.push(value);
+          recu += value.byteLength;
+          if (tailleAttendue && tailleAttendue > 0) {
+            const pct = Math.min(95, Math.max(5, Math.round((recu / tailleAttendue) * 95)));
+            onProgression?.(pct);
+          } else {
+            // Progression graduelle asymptotique quand Content-Length est absent
+            const pctEstime = Math.min(90, 10 + Math.round((1 - Math.exp(-recu / (512 * 1024))) * 80));
+            onProgression?.(pctEstime);
+          }
+        }
+      }
+    } finally {
+      try {
+        lecteur.releaseLock();
+      } catch {
+        // Déjà libéré
+      }
+    }
+
+    const total = new Uint8Array(recu);
+    let decalage = 0;
+    for (const morceau of morceaux) {
+      total.set(morceau, decalage);
+      decalage += morceau.byteLength;
+    }
+    return total.buffer;
   }
 
   /**
-   * Demande au navigateur de ne pas évincer ce stockage.
-   *
-   * Chrome l'accorde silencieusement à une application installée ; Safari iOS
-   * l'ignore souvent. Le refus n'est pas traité comme une erreur : on
-   * enregistre quand même, en sachant que le document pourra devoir être
-   * retéléchargé un jour.
+   * Méthode de compatibilité booléenne : télécharge et enregistre un document dans IndexedDB.
    */
-  private async demanderPersistance(): Promise<void> {
+  async enregistrer(
+    id: string,
+    url: string,
+    fiche?: DocumentModel,
+    options?: OptionsEnregistrementLocal,
+  ): Promise<boolean> {
+    const resultat = await this.telechargerEtEnregistrer(id, url, fiche, options);
+    return resultat.ok;
+  }
+
+  /**
+   * Associe ou met à jour la fiche de métadonnées d'un document déjà présent dans IndexedDB.
+   */
+  async enregistrerFiche(id: string, fiche: DocumentModel): Promise<void> {
+    const userId = this.utilisateurActif();
+    if (!userId || !id) return;
+    const cle = this.cleComposite(userId, id);
+    const existant = await this.lireEnregistrement(cle);
+    if (!existant) return;
+    await this.ecrireEnregistrement({
+      ...existant,
+      nom: fiche.titre || existant.nom,
+      fiche: ficheVersObjet(fiche, existant.tailleOctets),
+    });
+    await this.inventorier();
+  }
+
+  // ── Ouverture et lecture locale (Blob URL gérée) ─────────────────────────
+
+  /**
+   * Prépare un document stocké localement pour la lecture dans le lecteur interne
+   * (PDF ou DOCX) sans aucun appel réseau.
+   * Retourne l'URL objet (`blob:...`), le format détecté et les métadonnées.
+   */
+  async obtenirPourLecture(id: string): Promise<LectureLocaleDocument | null> {
+    const userId = this.utilisateurActif();
+    if (!userId || !id) return null;
+
+    const rec = await this.lireEnregistrement(this.cleComposite(userId, id));
+    if (!rec || rec.etat !== 'complet' || !rec.contenu || rec.tailleOctets <= 0) {
+      return null;
+    }
+
+    const blob = new Blob([rec.contenu], { type: rec.mimeType || mimePourFormat(rec.format) });
+    const url = URL.createObjectURL(blob);
+
+    let setDoc = this.urlsParDocument.get(id);
+    if (!setDoc) {
+      setDoc = new Set<string>();
+      this.urlsParDocument.set(id, setDoc);
+    }
+    setDoc.add(url);
+    this.toutesUrlsActives.add(url);
+
+    return {
+      id: rec.id,
+      url,
+      format: rec.format,
+      mimeType: rec.mimeType,
+      nom: rec.nom,
+      tailleOctets: rec.tailleOctets,
+      dateTelechargement: rec.dateTelechargement,
+      version: rec.version,
+    };
+  }
+
+  /**
+   * Rend une `blob:` URL pointant vers la copie locale de l'utilisateur actif,
+   * ou `null` si ce document n'est pas enregistré localement.
+   * L'appelant (ou `revoquerUrlLocale`) révoque l'URL à la fermeture du lecteur.
+   */
+  async urlLocale(id: string): Promise<string | null> {
+    const lecture = await this.obtenirPourLecture(id);
+    return lecture?.url ?? null;
+  }
+
+  /** Révoque explicitement une URL Blob créée par `urlLocale` ou `obtenirPourLecture`. */
+  revoquerUrlLocale(url: string | null | undefined): void {
+    if (!url) return;
     try {
-      if (await navigator.storage?.persisted?.()) return;
-      await navigator.storage?.persist?.();
+      URL.revokeObjectURL(url);
     } catch {
-      // API absente : rien à demander.
+      // Ignoré si déjà révoquée
+    }
+    this.toutesUrlsActives.delete(url);
+    for (const [docId, setUrls] of this.urlsParDocument.entries()) {
+      setUrls.delete(url);
+      if (setUrls.size === 0) {
+        this.urlsParDocument.delete(docId);
+      }
+    }
+  }
+
+  /** Révoque toutes les URLs Blob associées à un document donné. */
+  private revoquerUrlsDuDocument(id: string): void {
+    const setUrls = this.urlsParDocument.get(id);
+    if (!setUrls) return;
+    for (const url of setUrls) {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        // Ignoré
+      }
+      this.toutesUrlsActives.delete(url);
+    }
+    this.urlsParDocument.delete(id);
+  }
+
+  /** Révoque toutes les URLs Blob actives (ex. lors d'un changement d'utilisateur ou nettoyage). */
+  revoquerToutesUrlsLocales(): void {
+    for (const url of this.toutesUrlsActives) {
+      try {
+        URL.revokeObjectURL(url);
+      } catch {
+        // Ignoré
+      }
+    }
+    this.toutesUrlsActives.clear();
+    this.urlsParDocument.clear();
+  }
+
+  // ── Suppression et gestion de l'espace de stockage ───────────────────────
+
+  /** Retire un document du stockage local de l'utilisateur actif. */
+  async supprimer(id: string): Promise<void> {
+    const userId = this.utilisateurActif();
+    if (!userId || !id) return;
+    this.revoquerUrlsDuDocument(id);
+    await this.supprimerEnregistrementParCle(this.cleComposite(userId, id));
+    await this.inventorier();
+  }
+
+  /**
+   * Efface tous les documents téléchargés de l'utilisateur actif uniquement
+   * (action explicite « Libérer de l'espace » / « Vider mes téléchargements »).
+   * N'affecte pas les documents des autres comptes utilisateurs sur l'appareil.
+   */
+  async vider(): Promise<void> {
+    const userId = this.utilisateurActif();
+    if (!userId) return;
+    this.revoquerToutesUrlsLocales();
+    const enregistrements = await this.listerEnregistrementsUtilisateur(userId);
+    for (const rec of enregistrements) {
+      await this.supprimerEnregistrementParCle(rec.cle);
+    }
+    await this.inventorier();
+  }
+
+  /**
+   * Espace occupé par les téléchargements de l'utilisateur et quota disponible sur l'appareil,
+   * en octets. Combine la somme exacte des fichiers stockés dans IndexedDB (`utiliseApp`)
+   * et l'estimation globale du navigateur (`navigator.storage.estimate()`).
+   */
+  async estimation(): Promise<{
+    utilise: number;
+    quota: number;
+    utiliseApp: number;
+    nombreDocuments: number;
+  }> {
+    const enregistrements = this._enregistrements();
+    const utiliseApp = enregistrements.reduce((acc, r) => acc + (r.tailleOctets || 0), 0);
+    const nombreDocuments = enregistrements.length;
+
+    if (typeof navigator !== 'undefined' && navigator.storage?.estimate) {
+      try {
+        const est = await navigator.storage.estimate();
+        return {
+          utilise: Math.max(est.usage ?? 0, utiliseApp),
+          quota: est.quota ?? 0,
+          utiliseApp,
+          nombreDocuments,
+        };
+      } catch {
+        // Repli sur utiliseApp
+      }
+    }
+    return {
+      utilise: utiliseApp,
+      quota: 0,
+      utiliseApp,
+      nombreDocuments,
+    };
+  }
+
+  /**
+   * Demande au navigateur de marquer le stockage de l'origine comme persistant
+   * afin d'éviter toute éviction automatique par le système d'exploitation.
+   */
+  async demanderPersistance(): Promise<boolean> {
+    if (typeof navigator === 'undefined' || !navigator.storage?.persist) return false;
+    try {
+      if (navigator.storage.persisted && (await navigator.storage.persisted())) {
+        return true;
+      }
+      return await navigator.storage.persist();
+    } catch {
+      return false;
     }
   }
 }

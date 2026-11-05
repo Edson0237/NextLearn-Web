@@ -103,8 +103,21 @@ export class PdfReader implements OnInit, OnDestroy {
     }
     this.pagesVues.add(this.page());
 
-    // La copie locale d'abord : c'est la seule qui s'ouvre sans réseau, et
-    // elle évite une URL signée de plus quand le document est déjà là.
+    // La copie locale d'abord (IndexedDB) : c'est la seule qui s'ouvre sans réseau,
+    // et elle évite toute requête réseau / URL signée quand le document est déjà téléchargé.
+    const lectureLocale =
+      typeof this.stockage.obtenirPourLecture === 'function'
+        ? await this.stockage.obtenirPourLecture(id)
+        : null;
+    if (lectureLocale) {
+      this.urlObjet = lectureLocale.url;
+      this.format.set(lectureLocale.format);
+      this.setUrl(lectureLocale.url);
+      void this.docsRepo.recordView(id);
+      this.loading.set(false);
+      return;
+    }
+
     const locale = await this.stockage.urlLocale(id);
     if (locale) {
       this.urlObjet = locale;
@@ -243,7 +256,13 @@ export class PdfReader implements OnInit, OnDestroy {
     if (this.sauvegardeEnAttente) clearTimeout(this.sauvegardeEnAttente);
     this.clearFallbackTimeout();
     // Une URL d'objet non révoquée retient le fichier entier en mémoire.
-    if (this.urlObjet) URL.revokeObjectURL(this.urlObjet);
+    if (this.urlObjet) {
+      if (typeof this.stockage.revoquerUrlLocale === 'function') {
+        this.stockage.revoquerUrlLocale(this.urlObjet);
+      } else {
+        URL.revokeObjectURL(this.urlObjet);
+      }
+    }
 
     const id = this.documentId();
     if (!id) return;

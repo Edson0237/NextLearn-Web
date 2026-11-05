@@ -57,6 +57,7 @@ export class BibliothequeHome implements OnInit {
   private readonly sheets = inject(BottomSheetService);
 
   protected readonly user = computed(() => this.auth.state().user);
+  protected readonly nombreHorsLigne = computed(() => this.stockage.ids().size);
   protected readonly cursus = computed(() => {
     const u = this.user();
     if (!u) return undefined;
@@ -193,7 +194,12 @@ export class BibliothequeHome implements OnInit {
     try {
       const docs = await this.docsRepo.getDocuments();
       this.documents.set(docs);
-    } catch (e) {
+    } catch {
+      const fichesLocales = this.stockage.fiches();
+      if (fichesLocales.length > 0) {
+        this.documents.set([...fichesLocales]);
+        return;
+      }
       if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set('Impossible de charger les documents.');
     } finally {

@@ -40,7 +40,7 @@
         <span class="home__stat-libelle">{{ 'pwaDocsLus' | t }}</span>
       </div>
       <span class="home__stat-filet" aria-hidden="true"></span>
-      <div class="home__stat">
+      <div class="home__stat" role="button" tabindex="0" (click)="openOffline()" (keydown.enter)="openOffline()">
         <span class="home__stat-valeur"><nl-animated-number [value]="horsLigne()" /></span>
         <span class="home__stat-libelle">{{ 'pwaHorsLigneMinuscule' | t }}</span>
       </div>

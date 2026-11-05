@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_PATH } from '../../network/config/api-config';
 import { SecureStorageService } from '../../storage/services/secure-storage.service';
+import { StockageHorsLigne } from '../../bibliotheque/services/stockage-hors-ligne';
 import { Failure } from '../../models/failure.model';
 import { Appareil } from '../services/appareil';
 import { Consentements } from '../services/consentements';
@@ -71,6 +72,7 @@ export interface ProfilGoogle {
 export class AuthRepository {
   private readonly http = inject(HttpClient);
   private readonly storage = inject(SecureStorageService);
+  private readonly stockageHorsLigne = inject(StockageHorsLigne);
   private readonly appareil = inject(Appareil);
   private readonly consentements = inject(Consentements);
 
@@ -423,7 +425,9 @@ export class AuthRepository {
     }
     this.storage.saveToken(accessToken, new Date(Date.now() + 15 * 60 * 1000));
     this.storage.saveRefreshToken(refreshToken);
-    this.storage.saveUser(utilisateurDepuisApi(userData as Record<string, unknown>));
+    const utilisateur = utilisateurDepuisApi(userData as Record<string, unknown>);
+    this.storage.saveUser(utilisateur);
+    await this.stockageHorsLigne.definirUtilisateur(utilisateur.id);
     if (pin) this.storage.savePinHash(await hashPin(pin));
     // Point de départ des 30 jours pendant lesquels le PIN seul rouvre la session.
     this.storage.saveLastOtpVerifiedAt(new Date());
@@ -439,10 +443,12 @@ export class AuthRepository {
     this.storage.clearToken();
     this.storage.clearRefreshToken();
     this.storage.clearTempToken();
+    await this.stockageHorsLigne.definirUtilisateur(null);
   }
 
   async forgetDevice(): Promise<void> {
     this.storage.clearAll();
+    await this.stockageHorsLigne.definirUtilisateur(null);
   }
 
   /** L'adresse du compte vient de changer côté serveur : la copie locale la suit. */
@@ -521,6 +527,7 @@ export class AuthRepository {
     const user = this.storage.getUser();
     if (!token && !this.storage.getRefreshToken()) return null;
     if (!user) return null;
+    await this.stockageHorsLigne.definirUtilisateur(user.id);
     return { userId: user.id };
   }
 
@@ -565,6 +572,7 @@ export class AuthRepository {
     this.storage.saveRefreshToken(refreshToken);
     const utilisateur = utilisateurDepuisApi(userData as Record<string, unknown>);
     this.storage.saveUser(utilisateur);
+    await this.stockageHorsLigne.definirUtilisateur(utilisateur.id);
     this.storage.savePinHash(await hashPin(newPin));
     this.storage.saveLastOtpVerifiedAt(new Date());
     return utilisateur;

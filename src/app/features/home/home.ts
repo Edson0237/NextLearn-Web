@@ -15,6 +15,7 @@ import {
   LectureProgress,
   LectureProgressRepository,
   pourcentageLu,
+  StockageHorsLigne,
 } from '../../core/bibliotheque';
 import {
   DocumentModel,
@@ -65,6 +66,7 @@ export class Home implements OnInit {
   private readonly profilRepo = inject(ProfilRepository);
   private readonly contexteRepo = inject(ContexteRepository);
   private readonly lectureRepo = inject(LectureProgressRepository);
+  private readonly stockage = inject(StockageHorsLigne);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -201,11 +203,23 @@ export class Home implements OnInit {
       this.popular.set(pop);
       this.recent.set(recents);
       this.streak.set(stats?.streak ?? 0);
-      this.horsLigne.set(stats?.docsTelecharges ?? 0);
+      this.horsLigne.set(Math.max(stats?.docsTelecharges ?? 0, this.stockage.ids().size));
       this.lus.set(stats?.docsLus ?? 0);
       this.contexte.set(contexte);
-      this.reprises.set(this.composerReprises(progression, [...rec, ...pop, ...recents]));
+      this.reprises.set(
+        this.composerReprises(progression, [...this.stockage.fiches(), ...rec, ...pop, ...recents]),
+      );
     } catch {
+      const fichesLocales = this.stockage.fiches();
+      if (fichesLocales.length > 0) {
+        const progressionLocale = await this.lectureRepo
+          .getAll()
+          .catch(() => new Map<string, LectureProgress>());
+        this.horsLigne.set(this.stockage.ids().size);
+        this.reprises.set(this.composerReprises(progressionLocale, fichesLocales));
+        this.recommended.set([...fichesLocales]);
+        return;
+      }
       if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set("Impossible de charger l'accueil.");
     } finally {

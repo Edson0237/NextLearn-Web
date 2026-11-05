@@ -5,6 +5,8 @@ import { TraductionPipe } from '../../../core/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves';
 import { EpreuveModel, TypeEpreuve, typeEpreuveCle } from '../../../core/epreuves';
+import { DocumentModel, DocumentType, StockageHorsLigne } from '../../../core/bibliotheque';
+import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Badge } from '../../../shared/ui/badge/badge';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
@@ -40,6 +42,8 @@ export class EpreuveDetail {
   protected readonly TypeEpreuve = TypeEpreuve;
   protected readonly typeCle = typeEpreuveCle;
 
+  protected readonly telechargements = inject(TelechargementEtat);
+  private readonly stockage = inject(StockageHorsLigne);
   private readonly repo = inject(EpreuvesRepository);
   private readonly toast = inject(ToastService);
   private readonly signalement = inject(SignalementFlux);
@@ -62,11 +66,13 @@ export class EpreuveDetail {
   private readonly notifEtat = inject(NotificationsEtat);
 
   constructor() {
+    void this.telechargements.initialiser();
     void this.charger();
   }
 
   private async charger(): Promise<void> {
     this.statut.set('chargement');
+    await this.stockage.rafraichir();
     try {
       const ep = await this.repo.getById(this.id);
       if (!ep) {
@@ -78,22 +84,98 @@ export class EpreuveDetail {
       // Consultée : les notifications qui l'annonçaient ne sont plus « nouvelles ».
       void this.notifEtat.marquerRessourceLue('epreuve', this.id);
     } catch (e) {
+      const localDoc = this.stockage.infoDocument(this.id)?.document;
+      if (localDoc) {
+        this.epreuve.set({
+          id: localDoc.id,
+          matiere: localDoc.matiere,
+          annee: Number(localDoc.anneeAcademique?.slice(0, 4)) || new Date().getFullYear(),
+          universite: localDoc.universite,
+          niveau: localDoc.niveau,
+          dureeMinutes: localDoc.dureeMinutes,
+          anneeAcademique: localDoc.anneeAcademique,
+          avecCorrige: localDoc.avecCorrige,
+          urlPdf: localDoc.urlPdf,
+          urlCorrigePdf: localDoc.urlCorrigePdf,
+          matiereId: localDoc.matiereId,
+          universiteId: localDoc.universiteId,
+          semestre: localDoc.semestre,
+          universel: false,
+          vues: localDoc.vues,
+          telechargements: localDoc.telechargements,
+          noteMoyenne: localDoc.noteMoyenne,
+        });
+        this.statut.set('pret');
+        return;
+      }
       this.erreur.set(e instanceof Failure ? e.message : 'Erreur de chargement.');
       this.statut.set('erreur');
     }
   }
 
+  private versDocumentModel(ep: EpreuveModel, urlFinale?: string): DocumentModel {
+    return {
+      id: ep.id,
+      titre: `Épreuve de ${ep.matiere} (${ep.anneeAcademique ?? ep.annee})`,
+      description: ep.enseigne ? `Institution : ${ep.enseigne}` : '',
+      type: DocumentType.epreuve,
+      matiere: ep.matiere,
+      enseignant: ep.enseigne ?? 'Non renseigné',
+      universite: ep.universite,
+      niveau: ep.niveau,
+      semestre: ep.semestre,
+      dureeMinutes: ep.dureeMinutes,
+      avecCorrige: ep.avecCorrige,
+      urlCorrigePdf: ep.urlCorrigePdf,
+      anneeAcademique: ep.anneeAcademique ?? String(ep.annee),
+      tailleMb: 0,
+      pages: 0,
+      urlPdf: urlFinale ?? ep.urlPdf,
+      dateAjout: new Date(),
+      vues: ep.vues,
+      telechargements: ep.telechargements,
+      noteMoyenne: ep.noteMoyenne,
+      matiereId: ep.matiereId,
+      universiteId: ep.universiteId,
+    };
+  }
+
   protected async ouvrirPdf(type: 'epreuve' | 'corrige'): Promise<void> {
     const ep = this.epreuve();
     if (!ep || this.telechargementEnCours()) return;
+
+    if (type === 'epreuve' && this.stockage.ids().has(ep.id)) {
+      await this.router.navigateByUrl(
+        `/app/${AppRoutes.docReaderPath(ep.id)}?title=${encodeURIComponent(ep.matiere)}`,
+      );
+      return;
+    }
+
     this.telechargementEnCours.set(type);
     try {
       const url = await this.repo.getDownloadUrl(ep.id, type);
-      window.open(url, '_blank', 'noopener');
+      const titre = type === 'corrige' ? `Corrigé - ${ep.matiere}` : ep.matiere;
+      await this.router.navigateByUrl(
+        `/app/${AppRoutes.docReaderPath(ep.id)}?title=${encodeURIComponent(titre)}&url=${encodeURIComponent(url)}`,
+      );
     } catch (e) {
-      this.toast.erreur(e instanceof Failure ? e.message : 'Téléchargement impossible.');
+      this.toast.erreur(e instanceof Failure ? e.message : 'Ouverture impossible.');
     } finally {
       this.telechargementEnCours.set(undefined);
+    }
+  }
+
+  protected async telechargerHorsLigne(): Promise<void> {
+    const ep = this.epreuve();
+    if (!ep) return;
+    try {
+      const url =
+        this.stockage.ids().has(ep.id)
+          ? ep.urlPdf
+          : await this.repo.getDownloadUrl(ep.id, 'epreuve').catch(() => ep.urlPdf);
+      await this.telechargements.telecharger(this.versDocumentModel(ep, url));
+    } catch (e) {
+      this.toast.erreur(e instanceof Failure ? e.message : 'Téléchargement impossible.');
     }
   }
 

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { enFailure } from '../../network';
+import { StockageHorsLigne } from '../services/stockage-hors-ligne';
 
 /**
  * Progression de lecture - traduction de `LectureProgressRemoteRepository`.
@@ -46,6 +47,12 @@ const CLE_MIROIR = 'nl_lecture_progress';
 @Injectable({ providedIn: 'root' })
 export class LectureProgressRepository {
   private readonly http = inject(HttpClient);
+  private readonly stockage = inject(StockageHorsLigne);
+
+  private cleMiroir(): string {
+    const userId = this.stockage.utilisateurActif();
+    return userId && userId !== 'anonyme' ? `${CLE_MIROIR}:${userId}` : CLE_MIROIR;
+  }
 
   // ── Miroir local ─────────────────────────────────────────────────────────
   //
@@ -60,7 +67,8 @@ export class LectureProgressRepository {
 
   private lireMiroir(): Record<string, LectureProgress> {
     try {
-      const brut = localStorage.getItem(CLE_MIROIR);
+      const cle = this.cleMiroir();
+      const brut = localStorage.getItem(cle) ?? (cle !== CLE_MIROIR ? localStorage.getItem(CLE_MIROIR) : null);
       if (!brut) return {};
       const objet = JSON.parse(brut) as unknown;
       return objet && typeof objet === 'object' ? (objet as Record<string, LectureProgress>) : {};
@@ -75,7 +83,7 @@ export class LectureProgressRepository {
     try {
       const miroir = this.lireMiroir();
       miroir[progres.documentId] = progres;
-      localStorage.setItem(CLE_MIROIR, JSON.stringify(miroir));
+      localStorage.setItem(this.cleMiroir(), JSON.stringify(miroir));
     } catch {
       // Quota atteint ou stockage refusé : la position sera perdue à la
       // fermeture, ce qui reste préférable à une lecture interrompue.

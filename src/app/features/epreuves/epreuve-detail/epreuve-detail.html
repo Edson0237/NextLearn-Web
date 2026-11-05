@@ -66,6 +66,21 @@
               >
                 <nl-icon name="check_circle" [size]="18" />{{ 'epreuvesCorrige' | t }}</button>
             }
+            <button
+              type="button"
+              class="nl-epd__cta nl-epd__cta--secondaire"
+              [disabled]="telechargements.etat(ep.id) === 'encours'"
+              (click)="telechargerHorsLigne()"
+            >
+              <nl-icon [name]="telechargements.etat(ep.id) === 'fait' ? 'cloud_done' : 'download'" [size]="18" />
+              @if (telechargements.etat(ep.id) === 'fait') {
+                Enregistré hors ligne
+              } @else if (telechargements.etat(ep.id) === 'encours') {
+                {{ telechargements.progression(ep.id) }} %
+              } @else {
+                {{ 'actionTelecharger' | t }}
+              }
+            </button>
           </div>
 
           <h2 class="nl-epd__section-titre">{{ 'docInformations' | t }}</h2>

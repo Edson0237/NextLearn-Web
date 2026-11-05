@@ -134,6 +134,33 @@
         </button>
       </div>
 
+      @if (infoLocale(doc.id); as localInfo) {
+        <section class="doc-detail__hors-ligne" aria-live="polite">
+          <div class="doc-detail__hors-ligne-entete">
+            <span class="doc-detail__hors-ligne-icone">
+              <nl-icon name="cloud_done" [size]="18" />
+            </span>
+            <div class="doc-detail__hors-ligne-textes">
+              <span class="doc-detail__hors-ligne-titre">
+                {{ 'docDisponibleHorsLigne' | t }} · {{ localInfo.format.toUpperCase() }}
+              </span>
+              <span class="doc-detail__hors-ligne-meta">
+                {{ tailleLocaleFormatee(doc.id) }} · Téléchargé le {{ localInfo.dateTelechargement | date: 'dd/MM/yyyy' }}
+              </span>
+            </div>
+          </div>
+          <div class="doc-detail__hors-ligne-actions">
+            <button type="button" class="doc-detail__hors-ligne-lien" (click)="ouvrirMesTelechargements()">
+              Mes téléchargements
+            </button>
+            <button type="button" class="doc-detail__hors-ligne-supprimer" (click)="supprimerDuStockageLocal()">
+              <nl-icon name="delete" [size]="16" />
+              <span>Retirer</span>
+            </button>
+          </div>
+        </section>
+      }
+
       @if (doc.description) {
         <section class="doc-detail__bloc">
           <h2 class="doc-detail__bloc-titre">{{ 'docDescription' | t }}</h2>

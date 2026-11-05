@@ -1,40 +1,45 @@
 <div class="offline">
-  <nl-page-bar [titre]="'pwaMaBibliotheque' | t" (retour)="goBack()">
+  <nl-page-bar [titre]="'Mes téléchargements'" (retour)="goBack()">
     <button type="button" [disabled]="loading()" [attr.aria-label]="'pwaSynchroniser' | t" (click)="load()">
       <nl-icon name="cloud_sync" [size]="20" />
     </button>
   </nl-page-bar>
 
   <div class="offline__corps">
-    <!-- Ce que l'appareil garde réellement. La barre vient de
-         `navigator.storage.estimate()` : si le navigateur ne sait pas
-         l'estimer - Safari le fait rarement - le bloc ne s'affiche pas,
-         plutôt que d'annoncer un chiffre inventé. -->
-    @if (stockageTotal()) {
-      <section class="offline__stockage">
-        <div class="offline__stockage-tete">
-          <nl-icon name="storage" [size]="18" />
-          <h2 class="offline__stockage-titre">{{ 'pwaStockageAppareil' | t }}</h2>
+    <!-- Espace de stockage occupé par les téléchargements locaux (IndexedDB) et quota appareil. -->
+    <section class="offline__stockage">
+      <div class="offline__stockage-tete">
+        <nl-icon name="storage" [size]="18" />
+        <h2 class="offline__stockage-titre">{{ 'pwaStockageAppareil' | t }}</h2>
+        @if (stockage.ids().size > 0) {
+          <button type="button" class="offline__lien offline__lien--danger nl-cible-fine" (click)="libererEspace()">
+            Libérer de l’espace
+          </button>
+        } @else {
           <button type="button" class="offline__lien nl-cible-fine" (click)="gererCache()">
             {{ 'pwaGererLeCache' | t }}
           </button>
-        </div>
-        <div
-          class="offline__jauge"
-          role="progressbar"
-          [attr.aria-valuenow]="pourcentageStockage()"
-          aria-valuemin="0"
-          aria-valuemax="100">
-          <span class="offline__jauge-part" [style.width.%]="pourcentageStockage()"></span>
-        </div>
-        <div class="offline__stockage-pied">
-          <span>{{ 'pwaStockageUtilise' | t: { taille: lisible(stockageUtilise()) } }}</span>
+        }
+      </div>
+      <div
+        class="offline__jauge"
+        role="progressbar"
+        [attr.aria-valuenow]="pourcentageStockage()"
+        aria-valuemin="0"
+        aria-valuemax="100">
+        <span class="offline__jauge-part" [style.width.%]="pourcentageStockage()"></span>
+      </div>
+      <div class="offline__stockage-pied">
+        <span>
+          Documents NextLearn : <strong>{{ lisible(stockageApp()) }}</strong> ({{ stockage.ids().size }} fichier{{ stockage.ids().size > 1 ? 's' : '' }})
+        </span>
+        @if (stockageTotal()) {
           <span>{{ 'pwaStockageTotal' | t: { taille: lisible(stockageTotal()) } }}</span>
-        </div>
-      </section>
-    }
+        }
+      </div>
+    </section>
 
-    <div class="offline__onglets" role="tablist" [attr.aria-label]="'pwaMaBibliotheque' | t">
+    <div class="offline__onglets" role="tablist" [attr.aria-label]="'Mes téléchargements'">
       <button
         type="button"
         role="tab"
@@ -42,7 +47,7 @@
         [class.offline__onglet--actif]="onglet() === 'telecharges'"
         [attr.aria-selected]="onglet() === 'telecharges'"
         (click)="choisir('telecharges')">
-        {{ 'pwaTelecharges' | t }} ({{ compte('telecharges') }})
+        Mes téléchargements ({{ compte('telecharges') }})
       </button>
       <button
         type="button"
@@ -90,7 +95,7 @@
       </nl-empty-state>
     } @else {
       <nl-section-header
-        [titre]="'pwaFichiersRecents' | t"
+        [titre]="onglet() === 'telecharges' ? 'Mes téléchargements hors ligne' : ('pwaFichiersRecents' | t)"
         [sousTitre]="'pwaResultats' | t: { nombre: liste().length }"
         icone="folder"
         teinte="var(--primary)" />
@@ -112,7 +117,7 @@
             [meta]="metaFor(doc)"
             [note]="noteFor(doc)"
             [progress]="avancementDe(doc)"
-            [offline]="true"
+            [offline]="stockage.ids().has(doc.id)"
             actionIcone="delete"
             [actionDestructive]="true"
             [actionLibelle]="'pwaRetirerHorsLigne' | t"

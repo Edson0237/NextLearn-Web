@@ -14,7 +14,7 @@ import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille
 import { DocumentsRepository } from '../../../core/bibliotheque';
 import { FavorisRepository } from '../../../core/bibliotheque';
 import { OfflineRepository } from '../../../core/bibliotheque';
-import { StockageHorsLigne } from '../../../core/bibliotheque';
+import { StockageHorsLigne, formaterTailleOctets, InfoDocumentLocal } from '../../../core/bibliotheque';
 import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation';
@@ -67,26 +67,33 @@ export class DocumentDetail implements OnInit {
   async load(): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
+    await this.stockage.rafraichir();
     try {
       const [doc, favoris, offlineIds] = await Promise.all([
-        this.docsRepo.getById(this.docId),
+        this.docsRepo.getById(this.docId).catch(() => null),
         this.favorisRepo.getFavorites().catch(() => []),
         this.offlineRepo.getOfflineIds().catch(() => new Set<string>()),
       ]);
-      this.document.set(doc);
+      const docFinal = doc ?? this.stockage.infoDocument(this.docId)?.document ?? null;
+      this.document.set(docFinal);
       this.isFavori.set(favoris.some((f) => f.id === this.docId));
       // Deux sources, et c'est voulu : le serveur dit ce que l'étudiant a
       // marqué depuis n'importe quel appareil, le cache local dit ce qui est
       // réellement lisible sur celui-ci.
-      await this.stockage.rafraichir();
       this.isOffline.set(offlineIds.has(this.docId) || this.stockage.ids().has(this.docId));
-      if (doc) {
-        void this.docsRepo.recordView(doc.id);
+      if (docFinal) {
+        void this.docsRepo.recordView(docFinal.id);
         // Consulté : les notifications qui l'annonçaient ne sont plus « nouvelles ».
-        void this.notifEtat.marquerRessourceLue('document', doc.id);
+        void this.notifEtat.marquerRessourceLue('document', docFinal.id);
       }
     } catch {
-      this.error.set('Impossible de charger ce document.');
+      const repliLocal = this.stockage.infoDocument(this.docId)?.document ?? null;
+      if (repliLocal) {
+        this.document.set(repliLocal);
+        this.isOffline.set(true);
+      } else {
+        this.error.set('Impossible de charger ce document.');
+      }
     } finally {
       this.loading.set(false);
     }
@@ -146,9 +153,31 @@ export class DocumentDetail implements OnInit {
     }
   }
 
-  protected telecharger(): Promise<void> {
+  protected async telecharger(): Promise<void> {
     const doc = this.document();
-    return doc ? this.telechargements.telecharger(doc) : Promise.resolve();
+    if (!doc) return;
+    await this.telechargements.telecharger(doc);
+    this.isOffline.set(this.stockage.ids().has(doc.id));
+  }
+
+  protected async supprimerDuStockageLocal(): Promise<void> {
+    const doc = this.document();
+    if (!doc) return;
+    await this.telechargements.supprimer(doc.id);
+    this.isOffline.set(this.stockage.ids().has(doc.id));
+  }
+
+  protected infoLocale(id: string): InfoDocumentLocal | null {
+    return this.stockage.infoDocument(id);
+  }
+
+  protected tailleLocaleFormatee(id: string): string {
+    const info = this.stockage.infoDocument(id);
+    return info ? formaterTailleOctets(info.tailleOctets) : '';
+  }
+
+  protected ouvrirMesTelechargements(): void {
+    void this.router.navigate(['/app', AppRoutes.offlineLibrary]);
   }
 
   protected iconeTelechargement(id: string): IconName {
@@ -161,8 +190,11 @@ export class DocumentDetail implements OnInit {
 
   protected libelleTelechargement(id: string): string {
     switch (this.telechargements.etat(id)) {
-      case 'fait': return tr('dlTelechargeCourt', 'Téléchargé');
-      case 'encours': return tr('chargementEnCours', 'Chargement en cours');
+      case 'fait': return tr('dlEnregistreHorsLigne', 'Enregistré hors ligne');
+      case 'encours': {
+        const pct = this.telechargements.progression(id);
+        return pct > 0 ? `${pct} %` : tr('chargementEnCours', 'Chargement…');
+      }
       case 'lance': return tr('dlLanceCourt', 'Téléchargement lancé');
       default: return tr('actionTelecharger', 'Télécharger');
     }

@@ -7,7 +7,20 @@ export { FavorisRepository } from './repositories/favoris-repository';
 export { LectureProgressRepository, pourcentageLu } from './repositories/lecture-progress-repository';
 export type { LectureProgress } from './repositories/lecture-progress-repository';
 export { OfflineRepository } from './repositories/offline-repository';
-export { StockageHorsLigne } from './services/stockage-hors-ligne';
+export {
+  StockageHorsLigne,
+  calculerVersionDocument,
+  formaterTailleOctets,
+} from './services/stockage-hors-ligne';
+export type {
+  EnregistrementDocumentLocal,
+  EtatStockageLocal,
+  InfoDocumentLocal,
+  LectureLocaleDocument,
+  OptionsEnregistrementLocal,
+  RaisonEchecStockage,
+  ResultatEnregistrementLocal,
+} from './services/stockage-hors-ligne';
 export {
   detecterFormatDocument,
   detecterFormatParEntete,
