@@ -17,6 +17,7 @@ import { Failure } from '../../../core/models';
 import { nomComplet, initiales, libelleNiveau } from '../../../core/models';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { AppRoutes } from '../../../core/router';
+import { optimiserAvatar } from '../../../shared/services/image-optimiseur';
 
 /**
  * Onglet Profil - traduction de `ProfilHomePage`
@@ -155,10 +156,11 @@ export class ProfilHome {
     const fichier = input.files?.[0];
     input.value = '';
     if (!fichier) return;
-    if (fichier.size > 5 * 1024 * 1024) {
-      // La limite de 5 Mo reproduit la validation « confort » du mobile.
-      return;
+    try {
+      const fichierOptimise = await optimiserAvatar(fichier);
+      await this.auth.changerAvatar(fichierOptimise);
+    } catch {
+      await this.auth.changerAvatar(fichier);
     }
-    await this.auth.changerAvatar(fichier);
   }
 }

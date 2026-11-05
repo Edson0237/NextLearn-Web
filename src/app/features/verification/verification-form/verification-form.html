@@ -62,7 +62,7 @@
           <label class="verif__fichier">
             <nl-icon name="upload_file" [size]="20" />
             <span class="verif__fichier-nom">{{ file()?.name ?? ('verifChoisirFichier' | t) }}</span>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png,.heic,.heif,image/*,application/pdf" (change)="onFileChange($event)" />
+            <input type="file" accept=".pdf,application/pdf,.jpg,.jpeg,.png,.heic,.heif,image/*" (change)="onFileChange($event)" />
           </label>
         </div>
 
