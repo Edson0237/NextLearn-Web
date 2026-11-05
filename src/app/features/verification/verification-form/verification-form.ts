@@ -146,6 +146,7 @@ export class VerificationForm implements OnInit {
     this.sending.set(true);
     this.error.set(null);
     try {
+      const fichierAEnvoyer = await this.optimiserFichier(this.file()!);
       const depose = await this.verificationRepo.submit({
         nom: this.nom().trim(),
         prenom: this.prenom().trim(),
@@ -154,7 +155,7 @@ export class VerificationForm implements OnInit {
         filiere,
         niveau,
         justificatifType: this.justificatifType(),
-        file: this.file()!,
+        file: fichierAEnvoyer,
       });
       // La garde de routage s'en remet à l'état de vérification : lui laisser
       // « requis » la ferait renvoyer ici, en boucle. On pose donc l'état à
@@ -213,5 +214,104 @@ export class VerificationForm implements OnInit {
 
   protected allerAccueil(): void {
     void this.router.navigate(['/app', AppRoutes.home]);
+  }
+
+  /**
+   * Optimise et convertit les photos (notamment les clichés haute résolution
+   * ou formats spécifiques iPhone HEIC/HEIF) en JPEG standard sous 2 Mo.
+   * Les fichiers PDF sont préservés à l'identique.
+   */
+  private async optimiserFichier(file: File): Promise<File> {
+    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      return file;
+    }
+
+    const estImage = file.type.startsWith('image/') || /\.(jpe?g|png|heic|heif|webp)$/i.test(file.name);
+    if (!estImage) {
+      return file;
+    }
+
+    try {
+      if (typeof window === 'undefined' || typeof document === 'undefined') return file;
+
+      let width = 0;
+      let height = 0;
+      let sourceImage: CanvasImageSource | null = null;
+      let bmp: ImageBitmap | null = null;
+      let objectUrl: string | null = null;
+
+      if (typeof createImageBitmap === 'function') {
+        try {
+          bmp = await createImageBitmap(file);
+          width = bmp.width;
+          height = bmp.height;
+          sourceImage = bmp;
+        } catch {
+          bmp = null;
+        }
+      }
+
+      if (!sourceImage) {
+        objectUrl = URL.createObjectURL(file);
+        const img = new Image();
+        await new Promise<void>((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('Décodage impossible'));
+          img.src = objectUrl!;
+        });
+        width = img.naturalWidth || img.width;
+        height = img.naturalHeight || img.height;
+        sourceImage = img;
+      }
+
+      if (!width || !height) {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        if (bmp) bmp.close();
+        return file;
+      }
+
+      // Redimensionnement max 1920px (résolution idéale pour la lisibilité d'un justificatif académique)
+      const MAX_DIM = 1920;
+      let destWidth = width;
+      let destHeight = height;
+      if (destWidth > MAX_DIM || destHeight > MAX_DIM) {
+        if (destWidth > destHeight) {
+          destHeight = Math.round((destHeight * MAX_DIM) / destWidth);
+          destWidth = MAX_DIM;
+        } else {
+          destWidth = Math.round((destWidth * MAX_DIM) / destHeight);
+          destHeight = MAX_DIM;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = destWidth;
+      canvas.height = destHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        if (bmp) bmp.close();
+        return file;
+      }
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, destWidth, destHeight);
+      ctx.drawImage(sourceImage, 0, 0, destWidth, destHeight);
+
+      if (bmp) bmp.close();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob(resolve, 'image/jpeg', 0.85);
+      });
+
+      if (!blob) return file;
+
+      const baseName = file.name.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const nomFinal = `${baseName || 'justificatif'}.jpg`;
+      return new File([blob], nomFinal, { type: 'image/jpeg' });
+    } catch {
+      return file;
+    }
   }
 }
