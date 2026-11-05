@@ -1,6 +1,6 @@
 # Conditions générales d'utilisation de l'application NextLearn
 
-Dernière mise à jour : 8 octobre 2026
+Dernière mise à jour : 5 novembre 2026
 
 ## Préambule
 
@@ -82,8 +82,11 @@ et la création d'un compte.
 
 L'inscription requiert la communication d'une adresse électronique valide, de
 votre identité, de votre établissement, de votre filière et de votre niveau
-d'études. Un code de vérification vous est transmis par courriel, puis vous
-définissez un code confidentiel à quatre chiffres.
+d'études. Vous pouvez vous inscrire au moyen de votre adresse électronique (avec
+vérification par code OTP envoyé par courriel) ou via votre compte Google (Google OAuth).
+La définition d'un code confidentiel à quatre chiffres (PIN) est facultative pour
+renforcer la sécurité de l'accès local. Votre niveau d'études et votre filière sont
+définis lors de l'inscription afin d'adapter fidèlement votre bibliothèque académique.
 
 L'inscription est gratuite. L'accès aux ressources est gratuit à la date des
 présentes.
@@ -247,15 +250,20 @@ Vous disposez d'un délai de trente (30) jours pour la contester, en écrivant
 celle ayant pris la mesure initiale lorsque l'organisation le permet. La
 réponse vous est adressée dans les trente (30) jours de la contestation.
 
-## Article 12 : suppression du compte
+## Article 12 : suppression du compte et purge du stockage local
 
 Vous pouvez supprimer votre compte à tout moment, depuis l'écran Profil puis
 « Supprimer mon compte ». La suppression est confirmée par votre code
-confidentiel.
+confidentiel ou par validation de sécurité.
 
-Elle est définitive et emporte l'effacement de vos favoris, de votre
-progression, de vos résultats, de vos signalements, de votre photo de profil
-et de votre justificatif.
+Elle est définitive et emporte l'effacement immédiat sur nos serveurs de vos
+favoris, de votre progression, de vos résultats, de vos signalements, de votre photo
+de profil et de votre justificatif.
+
+Sur votre appareil, la suppression du compte déclenche une purge automatique
+et intégrale du stockage local (documents hors ligne IndexedDB, caches du navigateur,
+progression de lecture et recherches récentes), garantissant qu'aucune donnée de
+votre compte ne subsiste sur le terminal.
 
 Les traces des décisions d'administration vous concernant sont conservées sous
 forme anonymisée, dans les conditions exposées par la politique de protection

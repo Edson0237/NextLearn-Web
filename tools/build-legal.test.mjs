@@ -128,12 +128,12 @@ describe('Liens entre les pages', () => {
     }
   });
 
-  test('le footer du site renvoie aux trois pages', () => {
+  test('le pied de page de la vitrine renvoie aux trois pages', () => {
     const footer = readFileSync(
-      join(racine, 'src/app/Components/footer/footer.html'), 'utf8',
+      join(racine, 'src/app/features/vitrine/vitrine.html'), 'utf8',
     );
     for (const slug of SLUGS) {
-      assert.ok(footer.includes(`/${slug}/`), `footer ne lie pas ${slug}`);
+      assert.ok(footer.includes(`/${slug}/`), `vitrine.html ne lie pas ${slug}`);
     }
   });
 });

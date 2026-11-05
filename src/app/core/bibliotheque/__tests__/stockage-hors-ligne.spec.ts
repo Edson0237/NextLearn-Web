@@ -363,4 +363,42 @@ describe('StockageHorsLigne — Stockage local IndexedDB & Cas de tests obligato
     expect(lecture?.tailleOctets).toBe(2560);
     service.revoquerUrlLocale(lecture?.url);
   });
+
+  // ── 11. Scénarios inter-comptes obligatoires ──────────────────────────────
+  it('11. purgerToutLeStockageLocal vide intégralement IndexedDB, signaux et caches à la déconnexion ou suppression', async () => {
+    const octetsPdf = creerOctetsPdf(1024);
+    globalThis.fetch = vi.fn().mockResolvedValue(
+      new Response(octetsPdf, { status: 200, headers: { 'content-type': 'application/pdf' } }),
+    );
+    const docA = creerFicheDocument({ id: 'doc-user-a', titre: 'Document A' });
+    await service.definirUtilisateur('user-a');
+    await service.telechargerEtEnregistrer(docA.id, docA.urlPdf, docA);
+    expect(service.ids().size).toBe(1);
+
+    // Déconnexion ou suppression de compte
+    await service.purgerToutLeStockageLocal();
+
+    expect(service.ids().size).toBe(0);
+    expect(service.fiches().length).toBe(0);
+    expect(service.enregistrements().length).toBe(0);
+
+    // Nouveau compte B créé / connecté sur le même appareil
+    await service.definirUtilisateur('user-b');
+    expect(service.ids().size).toBe(0);
+    expect(service.ids().has('doc-user-a')).toBe(false);
+  });
+
+  it('12. verifierEtIsolerCompte purge les traces d’un compte précédent en cas de déconnexion anormale ou crash', async () => {
+    // Simulation : l'utilisateur A avait des traces locales
+    localStorage.setItem('nl_active_account_id', 'user-a');
+    localStorage.setItem('nl_recherches_recentes', JSON.stringify(['physique', 'chimie']));
+    localStorage.setItem('nl_lecture_progress:user-a', JSON.stringify({ doc1: { pageCourante: 5 } }));
+
+    // Connexion directe de l'utilisateur B (filet de sécurité)
+    await service.definirUtilisateur('user-b');
+
+    expect(localStorage.getItem('nl_active_account_id')).toBe('user-b');
+    expect(localStorage.getItem('nl_recherches_recentes')).toBeNull();
+    expect(localStorage.getItem('nl_lecture_progress:user-a')).toBeNull();
+  });
 });

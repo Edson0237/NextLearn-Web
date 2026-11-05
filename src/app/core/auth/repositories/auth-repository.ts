@@ -440,15 +440,13 @@ export class AuthRepository {
       // Réseau absent, jeton déjà expiré, serveur indisponible : la session
       // locale doit tomber malgré tout.
     }
-    this.storage.clearToken();
-    this.storage.clearRefreshToken();
-    this.storage.clearTempToken();
-    await this.stockageHorsLigne.definirUtilisateur(null);
+    this.storage.clearAll();
+    await this.stockageHorsLigne.purgerToutLeStockageLocal();
   }
 
   async forgetDevice(): Promise<void> {
     this.storage.clearAll();
-    await this.stockageHorsLigne.definirUtilisateur(null);
+    await this.stockageHorsLigne.purgerToutLeStockageLocal();
   }
 
   /** L'adresse du compte vient de changer côté serveur : la copie locale la suit. */

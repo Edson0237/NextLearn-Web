@@ -14,6 +14,9 @@ import { StatutDemandeOtp } from '../../models/demande-otp.model';
 import { Failure } from '../../models/failure.model';
 import { ProfilRepository } from '../../profil/repositories/profil-repository';
 import { VerrouPin } from './verrou-pin';
+import { TabReuseStrategy } from '../../router/strategies/tab-reuse-strategy';
+import { NotificationsEtat } from '../../notifications/services/notifications-etat';
+import { HistoriqueRecherches } from '../../recherche/services/historique-recherches';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
 const SPLASH_MIN_MS = 1500;
@@ -39,6 +42,8 @@ export class AuthService {
   private readonly verrouillage = inject(VerrouillageApp);
   private readonly verification = inject(VerificationService);
   private readonly verificationRepo = inject(VerificationRepository);
+  private readonly notificationsEtat = inject(NotificationsEtat);
+  private readonly historiqueRecherches = inject(HistoriqueRecherches);
   private readonly router = inject(Router);
 
   private readonly _state = signal<AuthState>(ETAT_INITIAL);
@@ -587,6 +592,9 @@ export class AuthService {
       // Ignoré volontairement : la session locale doit tomber quoi qu'il arrive.
     }
     this.verification.reset();
+    this.notificationsEtat.reinitialiser();
+    this.historiqueRecherches.vider();
+    TabReuseStrategy.vider();
     this._state.set({ ...ETAT_INITIAL, isInitializing: false });
   }
 
@@ -598,6 +606,9 @@ export class AuthService {
       // Idem : on repart d'un état propre même si l'effacement a échoué.
     }
     this.verification.reset();
+    this.notificationsEtat.reinitialiser();
+    this.historiqueRecherches.vider();
+    TabReuseStrategy.vider();
     this._state.set({ ...ETAT_INITIAL, isInitializing: false });
   }
 

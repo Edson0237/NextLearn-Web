@@ -96,6 +96,16 @@ export class NotificationsEtat {
     this._nonLues.set(0);
   }
 
+  /**
+   * Réinitialise totalement le compteur de notifications (à la déconnexion
+   * ou au changement de compte).
+   */
+  reinitialiser(): void {
+    this.enCours = null;
+    this._nonLues.set(0);
+    this._version.update((v) => v + 1);
+  }
+
   private ecouterRetourAuPremierPlan(): void {
     if (this.ecoute || typeof document === 'undefined') return;
     this.ecoute = true;

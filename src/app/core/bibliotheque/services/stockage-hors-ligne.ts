@@ -10,10 +10,8 @@ const NOM_BASE_IDB = 'nl-stockage-local-db';
 const VERSION_BASE_IDB = 1;
 const STORE_DOCUMENTS = 'documents_locaux';
 
-/** Ancien Cache Storage conservé uniquement pour migration transparente au premier lancement. */
+/** Ancien Cache Storage global non scopé par compte : purgé systématiquement pour éviter toute fuite inter-comptes. */
 const NOM_CACHE_HERITE = 'nl-documents-hors-ligne';
-const PREFIXE_CLE_HERITE = '/__nl-offline__/';
-const PREFIXE_FICHE_HERITE = '/__nl-offline-fiche__/';
 
 export type EtatStockageLocal = 'complet' | 'en_cours' | 'interrompu' | 'erreur';
 
@@ -245,6 +243,7 @@ export class StockageHorsLigne {
   private readonly _ids = signal<ReadonlySet<string>>(new Set());
   private readonly _fiches = signal<readonly DocumentModel[]>([]);
   private readonly _enregistrements = signal<readonly InfoDocumentLocal[]>([]);
+  private readonly _idUtilisateurActif = signal<string | null>(null);
 
   /** Vrai si le stockage local (IndexedDB ou repli mémoire/cache) est disponible. */
   readonly disponible = true;
@@ -258,10 +257,13 @@ export class StockageHorsLigne {
   /** Les métadonnées détaillées (taille exacte, format, date, version) des documents locaux. */
   readonly enregistrements = this._enregistrements.asReadonly();
 
+  /** Identifiant du compte actuellement actif (`null` si déconnecté). */
+  readonly idUtilisateurActif = this._idUtilisateurActif.asReadonly();
+
   /**
    * Portée utilisateur définie explicitement par `AuthRepository` / `AuthService` ou les tests :
    * - `undefined` : non définie explicitement (résolution automatique via `SecureStorageService`)
-   * - `null` : utilisateur explicitement déconnecté (aucun document visible, rien n'est supprimé)
+   * - `null` : utilisateur explicitement déconnecté (aucun document visible)
    * - `string` : identifiant de l'utilisateur connecté
    */
   private utilisateurExplicite: string | null | undefined = undefined;
@@ -279,16 +281,47 @@ export class StockageHorsLigne {
   private readonly urlsParDocument = new Map<string, Set<string>>();
   private readonly toutesUrlsActives = new Set<string>();
 
-  /** Indique si la migration depuis l'ancien Cache Storage a déjà été vérifiée. */
-  private migrationHeriteeVerifiee = false;
-
   constructor() {
     void this.initialiserAuDemarrage();
   }
 
   private async initialiserAuDemarrage(): Promise<void> {
+    await this.supprimerCacheHeriteGlobal();
     await this.nettoyerFichiersTemporaires();
     await this.inventorier();
+  }
+
+  /**
+   * Supprime l'ancien cache Cache Storage 'nl-documents-hors-ligne' pour garantir
+   * qu'aucun document résiduel non scopé ne subsiste ou ne fuite vers un autre compte.
+   */
+  private async supprimerCacheHeriteGlobal(): Promise<void> {
+    if (typeof caches === 'undefined') return;
+    try {
+      if (await caches.has(NOM_CACHE_HERITE)) {
+        await caches.delete(NOM_CACHE_HERITE);
+      }
+    } catch {
+      // Ignoré si indisponible
+    }
+  }
+
+  /**
+   * Purge les caches dynamiques de l'API stockés par le Service Worker (ngsw)
+   * pour éviter que des données JSON d'un compte précédent soient servies au nouveau.
+   */
+  private async purgerCachesDynamiquesServiceWorker(): Promise<void> {
+    if (typeof caches === 'undefined') return;
+    try {
+      const noms = await caches.keys();
+      for (const nom of noms) {
+        if (nom.includes('dynamic:api') || nom.includes('nl-documents-hors-ligne')) {
+          await caches.delete(nom);
+        }
+      }
+    } catch {
+      // Ignoré
+    }
   }
 
   /**
@@ -307,19 +340,92 @@ export class StockageHorsLigne {
   }
 
   /**
-   * Change l'utilisateur actif (ex. à la connexion, restauration de session ou déconnexion).
-   * Lors d'une déconnexion (`userId = null`), révoque les URLs Blob en cours et vide
-   * la vue courante sans supprimer aucun document dans IndexedDB.
+   * Change l'utilisateur actif (à la connexion, restauration de session ou déconnexion).
+   * - Si `userId` est fourni : exécute le filet de sécurité inter-comptes (`verifierEtIsolerCompte`)
+   *   qui compare `userId` avec le dernier compte actif connu (`nl_active_account_id`) et purge
+   *   immédiatement toute donnée résiduelle appartenant à un compte différent avant de charger
+   *   les données du compte entrant. Si c'est le même compte qui reste connecté, conserve
+   *   ses documents hors ligne intacts.
+   * - Si `userId === null` : révoque les URLs Blob et réinitialise immédiatement l'inventaire.
    */
   async definirUtilisateur(userId: string | null): Promise<void> {
-    const Normalise = userId && userId.trim().length > 0 ? userId.trim() : null;
-    if (this.utilisateurExplicite === Normalise) {
-      await this.inventorier();
-      return;
-    }
+    const normalise = userId && userId.trim().length > 0 ? userId.trim() : null;
     this.revoquerToutesUrlsLocales();
-    this.utilisateurExplicite = Normalise;
+    this.utilisateurExplicite = normalise;
+    this._idUtilisateurActif.set(normalise);
+
+    if (normalise) {
+      await this.verifierEtIsolerCompte(normalise);
+    } else {
+      this._ids.set(new Set());
+      this._fiches.set([]);
+      this._enregistrements.set([]);
+    }
     await this.inventorier();
+  }
+
+  /**
+   * Filet de sécurité à la connexion / ouverture de session :
+   * Compare l'identifiant du compte entrant (`userId`) avec `nl_active_account_id` stocké
+   * localement :
+   * - Si un compte précédent différent était actif et qu'aucun autre mécanisme n'a purgé,
+   *   isole et nettoie les traces de session précédentes.
+   * - Met à jour le dernier compte actif.
+   */
+  async verifierEtIsolerCompte(userId: string): Promise<boolean> {
+    const propre = userId.trim();
+    if (!propre) return false;
+
+    const dernierCompte = this.secureStorage.getActiveAccountId();
+    const changementDeCompte = dernierCompte !== null && dernierCompte !== propre;
+
+    await this.supprimerCacheHeriteGlobal();
+
+    if (changementDeCompte) {
+      this.secureStorage.purgerTracesActiviteLocale();
+      await this.purgerCachesDynamiquesServiceWorker();
+    }
+
+    this.secureStorage.saveActiveAccountId(propre);
+    return changementDeCompte;
+  }
+
+  /**
+   * Purge totale appelée lors de la déconnexion (`logout`) ou de la suppression de compte
+   * (`forgetDevice` / `deleteAccount`) :
+   * - Révoque toutes les URLs Blob actives.
+   * - Vide intégralement le magasin IndexedDB `documents_locaux` et le repli mémoire.
+   * - Supprime le cache hérité `nl-documents-hors-ligne` et les caches API du Service Worker.
+   * - Réinitialise immédiatement les signaux (`ids`, `fiches`, `enregistrements`) à zéro.
+   */
+  async purgerToutLeStockageLocal(): Promise<void> {
+    this.revoquerToutesUrlsLocales();
+    this.utilisateurExplicite = null;
+    this._idUtilisateurActif.set(null);
+    this._ids.set(new Set());
+    this._fiches.set([]);
+    this._enregistrements.set([]);
+    this.memoireFallback.clear();
+
+    const db = await this.ouvrirBase();
+    if (db) {
+      await new Promise<void>((resolve) => {
+        try {
+          const tx = db.transaction(STORE_DOCUMENTS, 'readwrite');
+          const store = tx.objectStore(STORE_DOCUMENTS);
+          store.clear();
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+          tx.onabort = () => resolve();
+        } catch {
+          resolve();
+        }
+      });
+    }
+
+    await this.supprimerCacheHeriteGlobal();
+    await this.purgerCachesDynamiquesServiceWorker();
+    this.secureStorage.clearActiveAccountId();
   }
 
   private cleComposite(userId: string, documentId: string): string {
@@ -517,82 +623,6 @@ export class StockageHorsLigne {
     return supprimes;
   }
 
-  /**
-   * Migration transparente et unique des documents qui auraient été enregistrés
-   * dans l'ancien Cache Storage (`nl-documents-hors-ligne`) vers IndexedDB.
-   */
-  private async migrerCacheHeriteSiNecessaire(userId: string): Promise<void> {
-    if (this.migrationHeriteeVerifiee) return;
-    this.migrationHeriteeVerifiee = true;
-
-    if (typeof caches === 'undefined') return;
-    try {
-      const existe = await caches.has(NOM_CACHE_HERITE);
-      if (!existe) return;
-      const cache = await caches.open(NOM_CACHE_HERITE);
-      const cles = await cache.keys();
-      if (cles.length === 0) return;
-
-      const fichesHeritees = new Map<string, Record<string, unknown>>();
-      for (const req of cles) {
-        const chemin = new URL(req.url).pathname;
-        if (chemin.startsWith(PREFIXE_FICHE_HERITE)) {
-          const docId = decodeURIComponent(chemin.slice(PREFIXE_FICHE_HERITE.length));
-          const rep = await cache.match(req);
-          if (rep) {
-            try {
-              const json = (await rep.json()) as Record<string, unknown>;
-              if (json && typeof json === 'object') fichesHeritees.set(docId, json);
-            } catch {
-              // Fiche illisible ignorée
-            }
-          }
-        }
-      }
-
-      for (const req of cles) {
-        const chemin = new URL(req.url).pathname;
-        if (!chemin.startsWith(PREFIXE_CLE_HERITE)) continue;
-        const docId = decodeURIComponent(chemin.slice(PREFIXE_CLE_HERITE.length));
-        if (!docId) continue;
-
-        const cle = this.cleComposite(userId, docId);
-        const dejaPresent = await this.lireEnregistrement(cle);
-        if (dejaPresent && dejaPresent.etat === 'complet') continue;
-
-        const rep = await cache.match(req);
-        if (!rep) continue;
-        const octets = await rep.arrayBuffer();
-        if (octets.byteLength === 0) continue;
-
-        const format = detecterFormatDocument({
-          octets,
-          typeMime: rep.headers.get('content-type'),
-        });
-        const ficheJson = fichesHeritees.get(docId);
-        const rec: EnregistrementDocumentLocal = {
-          cle,
-          id: docId,
-          userId,
-          nom: String(ficheJson?.['titre'] ?? `Document ${docId}`),
-          format,
-          mimeType: mimePourFormat(format, rep.headers.get('content-type')),
-          tailleOctets: octets.byteLength,
-          dateTelechargement: new Date().toISOString(),
-          version: 'v1',
-          contenu: octets,
-          etat: 'complet',
-          fiche: ficheJson,
-        };
-        await this.ecrireEnregistrement(rec);
-      }
-
-      await caches.delete(NOM_CACHE_HERITE);
-    } catch {
-      // Migration non bloquante
-    }
-  }
-
   // ── Inventaire et vérification de disponibilité ──────────────────────────
 
   private async inventorier(): Promise<void> {
@@ -603,8 +633,6 @@ export class StockageHorsLigne {
       this._enregistrements.set([]);
       return;
     }
-
-    await this.migrerCacheHeriteSiNecessaire(userId);
 
     const bruts = await this.listerEnregistrementsUtilisateur(userId);
     const complets = bruts

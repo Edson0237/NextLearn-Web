@@ -60,7 +60,7 @@ export class Onboarding {
   protected readonly diapositives: readonly Diapositive[] = [
     {
       icone: 'folder_open',
-      titre: tr('onboardingTitre1', 'Tes cours éparpillés partout'),
+      titre: tr('onboardingTitre1', 'Tes documents éparpillés partout'),
       corps: tr(
         'onboardingCorps1',
         "WhatsApp, clés USB, groupes Telegram… retrouver un poly prend plus de temps que de l'étudier. Ce n'est plus acceptable.",
@@ -75,7 +75,7 @@ export class Onboarding {
       titre: tr('onboardingTitre2', 'Une bibliothèque pour tout trouver'),
       corps: tr(
         'onboardingCorps2',
-        'Cours, TD, synthèses, annales - tout est là, classé, trouvable en 2 secondes. Même sans connexion internet.',
+        'Épreuves, TD, synthèses, annales - tout est là, classé, trouvable en 2 secondes. Même sans connexion internet.',
       ),
       accent: 'var(--primary)',
       accentFonce: 'var(--primary-deep)',

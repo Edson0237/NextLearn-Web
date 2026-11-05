@@ -1,6 +1,6 @@
 # Politique de protection des données à caractère personnel
 
-Dernière mise à jour : 8 octobre 2026
+Dernière mise à jour : 5 novembre 2026
 
 ## Préambule
 
@@ -56,9 +56,12 @@ et une réponse vous est due dans le délai fixé à l'article 10.
 - Votre établissement d'enseignement supérieur, votre filière et votre niveau
   d'études.
 - Votre langue d'affichage.
-- Votre code confidentiel à quatre chiffres, conservé sous forme de condensat
+- Votre code confidentiel à quatre chiffres (facultatif), conservé sous forme de condensat
   cryptographique irréversible. Il n'est jamais enregistré en clair et l'éditeur
   lui-même ne peut pas le retrouver.
+- Lorsque vous choisissez de vous authentifier via votre compte Google (Google OAuth),
+  votre identifiant unique Google (sub), votre adresse e-mail ainsi que votre nom et
+  prénom transmis par Google.
 - **Votre photo de profil, si vous choisissez d'en déposer une.** Elle est
   facultative : l'application fonctionne à l'identique sans elle, et vous
   pouvez la retirer à tout moment depuis l'écran Profil. Une photographie de
@@ -148,20 +151,20 @@ Nous faisons par ailleurs appel aux sous-traitants techniques suivants, liés
 par leurs conditions contractuelles et tenus d'agir sur nos seules
 instructions :
 
-- Contabo GmbH, pour l'hébergement du serveur applicatif, ainsi que des
-  documents, des épreuves, des soumissions et des justificatifs, lesquels
-  sont conservés sur le disque de ce serveur ;
+- Cloudflare, Inc. (Cloudflare R2), pour le stockage objet hautement disponible et chiffré
+  des documents pédagogiques, épreuves, corrigés, contributions et justificatifs de scolarité,
+  servis exclusivement par des URLs temporaires signées cryptographiquement ;
+- Contabo GmbH / Vercel, pour l'hébergement du serveur d'API applicatif et de la PWA ;
 - MongoDB Atlas, pour l'hébergement de la base de données ;
 - Cloudinary, pour l'hébergement des seules photos de profil ;
-- Google Firebase Cloud Messaging, pour l'acheminement des notifications
+- Google Firebase Cloud Messaging et Web Push API, pour l'acheminement des notifications
   lorsque vous les avez activées ;
-- Google (service de messagerie Gmail), pour la transmission des codes de
-  connexion et des messages de service.
+- Google (services Google OAuth et messagerie Gmail), pour l'authentification sécurisée
+  et la transmission des codes de vérification (OTP) et messages de service.
 
-Votre justificatif d'identité ou de scolarité n'est pas confié à un
-hébergeur de fichiers tiers : il demeure sur le serveur applicatif, et n'est
-jamais servi par une adresse fixe ou devinable. Chaque consultation passe par
-une adresse à durée de vie limitée, signée cryptographiquement.
+Votre justificatif d'identité ou de scolarité n'est jamais servi par une adresse fixe
+ou devinable. Chaque consultation passe par une adresse temporaire signée cryptographiquement,
+à durée de vie strictement limitée.
 
 L'accès aux justificatifs d'identité est restreint aux seules personnes
 habilitées à instruire les dossiers, et chaque consultation est journalisée.
@@ -191,7 +194,7 @@ est mentionné ici dès qu'elle est accomplie.
 - Jetons de session : trente (30) jours à compter de la dernière connexion.
 - Codes de vérification transmis par courriel : dix (10) minutes.
 - Reconnaissance d'un appareil dispensant du code de vérification : la durée de
-  validité de la vérification en cours, sans prolongation par l'usage.
+  validité de la vérification active, sans prolongation par l'usage.
 - Compte et données d'usage : conservés tant que le compte existe.
 - Traces des décisions d'administration : conservées après la clôture du
   compte, sous forme anonymisée, aux fins de justification.
@@ -252,16 +255,27 @@ Cameroun pour connaître des manquements à la loi n° 2024/017.
 Cette faculté ne fait pas obstacle à un recours devant les juridictions
 compétentes.
 
-## Article 12 : traceurs
+## Article 12 : traceurs et stockage local sur l'appareil
 
 L'application mobile NextLearn n'utilise ni cookie publicitaire, ni traceur de
-mesure d'audience tiers. Les seules données stockées sur votre appareil sont
-celles nécessaires au fonctionnement du service : votre session, vos
-préférences d'affichage et les documents que vous avez choisi de conserver
-hors connexion.
+mesure d'audience tiers.
+
+Les données stockées sur votre appareil (dans le stockage sécurisé du navigateur,
+IndexedDB et le cache du service worker) sont strictement limitées au fonctionnement
+du service :
+- votre session active et vos préférences d'affichage (thème, langue) ;
+- les documents que vous avez explicitement choisi de conserver hors connexion,
+  stockés de manière isolée dans le stockage IndexedDB de l'application (`nl-stockage-local-db`) ;
+- votre progression de lecture locale et l'historique de vos recherches récentes.
+
+Toutes les données rattachées à votre compte stockées localement sur votre appareil
+(documents hors ligne, progression de lecture, historique de recherches, jetons de session)
+sont **intégralement purgées de votre appareil dès votre déconnexion, lors de la suppression
+de votre compte ou en cas de connexion d'un compte différent sur le même appareil**,
+garantissant une étanchéité absolue entre utilisateurs d'un même terminal.
 
 Le consentement donné aux présentes ne vaut en aucun cas consentement à
-d'éventuels traceurs, lesquels feraient l'objet d'un accord distinct.
+d'éventuels traceurs publicitaires, lesquels feraient l'objet d'un accord distinct.
 
 ## Article 13 : modification de la présente politique
 

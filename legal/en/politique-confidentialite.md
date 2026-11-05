@@ -1,6 +1,6 @@
 # Personal Data Protection Policy
 
-Last updated: 8 October 2026
+Last updated: 5 November 2026
 
 ## Preamble
 
@@ -52,8 +52,10 @@ reply is owed to you within the period set out in Article 10.
 - Your email address, your last name and first name.
 - Your higher-education institution, your field of study and your level.
 - Your display language.
-- Your four-digit PIN, stored as an irreversible cryptographic hash. It is never
+- Your four-digit PIN (optional), stored as an irreversible cryptographic hash. It is never
   stored in clear text and the publisher cannot retrieve it.
+- Where you choose to sign in with Google (Google OAuth), your unique Google identifier
+  (sub), email address, first and last name provided by Google.
 - **Your profile photo, if you choose to upload one.** It is optional: the
   application works identically without it, and you can remove it at any time
   from the Profile screen. A photograph of a face is data that directly
@@ -137,20 +139,19 @@ It is accessible:
 We also use the following technical processors, bound by their contractual
 terms and required to act only on our instructions:
 
-- Contabo GmbH, for hosting the application server, as well as documents,
-  exams, submissions and supporting documents, which are stored on the disk of
-  that server;
+- Cloudflare, Inc. (Cloudflare R2), for highly available, encrypted object storage
+  of educational documents, past papers, exams, contributions and enrolment certificates,
+  served exclusively via cryptographically signed temporary URLs;
+- Contabo GmbH / Vercel, for hosting the application API server and the PWA;
 - MongoDB Atlas, for hosting the database;
 - Cloudinary, for hosting profile photos only;
-- Google Firebase Cloud Messaging, for delivering notifications when you have
-  enabled them;
-- Google (Gmail messaging service), for sending login codes and service
-  messages.
+- Google Firebase Cloud Messaging and Web Push API, for delivering notifications
+  when you have enabled them;
+- Google (Google OAuth services and Gmail messaging), for secure authentication,
+  login codes (OTP) and service messages.
 
-Your identity or enrolment document is not entrusted to a third-party file
-host: it remains on the application server, and is never served from a fixed or
-guessable address. Each access goes through a time-limited address,
-cryptographically signed.
+Your identity or enrolment document is never served from a fixed or guessable address.
+Each access goes through a time-limited, cryptographically signed address.
 
 Access to identity documents is restricted to the persons authorised to process
 applications, and each access is logged.
@@ -178,7 +179,7 @@ here as soon as it is completed.
 - Session tokens: thirty (30) days from the last login.
 - Verification codes sent by email: ten (10) minutes.
 - Recognition of a device that waives the verification code: the validity
-  period of the current verification, with no extension through use.
+  period of active verification, with no extension through use.
 - Account and usage data: kept for as long as the account exists.
 - Records of administration decisions: kept after the account is closed, in
   anonymised form, for justification purposes.
@@ -231,14 +232,24 @@ breaches of Law No. 2024/017.
 
 This option does not preclude an appeal before the competent courts.
 
-## Article 12: trackers
+## Article 12: trackers and local on-device storage
 
 The NextLearn application uses no advertising cookie and no third-party audience
-measurement tracker. The only data stored on your device is what is necessary
-for the service to work: your session, your display preferences and the
-documents you have chosen to keep offline.
+measurement tracker.
 
-Consent given to this policy in no way constitutes consent to any trackers,
+Data stored on your device (browser secure storage, IndexedDB, and service worker cache)
+is strictly limited to what is necessary for the service to work:
+- your active session and display preferences (theme, language);
+- documents you have explicitly chosen to keep offline, stored in isolated
+  IndexedDB application storage (`nl-stockage-local-db`);
+- your local reading progress and recent search history.
+
+All account-related data stored locally on your device (offline documents, reading
+progress, recent searches, session tokens) is **completely purged from your device upon
+sign-out, account deletion, or when a different account signs in on the same device**,
+guaranteeing complete isolation between users of the same terminal.
+
+Consent given to this policy in no way constitutes consent to any advertising trackers,
 which would be the subject of a separate agreement.
 
 ## Article 13: changes to this policy

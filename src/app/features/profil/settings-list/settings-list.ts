@@ -141,11 +141,6 @@ export class SettingsList implements OnInit {
             valeur: u?.email, action: () => void this.router.navigateByUrl('/app/' + AppRoutes.changerEmail),
           },
           {
-            icone: 'school', titre: tr('docNiveau', 'Niveau'), sousTitre: tr('pwaPromotionActuelle', 'Ta promotion actuelle'),
-            valeur: u ? this.libelleNiveau(u.niveau, u.cycle) : undefined,
-            action: () => void this.choisirNiveau(),
-          },
-          {
             icone: 'lock', titre: tr('pwaCodePin', 'Code PIN'),
             sousTitre: this.aUnPin()
               ? tr('pwaChangerCodeDeverrouillage', 'Changer le code de déverrouillage')
@@ -295,28 +290,6 @@ export class SettingsList implements OnInit {
       case 'prepa': return `Prépa ${rang}`;
       default: return `Niveau ${rang}`;
     }
-  }
-
-  protected async choisirNiveau(): Promise<void> {
-    const disponibles = await this.auth.niveauxDuCycle();
-    if (disponibles.niveaux.length <= 1) {
-      this.toast.info(tr('pwaAucunAutreNiveau', 'Aucun autre niveau disponible pour ton école.'));
-      return;
-    }
-    const actuel = this.user()?.niveau;
-    const choices: ChoixSelection<string>[] = disponibles.niveaux.map((n) => ({
-      value: n.code,
-      label: n.label,
-      description: n.code === actuel ? 'Niveau actuel' : undefined,
-    }));
-    const choisi = await this.selections.ouvrir<string>({
-      title: tr('pwaChangerNiveau', 'Changer de niveau'),
-      choices,
-      currentValue: actuel,
-    });
-    if (!choisi || choisi === actuel) return;
-    const erreur = await this.auth.changerNiveau(choisi);
-    if (!erreur) this.toast.succes(tr('pwaNiveauEnregistre', 'Niveau enregistré.'));
   }
 
   private async choisirTheme(): Promise<void> {

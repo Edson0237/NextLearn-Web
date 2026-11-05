@@ -89,7 +89,7 @@
   <article>
 <div class="version" lang="fr">
 <h1>Politique de protection des données à caractère personnel</h1>
-<p>Dernière mise à jour : 8 octobre 2026</p>
+<p>Dernière mise à jour : 5 novembre 2026</p>
 <h2>Préambule</h2>
 <p>La présente politique est établie conformément à la loi n° 2024/017 du
 23 décembre 2024 relative à la protection des données à caractère personnel au
@@ -134,9 +134,12 @@ et une réponse vous est due dans le délai fixé à l&#39;article 10.</p>
 <li>Votre établissement d&#39;enseignement supérieur, votre filière et votre niveau
 d&#39;études.</li>
 <li>Votre langue d&#39;affichage.</li>
-<li>Votre code confidentiel à quatre chiffres, conservé sous forme de condensat
+<li>Votre code confidentiel à quatre chiffres (facultatif), conservé sous forme de condensat
 cryptographique irréversible. Il n&#39;est jamais enregistré en clair et l&#39;éditeur
 lui-même ne peut pas le retrouver.</li>
+<li>Lorsque vous choisissez de vous authentifier via votre compte Google (Google OAuth),
+votre identifiant unique Google (sub), votre adresse e-mail ainsi que votre nom et
+prénom transmis par Google.</li>
 <li><strong>Votre photo de profil, si vous choisissez d&#39;en déposer une.</strong> Elle est
 facultative : l&#39;application fonctionne à l&#39;identique sans elle, et vous
 pouvez la retirer à tout moment depuis l&#39;écran Profil. Une photographie de
@@ -218,20 +221,20 @@ régulière et dans les limites de celle-ci.</li>
 par leurs conditions contractuelles et tenus d&#39;agir sur nos seules
 instructions :</p>
 <ul>
-<li>Contabo GmbH, pour l&#39;hébergement du serveur applicatif, ainsi que des
-documents, des épreuves, des soumissions et des justificatifs, lesquels
-sont conservés sur le disque de ce serveur ;</li>
+<li>Cloudflare, Inc. (Cloudflare R2), pour le stockage objet hautement disponible et chiffré
+des documents pédagogiques, épreuves, corrigés, contributions et justificatifs de scolarité,
+servis exclusivement par des URLs temporaires signées cryptographiquement ;</li>
+<li>Contabo GmbH / Vercel, pour l&#39;hébergement du serveur d&#39;API applicatif et de la PWA ;</li>
 <li>MongoDB Atlas, pour l&#39;hébergement de la base de données ;</li>
 <li>Cloudinary, pour l&#39;hébergement des seules photos de profil ;</li>
-<li>Google Firebase Cloud Messaging, pour l&#39;acheminement des notifications
+<li>Google Firebase Cloud Messaging et Web Push API, pour l&#39;acheminement des notifications
 lorsque vous les avez activées ;</li>
-<li>Google (service de messagerie Gmail), pour la transmission des codes de
-connexion et des messages de service.</li>
+<li>Google (services Google OAuth et messagerie Gmail), pour l&#39;authentification sécurisée
+et la transmission des codes de vérification (OTP) et messages de service.</li>
 </ul>
-<p>Votre justificatif d&#39;identité ou de scolarité n&#39;est pas confié à un
-hébergeur de fichiers tiers : il demeure sur le serveur applicatif, et n&#39;est
-jamais servi par une adresse fixe ou devinable. Chaque consultation passe par
-une adresse à durée de vie limitée, signée cryptographiquement.</p>
+<p>Votre justificatif d&#39;identité ou de scolarité n&#39;est jamais servi par une adresse fixe
+ou devinable. Chaque consultation passe par une adresse temporaire signée cryptographiquement,
+à durée de vie strictement limitée.</p>
 <p>L&#39;accès aux justificatifs d&#39;identité est restreint aux seules personnes
 habilitées à instruire les dossiers, et chaque consultation est journalisée.</p>
 <h2>Article 6 : transferts hors du Cameroun</h2>
@@ -255,7 +258,7 @@ purge.</li>
 <li>Jetons de session : trente (30) jours à compter de la dernière connexion.</li>
 <li>Codes de vérification transmis par courriel : dix (10) minutes.</li>
 <li>Reconnaissance d&#39;un appareil dispensant du code de vérification : la durée de
-validité de la vérification en cours, sans prolongation par l&#39;usage.</li>
+validité de la vérification active, sans prolongation par l&#39;usage.</li>
 <li>Compte et données d&#39;usage : conservés tant que le compte existe.</li>
 <li>Traces des décisions d&#39;administration : conservées après la clôture du
 compte, sous forme anonymisée, aux fins de justification.</li>
@@ -305,14 +308,25 @@ Protection des Données à caractère Personnel (APDP), autorité compétente au
 Cameroun pour connaître des manquements à la loi n° 2024/017.</p>
 <p>Cette faculté ne fait pas obstacle à un recours devant les juridictions
 compétentes.</p>
-<h2>Article 12 : traceurs</h2>
+<h2>Article 12 : traceurs et stockage local sur l&#39;appareil</h2>
 <p>L&#39;application mobile NextLearn n&#39;utilise ni cookie publicitaire, ni traceur de
-mesure d&#39;audience tiers. Les seules données stockées sur votre appareil sont
-celles nécessaires au fonctionnement du service : votre session, vos
-préférences d&#39;affichage et les documents que vous avez choisi de conserver
-hors connexion.</p>
+mesure d&#39;audience tiers.</p>
+<p>Les données stockées sur votre appareil (dans le stockage sécurisé du navigateur,
+IndexedDB et le cache du service worker) sont strictement limitées au fonctionnement
+du service :</p>
+<ul>
+<li>votre session active et vos préférences d&#39;affichage (thème, langue) ;</li>
+<li>les documents que vous avez explicitement choisi de conserver hors connexion,
+stockés de manière isolée dans le stockage IndexedDB de l&#39;application (<code>nl-stockage-local-db</code>) ;</li>
+<li>votre progression de lecture locale et l&#39;historique de vos recherches récentes.</li>
+</ul>
+<p>Toutes les données rattachées à votre compte stockées localement sur votre appareil
+(documents hors ligne, progression de lecture, historique de recherches, jetons de session)
+sont <strong>intégralement purgées de votre appareil dès votre déconnexion, lors de la suppression
+de votre compte ou en cas de connexion d&#39;un compte différent sur le même appareil</strong>,
+garantissant une étanchéité absolue entre utilisateurs d&#39;un même terminal.</p>
 <p>Le consentement donné aux présentes ne vaut en aucun cas consentement à
-d&#39;éventuels traceurs, lesquels feraient l&#39;objet d&#39;un accord distinct.</p>
+d&#39;éventuels traceurs publicitaires, lesquels feraient l&#39;objet d&#39;un accord distinct.</p>
 <h2>Article 13 : modification de la présente politique</h2>
 <p>Toute modification donne lieu à la mise à jour de la date figurant en tête du
 présent document et à une information dans l&#39;application. Lorsque la
@@ -330,7 +344,7 @@ prenne effet, et l&#39;article premier serait mis à jour en conséquence.</p>
 </div>
 <div class="version" lang="en">
 <h1>Personal Data Protection Policy</h1>
-<p>Last updated: 8 October 2026</p>
+<p>Last updated: 5 November 2026</p>
 <h2>Preamble</h2>
 <p>This policy is established in accordance with Law No. 2024/017 of
 23 December 2024 on the protection of personal data in Cameroon, as well as
@@ -371,8 +385,10 @@ reply is owed to you within the period set out in Article 10.</p>
 <li>Your email address, your last name and first name.</li>
 <li>Your higher-education institution, your field of study and your level.</li>
 <li>Your display language.</li>
-<li>Your four-digit PIN, stored as an irreversible cryptographic hash. It is never
+<li>Your four-digit PIN (optional), stored as an irreversible cryptographic hash. It is never
 stored in clear text and the publisher cannot retrieve it.</li>
+<li>Where you choose to sign in with Google (Google OAuth), your unique Google identifier
+(sub), email address, first and last name provided by Google.</li>
 <li><strong>Your profile photo, if you choose to upload one.</strong> It is optional: the
 application works identically without it, and you can remove it at any time
 from the Profile screen. A photograph of a face is data that directly
@@ -448,20 +464,19 @@ and within the limits of that request.</li>
 <p>We also use the following technical processors, bound by their contractual
 terms and required to act only on our instructions:</p>
 <ul>
-<li>Contabo GmbH, for hosting the application server, as well as documents,
-exams, submissions and supporting documents, which are stored on the disk of
-that server;</li>
+<li>Cloudflare, Inc. (Cloudflare R2), for highly available, encrypted object storage
+of educational documents, past papers, exams, contributions and enrolment certificates,
+served exclusively via cryptographically signed temporary URLs;</li>
+<li>Contabo GmbH / Vercel, for hosting the application API server and the PWA;</li>
 <li>MongoDB Atlas, for hosting the database;</li>
 <li>Cloudinary, for hosting profile photos only;</li>
-<li>Google Firebase Cloud Messaging, for delivering notifications when you have
-enabled them;</li>
-<li>Google (Gmail messaging service), for sending login codes and service
-messages.</li>
+<li>Google Firebase Cloud Messaging and Web Push API, for delivering notifications
+when you have enabled them;</li>
+<li>Google (Google OAuth services and Gmail messaging), for secure authentication,
+login codes (OTP) and service messages.</li>
 </ul>
-<p>Your identity or enrolment document is not entrusted to a third-party file
-host: it remains on the application server, and is never served from a fixed or
-guessable address. Each access goes through a time-limited address,
-cryptographically signed.</p>
+<p>Your identity or enrolment document is never served from a fixed or guessable address.
+Each access goes through a time-limited, cryptographically signed address.</p>
 <p>Access to identity documents is restricted to the persons authorised to process
 applications, and each access is logged.</p>
 <h2>Article 6: transfers outside Cameroon</h2>
@@ -483,7 +498,7 @@ made on your application. A daily task carries out this purge.</li>
 <li>Session tokens: thirty (30) days from the last login.</li>
 <li>Verification codes sent by email: ten (10) minutes.</li>
 <li>Recognition of a device that waives the verification code: the validity
-period of the current verification, with no extension through use.</li>
+period of active verification, with no extension through use.</li>
 <li>Account and usage data: kept for as long as the account exists.</li>
 <li>Records of administration decisions: kept after the account is closed, in
 anonymised form, for justification purposes.</li>
@@ -525,12 +540,22 @@ reasonable doubt.</p>
 Protection Authority (APDP), the authority competent in Cameroon to deal with
 breaches of Law No. 2024/017.</p>
 <p>This option does not preclude an appeal before the competent courts.</p>
-<h2>Article 12: trackers</h2>
+<h2>Article 12: trackers and local on-device storage</h2>
 <p>The NextLearn application uses no advertising cookie and no third-party audience
-measurement tracker. The only data stored on your device is what is necessary
-for the service to work: your session, your display preferences and the
-documents you have chosen to keep offline.</p>
-<p>Consent given to this policy in no way constitutes consent to any trackers,
+measurement tracker.</p>
+<p>Data stored on your device (browser secure storage, IndexedDB, and service worker cache)
+is strictly limited to what is necessary for the service to work:</p>
+<ul>
+<li>your active session and display preferences (theme, language);</li>
+<li>documents you have explicitly chosen to keep offline, stored in isolated
+IndexedDB application storage (<code>nl-stockage-local-db</code>);</li>
+<li>your local reading progress and recent search history.</li>
+</ul>
+<p>All account-related data stored locally on your device (offline documents, reading
+progress, recent searches, session tokens) is <strong>completely purged from your device upon
+sign-out, account deletion, or when a different account signs in on the same device</strong>,
+guaranteeing complete isolation between users of the same terminal.</p>
+<p>Consent given to this policy in no way constitutes consent to any advertising trackers,
 which would be the subject of a separate agreement.</p>
 <h2>Article 13: changes to this policy</h2>
 <p>Any change leads to the update of the date at the top of this document and to a

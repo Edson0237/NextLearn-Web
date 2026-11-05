@@ -40,6 +40,7 @@ export class SecureStorageService {
     parcoursOtpEcheance: 'nl_otp_parcours_echeance',
     pinHash: 'nl_pin_hash',
     echeanceVerif: 'echeance_verification',
+    activeAccountId: 'nl_active_account_id',
   } as const;
 
   private lire(cle: string): string | null {
@@ -232,14 +233,63 @@ export class SecureStorageService {
     this.ecrire(this.cle.firstLaunch, 'done');
   }
 
-  // ── Tout effacer ─────────────────────────────────────────────────────────
+  // ── Dernier compte actif sur cet appareil (filet de sécurité inter-comptes) ──
+  saveActiveAccountId(userId: string): void {
+    if (!userId || userId.trim().length === 0) return;
+    this.ecrire(this.cle.activeAccountId, userId.trim());
+  }
+
+  getActiveAccountId(): string | null {
+    const val = this.lire(this.cle.activeAccountId);
+    return val && val.trim().length > 0 ? val.trim() : null;
+  }
+
+  clearActiveAccountId(): void {
+    this.effacer(this.cle.activeAccountId);
+  }
+
+  /**
+   * Supprime toutes les clés de progression de lecture (`nl_lecture_progress` et
+   * `nl_lecture_progress:*`) ainsi que l'historique de recherches récentes et
+   * `sessionStorage` afin qu'aucune trace d'activité d'un compte précédent ne subsiste.
+   */
+  purgerTracesActiviteLocale(): void {
+    this.effacer('nl_recherches_recentes');
+    this.effacer('nl_lecture_progress');
+    try {
+      const clesASupprimer: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k === 'nl_lecture_progress' || k.startsWith('nl_lecture_progress:'))) {
+          clesASupprimer.push(k);
+        }
+      }
+      for (const k of clesASupprimer) {
+        localStorage.removeItem(k);
+      }
+    } catch {
+      // Ignoré si localStorage est inaccessible
+    }
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.clear();
+      }
+    } catch {
+      // Ignoré
+    }
+  }
+
+  // ── Tout effacer (déconnexion / suppression de compte / changement de compte) ──
   clearAll(): void {
     this.clearToken();
     this.clearRefreshToken();
     this.clearUser();
     this.clearPin();
     this.effacer(this.cle.lastOtp);
+    this.effacer(this.cle.echeanceVerif);
     this.clearPinAttempts();
     this.clearTempToken();
+    this.clearActiveAccountId();
+    this.purgerTracesActiviteLocale();
   }
 }

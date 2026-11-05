@@ -1,6 +1,6 @@
 # NextLearn Application Terms of Use
 
-Last updated: 8 October 2026
+Last updated: 5 November 2026
 
 ## Preamble
 
@@ -77,8 +77,10 @@ Access requires installing the application on a compatible device and creating
 an account.
 
 Registration requires you to provide a valid email address, your identity, your
-institution, your field of study and your level. A verification code is sent to
-you by email, then you set a four-digit PIN.
+institution, your field of study and your level. You can sign up using your email
+address (with verification code sent by email) or with your Google account (Google OAuth).
+Setting a four-digit PIN is optional to enhance local access security. Your study level
+and field of study are set during registration to tailor your academic library accurately.
 
 Registration is free. Access to the resources is free as of the date of these
 terms.
@@ -234,13 +236,17 @@ Article 3. The review is entrusted to a person other than the one who took the
 initial measure where the organisation allows it. The reply is sent to you
 within thirty (30) days of the contestation.
 
-## Article 12: account deletion
+## Article 12: account deletion and local storage purge
 
 You can delete your account at any time, from the Profile screen then "Delete
-my account". Deletion is confirmed with your PIN.
+my account". Deletion is confirmed with your PIN or security confirmation.
 
-It is final and erases your favourites, your progress, your results, your
-reports, your profile photo and your supporting document.
+It is final and immediately erases from our servers your favourites, your
+progress, your results, your reports, your profile photo and your supporting document.
+
+On your device, account deletion triggers an automatic and complete purge of
+local storage (IndexedDB offline documents, browser caches, reading progress and
+recent searches), ensuring no data from your account remains on the terminal.
 
 Records of administration decisions concerning you are kept in anonymised form,
 under the conditions set out in the data protection policy.

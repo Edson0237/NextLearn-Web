@@ -30,7 +30,40 @@ function cheminDeBase(route: ActivatedRouteSnapshot): string | undefined {
 }
 
 export class TabReuseStrategy extends BaseRouteReuseStrategy {
+  private static instanceActive: TabReuseStrategy | null = null;
   private readonly stockees = new Map<string, DetachedRouteHandle>();
+
+  constructor() {
+    super();
+    TabReuseStrategy.instanceActive = this;
+  }
+
+  /**
+   * Vide toutes les vues d'onglets détachées et conservées en mémoire.
+   * À appeler impérativement à la déconnexion, lors de la suppression de compte,
+   * ou lors d'un changement de session pour éviter toute réutilisation d'un composant
+   * Angular monté pour un compte précédent.
+   */
+  static vider(): void {
+    if (TabReuseStrategy.instanceActive) {
+      TabReuseStrategy.instanceActive.detruireToutesLesVues();
+    }
+  }
+
+  /** Détruit et libère tous les handles de composants Angular détachés. */
+  detruireToutesLesVues(): void {
+    for (const [, handle] of this.stockees) {
+      try {
+        const compRef = (handle as { componentRef?: { destroy: () => void } }).componentRef;
+        if (compRef && typeof compRef.destroy === 'function') {
+          compRef.destroy();
+        }
+      } catch {
+        // Ignoré
+      }
+    }
+    this.stockees.clear();
+  }
 
   override shouldDetach(route: ActivatedRouteSnapshot): boolean {
     return cheminDeBase(route) !== undefined;
