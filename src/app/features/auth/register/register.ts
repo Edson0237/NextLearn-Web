@@ -155,7 +155,22 @@ export class Register {
   private async chargerUniversites(): Promise<void> {
     this.universites.set(CHARGEMENT);
     try {
-      this.universites.set({ statut: 'pret', items: await this.refs.getUniversites(), erreur: '' });
+      const items = await this.refs.getUniversites();
+      // Pour le début d'activité, Saint Jean Ingénieur (SJI) est préselectionné par défaut
+      // et constitue le seul choix proposé lors de l'inscription.
+      const sji = items.find((u) => {
+        const nom = (u.nom || '').toLowerCase();
+        return nom.includes('saint jean ingénieur') || nom.includes('saint-jean ingénieur') || nom.includes('sji');
+      }) ?? items[0];
+
+      const ecolesInscriptibles = sji ? [sji] : items;
+      this.universites.set({ statut: 'pret', items: ecolesInscriptibles, erreur: '' });
+
+      if (sji && !this.universiteId()) {
+        this.universiteId.set(sji.id);
+        this.universiteNom.set(sji.nom);
+        void this.chargerCycles(sji.id);
+      }
     } catch (e) {
       this.universites.set({ statut: 'erreur', items: [], erreur: this.messageErreur(e) });
     }
@@ -219,7 +234,7 @@ export class Register {
       choices: items.map((u) => ({ value: u.id, label: u.nom })),
       searchHint: tr('actionRechercher', 'Rechercher'),
     });
-    if (choisi === undefined) return;
+    if (choisi === undefined || (choisi === this.universiteId() && this.cycles().statut !== 'verrouille')) return;
     this.universiteId.set(choisi);
     this.universiteNom.set(items.find((u) => u.id === choisi)?.nom);
     this.cycle.set(undefined);

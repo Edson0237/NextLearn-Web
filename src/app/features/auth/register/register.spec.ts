@@ -94,4 +94,26 @@ describe('Register - cascade académique', () => {
     expect(component['domaine']().etat).toBe('reconnu');
     controller.verify();
   });
+
+  it('préselectionne Saint Jean Ingénieur (SJI) par défaut et en fait le seul choix', async () => {
+    const { component, controller } = creer({});
+    controller.expectOne('/api/references/universites').flush({
+      data: [
+        { _id: 'u1', nom: 'Université de Yaoundé I' },
+        { _id: 'u2', nom: 'Saint Jean Ingénieur (SJI)' },
+        { _id: 'u3', nom: 'École Polytechnique' },
+      ],
+    });
+    await tick();
+
+    expect(component['universiteId']()).toBe('u2');
+    expect(component['universiteNom']()).toBe('Saint Jean Ingénieur (SJI)');
+    expect(component['universites']().items.length).toBe(1);
+    expect(component['universites']().items[0].nom).toBe('Saint Jean Ingénieur (SJI)');
+
+    controller
+      .expectOne((r) => r.url === '/api/references/cycles' && r.params.get('universiteId') === 'u2')
+      .flush({ data: [] });
+    controller.verify();
+  });
 });
