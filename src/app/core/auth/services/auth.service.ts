@@ -4,9 +4,10 @@ import { AppRoutes } from '../../router/routes/app-routes';
 import { AuthRepository } from '../repositories/auth-repository';
 import { SessionExpiredService } from '../../network/services/session-expired.service';
 import { VerificationService } from '../../verification/services/verification.service';
+import { VerificationRepository } from '../../verification/repositories/verification-repository';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/services/verrouillage-app';
-import { Cycle, NiveauEtude, NiveauxDuCycle } from '../../models/user.model';
+import { Cycle, niveauCourt, NiveauEtude, NiveauxDuCycle, UserModel } from '../../models/user.model';
 import { ProfilGoogle, ReponseGoogle } from '../repositories/auth-repository';
 import { ParcoursOtp } from '../../models/parcours-otp.model';
 import { StatutDemandeOtp } from '../../models/demande-otp.model';
@@ -37,6 +38,7 @@ export class AuthService {
   private readonly verrouPin = inject(VerrouPin);
   private readonly verrouillage = inject(VerrouillageApp);
   private readonly verification = inject(VerificationService);
+  private readonly verificationRepo = inject(VerificationRepository);
   private readonly router = inject(Router);
 
   private readonly _state = signal<AuthState>(ETAT_INITIAL);
@@ -123,6 +125,7 @@ export class AuthService {
   // ── OTP (inscription) ────────────────────────────────────────────────────
   async verifyOtp(code: string): Promise<boolean> {
     this.patch({ isLoading: true, error: undefined });
+    const pendingJustificatif = this._state().pendingJustificatif;
     try {
       await this.repo.verifyOtp(code);
       // L'adresse est vérifiée : le compte est prêt, la session s'ouvre. Le PIN
@@ -130,6 +133,7 @@ export class AuthService {
       // les réglages.
       await this.repo.setupPin(undefined);
       const user = this.repo.getCurrentUser() ?? undefined;
+      await this.envoyerJustificatifEnAttente(user, pendingJustificatif);
       void this.verification.refresh();
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
@@ -217,17 +221,47 @@ export class AuthService {
   // ── PIN setup (établit la session) ───────────────────────────────────────
   async setupPin(pin: string): Promise<boolean> {
     this.patch({ isLoading: true, error: undefined });
+    const pendingJustificatif = this._state().pendingJustificatif;
     try {
       await this.repo.setupPin(pin);
       const user = this.repo.getCurrentUser() ?? undefined;
-      // Le dépôt du justificatif retenu depuis l'inscription est Phase 4
-      // (nécessite le module de vérification) - non câblé ici.
+      await this.envoyerJustificatifEnAttente(user, pendingJustificatif);
       void this.verification.refresh();
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e) });
       return false;
+    }
+  }
+
+  private async envoyerJustificatifEnAttente(
+    user: UserModel | undefined,
+    justificatif: PendingJustificatif | undefined,
+  ): Promise<void> {
+    if (!justificatif || !user) return;
+    try {
+      const ext = justificatif.fileName.toLowerCase();
+      const mime = ext.endsWith('.pdf')
+        ? 'application/pdf'
+        : ext.endsWith('.png')
+          ? 'image/png'
+          : ext.endsWith('.webp')
+            ? 'image/webp'
+            : 'image/jpeg';
+      const file = new File([justificatif.bytes as unknown as BlobPart], justificatif.fileName, { type: mime });
+      await this.verificationRepo.submit({
+        nom: user.nom,
+        prenom: user.prenom,
+        matricule: justificatif.matricule,
+        universite: user.universite,
+        filiere: user.filiere,
+        niveau: niveauCourt(user.niveau),
+        justificatifType: justificatif.type,
+        file,
+      });
+    } catch {
+      // Non bloquant : l'étudiant pourra déposer son justificatif depuis l'écran dédié.
     }
   }
 

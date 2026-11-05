@@ -18,19 +18,30 @@ export class DocumentsRepository {
 
   async getDocuments(): Promise<DocumentModel[]> {
     try {
-      const allDocs: DocumentModel[] = [];
-      let page = 1;
-      let totalPages = 1;
+      const premiereReponse = await firstValueFrom(this.http.get('/api/documents', {
+        params: { page: '1', limit: String(this.maxLimit) },
+      }));
+      const premierePage = pageDocumentsDepuisApi(premiereReponse as Record<string, unknown>);
+      const allDocs: DocumentModel[] = [...premierePage.items];
+      const maxPage = Math.min(premierePage.totalPages, this.maxPagesWhenFetchingAll);
 
-      do {
-        const reponse = await firstValueFrom(this.http.get('/api/documents', {
-          params: { page: String(page), limit: String(this.maxLimit) },
-        }));
-        const pageData = pageDocumentsDepuisApi(reponse as Record<string, unknown>);
-        allDocs.push(...pageData.items);
-        totalPages = pageData.totalPages;
-        page++;
-      } while (page <= totalPages && page <= this.maxPagesWhenFetchingAll);
+      const batchSize = 4;
+      for (let start = 2; start <= maxPage; start += batchSize) {
+        const pages = Array.from(
+          { length: Math.min(batchSize, maxPage - start + 1) },
+          (_, i) => start + i,
+        );
+        const reponses = await Promise.all(
+          pages.map((p) =>
+            firstValueFrom(this.http.get('/api/documents', {
+              params: { page: String(p), limit: String(this.maxLimit) },
+            })),
+          ),
+        );
+        for (const rep of reponses) {
+          allDocs.push(...pageDocumentsDepuisApi(rep as Record<string, unknown>).items);
+        }
+      }
 
       return allDocs;
     } catch (e) {

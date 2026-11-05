@@ -15,8 +15,8 @@ describe('Lecteur DOCX & Détection Format', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     // Mock getBBox pour les éléments SVG sous JSDOM
-    if (typeof SVGElement !== 'undefined' && !SVGElement.prototype.getBBox) {
-      SVGElement.prototype.getBBox = () => ({
+    if (typeof SVGElement !== 'undefined' && !(SVGElement.prototype as any).getBBox) {
+      (SVGElement.prototype as any).getBBox = () => ({
         x: 0,
         y: 0,
         width: 100,

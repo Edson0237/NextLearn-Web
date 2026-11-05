@@ -94,7 +94,7 @@
       </p>
 
       <div class="nl-biblio__liste">
-        @for (doc of filteredDocuments(); track doc.id; let i = $index) {
+        @for (doc of visibleDocuments(); track doc.id; let i = $index) {
           <nl-document-card
             [nlCascadeEnter]="i"
             [documentId]="doc.id"
@@ -117,6 +117,14 @@
             (activate)="openDocument(doc)" />
         }
       </div>
+
+      @if (aPlusDeDocuments()) {
+        <div class="nl-biblio__plus" style="display: flex; justify-content: center; margin-top: 16px;">
+          <button nlButton variant="outline" size="sm" (click)="afficherPlus()">
+            Afficher plus ({{ visibleDocuments().length }} / {{ filteredDocuments().length }})
+          </button>
+        </div>
+      }
     }
   </div>
 </div>

@@ -115,7 +115,15 @@ export class BibliothequeHome implements OnInit {
     return [tous, ...serveur.map((f) => ({ type: f.type, label: f.label }))];
   });
 
+  private static readonly PAS_AFFICHAGE = 30;
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
+  protected readonly limiteAffichee = signal<number>(BibliothequeHome.PAS_AFFICHAGE);
+  protected readonly visibleDocuments = computed(() =>
+    this.filteredDocuments().slice(0, this.limiteAffichee()),
+  );
+  protected readonly aPlusDeDocuments = computed(
+    () => this.filteredDocuments().length > this.limiteAffichee(),
+  );
 
   constructor() {
     // Relecture silencieuse quand l'application revient, que la connexion revient, ou toutes les cinq minutes.
@@ -137,12 +145,20 @@ export class BibliothequeHome implements OnInit {
     }
 
     effect(() => {
+      const type = this.selectedType();
+      const matiere = this.selectedMatiere();
+      this.texteRecherche();
       this.filteredDocuments.set(
         this.documents().filter((d) =>
-          this.correspond(d, this.selectedType(), this.selectedMatiere(), true),
+          this.correspond(d, type, matiere, true),
         ),
       );
+      untracked(() => this.limiteAffichee.set(BibliothequeHome.PAS_AFFICHAGE));
     });
+  }
+
+  protected afficherPlus(): void {
+    this.limiteAffichee.update((n) => n + BibliothequeHome.PAS_AFFICHAGE);
   }
 
   /** Un document passe-t-il ces filtres ? Le texte saisi s'applique toujours si `avecTexte`. */
