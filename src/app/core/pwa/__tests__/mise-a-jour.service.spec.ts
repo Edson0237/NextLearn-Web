@@ -55,7 +55,7 @@ describe('MiseAJourService', () => {
     expect(recharger).toHaveBeenCalledTimes(1);
   });
 
-  it('dans l’application, recharge d’office tant que l’utilisateur n’a rien touché', async () => {
+  it('dans l’application, recharge d’office automatiquement', async () => {
     history.replaceState({}, '', '/app/home');
     creer();
     prete();
@@ -63,20 +63,23 @@ describe('MiseAJourService', () => {
     expect(recharger).toHaveBeenCalledTimes(1);
   });
 
-  it('dans l’application, une fois l’utilisateur à l’œuvre, propose au lieu d’imposer', async () => {
-    history.replaceState({}, '', '/app/home');
+  it('dans le scanner (zone sensible), temporise la mise à jour jusqu’à la sortie', async () => {
+    history.replaceState({}, '', '/app/depots/scanner');
     const s = creer();
-    window.dispatchEvent(new Event('pointerdown'));
     prete();
     await vide();
     expect(recharger).not.toHaveBeenCalled();
     expect(s.disponible()).toBe(true);
+
+    s.appliquerSiMomentSur('/app/home');
+    await vide();
+    expect(sw.activateUpdate).toHaveBeenCalledTimes(1);
+    expect(recharger).toHaveBeenCalledTimes(1);
   });
 
   it('le bandeau applique la mise à jour sur geste explicite', async () => {
-    history.replaceState({}, '', '/app/home');
+    history.replaceState({}, '', '/app/depots/scanner');
     const s = creer();
-    window.dispatchEvent(new Event('pointerdown'));
     prete();
     await s.appliquer();
     expect(sw.activateUpdate).toHaveBeenCalled();
@@ -113,10 +116,9 @@ describe('MiseAJourService', () => {
   });
 
   describe('première occasion sûre', () => {
-    async function prepareeEtEnAttente(chemin = '/app/home') {
+    async function prepareeEtEnAttente(chemin = '/app/depots/scanner') {
       history.replaceState({}, '', chemin);
       const s = creer();
-      window.dispatchEvent(new Event('pointerdown'));
       prete();
       await vide();
       expect(s.disponible()).toBe(true);
@@ -132,14 +134,12 @@ describe('MiseAJourService', () => {
       expect(recharger).toHaveBeenCalledTimes(1);
     });
 
-    it('jamais sur un écran de saisie : scanner, dépôt, inscription, connexion, changement d’adresse', async () => {
+    it('temporisé tant qu’on reste sur le scanner', async () => {
       const s = await prepareeEtEnAttente();
-      for (const url of ['/app/depots/scanner', '/app/depots/nouveau', '/app/register/otp', '/app/login', '/app/verification', '/app/compte/email?x=1']) {
-        s.appliquerSiMomentSur(url);
-      }
+      s.appliquerSiMomentSur('/app/depots/scanner');
       await vide();
       expect(recharger).not.toHaveBeenCalled();
-      expect(s.disponible()).toBe(true); // le bandeau reste proposé
+      expect(s.disponible()).toBe(true);
     });
 
     it('rien à appliquer : un changement d’écran ne recharge pas', async () => {
@@ -152,6 +152,7 @@ describe('MiseAJourService', () => {
 
     it('le retour dans l’application après une absence applique la version prête', async () => {
       const s = await prepareeEtEnAttente();
+      history.replaceState({}, '', '/app/home');
       vi.useFakeTimers({ toFake: ['Date'] });
       try {
         Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });

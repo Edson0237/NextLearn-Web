@@ -19,7 +19,7 @@
     },
     {
       "source": "/(index.html|ngsw-worker.js|ngsw.json|manifest.webmanifest)",
-      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
     }
   ]
 }

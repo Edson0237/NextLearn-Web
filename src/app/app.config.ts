@@ -53,7 +53,7 @@ export const appConfig: ApplicationConfig = {
     { provide: ErrorHandler, useClass: AppErrorHandler },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
-      registrationStrategy: 'registerWhenStable:5000',
+      registrationStrategy: 'registerImmediately',
     }),
   ],
 };

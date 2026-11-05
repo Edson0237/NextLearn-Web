@@ -4,24 +4,20 @@ import { SwUpdate } from '@angular/service-worker';
 import { filter } from 'rxjs';
 
 const CLE_RECHARGEMENT = 'nl_maj_rechargee_a';
-/** En deçà, un second rechargement automatique serait une boucle : on affiche le bandeau. */
-const DELAI_ANTI_BOUCLE_MS = 60_000;
-const VERIFICATION_PERIODIQUE_MS = 10 * 60_000;
+/** En deçà, un second rechargement automatique serait une boucle. */
+const DELAI_ANTI_BOUCLE_MS = 10_000;
+const VERIFICATION_PERIODIQUE_MS = 60_000;
 /** Entre deux vérifications déclenchées par un changement d'écran. */
-const DELAI_ENTRE_VERIFICATIONS_MS = 2 * 60_000;
-/** Absence minimale (écran éteint, autre application) pour que le retour compte comme un « moment sûr ». */
-const ABSENCE_MIN_MS = 15_000;
+const DELAI_ENTRE_VERIFICATIONS_MS = 30_000;
+/** Absence minimale (écran éteint, autre application) pour revérifier. */
+const ABSENCE_MIN_MS = 5_000;
 
 /**
- * Les écrans où l'on saisit quelque chose qu'un rechargement perdrait : le scanner (les pages
- * sont en mémoire), le formulaire de dépôt, les parcours d'inscription et de connexion, le
- * dossier de vérification, le changement d'adresse. La mise à jour y attend, elle s'applique
- * à l'écran suivant.
+ * Seul le scanner où des prises de vue caméra sont gardées en mémoire vive
+ * ne doit pas être rechargé au milieu d'un geste. Partout ailleurs,
+ * la mise à jour s'applique instantanément et automatiquement.
  */
-const ZONES_SENSIBLES = [
-  '/app/depots/nouveau', '/app/depots/scanner', '/app/register', '/app/login', '/app/verification',
-  '/app/compte/email', '/app/onboarding',
-];
+const ZONES_SENSIBLES = ['/app/depots/scanner'];
 
 /**
  * Mise à jour de l'application installée.
@@ -170,8 +166,7 @@ export class MiseAJourService {
 
   private peutRechargerSansRisque(): boolean {
     if (this.rechargeRecemment()) return false;
-    const horsApplication = !location.pathname.startsWith('/app');
-    return horsApplication || !this.interagi;
+    return !this.zoneSensible(location.pathname);
   }
 
   private rechargeRecemment(): boolean {
