@@ -12,7 +12,8 @@ import { VerificationService } from '../../../core/verification';
 import { ReferencesRepository } from '../../../core/references';
 import { JustificatifType } from '../../../core/references';
 import { AuthService } from '../../../core/auth';
-import { libelleNiveau, niveauCourt } from '../../../core/models';
+import { Failure, libelleNiveau, niveauCourt } from '../../../core/models';
+import { enFailure } from '../../../core/network';
 import { VERIFICATION_AUCUNE, VerificationState, VerificationStatut, estApprouve, verificationDepuisJson } from '../../../core/models';
 import { AppRoutes } from '../../../core/router';
 
@@ -97,6 +98,9 @@ export class VerificationForm implements OnInit {
       ]);
       this.types.set(types);
       this.status.set(status);
+      if (status && (status.statut === VerificationStatut.enAttente || status.statut === VerificationStatut.enRevue)) {
+        await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
+      }
     } finally {
       this.loading.set(false);
     }
@@ -134,6 +138,11 @@ export class VerificationForm implements OnInit {
       this.error.set(tr('registerJoinsJustificatif', 'Joins ton justificatif.'));
       return;
     }
+
+    const universite = u.universite?.trim() || this.auth.state().pendingUniversite?.trim() || '';
+    const filiere = u.filiere?.trim() || this.auth.state().pendingFiliere?.trim() || '';
+    const niveau = u.niveau ? niveauCourt(u.niveau) : (this.auth.state().pendingNiveau ? niveauCourt(this.auth.state().pendingNiveau!) : 'N1');
+
     this.sending.set(true);
     this.error.set(null);
     try {
@@ -141,9 +150,9 @@ export class VerificationForm implements OnInit {
         nom: this.nom().trim(),
         prenom: this.prenom().trim(),
         matricule: this.matricule().trim() || undefined,
-        universite: u.universite,
-        filiere: u.filiere,
-        niveau: niveauCourt(u.niveau),
+        universite,
+        filiere,
+        niveau,
         justificatifType: this.justificatifType(),
         file: this.file()!,
       });
@@ -156,8 +165,24 @@ export class VerificationForm implements OnInit {
       );
       await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
       void this.verification.refresh();
-    } catch {
-      this.error.set(tr('verifErreurEnvoi', 'L’envoi a échoué. Vérifie le fichier et réessaie.'));
+    } catch (e: unknown) {
+      const failure = e instanceof Failure ? e : enFailure(e);
+      const msg = failure.message || '';
+      // Si un dossier est déjà en cours d'examen (409 Conflict ou statut en attente),
+      // basculer directement sur l'écran d'attente au lieu de bloquer l'étudiant.
+      if (
+        failure.statusCode === 409 ||
+        failure.code === 'CONFLICT' ||
+        msg.toLowerCase().includes('déjà en cours')
+      ) {
+        this.verification.state.set(
+          verificationDepuisJson({ statut: 'en_attente', requis: true }),
+        );
+        await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
+        void this.verification.refresh();
+        return;
+      }
+      this.error.set(msg || tr('verifErreurEnvoi', 'L’envoi a échoué. Vérifie le fichier et réessaie.'));
     } finally {
       this.sending.set(false);
     }

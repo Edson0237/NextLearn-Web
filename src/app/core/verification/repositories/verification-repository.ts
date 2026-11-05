@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { enFailure } from '../../network';
 import { VerificationState, verificationDepuisJson } from '../../models/verification.model';
 
 @Injectable({ providedIn: 'root' })
@@ -8,9 +9,13 @@ export class VerificationRepository {
   private readonly http = inject(HttpClient);
 
   async getMyStatus(): Promise<VerificationState> {
-    const reponse = await firstValueFrom(this.http.get('/api/verification/requests/me'));
-    const data = (reponse as Record<string, unknown>)?.['data'] as Record<string, unknown> | undefined;
-    return verificationDepuisJson(data ?? {});
+    try {
+      const reponse = await firstValueFrom(this.http.get('/api/verification/requests/me'));
+      const data = (reponse as Record<string, unknown>)?.['data'] as Record<string, unknown> | undefined;
+      return verificationDepuisJson(data ?? {});
+    } catch (e) {
+      throw enFailure(e);
+    }
   }
 
   async submit(payload: {
@@ -32,8 +37,12 @@ export class VerificationRepository {
     formData.append('niveau', payload.niveau);
     formData.append('justificatifType', payload.justificatifType);
     formData.append('justificatif', payload.file, payload.file.name);
-    const reponse = await firstValueFrom(this.http.post('/api/verification/requests', formData));
-    // Le dossier tel que le serveur vient de l'enregistrer.
-    return ((reponse as Record<string, unknown> | null)?.['data'] ?? {}) as Record<string, unknown>;
+    try {
+      const reponse = await firstValueFrom(this.http.post('/api/verification/requests', formData));
+      // Le dossier tel que le serveur vient de l'enregistrer.
+      return ((reponse as Record<string, unknown> | null)?.['data'] ?? {}) as Record<string, unknown>;
+    } catch (e) {
+      throw enFailure(e);
+    }
   }
 }

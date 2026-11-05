@@ -12,7 +12,8 @@ export enum VerificationStatut {
 }
 
 export function statutVerificationDepuisApi(s: string | null | undefined): VerificationStatut {
-  switch (s) {
+  const normalise = String(s ?? '').toLowerCase().trim();
+  switch (normalise) {
     case 'en_attente': return VerificationStatut.enAttente;
     case 'en_revue': return VerificationStatut.enRevue;
     case 'infos_complementaires_requises': return VerificationStatut.infosComplementairesRequises;

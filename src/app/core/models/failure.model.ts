@@ -122,6 +122,22 @@ function messagePour(
     return 'Document non disponible / à réuploader';
   }
 
+  // Les messages explicites du serveur sur la vérification et les dépôts
+  // ou en cas de conflit/validation doivent être visibles par l'utilisateur.
+  if (duServeur && duServeur.trim().length > 0 && duServeur.trim().length <= 240) {
+    if (
+      chemin.includes('/verification') ||
+      chemin.includes('/submissions') ||
+      code === 'CONFLICT' ||
+      code === 'VALIDATION_ERROR' ||
+      code === 'TOO_MANY_REQUESTS' ||
+      statusCode === 409 ||
+      statusCode === 429
+    ) {
+      return duServeur.trim();
+    }
+  }
+
   if (!estCheminPreAuth(chemin)) return messageParDefaut(statusCode);
   if (statusCode !== 401 && statusCode !== 422) return messageParDefaut(statusCode);
 

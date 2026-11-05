@@ -34,12 +34,18 @@ const RANG: Readonly<Record<NiveauEtude, number>> = {
   [NiveauEtude.n5]: 5,
 };
 
-export function rangNiveau(n: NiveauEtude): number {
-  return RANG[n];
+export function rangNiveau(n: NiveauEtude | string): number {
+  if (typeof n === 'string') {
+    const directMatch = RANG[n.toLowerCase() as NiveauEtude];
+    if (directMatch) return directMatch;
+    const num = Number(n.replace(/[^0-9]/g, ''));
+    if (num >= 1 && num <= 5) return num;
+  }
+  return RANG[n as NiveauEtude] ?? 1;
 }
 
 /** Valeur attendue par le backend (`N1`..`N5`). */
-export function niveauCourt(n: NiveauEtude): string {
+export function niveauCourt(n: NiveauEtude | string): string {
   return `N${rangNiveau(n)}`;
 }
 
