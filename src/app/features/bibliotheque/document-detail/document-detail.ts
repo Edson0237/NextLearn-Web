@@ -107,9 +107,12 @@ export class DocumentDetail implements OnInit {
     this.historique.retour('/app/' + AppRoutes.bibliotheque, (url) => url.endsWith('/read'));
   }
 
+  protected readonly chargementLecture = signal(false);
+
   protected openDocument(): void {
     const doc = this.document();
     if (!doc) return;
+    this.chargementLecture.set(true);
     void this.router.navigateByUrl('/app/' + AppRoutes.docReaderPath(doc.id));
   }
 

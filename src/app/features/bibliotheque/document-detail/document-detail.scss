@@ -172,6 +172,26 @@
   &:active {
     transform: scale(0.99);
   }
+
+  &:disabled {
+    opacity: 0.85;
+    cursor: wait;
+  }
+}
+
+.doc-detail__spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--text-on-primary) 35%, transparent);
+  border-top-color: var(--text-on-primary);
+  animation: doc-detail-spin 0.8s linear infinite;
+}
+
+@keyframes doc-detail-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .doc-detail__principal-poids {

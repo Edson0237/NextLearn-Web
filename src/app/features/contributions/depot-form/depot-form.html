@@ -44,7 +44,7 @@
           <p class="nl-depf__erreur">{{ 'depotTypesIndisponibles' | t }}</p>
         }
         @default {
-          <select [value]="type() ?? ''" (change)="type.set(val($event) || undefined)">
+          <select [value]="type() ?? ''" (change)="surChangementType(val($event) || undefined)">
             <option value="" disabled>{{ 'depotTypeIndice' | t }}</option>
             @for (t of types().items; track t.value) {
               <option [value]="t.value">{{ t.label }}</option>
@@ -53,6 +53,18 @@
         }
       }
     </label>
+
+    @if (estEpreuve()) {
+      <label class="nl-depf__champ">
+        <span>{{ 'depotSousTypeEpreuve' | t }}</span>
+        <select [value]="sousTypeEpreuve() ?? ''" (change)="sousTypeEpreuve.set(val($event) || undefined)">
+          <option value="" disabled>{{ 'depotSousTypeEpreuveIndice' | t }}</option>
+          @for (st of sousTypesEpreuve(); track st.value) {
+            <option [value]="st.value">{{ st.label }}</option>
+          }
+        </select>
+      </label>
+    }
 
     <div class="nl-depf__rattachement">
       <nl-icon name="check_circle" [size]="16" />
@@ -156,9 +168,10 @@
 
     <button type="button" class="nl-depf__cta" [disabled]="envoiEnCours()" (click)="envoyer()">
       @if (envoiEnCours()) {
-        <span class="nl-depf__spinner"></span>
+        <span class="nl-depf__spinner" aria-hidden="true"></span>
+        <span>{{ 'verifEnvoiEnCours' | t }}</span>
       } @else {
-        Envoyer pour relecture
+        <span>{{ 'depotEnvoyer' | t }}</span>
       }
     </button>
     <p class="nl-depf__engagement">{{ 'pwaConfirmationDroitPartage' | t }}</p>

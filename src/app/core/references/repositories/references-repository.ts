@@ -61,6 +61,20 @@ export class ReferencesRepository {
     return this.liste('/api/references/document-types', typeContenuDepuisJson);
   }
 
+  async getTypesEpreuve(): Promise<OptionReference[]> {
+    try {
+      const items = await this.liste('/api/references/types-epreuve', optionDepuisJson);
+      if (items.length > 0) return items;
+    } catch {
+      // repli en cas de coupure réseau ou route indisponible
+    }
+    return [
+      { value: 'SN', label: 'Session normale' },
+      { value: 'CC', label: 'Contrôle continu' },
+      { value: 'RATTRAPAGE', label: 'Rattrapage' },
+    ];
+  }
+
   /** Taille maximale et formats acceptés pour un fichier envoyé, tels que le serveur les règle. */
   async getLimitesFichier(): Promise<{ maxFileSizeMb: number; formats: readonly string[] }> {
     const reponse = await firstValueFrom(this.http.get('/api/references/limites-fichier'));

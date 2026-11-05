@@ -10,13 +10,13 @@
         Lecture
       }
     </span>
-    <button class="nl-icon-btn" (click)="openInNewTab()" [attr.aria-label]="'pwaOuvrirNouvelOnglet' | t">
-      <nl-icon name="open_in_new" />
-    </button>
   </header>
 
   @if (loading()) {
-    <p class="pdf-reader__etat">{{ 'pdfChargement' | t }}</p>
+    <div class="pdf-reader__chargement">
+      <span class="pdf-reader__spinner"></span>
+      <p class="pdf-reader__etat">{{ 'pdfChargement' | t }}</p>
+    </div>
   } @else if (error()) {
     <div class="pdf-reader__etat pdf-reader__etat--erreur">
       <p>{{ error() }}</p>

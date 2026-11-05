@@ -101,11 +101,16 @@
 
       <!-- L'action principale occupe toute la largeur : c'est pour elle qu'on
            ouvre cette fiche. -->
-      <button type="button" class="doc-detail__principal" (click)="openDocument()">
-        <nl-icon name="visibility" [size]="20" />
-        <span>{{ 'docLire' | t }}</span>
-        @if (doc.tailleMb > 0) {
-          <span class="doc-detail__principal-poids">{{ doc.tailleMb | number: '1.1-1' }} Mo</span>
+      <button type="button" class="doc-detail__principal" (click)="openDocument()" [disabled]="chargementLecture()">
+        @if (chargementLecture()) {
+          <span class="doc-detail__spinner" aria-hidden="true"></span>
+          <span>{{ 'pdfChargement' | t }}</span>
+        } @else {
+          <nl-icon name="visibility" [size]="20" />
+          <span>{{ 'docLire' | t }}</span>
+          @if (doc.tailleMb > 0) {
+            <span class="doc-detail__principal-poids">{{ doc.tailleMb | number: '1.1-1' }} Mo</span>
+          }
         }
       </button>
 

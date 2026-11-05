@@ -20,6 +20,7 @@ describe('DepotForm - envoi', () => {
     const fixture = TestBed.createComponent(DepotForm);
     const controller = TestBed.inject(HttpTestingController);
     controller.match((r) => r.url === '/api/references/limites-fichier').forEach((r) => r.flush({ data: { maxFileSizeMb: 50, formats: ['pdf'] } }));
+    controller.match((r) => r.url === '/api/references/types-epreuve').forEach((r) => r.flush({ data: [] }));
     controller.expectOne((r) => r.url === '/api/references/document-types').flush({ data: [] });
     controller.expectOne((r) => r.url === '/api/references/matieres').flush({ data: [] });
     return { component: fixture.componentInstance, controller, router: TestBed.inject(Router) };
@@ -53,6 +54,28 @@ describe('DepotForm - envoi', () => {
     expect(formData.get('licence')).toBe('auteur');
     const fichierEnvoye = formData.get('file') as File;
     expect(fichierEnvoye.name).toBe('cours.pdf');
+
+    requete.flush({ data: {} });
+    await promesse;
+    controller.verify();
+  });
+
+  it('envoie un type Epreuve avec son sous-type', async () => {
+    const { component, controller } = creer();
+    component['titre'].set('Examen Final');
+    component['description'].set('Sujet session normale 2024-2025.');
+    component['surChangementType']('EPREUVE');
+    component['sousTypeEpreuve'].set('SN');
+    component['matiereId'].set('mat-1');
+    component['licence'].set(DepotLicence.institutionnel);
+    component['fichier'].set(new File([new Uint8Array([1, 2, 3])], 'epreuve.pdf', { type: 'application/pdf' }));
+
+    const promesse = component['envoyer']();
+
+    const requete = controller.expectOne('/api/documents/submissions');
+    const formData = requete.request.body as FormData;
+    expect(formData.get('type')).toBe('EPREUVE');
+    expect(formData.get('typeEpreuve')).toBe('SN');
 
     requete.flush({ data: {} });
     await promesse;

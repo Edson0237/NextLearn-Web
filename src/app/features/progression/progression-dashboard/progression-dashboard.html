@@ -16,7 +16,10 @@
 
   <div class="progression__corps">
     @if (loading()) {
-      <p class="progression__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="progression__chargement">
+        <span class="progression__spinner" aria-hidden="true"></span>
+        <p class="progression__etat">{{ 'chargementEnCours' | t }}</p>
+      </div>
     } @else if (error()) {
       <div class="progression__etat progression__etat--erreur">
         <p>{{ error() }}</p>

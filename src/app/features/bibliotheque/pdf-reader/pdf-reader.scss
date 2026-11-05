@@ -35,8 +35,26 @@
     color: var(--text-primary);
   }
 
-  &__etat {
+  &__chargement {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+  }
+
+  &__spinner {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid color-mix(in srgb, var(--primary) 25%, transparent);
+    border-top-color: var(--primary);
+    animation: pdf-reader-spin 0.8s linear infinite;
+  }
+
+  &__etat {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -45,6 +63,7 @@
     text-align: center;
 
     &--erreur {
+      flex: 1;
       color: var(--danger);
     }
   }
@@ -74,4 +93,10 @@
   background: transparent;
   color: var(--text-primary);
   cursor: pointer;
+}
+
+@keyframes pdf-reader-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

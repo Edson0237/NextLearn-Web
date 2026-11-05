@@ -23,9 +23,11 @@ export class DepotRepository {
 
   async getTypes(): Promise<TypeContenuOption[]> {
     const types = await this.liste<TypeContenuOption>('/api/references/document-types', typeContenuDepuisJson);
-    // Les épreuves ont leur propre collection et leur propre circuit : les
-    // proposer ici enverrait le dépôt vers la mauvaise ressource.
-    return types.filter((t) => t.collection === 'documents');
+    const aEpreuve = types.some((t) => t.value.toUpperCase() === 'EPREUVE');
+    if (!aEpreuve) {
+      return [...types, { value: 'EPREUVE', label: 'Épreuve', collection: 'epreuves' }];
+    }
+    return types;
   }
 
   async mesDepots(): Promise<Depot[]> {
@@ -33,13 +35,14 @@ export class DepotRepository {
   }
 
   async deposer(infos: {
-    titre: string; description: string; type: string; matiereId: string; anneeAcademique: string;
+    titre: string; description: string; type: string; typeEpreuve?: string; matiereId: string; anneeAcademique: string;
     licence: DepotLicence; sourceDeclaree?: string; auteur?: string; fichier: File;
   }): Promise<void> {
     const formData = new FormData();
     formData.set('titre', infos.titre);
     formData.set('description', infos.description);
     formData.set('type', infos.type);
+    if (infos.typeEpreuve) formData.set('typeEpreuve', infos.typeEpreuve);
     formData.set('matiereId', infos.matiereId);
     formData.set('anneeAcademique', infos.anneeAcademique);
     formData.set('licence', infos.licence);

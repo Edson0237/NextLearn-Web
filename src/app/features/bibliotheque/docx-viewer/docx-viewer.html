@@ -1,6 +1,9 @@
 <div class="nl-docx-viewer">
   @if (chargement()) {
-    <p class="nl-docx-viewer__etat">{{ 'pdfChargement' | t }}</p>
+    <div class="nl-docx-viewer__chargement">
+      <span class="nl-docx-viewer__spinner"></span>
+      <p class="nl-docx-viewer__etat">{{ 'pdfChargement' | t }}</p>
+    </div>
   } @else if (messageErreur(); as err) {
     <div class="nl-docx-viewer__etat nl-docx-viewer__etat--erreur">
       <p>{{ err }}</p>

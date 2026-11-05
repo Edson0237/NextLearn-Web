@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { AuthService } from '../../../core/auth';
 import { DepotRepository } from '../../../core/contributions';
 import { ReferencesRepository } from '../../../core/references';
 import { DepotLicence, LICENCES_PROPOSEES, anneesAcademiquesProposees } from '../../../core/contributions';
-import { TypeContenuOption, MatiereOption } from '../../../core/references';
+import { TypeContenuOption, MatiereOption, OptionReference } from '../../../core/references';
 import { niveauCourt } from '../../../core/models';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
@@ -63,6 +63,9 @@ export class DepotForm {
   protected readonly auteur = signal('');
   protected readonly sourceDeclaree = signal('');
   protected readonly type = signal<string | undefined>(undefined);
+  protected readonly sousTypesEpreuve = signal<OptionReference[]>([]);
+  protected readonly sousTypeEpreuve = signal<string | undefined>(undefined);
+  protected readonly estEpreuve = computed(() => this.type()?.toUpperCase() === 'EPREUVE');
   protected readonly matiereId = signal<string | undefined>(undefined);
   protected readonly anneeAcademique = signal(this.annees[0]);
   protected readonly licence = signal<DepotLicence | undefined>(undefined);
@@ -82,6 +85,7 @@ export class DepotForm {
     const scanne = this.scans.reprendre();
     if (scanne) this.fichier.set(scanne);
     void this.refs.getLimitesFichier().then((l) => this.tailleMaxMo.set(l.maxFileSizeMb)).catch(() => undefined);
+    void this.refs.getTypesEpreuve().then((items) => this.sousTypesEpreuve.set(items)).catch(() => undefined);
     void this.chargerTypes();
     void this.chargerMatieres();
   }
@@ -106,6 +110,15 @@ export class DepotForm {
 
   protected val(e: Event): string {
     return (e.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value;
+  }
+
+  protected surChangementType(type: string | undefined): void {
+    this.type.set(type);
+    if (type?.toUpperCase() !== 'EPREUVE') {
+      this.sousTypeEpreuve.set(undefined);
+    } else if (!this.sousTypeEpreuve() && this.sousTypesEpreuve().length > 0) {
+      this.sousTypeEpreuve.set(this.sousTypesEpreuve()[0].value);
+    }
   }
 
   protected surFichierChoisi(e: Event): void {
@@ -144,6 +157,7 @@ export class DepotForm {
       await this.repo.deposer({
         titre, description,
         type: this.type()!,
+        typeEpreuve: this.estEpreuve() ? this.sousTypeEpreuve() : undefined,
         matiereId: this.matiereId()!,
         anneeAcademique: this.anneeAcademique(),
         licence: this.licence()!,

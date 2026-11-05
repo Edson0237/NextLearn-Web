@@ -198,11 +198,6 @@ export class PdfReader implements OnInit, OnDestroy {
     this.historique.retour(fiche, (url) => !url.endsWith(`/${this.documentId()}`));
   }
 
-  protected openInNewTab(): void {
-    const url = this.url();
-    if (url) window.open(url, '_blank');
-  }
-
   protected onError(error: unknown): void {
     console.error('[PdfReader] erreur lecteur PDF intégré', error);
     this.clearFallbackTimeout();

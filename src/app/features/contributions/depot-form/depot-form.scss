@@ -248,11 +248,14 @@
   color: var(--text-on-primary);
   font: 700 1rem/1 var(--font-family);
   cursor: pointer;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
 
   &:disabled {
     opacity: 0.7;
+    cursor: wait;
   }
 }
 
