@@ -15,6 +15,7 @@ export class Failure extends Error {
     message: string,
     readonly statusCode?: number,
     readonly code?: string,
+    readonly retryAfterSeconds?: number,
   ) {
     super(message);
   }
@@ -78,17 +79,31 @@ function depuisReponse(e: HttpErrorResponse): Failure {
   const data = e.error as unknown;
   let backendCode: string | undefined;
   let backendMessage: string | undefined;
+  let retryAfterSeconds: number | undefined;
+
+  // Extraction de Retry-After depuis les en-têtes HTTP ou le corps JSON
+  const rawHeader = e.headers?.get('Retry-After');
+  if (rawHeader) {
+    const parsed = Number(rawHeader);
+    if (!Number.isNaN(parsed) && parsed > 0) retryAfterSeconds = parsed;
+  }
+
   if (data && typeof data === 'object') {
     const err = (data as Record<string, unknown>)['error'];
     if (err && typeof err === 'object') {
       backendCode = (err as Record<string, unknown>)['code'] as string | undefined;
       backendMessage = (err as Record<string, unknown>)['message'] as string | undefined;
+      const details = (err as Record<string, unknown>)['details'] as Record<string, unknown> | undefined;
+      if (details?.['retryAfter'] && typeof details['retryAfter'] === 'number') {
+        retryAfterSeconds = details['retryAfter'];
+      }
     }
   }
   return new Failure(
     messagePour(e.url ?? '', e.status, backendMessage, backendCode),
     e.status,
     backendCode,
+    retryAfterSeconds,
   );
 }
 
@@ -105,7 +120,15 @@ function messagePour(
   // Les refus de la connexion Google disent eux aussi ce qu'il faut faire
   // (utiliser son adresse d'établissement, contacter un administrateur) et ne
   // révèlent rien de protégé.
-  if (code === 'domain_not_allowed' || code === 'account_banned' || code === 'use_google_auth' || code === 'consent_required' || code?.startsWith('EMAIL_CHANGE_')) {
+  if (
+    code === 'domain_not_allowed' ||
+    code === 'account_banned' ||
+    code === 'use_google_auth' ||
+    code === 'consent_required' ||
+    code === 'PIN_TEMPORARILY_LOCKED' ||
+    code === 'RATE_LIMIT_EXCEEDED' ||
+    code?.startsWith('EMAIL_CHANGE_')
+  ) {
     const message = duServeur?.trim();
     if (message && message.length > 0 && message.length <= 240) return message;
   }

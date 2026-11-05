@@ -168,6 +168,10 @@ export class VerificationForm implements OnInit {
       await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
       void this.verification.refresh();
     } catch (e: unknown) {
+      if (e instanceof Error && e.message && !(e instanceof Failure)) {
+        this.error.set(e.message);
+        return;
+      }
       const failure = e instanceof Failure ? e : enFailure(e);
       const msg = failure.message || '';
       // Si un dossier est déjà en cours d'examen (409 Conflict ou statut en attente),

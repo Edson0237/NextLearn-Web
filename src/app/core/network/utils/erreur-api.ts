@@ -15,6 +15,7 @@ import { Failure } from '../../models/failure.model';
  * portaient chacun une copie identique.
  */
 export function enFailure(e: unknown): Failure {
+  if (e instanceof Failure) return e;
   if (e instanceof HttpErrorResponse) return Failure.depuisErreurHttp(e, !isDevMode());
   return new Failure('Une erreur est survenue.');
 }

@@ -36,7 +36,8 @@ export class VerificationRepository {
     formData.append('filiere', payload.filiere);
     formData.append('niveau', payload.niveau);
     formData.append('justificatifType', payload.justificatifType);
-    formData.append('justificatif', payload.file, payload.file.name);
+    const nomNettoye = payload.file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    formData.append('justificatif', payload.file, nomNettoye || 'justificatif.pdf');
     try {
       const reponse = await firstValueFrom(this.http.post('/api/verification/requests', formData));
       // Le dossier tel que le serveur vient de l'enregistrer.

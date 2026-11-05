@@ -32,7 +32,11 @@ export async function optimiserJustificatif(file: File): Promise<File> {
     // Nettoyer les caractères spéciaux du nom (&, espaces, etc.) qui perturbent les entêtes HTTP
     const base = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').replace(/\.pdf$/i, '');
     const nomFinal = `${base || 'justificatif'}.pdf`;
-    return new File([file], nomFinal, { type: 'application/pdf' });
+    try {
+      return new File([file], nomFinal, { type: 'application/pdf' });
+    } catch {
+      return file;
+    }
   }
 
   // C'est une image : compression et conversion en JPEG universel
