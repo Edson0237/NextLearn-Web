@@ -83,4 +83,12 @@ describe('authInterceptor', () => {
     expect(fetchEspion).not.toHaveBeenCalled();
     fetchEspion.mockRestore();
   });
+
+  it('injecte un en-tête X-Request-ID sur toutes les requêtes', () => {
+    http.get('/api/test-trace').subscribe();
+    const requete = controller.expectOne('/api/test-trace');
+    expect(requete.request.headers.has('X-Request-ID')).toBe(true);
+    expect(requete.request.headers.get('X-Request-ID')?.length).toBeGreaterThan(0);
+    requete.flush({});
+  });
 });

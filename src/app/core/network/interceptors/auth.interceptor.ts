@@ -93,10 +93,24 @@ function ajouterJeton(
   req: HttpRequest<unknown>,
   storage: SecureStorageService,
 ): HttpRequest<unknown> {
-  if (estCheminSansJeton(req.url)) return req;
-  const token = storage.getToken();
-  if (!token) return req;
-  return req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+  const reqId =
+    req.headers.get('X-Request-ID') ||
+    (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
+
+  const headers: Record<string, string> = {
+    'X-Request-ID': reqId,
+  };
+
+  if (!estCheminSansJeton(req.url)) {
+    const token = storage.getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+
+  return req.clone({ setHeaders: headers });
 }
 
 function rafraichir(storage: SecureStorageService): Promise<boolean> {
