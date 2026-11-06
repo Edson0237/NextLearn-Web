@@ -17,6 +17,7 @@ import { VerrouPin } from './verrou-pin';
 import { TabReuseStrategy } from '../../router/strategies/tab-reuse-strategy';
 import { NotificationsEtat } from '../../notifications/services/notifications-etat';
 import { HistoriqueRecherches } from '../../recherche/services/historique-recherches';
+import { StockageHorsLigne } from '../../bibliotheque/services/stockage-hors-ligne';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
 const SPLASH_MIN_MS = 1500;
@@ -44,6 +45,7 @@ export class AuthService {
   private readonly verificationRepo = inject(VerificationRepository);
   private readonly notificationsEtat = inject(NotificationsEtat);
   private readonly historiqueRecherches = inject(HistoriqueRecherches);
+  private readonly stockage = inject(StockageHorsLigne);
   private readonly router = inject(Router);
 
   private readonly _state = signal<AuthState>(ETAT_INITIAL);
@@ -601,6 +603,19 @@ export class AuthService {
     this.verification.reset();
     this.notificationsEtat.reinitialiser();
     this.historiqueRecherches.vider();
+    this.stockage.revoquerToutesUrlsLocales();
+    if (typeof caches !== 'undefined') {
+      try {
+        const cacheKeys = await caches.keys();
+        for (const key of cacheKeys) {
+          if (key.includes('api-lecture')) {
+            await caches.delete(key);
+          }
+        }
+      } catch {
+        // Ignoré
+      }
+    }
     TabReuseStrategy.vider();
     this._state.set({ ...ETAT_INITIAL, isInitializing: false });
   }
@@ -615,6 +630,19 @@ export class AuthService {
     this.verification.reset();
     this.notificationsEtat.reinitialiser();
     this.historiqueRecherches.vider();
+    this.stockage.revoquerToutesUrlsLocales();
+    if (typeof caches !== 'undefined') {
+      try {
+        const cacheKeys = await caches.keys();
+        for (const key of cacheKeys) {
+          if (key.includes('api-lecture')) {
+            await caches.delete(key);
+          }
+        }
+      } catch {
+        // Ignoré
+      }
+    }
     TabReuseStrategy.vider();
     this._state.set({ ...ETAT_INITIAL, isInitializing: false });
   }
