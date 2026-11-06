@@ -429,9 +429,16 @@ export class AuthService {
       return 'otp';
     } catch (e) {
       const reseau = e instanceof Failure && e.estErreurReseau;
+      const messageServeur =
+        e instanceof Failure &&
+        (e.code === 'PIN_TEMPORARILY_LOCKED' ||
+          e.code === 'RATE_LIMIT_EXCEEDED' ||
+          e.statusCode === 429 ||
+          e.statusCode === 403 ||
+          Boolean(e.message && (e.message.includes('tentative') || e.message.includes('bloqué') || e.message.includes('Réessayez'))));
       this.patch({
         isLoading: false,
-        error: reseau ? this.messageErreur(e) : 'Identifiants incorrects.',
+        error: reseau || messageServeur ? this.messageErreur(e) : 'Identifiants incorrects.',
       });
       return 'echec';
     }
