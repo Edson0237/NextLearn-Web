@@ -105,4 +105,32 @@ describe('EpreuvesList - filtrage', () => {
     expect(c['filtreActif']()).toBe(false);
     expect(c['filtrees']().length).toBe(3);
   });
+
+  it('durée connue : conserve la valeur exacte de dureeMinutes dans filtrees()', async () => {
+    const avecDuree = { _id: '7', matiere: 'Physique', annee: 2024, universite: 'ISJ', niveau: 'N2', matiereId: 'm3', dureeMinutes: 120 };
+    const c = await creer([avecDuree]);
+    expect(c['filtrees']()[0].dureeMinutes).toBe(120);
+  });
+
+  it('tri par année décroissante : la plus récente apparaît en tête', async () => {
+    const e2020 = { _id: '10', matiere: 'M', annee: 2020, universite: 'U', niveau: 'N1', matiereId: 'm1' };
+    const e2024 = { _id: '11', matiere: 'M', annee: 2024, universite: 'U', niveau: 'N1', matiereId: 'm1' };
+    const e2022 = { _id: '12', matiere: 'M', annee: 2022, universite: 'U', niveau: 'N1', matiereId: 'm1' };
+    const c = await creer([e2020, e2024, e2022]);
+    expect(c['filtrees']().map((e: { annee: number }) => e.annee)).toEqual([2024, 2022, 2020]);
+  });
+
+  it('erreur réseau serveur : le statut bascule à erreur', async () => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    });
+    const fixture = TestBed.createComponent(EpreuvesList);
+    const controller = TestBed.inject(HttpTestingController);
+    controller.expectOne((r) => r.url === '/api/epreuves').error(new ProgressEvent('Network error'));
+    controller.verify();
+    await tick();
+    const c = fixture.componentInstance;
+    expect(c['statut']()).toBe('erreur');
+    expect(c['erreur']()).toBeTruthy();
+  });
 });
