@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Icon } from '../icon/icon';
 
@@ -41,6 +41,13 @@ export class Avatar {
   // une nouvelle adresse après un échec, la nouvelle doit être retentée -
   // un booléen resterait bloqué sur « échec » indéfiniment.
   private readonly urlEnEchec = signal<string | undefined>(undefined);
+
+  constructor() {
+    effect(() => {
+      this.photoUrl();
+      this.urlEnEchec.set(undefined);
+    });
+  }
 
   protected readonly afficherPhoto = computed(
     () => !!this.photoUrl() && this.photoUrl() !== this.urlEnEchec(),

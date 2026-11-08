@@ -566,6 +566,7 @@ export class AuthService {
     try {
       const utilisateur = await this.profilRepo.televerserAvatar(fichier);
       this.patch({ isLoading: false, user: utilisateur });
+      void this.invaliderCacheProfil();
       return null;
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e, 'Photo non enregistrée.') });
@@ -579,10 +580,30 @@ export class AuthService {
     try {
       const utilisateur = await this.profilRepo.supprimerAvatar();
       this.patch({ isLoading: false, user: utilisateur });
+      void this.invaliderCacheProfil();
       return null;
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e, 'Photo non retirée.') });
       return this.messageErreur(e, 'Photo non retirée.');
+    }
+  }
+
+  private async invaliderCacheProfil(): Promise<void> {
+    if (typeof window !== 'undefined' && 'caches' in window) {
+      try {
+        const cles = await caches.keys();
+        for (const cle of cles) {
+          const cache = await caches.open(cle);
+          const requetes = await cache.keys();
+          for (const req of requetes) {
+            if (req.url.includes('/api/profile')) {
+              await cache.delete(req);
+            }
+          }
+        }
+      } catch {
+        // Ignoré silencieusement en environnement restreint
+      }
     }
   }
 

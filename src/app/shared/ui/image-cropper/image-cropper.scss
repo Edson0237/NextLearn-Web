@@ -1,0 +1,195 @@
+.nl-cropper-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.nl-cropper-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+}
+
+.nl-cropper-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-canvas, #ffffff);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.nl-cropper-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
+}
+
+.nl-cropper-title {
+  margin: 0;
+  font: 700 1.1rem/1.2 var(--font-family);
+  color: var(--text-primary);
+}
+
+.nl-cropper-close {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+}
+
+.nl-cropper-body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.nl-cropper-instruction {
+  margin: 0;
+  font: 400 0.85rem/1.4 var(--font-family-body);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.nl-cropper-viewport {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  background: #111;
+  border-radius: var(--radius-md, 12px);
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.nl-cropper-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  max-height: none;
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+.nl-cropper-circle-guide {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+}
+
+.nl-cropper-zoom-controls {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0 var(--space-xs);
+}
+
+.nl-cropper-zoom-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+
+  &:active {
+    background: var(--bg-tertiary);
+  }
+}
+
+.nl-cropper-slider {
+  flex: 1;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.nl-cropper-footer {
+  display: flex;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.nl-cropper-btn-primary {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--primary);
+  color: #fff;
+  font: 600 0.9rem/1 var(--font-family);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.nl-cropper-btn-secondary {
+  flex: 1;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--bg-canvas, #fff);
+  color: var(--text-primary);
+  font: 500 0.9rem/1 var(--font-family);
+  cursor: pointer;
+}
+
+.nl-cropper-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: nl-cropper-spin 0.7s linear infinite;
+}
+
+@keyframes nl-cropper-spin {
+  to { transform: rotate(360deg); }
+}
+
+.nl-cropper-error {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--danger);
+  text-align: center;
+}

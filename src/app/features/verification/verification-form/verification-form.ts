@@ -144,6 +144,15 @@ export class VerificationForm implements OnInit {
     const filiere = u.filiere?.trim() || this.auth.state().pendingFiliere?.trim() || '';
     const niveau = u.niveau ? niveauCourt(u.niveau) : (this.auth.state().pendingNiveau ? niveauCourt(this.auth.state().pendingNiveau!) : 'N1');
 
+    if (!universite) {
+      this.error.set('Précise ton université ou établissement avant l’envoi.');
+      return;
+    }
+    if (!filiere) {
+      this.error.set('Précise ta filière d’étude avant l’envoi.');
+      return;
+    }
+
     this.sending.set(true);
     this.error.set(null);
     try {
@@ -165,11 +174,13 @@ export class VerificationForm implements OnInit {
       this.verification.state.set(
         verificationDepuisJson({ statut: 'en_attente', resoumissionsRestantes: 0, ...depose, requis: true }),
       );
+      this.toast.succes(tr('verifDossierEnvoye', 'Dossier de vérification envoyé avec succès.'));
       await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
       void this.verification.refresh();
     } catch (e: unknown) {
       if (e instanceof Error && e.message && !(e instanceof Failure)) {
         this.error.set(e.message);
+        this.toast.erreur(e.message);
         return;
       }
       const failure = e instanceof Failure ? e : enFailure(e);
@@ -184,11 +195,14 @@ export class VerificationForm implements OnInit {
         this.verification.state.set(
           verificationDepuisJson({ statut: 'en_attente', requis: true }),
         );
+        this.toast.info('Un dossier est déjà en cours d’examen.');
         await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
         void this.verification.refresh();
         return;
       }
-      this.error.set(msg || tr('verifErreurEnvoi', 'L’envoi a échoué. Vérifie le fichier et réessaie.'));
+      const finalMsg = msg || tr('verifErreurEnvoi', 'L’envoi a échoué. Vérifie le fichier et réessaie.');
+      this.error.set(finalMsg);
+      this.toast.erreur(finalMsg);
     } finally {
       this.sending.set(false);
     }

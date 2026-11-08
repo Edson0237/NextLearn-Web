@@ -1,0 +1,83 @@
+<div class="nl-cropper-modal" role="dialog" aria-modal="true" [attr.aria-label]="'pwaRecadrerPhoto' | t">
+  <div class="nl-cropper-backdrop" (click)="annuler()"></div>
+
+  <div class="nl-cropper-card">
+    <header class="nl-cropper-header">
+      <h2 class="nl-cropper-title">{{ 'pwaRecadrerPhoto' | t }}</h2>
+      <button type="button" class="nl-cropper-close" (click)="annuler()" [attr.aria-label]="'actionAnnuler' | t">
+        <nl-icon name="close" [size]="20" />
+      </button>
+    </header>
+
+    @if (error()) {
+      <div class="nl-cropper-error">
+        <nl-icon name="error" [size]="24" />
+        <p>{{ error() }}</p>
+        <button type="button" class="nl-cropper-btn-primary" (click)="annuler()">{{ 'actionFermer' | t }}</button>
+      </div>
+    } @else {
+      <div class="nl-cropper-body">
+        <p class="nl-cropper-instruction">{{ 'pwaAjusterCadrage' | t }}</p>
+
+        <!-- Viewport carré 280x280 avec masque circulaire -->
+        <div
+          class="nl-cropper-viewport"
+          (mousedown)="onPointerDown($event)"
+          (mousemove)="onPointerMove($event)"
+          (mouseup)="onPointerUp()"
+          (mouseleave)="onPointerUp()"
+          (touchstart)="onPointerDown($event)"
+          (touchmove)="onPointerMove($event)"
+          (touchend)="onPointerUp()"
+        >
+          @if (imageUrl(); as url) {
+            <img
+              [src]="url"
+              alt="Aperçu recadrage"
+              class="nl-cropper-image"
+              [style.transform]="'translate(' + offsetX() + 'px, ' + offsetY() + 'px) scale(' + zoom() + ')'"
+              draggable="false"
+            />
+          }
+
+          <!-- Guide circulaire pour prévisualiser l'avatar -->
+          <div class="nl-cropper-circle-guide" aria-hidden="true"></div>
+        </div>
+
+        <!-- Contrôles de zoom -->
+        <div class="nl-cropper-zoom-controls">
+          <button type="button" class="nl-cropper-zoom-btn" (click)="zoomOut()" [attr.aria-label]="'Zoom arrière'">
+            <nl-icon name="zoom_out" [size]="18" />
+          </button>
+          <input
+            type="range"
+            min="0.5"
+            max="3"
+            step="0.05"
+            [value]="zoom()"
+            (input)="onZoomSlider($event)"
+            class="nl-cropper-slider"
+            aria-label="Niveau de zoom"
+          />
+          <button type="button" class="nl-cropper-zoom-btn" (click)="zoomIn()" [attr.aria-label]="'Zoom avant'">
+            <nl-icon name="zoom_in" [size]="18" />
+          </button>
+        </div>
+      </div>
+
+      <footer class="nl-cropper-footer">
+        <button type="button" class="nl-cropper-btn-secondary" (click)="annuler()" [disabled]="processing()">
+          {{ 'actionAnnuler' | t }}
+        </button>
+        <button type="button" class="nl-cropper-btn-primary" (click)="confirmer()" [disabled]="loading() || processing()">
+          @if (processing()) {
+            <span class="nl-cropper-spinner" aria-hidden="true"></span>
+            <span>{{ 'pwaTraitementEnCours' | t }}</span>
+          } @else {
+            <span>{{ 'actionConfirmer' | t }}</span>
+          }
+        </button>
+      </footer>
+    }
+  </div>
+</div>

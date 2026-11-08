@@ -18,6 +18,8 @@ import { nomComplet, initiales, libelleNiveau } from '../../../core/models';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { AppRoutes } from '../../../core/router';
 import { optimiserAvatar } from '../../../shared/services/image-optimiseur';
+import { ToastService } from '../../../shared/ui/toast/toast';
+import { ImageCropper } from '../../../shared/ui/image-cropper/image-cropper';
 
 /**
  * Onglet Profil - traduction de `ProfilHomePage`
@@ -31,7 +33,7 @@ import { optimiserAvatar } from '../../../shared/services/image-optimiseur';
 @Component({
   selector: 'app-profil-home',
   standalone: true,
-  imports: [TraductionPipe, Avatar, AnimatedNumber, Icon, Badge, AppHeader, SettingsList],
+  imports: [TraductionPipe, Avatar, AnimatedNumber, Icon, Badge, AppHeader, SettingsList, ImageCropper],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './profil-home.html',
   styleUrl: './profil-home.scss',
@@ -43,7 +45,10 @@ export class ProfilHome {
   private readonly stockage = inject(StockageHorsLigne);
   private readonly fraicheur = inject(Fraicheur);
   private readonly actions = inject(FeuilleActionService);
+  private readonly toast = inject(ToastService);
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('avatarInput');
+
+  protected readonly fichierACadrer = signal<File | null>(null);
 
   protected readonly user = computed(() => this.auth.state().user);
   protected readonly nomComplet = computed(() => {
@@ -147,20 +152,38 @@ export class ProfilHome {
     if (choix === 'pick') {
       this.fileInput().nativeElement.click();
     } else if (choix === 'remove') {
-      await this.auth.supprimerAvatar();
+      const err = await this.auth.supprimerAvatar();
+      if (err) {
+        this.toast.erreur(err);
+      } else {
+        this.toast.info(tr('pwaSupprimerPhoto', 'Supprimer la photo') + ' : effectuée.');
+      }
     }
   }
 
-  protected async onFileSelected(event: Event): Promise<void> {
+  protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const fichier = input.files?.[0];
     input.value = '';
     if (!fichier) return;
+    this.fichierACadrer.set(fichier);
+  }
+
+  protected async onCropped(fichierRecadre: File): Promise<void> {
+    this.fichierACadrer.set(null);
     try {
-      const fichierOptimise = await optimiserAvatar(fichier);
-      await this.auth.changerAvatar(fichierOptimise);
-    } catch {
-      await this.auth.changerAvatar(fichier);
+      const err = await this.auth.changerAvatar(fichierRecadre);
+      if (err) {
+        this.toast.erreur(err);
+      } else {
+        this.toast.succes(tr('pwaPhotoProfil', 'Photo de profil') + ' mise à jour.');
+      }
+    } catch (e: any) {
+      this.toast.erreur(e?.message || 'Impossible d’enregistrer la photo.');
     }
+  }
+
+  protected onCropCancelled(): void {
+    this.fichierACadrer.set(null);
   }
 }

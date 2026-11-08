@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { ToastService } from './toast';
 
@@ -55,5 +56,13 @@ describe('ToastService', () => {
     // Aucune exception si le minuteur d'origine se déclenche malgré tout.
     vi.advanceTimersByTime(5000);
     expect(service.actif()).toBeUndefined();
+  });
+
+  it('un message avertissement porte la tonalite avertissement et son icone', () => {
+    const service = TestBed.inject(ToastService);
+    service.avertissement('Attention à ta connexion');
+
+    expect(service.actif()?.tone).toBe('avertissement');
+    expect(service.icone('avertissement')).toBe('warning');
   });
 });

@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { IconName } from '../icon/icon-paths';
 import { HapticService } from '../../services/haptic';
 
-export type ToastTone = 'info' | 'succes' | 'erreur';
+export type ToastTone = 'info' | 'succes' | 'erreur' | 'avertissement';
 
 export interface ToastActif {
   readonly id: number;
@@ -19,6 +19,7 @@ const ICONES: Readonly<Record<ToastTone, IconName>> = {
   info: 'info',
   succes: 'check_circle',
   erreur: 'error',
+  avertissement: 'warning',
 };
 
 /**
@@ -53,6 +54,12 @@ export class ToastService {
   erreur(message: string): void {
     this.haptic.echec();
     this.montrer(message, 'erreur');
+  }
+
+  /** Avertissement - pour attirer l'attention sans bloquer. */
+  avertissement(message: string): void {
+    this.haptic.selection();
+    this.montrer(message, 'avertissement');
   }
 
   /** Un message assorti d'un retour en arrière - le bon patron pour une suppression. */

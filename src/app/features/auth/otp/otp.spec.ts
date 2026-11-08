@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -52,5 +53,25 @@ describe('Otp - estConnexion', () => {
   it('sans démarche mémorisée, retombe sur le drapeau de la route (2FA)', () => {
     const { component } = creer(true);
     expect(component['estConnexion']()).toBe(true);
+  });
+
+  it('codeComplet vaut false quand les 6 cases ne sont pas toutes remplies', () => {
+    const { component } = creer(false);
+    expect(component['codeComplet']()).toBe(false);
+    component['chiffres'].set(['1', '2', '3', '', '', '']);
+    expect(component['codeComplet']()).toBe(false);
+    component['chiffres'].set(['1', '2', '3', '4', '5', '6']);
+    expect(component['codeComplet']()).toBe(true);
+  });
+
+  it('verifier() ne lance pas de requete concurrente si chargement est deja vrai', async () => {
+    const { component, auth } = creer(false);
+    component['chiffres'].set(['1', '2', '3', '4', '5', '6']);
+    component['chargement'].set(true);
+
+    const spy = vi.spyOn(auth, 'verifyOtp');
+    await component['verifier']();
+
+    expect(spy).not.toHaveBeenCalled();
   });
 });

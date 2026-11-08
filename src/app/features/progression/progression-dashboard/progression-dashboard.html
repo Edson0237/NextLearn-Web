@@ -26,6 +26,17 @@
         <button class="progression__retry" (click)="load()">{{ 'actionReessayer' | t }}</button>
       </div>
     } @else {
+      <!-- Bandeau introductif et explicatif -->
+      <div class="progression__intro-card">
+        <div class="progression__intro-icon">
+          <nl-icon name="trending_up" [size]="28" />
+        </div>
+        <div class="progression__intro-content">
+          <h2 class="progression__intro-title">{{ 'progressionIntroTitre' | t }}</h2>
+          <p class="progression__intro-text">{{ 'progressionIntroDesc' | t }}</p>
+        </div>
+      </div>
+
       @if (stats(); as s) {
         <section class="progression__hero">
           <div class="progression__streak">
@@ -33,6 +44,10 @@
             <span class="progression__streak-value"><nl-animated-number [value]="s.streak" /></span>
             <span class="progression__streak-label">{{ 'pwaJoursDeSuite' | t }}</span>
           </div>
+          <p class="progression__streak-hint">
+            <nl-icon name="info" [size]="14" />
+            <span>{{ 'progressionStreakAide' | t }}</span>
+          </p>
           <div class="progression__stats">
             <div class="progression__stat">
               <span class="progression__stat-value"><nl-animated-number [value]="s.docsLus" /></span>

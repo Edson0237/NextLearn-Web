@@ -36,7 +36,11 @@ export class VerificationRepository {
     formData.append('filiere', payload.filiere);
     formData.append('niveau', payload.niveau);
     formData.append('justificatifType', payload.justificatifType);
-    const nomNettoye = payload.file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    let nomNettoye = payload.file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const estPdf = payload.file.type === 'application/pdf' || nomNettoye.toLowerCase().endsWith('.pdf');
+    if (estPdf && !nomNettoye.toLowerCase().endsWith('.pdf')) {
+      nomNettoye += '.pdf';
+    }
     formData.append('justificatif', payload.file, nomNettoye || 'justificatif.pdf');
     try {
       const reponse = await firstValueFrom(this.http.post('/api/verification/requests', formData));

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, effect, inject, OnDestroy, signal, viewChildren } from '@angular/core';
 import { tr } from '../../../core/i18n';
 import { TraductionPipe } from '../../../core/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -50,6 +50,7 @@ export class Otp implements OnDestroy {
   protected readonly chargement = signal(false);
   protected readonly erreur = signal<string | undefined>(undefined);
   protected readonly actualisation = signal(false);
+  protected readonly codeComplet = computed(() => this.chiffres().every((c) => c !== ''));
 
   private sondage: ReturnType<typeof setInterval> | undefined;
 
@@ -126,22 +127,32 @@ export class Otp implements OnDestroy {
     if (copie.every((c) => c !== '')) void this.verifier();
   }
 
-  private async verifier(): Promise<void> {
+  protected async verifier(): Promise<void> {
+    if (this.chargement()) return;
     const code = this.chiffres().join('');
-    if (code.length < 6) return;
+    if (code.length < 6) {
+      this.erreur.set(tr('otpCodeIncomplet', 'Saisis les 6 chiffres du code.'));
+      return;
+    }
+
     this.chargement.set(true);
     this.erreur.set(undefined);
 
-    const estConnexion = this.estConnexion();
-    const ok = estConnexion ? await this.auth.verifyLoginOtp(code) : await this.auth.verifyOtp(code);
-    this.chargement.set(false);
-
-    if (ok) {
-      void this.router.navigateByUrl('/app/' + AppRoutes.home);
-    } else {
-      this.erreur.set(this.auth.state().error ?? 'Code incorrect.');
-      this.chiffres.set(['', '', '', '', '', '']);
-      this.cases()[0]?.nativeElement.focus();
+    try {
+      const estConnexion = this.estConnexion();
+      const ok = estConnexion ? await this.auth.verifyLoginOtp(code) : await this.auth.verifyOtp(code);
+      if (ok) {
+        void this.router.navigateByUrl('/app/' + AppRoutes.home);
+      } else {
+        const errServeur = this.auth.state().error;
+        this.erreur.set(errServeur || tr('otpCodeIncorrect', 'Code incorrect. Réessaie.'));
+        this.chiffres.set(['', '', '', '', '', '']);
+        this.cases()[0]?.nativeElement.focus();
+      }
+    } catch (e: any) {
+      this.erreur.set(e?.message || tr('erreurReseau', 'Erreur de connexion. Vérifie ton réseau et réessaie.'));
+    } finally {
+      this.chargement.set(false);
     }
   }
 

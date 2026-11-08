@@ -86,3 +86,11 @@
     <app-settings-list [inline]="true" />
   </main>
 </div>
+
+@if (fichierACadrer(); as fichier) {
+  <nl-image-cropper
+    [file]="fichier"
+    (cropped)="onCropped($event)"
+    (cancelled)="onCropCancelled()"
+  />
+}

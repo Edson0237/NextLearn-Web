@@ -109,6 +109,49 @@
   font: 400 0.85rem/1.4 var(--font-family-body);
 }
 
+.nl-otp__valider {
+  height: 50px;
+  width: 100%;
+  margin-top: var(--space-xs);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  font: 700 0.95rem/1 var(--font-family);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+
+  &:hover:not(:disabled) {
+    opacity: 0.92;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.nl-otp__spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: nl-otp-spin 0.75s linear infinite;
+}
+
+@keyframes nl-otp-spin {
+  to { transform: rotate(360deg); }
+}
+
 .nl-otp__lien {
   align-self: center;
   border: none;

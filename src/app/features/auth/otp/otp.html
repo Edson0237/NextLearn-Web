@@ -67,6 +67,7 @@
               maxlength="1"
               class="nl-otp__case"
               [class.nl-otp__case--erreur]="erreur()"
+              [disabled]="chargement()"
               [value]="c"
               (input)="saisirChiffre($index, val($event))"
             />
@@ -77,8 +78,22 @@
           <p class="nl-otp__erreur">{{ erreur() }}</p>
         }
 
-        <button type="button" class="nl-otp__lien" (click)="renvoyer()">{{ 'otpRenvoyerCode' | t }}</button>
-        <button type="button" class="nl-otp__lien nl-otp__lien--discret" (click)="demanderAbandon()">
+        <button
+          type="button"
+          class="nl-otp__valider"
+          [disabled]="!codeComplet() || chargement()"
+          (click)="verifier()"
+        >
+          @if (chargement()) {
+            <span class="nl-otp__spinner" aria-hidden="true"></span>
+            <span>{{ 'pwaVerificationEnCours' | t }}</span>
+          } @else {
+            <span>{{ 'otpValider' | t }}</span>
+          }
+        </button>
+
+        <button type="button" class="nl-otp__lien" [disabled]="chargement()" (click)="renvoyer()">{{ 'otpRenvoyerCode' | t }}</button>
+        <button type="button" class="nl-otp__lien nl-otp__lien--discret" [disabled]="chargement()" (click)="demanderAbandon()">
           {{ estConnexion() ? 'Annuler la connexion' : "Annuler l'inscription" }}
         </button>
       </section>
