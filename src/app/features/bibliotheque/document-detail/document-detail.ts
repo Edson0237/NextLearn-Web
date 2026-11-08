@@ -70,11 +70,11 @@ export class DocumentDetail implements OnInit {
     await this.stockage.rafraichir();
     try {
       const [doc, favoris, offlineIds] = await Promise.all([
-        this.docsRepo.getById(this.docId).catch(() => null),
+        this.docsRepo.getDocumentDetails(this.docId).catch(() => null),
         this.favorisRepo.getFavorites().catch(() => []),
         this.offlineRepo.getOfflineIds().catch(() => new Set<string>()),
       ]);
-      const docFinal = doc ?? this.stockage.infoDocument(this.docId)?.document ?? null;
+      const docFinal = doc ?? (await this.docsRepo.getOfflineDocument(this.docId)) ?? null;
       this.document.set(docFinal);
       this.isFavori.set(favoris.some((f) => f.id === this.docId));
       // Deux sources, et c'est voulu : le serveur dit ce que l'étudiant a
@@ -87,7 +87,7 @@ export class DocumentDetail implements OnInit {
         void this.notifEtat.marquerRessourceLue('document', docFinal.id);
       }
     } catch {
-      const repliLocal = this.stockage.infoDocument(this.docId)?.document ?? null;
+      const repliLocal = await this.docsRepo.getOfflineDocument(this.docId);
       if (repliLocal) {
         this.document.set(repliLocal);
         this.isOffline.set(true);

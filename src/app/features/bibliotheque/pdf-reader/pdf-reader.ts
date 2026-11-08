@@ -139,21 +139,28 @@ export class PdfReader implements OnInit, OnDestroy {
     }
 
     try {
-      const fresh = await this.docsRepo.urlLecture(id);
       const queryUrl = this.route.snapshot.queryParamMap.get('url') || undefined;
-      const finalUrl = fresh || queryUrl;
-      let urlCible: string | undefined = finalUrl;
-      if (!urlCible) {
-        const doc = await this.docsRepo.getById(id);
-        if (doc?.urlPdf) {
-          urlCible = doc.urlPdf;
+      let accessUrl = queryUrl;
+      let formatFinal: 'pdf' | 'docx' | undefined;
+
+      if (!accessUrl) {
+        try {
+          if (typeof this.docsRepo.requestDocumentReading === 'function') {
+            const access = await this.docsRepo.requestDocumentReading(id);
+            accessUrl = access.readUrl;
+            formatFinal = access.format;
+          } else {
+            accessUrl = (await this.docsRepo.urlLecture(id)) ?? undefined;
+          }
+        } catch {
+          accessUrl = (await this.docsRepo.urlLecture(id)) ?? undefined;
         }
       }
 
-      if (urlCible) {
-        const formatDetecte = detecterFormatDocument({ url: urlCible });
-        this.format.set(formatDetecte);
-        this.setUrl(urlCible);
+      if (accessUrl) {
+        const formatDetecte = detecterFormatDocument({ url: accessUrl });
+        this.format.set(formatFinal ?? formatDetecte);
+        this.setUrl(accessUrl);
         void this.docsRepo.recordView(id);
       } else {
         this.error.set('Impossible d\'obtenir l\'URL du document.');

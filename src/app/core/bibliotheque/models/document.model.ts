@@ -189,17 +189,47 @@ export interface DocumentPage {
   readonly totalPages: number;
   readonly total: number;
   readonly sortApplied?: string;
+  readonly nextCursor?: string | null;
+  readonly hasMore?: boolean;
+}
+
+export interface DocumentReadAccess {
+  readonly readUrl: string;
+  readonly expiresIn: number;
+  readonly mimeType: string;
+  readonly format: 'pdf' | 'docx';
+  readonly size?: number;
 }
 
 export function pageDocumentsDepuisApi(json: Record<string, unknown>): DocumentPage {
-  const data = Array.isArray(json['data']) ? (json['data'] as Record<string, unknown>[]) : [];
-  const meta = (json['meta'] as Record<string, unknown>) ?? {};
+  const rawData = json['data'];
+  let rawList: Record<string, unknown>[] = [];
+  let pagination: Record<string, unknown> | undefined;
+
+  if (Array.isArray(rawData)) {
+    rawList = rawData as Record<string, unknown>[];
+  } else if (rawData && typeof rawData === 'object') {
+    const obj = rawData as Record<string, unknown>;
+    if (Array.isArray(obj['documents'])) {
+      rawList = obj['documents'] as Record<string, unknown>[];
+    }
+    if (obj['pagination'] && typeof obj['pagination'] === 'object') {
+      pagination = obj['pagination'] as Record<string, unknown>;
+    }
+  }
+
+  const meta = (json['meta'] as Record<string, unknown>) ?? pagination ?? {};
+  const hasMore = pagination ? Boolean(pagination['hasMore']) : undefined;
+  const nextCursor = pagination?.['nextCursor'] ? String(pagination['nextCursor']) : null;
+
   return {
-    items: data.map(documentDepuisApi),
+    items: rawList.map(documentDepuisApi),
     page: typeof meta['page'] === 'number' ? meta['page'] : 1,
     totalPages: typeof meta['totalPages'] === 'number' ? meta['totalPages'] : 1,
-    total: typeof meta['total'] === 'number' ? meta['total'] : data.length,
+    total: typeof meta['total'] === 'number' ? meta['total'] : rawList.length,
     sortApplied: meta['sort'] ? String(meta['sort']) : undefined,
+    hasMore,
+    nextCursor,
   };
 }
 

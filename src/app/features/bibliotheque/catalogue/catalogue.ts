@@ -115,9 +115,9 @@ export class Catalogue implements OnInit {
       this.error.set(null);
     }
     try {
-      const docs = await this.docsRepo.getDocuments();
-      this.documents.set(docs);
-      this.groupMatieres(docs);
+      const page = await this.docsRepo.getDocuments({}, undefined, 50);
+      this.documents.set([...page.items]);
+      this.groupMatieres([...page.items]);
     } catch (e) {
       if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set('Impossible de charger le catalogue.');

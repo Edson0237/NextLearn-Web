@@ -139,17 +139,13 @@ export class OfflineLibrary implements OnInit {
     await this.mesurerStockage();
 
     try {
-      const [ids, docs, favoris, avancement] = await Promise.all([
+      const [ids, favoris, avancement] = await Promise.all([
         this.offlineRepo.getOfflineIds().catch(() => new Set<string>()),
-        this.docsRepo.getDocuments(),
         this.favorisRepo.getFavorites().catch(() => [] as DocumentModel[]),
         this.lectures.getAll().catch(() => new Map<string, LectureProgress>()),
       ]);
       this.offlineIds.set(new Set([...locaux, ...ids]));
-      const fusion = new Map<string, DocumentModel>();
-      for (const f of fichesLocales) fusion.set(f.id, f);
-      for (const d of docs) fusion.set(d.id, d);
-      this.documents.set([...fusion.values()]);
+      this.documents.set([...fichesLocales]);
       this.favoris.set(favoris);
       this.progression.set(avancement);
     } catch {

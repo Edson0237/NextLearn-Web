@@ -117,13 +117,15 @@ export class BibliothequeHome implements OnInit {
   });
 
   private static readonly PAS_AFFICHAGE = 30;
+  protected readonly nextCursor = signal<string | null>(null);
+  protected readonly hasMoreServer = signal<boolean>(false);
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
   protected readonly limiteAffichee = signal<number>(BibliothequeHome.PAS_AFFICHAGE);
   protected readonly visibleDocuments = computed(() =>
     this.filteredDocuments().slice(0, this.limiteAffichee()),
   );
   protected readonly aPlusDeDocuments = computed(
-    () => this.filteredDocuments().length > this.limiteAffichee(),
+    () => this.hasMoreServer() || this.filteredDocuments().length > this.limiteAffichee(),
   );
 
   constructor() {
@@ -154,12 +156,31 @@ export class BibliothequeHome implements OnInit {
           this.correspond(d, type, matiere, true),
         ),
       );
-      untracked(() => this.limiteAffichee.set(BibliothequeHome.PAS_AFFICHAGE));
+      untracked(() => this.limiteAffichee.set(this.documents().length || BibliothequeHome.PAS_AFFICHAGE));
     });
   }
 
-  protected afficherPlus(): void {
-    this.limiteAffichee.update((n) => n + BibliothequeHome.PAS_AFFICHAGE);
+  protected async afficherPlus(): Promise<void> {
+    const cursor = this.nextCursor();
+    if (cursor && this.hasMoreServer()) {
+      try {
+        const type = this.selectedType();
+        const matiere = this.selectedMatiere();
+        const page = await this.docsRepo.getDocuments(
+          { type: type || undefined, matiereId: matiere || undefined },
+          cursor,
+          20,
+        );
+        this.documents.update((docs) => [...docs, ...page.items]);
+        this.nextCursor.set(page.nextCursor ?? null);
+        this.hasMoreServer.set(Boolean(page.hasMore));
+        this.limiteAffichee.set(this.documents().length);
+      } catch {
+        this.limiteAffichee.update((n) => n + BibliothequeHome.PAS_AFFICHAGE);
+      }
+    } else {
+      this.limiteAffichee.update((n) => n + BibliothequeHome.PAS_AFFICHAGE);
+    }
   }
 
   /** Un document passe-t-il ces filtres ? Le texte saisi s'applique toujours si `avecTexte`. */
@@ -192,8 +213,16 @@ export class BibliothequeHome implements OnInit {
       this.error.set(null);
     }
     try {
-      const docs = await this.docsRepo.getDocuments();
-      this.documents.set(docs);
+      const type = this.selectedType();
+      const matiere = this.selectedMatiere();
+      const page = await this.docsRepo.getDocuments(
+        { type: type || undefined, matiereId: matiere || undefined },
+        undefined,
+        20,
+      );
+      this.documents.set([...page.items]);
+      this.nextCursor.set(page.nextCursor ?? null);
+      this.hasMoreServer.set(Boolean(page.hasMore));
     } catch {
       const fichesLocales = this.stockage.fiches();
       if (fichesLocales.length > 0) {

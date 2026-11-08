@@ -69,9 +69,9 @@ export class Matiere implements OnInit {
       this.error.set(null);
     }
     try {
-      const docs = await this.docsRepo.getDocuments();
-      this.documents.set(docs);
-      const first = docs.find((d) => d.matiereId === this.matiereId());
+      const page = await this.docsRepo.getDocuments({ matiereId: this.matiereId() }, undefined, 50);
+      this.documents.set([...page.items]);
+      const first = page.items.find((d) => d.matiereId === this.matiereId());
       if (first) this.matiereNom.set(first.matiere);
     } catch (e) {
       if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
