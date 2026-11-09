@@ -5,7 +5,7 @@ import { AuthRepository } from '../repositories/auth-repository';
 import { SessionExpiredService } from '../../network/services/session-expired.service';
 import { VerificationService } from '../../verification/services/verification.service';
 import { VerificationRepository } from '../../verification/repositories/verification-repository';
-import { VerificationStatut, determinerDestinationVerification } from '../../models/verification.model';
+import { VerificationStatut, determinerDestinationVerification, estApprouve } from '../../models/verification.model';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/services/verrouillage-app';
 import { Cycle, niveauCourt, NiveauEtude, NiveauxDuCycle, UserModel } from '../../models/user.model';
@@ -108,7 +108,12 @@ export class AuthService {
       const locked = !!user && this.repo.hasLocalPin() && this.verrouillage.actif();
       if (user) {
         this.verification.syncFromUser(user);
-        await this.verification.refresh();
+        const verif = await this.verification.refresh();
+        if (estApprouve(verif.statut)) {
+          if (user.verificationStatus && user.verificationStatus !== 'approuve') {
+            this.marquerCompteVerifie();
+          }
+        }
       }
       await minSplash;
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user, isLocked: locked });

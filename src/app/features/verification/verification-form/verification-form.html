@@ -18,7 +18,7 @@
       <div class="verif__carte verif__carte--centre">
         <nl-icon name="check_circle" [size]="48" />
         <p>{{ 'pwaCompteEstVerifie' | t }}</p>
-        <button type="button" class="verif__cta" (click)="allerAccueil()">{{ 'actionRetour' | t }}</button>
+        <button type="button" class="verif__cta" (click)="allerAccueil()">{{ 'docContinuer' | t }}</button>
       </div>
     } @else {
       <form class="verif__form" (submit)="$event.preventDefault(); submit()">

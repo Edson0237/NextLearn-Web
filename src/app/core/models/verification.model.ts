@@ -52,8 +52,19 @@ export interface VerificationState {
 export function bloqueAcces(v: VerificationState, user?: { role?: string; verificationStatus?: string } | null): boolean {
   if (user?.role && user.role !== 'etudiant' && user.role !== 'user') return false;
   const userStatus = user?.verificationStatus ? String(user.verificationStatus).toLowerCase().trim() : null;
+
+  // Si approuvé côté serveur ou côté profil : jamais bloqué
+  if (
+    userStatus === 'approuve' ||
+    userStatus === 'approved' ||
+    estApprouve(v.statut) ||
+    (!v.requis && userStatus !== 'requis')
+  ) {
+    return false;
+  }
+
   if (userStatus) {
-    return userStatus !== 'approuve' && userStatus !== 'approved';
+    return true;
   }
   return v.requis && !estApprouve(v.statut);
 }
@@ -73,31 +84,42 @@ export function determinerDestinationVerification(
     return null;
   }
 
-  // 1. Contrôle par le statut porté sur l'utilisateur
   const userStatus = user?.verificationStatus ? String(user.verificationStatus).toLowerCase().trim() : null;
-  if (userStatus) {
-    if (userStatus === 'approuve' || userStatus === 'approved') {
-      return null;
-    }
-    if (
-      userStatus === 'requis' ||
-      userStatus === 'infos_complementaires_requises' ||
-      userStatus === 'rejete' ||
-      userStatus === 'rejected'
-    ) {
-      return 'verification';
-    }
-    if (
-      userStatus === 'en_attente' ||
-      userStatus === 'pending' ||
-      userStatus === 'en_revue' ||
-      userStatus === 'in_review'
-    ) {
-      return 'verification/attente';
-    }
+
+  // 1. Dossier approuvé (côté serveur ou profil local) ou compte standard sans contrainte : accès libre !
+  if (
+    userStatus === 'approuve' ||
+    userStatus === 'approved' ||
+    estApprouve(verif.statut) ||
+    (!verif.requis && userStatus !== 'requis')
+  ) {
+    return null;
   }
 
-  // 2. Contrôle par le service de vérification
+  // 2. Dossier en cours de revue / attente de décision administrative
+  if (
+    verif.statut === VerificationStatut.enAttente ||
+    verif.statut === VerificationStatut.enRevue ||
+    userStatus === 'en_attente' ||
+    userStatus === 'pending' ||
+    userStatus === 'en_revue' ||
+    userStatus === 'in_review'
+  ) {
+    return 'verification/attente';
+  }
+
+  // 3. Dossier demandant une action de l'étudiant (dépôt initial, complément ou resoumission)
+  if (
+    (verif.requis && demandeAction(verif.statut)) ||
+    userStatus === 'requis' ||
+    userStatus === 'infos_complementaires_requises' ||
+    userStatus === 'rejete' ||
+    userStatus === 'rejected'
+  ) {
+    return 'verification';
+  }
+
+  // 4. Par défaut, si requis mais non approuvé
   if (verif.requis && !estApprouve(verif.statut)) {
     return demandeAction(verif.statut) ? 'verification' : 'verification/attente';
   }

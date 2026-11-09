@@ -101,8 +101,15 @@ export class VerificationForm implements OnInit {
       ]);
       this.types.set(types);
       this.status.set(status);
+      if (status && (status.statut === VerificationStatut.approuve || !status.requis)) {
+        this.auth.marquerCompteVerifie();
+        this.toast.succes(tr('pwaCompteVerifie', 'Ton compte a été validé ! Bienvenue sur NextLearn.'));
+        await this.router.navigate(['/app', AppRoutes.home], { replaceUrl: true });
+        return;
+      }
       if (status && (status.statut === VerificationStatut.enAttente || status.statut === VerificationStatut.enRevue)) {
         await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
+        return;
       }
     } finally {
       this.loading.set(false);
@@ -217,8 +224,9 @@ export class VerificationForm implements OnInit {
    * honnête est de quitter ce compte - par exemple pour en prendre un autre.
    */
   protected async sortir(): Promise<void> {
-    if (!this.bloque()) {
-      void this.router.navigate(['/app', AppRoutes.profil]);
+    if (this.dossierApprouve() || !this.bloque()) {
+      this.auth.marquerCompteVerifie();
+      void this.router.navigate(['/app', AppRoutes.home]);
       return;
     }
     const confirme = await this.actions.confirmer({
@@ -235,6 +243,7 @@ export class VerificationForm implements OnInit {
   }
 
   protected allerAccueil(): void {
+    this.auth.marquerCompteVerifie();
     void this.router.navigate(['/app', AppRoutes.home]);
   }
 }
