@@ -8,10 +8,12 @@ import { QuizRepository } from '../../../core/quiz';
 import { QuizAnswerDetail, QuizModel, QuizQuestion, QuizSubmitResult } from '../../../core/quiz';
 import { AppRoutes } from '../../../core/router';
 
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+
 @Component({
   selector: 'nl-quiz-session',
   standalone: true,
-  imports: [TraductionPipe, CommonModule, Icon, Button],
+  imports: [TraductionPipe, CommonModule, Icon, Button, Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './quiz-session.html',
   styleUrl: './quiz-session.scss',

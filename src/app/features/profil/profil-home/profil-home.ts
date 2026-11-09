@@ -14,7 +14,7 @@ import { Badge } from '../../../shared/ui/badge/badge';
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { SettingsList } from '../settings-list/settings-list';
 import { Failure } from '../../../core/models';
-import { nomComplet, initiales, libelleNiveau } from '../../../core/models';
+import { nomComplet, initiales, libelleNiveau, NiveauEtude } from '../../../core/models';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { AppRoutes } from '../../../core/router';
 import { optimiserAvatar } from '../../../shared/services/image-optimiseur';
@@ -158,6 +158,47 @@ export class ProfilHome {
       } else {
         this.toast.info(tr('pwaSupprimerPhoto', 'Supprimer la photo') + ' : effectuée.');
       }
+    }
+  }
+
+  protected async ouvrirChoixNiveau(): Promise<void> {
+    const u = this.user();
+    if (!u) return;
+    try {
+      const res = await this.auth.niveauxDuCycle();
+      const niveaux = res.niveaux.length > 0
+        ? res.niveaux
+        : [
+            { code: 'N1', label: libelleNiveau(NiveauEtude.n1, u.cycle) },
+            { code: 'N2', label: libelleNiveau(NiveauEtude.n2, u.cycle) },
+            { code: 'N3', label: libelleNiveau(NiveauEtude.n3, u.cycle) },
+            { code: 'N4', label: libelleNiveau(NiveauEtude.n4, u.cycle) },
+            { code: 'N5', label: libelleNiveau(NiveauEtude.n5, u.cycle) },
+          ];
+
+      const options: ActionOption<string>[] = niveaux.map((n) => ({
+        value: n.code,
+        label: n.label + (n.code === u.niveau ? ' (Actuel)' : ''),
+        icon: n.code === u.niveau ? 'check' : 'school',
+      }));
+
+      const choix = await this.actions.choisir<string>({
+        title: tr('pwaChangerNiveau', 'Changer de niveau'),
+        options,
+      });
+
+      if (!choix || choix === u.niveau) return;
+
+      const err = await this.auth.changerNiveau(choix);
+      if (err) {
+        this.toast.erreur(err);
+      } else {
+        const nomNiveau = niveaux.find((n) => n.code === choix)?.label ?? choix;
+        this.toast.succes(`Niveau mis à jour : ${nomNiveau}. Les cours sont adaptés.`);
+        this.fraicheur.tick();
+      }
+    } catch (e: any) {
+      this.toast.erreur(e?.message || 'Impossible de changer le niveau.');
     }
   }
 

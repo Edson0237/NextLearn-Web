@@ -21,6 +21,18 @@
     padding: var(--space-lg) var(--space-page) var(--space-xxxl);
   }
 
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  &__skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
   &__chargement {
     display: flex;
     flex-direction: column;

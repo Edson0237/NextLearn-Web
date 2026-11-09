@@ -16,15 +16,26 @@
        vit maintenant dans une carte, comme le reste de la page. -->
   @if (user(); as u) {
     <section class="nl-prf__identite">
-      <nl-avatar
-        class="nl-prf__avatar"
-        [initials]="initiales()"
-        [photoUrl]="u.avatarUrl"
-        [size]="72"
-        [editable]="true"
-        [onDarkBackground]="false"
-        (edit)="ouvrirChoixPhoto()"
-      />
+      <div class="nl-prf__avatar-col">
+        <nl-avatar
+          class="nl-prf__avatar"
+          [initials]="initiales()"
+          [photoUrl]="u.avatarUrl"
+          [size]="72"
+          [editable]="true"
+          [onDarkBackground]="false"
+          (edit)="ouvrirChoixPhoto()"
+        />
+        <button
+          type="button"
+          class="nl-prf__btn-edit-photo"
+          (click)="ouvrirChoixPhoto()"
+          [attr.aria-label]="'pwaModifierPhoto' | t"
+        >
+          <nl-icon name="photo_camera" [size]="14" />
+          <span>{{ 'pwaModifierPhoto' | t }}</span>
+        </button>
+      </div>
       <input
         #avatarInput
         type="file"
@@ -40,7 +51,17 @@
             <nl-badge [capitales]="true">{{ libelleCycle() }}</nl-badge>
           }
           @if (libelleNiveau()) {
-            <nl-badge ton="primaire" [capitales]="true">{{ libelleNiveau() }}</nl-badge>
+            <button
+              type="button"
+              class="nl-prf__badge-btn"
+              (click)="ouvrirChoixNiveau()"
+              [attr.aria-label]="'pwaChangerNiveau' | t"
+              [title]="'pwaChangerNiveau' | t"
+            >
+              <nl-badge ton="primaire" [capitales]="true" [icone]="'edit'">
+                {{ libelleNiveau() }}
+              </nl-badge>
+            </button>
           }
         </div>
         <p class="nl-prf__universite">
@@ -83,7 +104,7 @@
       </div>
     </div>
 
-    <app-settings-list [inline]="true" />
+    <app-settings-list [inline]="true" (modifierPhoto)="ouvrirChoixPhoto()" />
   </main>
 </div>
 

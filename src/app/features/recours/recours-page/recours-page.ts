@@ -9,10 +9,12 @@ import { RecoursRepository } from '../../../core/recours';
 import { EtatRecours, Recours, RecoursType } from '../../../core/recours';
 import { AppRoutes } from '../../../core/router';
 
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+
 @Component({
   selector: 'nl-recours-page',
   standalone: true,
-  imports: [TraductionPipe, CommonModule, FormsModule, Icon, Button],
+  imports: [TraductionPipe, CommonModule, FormsModule, Icon, Button, Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recours-page.html',
   styleUrl: './recours-page.scss',

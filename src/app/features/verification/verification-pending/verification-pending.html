@@ -3,7 +3,10 @@
 
   <div class="pending__corps">
     @if (loading()) {
-      <p class="pending__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="pending__skeleton" aria-busy="true" aria-live="polite">
+        <nl-skeleton height="180px" radius="var(--radius-lg)" />
+        <nl-skeleton height="120px" radius="var(--radius-lg)" />
+      </div>
     } @else {
       <section class="pending__hero" [attr.data-ton]="presentation().ton">
         <span class="pending__pastille"><nl-icon [name]="presentation().icone" [size]="34" /></span>

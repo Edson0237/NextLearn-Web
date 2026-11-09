@@ -70,9 +70,90 @@
     background: var(--bg-primary);
     text-align: left;
     cursor: pointer;
+    position: relative;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: color-mix(in srgb, var(--primary) 4%, var(--bg-primary));
+    }
 
     &--unread {
       background: color-mix(in srgb, var(--primary) 6%, var(--bg-primary));
+    }
+  }
+
+  &__item-delete {
+    flex: none;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    transition: color 0.15s ease, background 0.15s ease;
+
+    &:hover, &:focus-visible {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.08);
+    }
+  }
+
+  /* ── Squelettes de chargement shimmer ── */
+  &__skeleton-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  &__skeleton-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+  }
+
+  &__skeleton-vignette {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(100deg, var(--bg-secondary) 35%, var(--bg-canvas) 50%, var(--bg-secondary) 65%);
+    background-size: 200% 100%;
+    animation: nl-shimmer 1.5s ease-in-out infinite;
+  }
+
+  &__skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  &__skeleton-line {
+    border-radius: 4px;
+    background: linear-gradient(100deg, var(--bg-secondary) 35%, var(--bg-canvas) 50%, var(--bg-secondary) 65%);
+    background-size: 200% 100%;
+    animation: nl-shimmer 1.5s ease-in-out infinite;
+
+    &--cat {
+      width: 60px;
+      height: 10px;
+    }
+
+    &--title {
+      width: 75%;
+      height: 14px;
+    }
+
+    &--desc {
+      width: 90%;
+      height: 12px;
     }
   }
 

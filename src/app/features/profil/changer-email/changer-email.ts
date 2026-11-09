@@ -9,6 +9,8 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+
 type Ecran = 'chargement' | 'erreur' | 'accueil' | 'formulaire' | 'preuve' | 'nouvelle' | 'attente' | 'succes';
 
 /**
@@ -23,7 +25,7 @@ type Ecran = 'chargement' | 'erreur' | 'accueil' | 'formulaire' | 'preuve' | 'no
 @Component({
   selector: 'nl-changer-email',
   standalone: true,
-  imports: [TraductionPipe, Icon, PageBar],
+  imports: [TraductionPipe, Icon, PageBar, Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './changer-email.html',
   styleUrl: './changer-email.scss',

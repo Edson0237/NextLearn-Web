@@ -3,7 +3,11 @@
 
   <div class="verif__corps">
     @if (loading()) {
-      <p class="verif__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="verif__skeleton" aria-busy="true" aria-live="polite">
+        <nl-skeleton height="100px" radius="var(--radius-lg)" />
+        <nl-skeleton height="160px" radius="var(--radius-lg)" />
+        <nl-skeleton height="80px" radius="var(--radius-lg)" />
+      </div>
     } @else if (dossierEnCours()) {
       <div class="verif__carte verif__carte--centre">
         <nl-icon name="schedule" [size]="48" />

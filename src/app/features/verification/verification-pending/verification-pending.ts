@@ -18,6 +18,8 @@ import {
 } from '../../../core/models';
 import { AppRoutes } from '../../../core/router';
 
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+
 type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';
 
 /**
@@ -27,7 +29,7 @@ type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';
 @Component({
   selector: 'nl-verification-pending',
   standalone: true,
-  imports: [TraductionPipe, Icon, PageBar],
+  imports: [TraductionPipe, Icon, PageBar, Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './verification-pending.html',
   styleUrl: './verification-pending.scss',

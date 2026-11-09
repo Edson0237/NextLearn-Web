@@ -553,6 +553,7 @@ export class AuthService {
     try {
       const utilisateur = await this.profilRepo.changerNiveau(code);
       this.patch({ isLoading: false, user: utilisateur });
+      void this.invaliderCacheProfil();
       return null;
     } catch (e) {
       this.patch({ isLoading: false, error: this.messageErreur(e, 'Niveau non enregistré.') });

@@ -11,7 +11,18 @@
 
   <div class="notifs__corps">
     @if (loading()) {
-      <p class="notifs__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="notifs__skeleton-list" aria-busy="true" aria-live="polite">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <div class="notifs__skeleton-item">
+            <div class="notifs__skeleton-vignette"></div>
+            <div class="notifs__skeleton-content">
+              <div class="notifs__skeleton-line notifs__skeleton-line--cat"></div>
+              <div class="notifs__skeleton-line notifs__skeleton-line--title"></div>
+              <div class="notifs__skeleton-line notifs__skeleton-line--desc"></div>
+            </div>
+          </div>
+        }
+      </div>
     } @else if (error()) {
       <div class="notifs__etat notifs__etat--erreur">
         <p>{{ error() }}</p>
@@ -26,10 +37,14 @@
     } @else {
       <div class="notifs__liste">
         @for (n of notifications(); track n.id; let i = $index) {
-          <button [nlCascadeEnter]="i"
+          <div [nlCascadeEnter]="i"
             class="notifs__item"
             [class.notifs__item--unread]="!n.lu"
-            (click)="open(n)">
+            role="button"
+            tabindex="0"
+            (click)="open(n)"
+            (keydown.enter)="open(n)"
+            (keydown.space)="open(n)">
             <span class="notifs__vignette" aria-hidden="true">
               <nl-icon [name]="iconeDe(n)" [size]="20" />
             </span>
@@ -42,7 +57,14 @@
             @if (!n.lu) {
               <span class="notifs__dot" [attr.aria-label]="'notifsNonLue' | t"></span>
             }
-          </button>
+            <button
+              type="button"
+              class="notifs__item-delete"
+              [attr.aria-label]="'pwaSupprimerNotification' | t"
+              (click)="supprimerNotification(n, $event)">
+              <nl-icon name="delete" [size]="18" />
+            </button>
+          </div>
         }
       </div>
     }

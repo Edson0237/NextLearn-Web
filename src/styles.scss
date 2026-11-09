@@ -256,12 +256,17 @@ section { position: relative; }
 }
 
 /* ============================================
-   SCROLLBAR
+   SCROLLBAR (Masquage barre latérale PWA mobile-first)
    ============================================ */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--gray-100); }
-::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+html, body, * {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE & Edge */
+}
+::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
 ::selection { background: rgba(26,73,125,0.2); color: var(--primary-dark); }
 
 /* ============================================

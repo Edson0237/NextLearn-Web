@@ -11,7 +11,11 @@
 
   <div class="matiere__corps">
     @if (loading()) {
-      <p class="matiere__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="matiere__liste" aria-busy="true" aria-live="polite">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <nl-document-skeleton />
+        }
+      </div>
     } @else if (error()) {
       <div class="matiere__etat matiere__etat--erreur">
         <p>{{ error() }}</p>

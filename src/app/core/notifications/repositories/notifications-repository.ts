@@ -34,4 +34,8 @@ export class NotificationsRepository {
   async markAllAsRead(): Promise<void> {
     await firstValueFrom(this.http.put('/api/notifications/read-all', {}));
   }
+
+  async deleteNotification(id: string): Promise<void> {
+    await firstValueFrom(this.http.delete(`/api/notifications/${id}`));
+  }
 }

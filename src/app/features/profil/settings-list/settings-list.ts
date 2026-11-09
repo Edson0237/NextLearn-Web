@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { InstallationService } from '../../../core/pwa';
@@ -20,6 +20,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router';
 import { VerrouillageApp } from '../../../core/preferences';
 import { VERSION_APP } from '../../../core/version';
+import { Fraicheur } from '../../../shared/services/fraicheur';
 import { PinDialog } from '../dialogues/pin-dialog/pin-dialog';
 import { SupportDialog } from '../dialogues/support-dialog/support-dialog';
 
@@ -81,8 +82,10 @@ export class SettingsList implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly actions = inject(FeuilleActionService);
   private readonly selections = inject(FeuilleSelectionService);
+  private readonly fraicheur = inject(Fraicheur);
 
   readonly inline = input(false);
+  readonly modifierPhoto = output<void>();
 
 
   protected readonly user = computed(() => this.auth.state().user);
@@ -137,6 +140,25 @@ export class SettingsList implements OnInit {
         titre: tr('profilCompte', 'Compte'),
         lignes: [
           {
+            icone: 'photo_camera',
+            titre: tr('pwaPhotoProfil', 'Photo de profil'),
+            sousTitre: tr('pwaModifierRecadrerPhoto', 'Modifier ou recadrer la photo'),
+            action: () => {
+              if (this.inline()) {
+                this.modifierPhoto.emit();
+              } else {
+                void this.router.navigate(['/app', AppRoutes.profil]);
+              }
+            },
+          },
+          {
+            icone: 'school',
+            titre: tr('profilNiveauTitre', 'Niveau d’études'),
+            sousTitre: tr('pwaChangerNiveauAide', 'Adapter les cours et épreuves à mon niveau'),
+            valeur: u?.niveau ? this.libelleNiveau(u.niveau, u.cycle) : undefined,
+            action: () => void this.ouvrirChoixNiveau(),
+          },
+          {
             icone: 'alternate_email', titre: tr('aproposLigneEmail', 'E-mail'), sousTitre: tr('emailModifierAide', 'Voir et modifier mon adresse e-mail'),
             valeur: u?.email, action: () => void this.router.navigateByUrl('/app/' + AppRoutes.changerEmail),
           },
@@ -162,11 +184,6 @@ export class SettingsList implements OnInit {
           {
             icone: 'devices', titre: tr('sessionsTitre', 'Appareils connectés'), sousTitre: tr('pwaGererSessions', 'Gérer tes sessions actives'),
             action: () => void this.router.navigateByUrl('/app/' + AppRoutes.sessions),
-          },
-          {
-            icone: 'delete_forever', titre: tr('suppressionTitre', 'Supprimer mon compte'), sousTitre: tr('pwaActionIrreversible', 'Action irréversible'),
-            destructive: true,
-            action: () => void this.router.navigateByUrl('/app/' + AppRoutes.deleteAccount),
           },
         ],
       },
@@ -276,11 +293,23 @@ export class SettingsList implements OnInit {
           },
         ],
       },
+      {
+        titre: tr('zoneDanger', 'Zone de danger'),
+        lignes: [
+          {
+            icone: 'delete_forever',
+            titre: tr('suppressionTitre', 'Supprimer mon compte'),
+            sousTitre: tr('pwaActionIrreversible', 'Action irréversible'),
+            destructive: true,
+            action: () => void this.router.navigateByUrl('/app/' + AppRoutes.deleteAccount),
+          },
+        ],
+      },
     ];
   });
 
   private libelleNiveau(niveau: string, cycle?: string): string {
-    const rang = { n1: 1, n2: 2, n3: 3, n4: 4, n5: 5 }[niveau] ?? 0;
+    const rang = { n1: 1, n2: 2, n3: 3, n4: 4, n5: 5 }[niveau.toLowerCase()] ?? 0;
     if (!rang) return niveau.toUpperCase();
     switch (cycle) {
       case 'master': return `Master ${rang - 3}`;
@@ -289,6 +318,47 @@ export class SettingsList implements OnInit {
       case 'ingenieur': return `Ingénieur ${rang}`;
       case 'prepa': return `Prépa ${rang}`;
       default: return `Niveau ${rang}`;
+    }
+  }
+
+  protected async ouvrirChoixNiveau(): Promise<void> {
+    const u = this.user();
+    if (!u) return;
+    try {
+      const res = await this.auth.niveauxDuCycle();
+      const niveaux = res.niveaux.length > 0
+        ? res.niveaux
+        : [
+            { code: 'N1', label: this.libelleNiveau('N1', u.cycle) },
+            { code: 'N2', label: this.libelleNiveau('N2', u.cycle) },
+            { code: 'N3', label: this.libelleNiveau('N3', u.cycle) },
+            { code: 'N4', label: this.libelleNiveau('N4', u.cycle) },
+            { code: 'N5', label: this.libelleNiveau('N5', u.cycle) },
+          ];
+
+      const options: ActionOption<string>[] = niveaux.map((n) => ({
+        value: n.code,
+        label: n.label + (n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? ' (Actuel)' : ''),
+        icon: n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? 'check' : 'school',
+      }));
+
+      const choix = await this.actions.choisir<string>({
+        title: tr('pwaChangerNiveau', 'Changer de niveau'),
+        options,
+      });
+
+      if (!choix || choix.toUpperCase() === (u.niveau ?? '').toUpperCase()) return;
+
+      const err = await this.auth.changerNiveau(choix);
+      if (err) {
+        this.toast.erreur(err);
+      } else {
+        const nomNiveau = niveaux.find((n) => n.code.toUpperCase() === choix.toUpperCase())?.label ?? choix;
+        this.toast.succes(`Niveau mis à jour : ${nomNiveau}. Les cours sont adaptés.`);
+        this.fraicheur.tick();
+      }
+    } catch (e: any) {
+      this.toast.erreur(e?.message || 'Impossible de changer le niveau.');
     }
   }
 

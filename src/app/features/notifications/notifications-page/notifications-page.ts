@@ -12,6 +12,8 @@ import { categorieDeNotification, NotificationModel, routeDeNotification } from 
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { AppRoutes } from '../../../core/router';
 
+import { ToastService } from '../../../shared/ui/toast/toast';
+
 @Component({
   selector: 'nl-notifications-page',
   standalone: true,
@@ -24,6 +26,7 @@ export class NotificationsPage implements OnInit {
   private readonly router = inject(Router);
   private readonly notifRepo = inject(NotificationsRepository);
   private readonly etat = inject(NotificationsEtat);
+  private readonly toast = inject(ToastService);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -75,6 +78,20 @@ export class NotificationsPage implements OnInit {
       this.etat.toutLu();
     } catch {
       // Silencieux.
+    }
+  }
+
+  protected async supprimerNotification(n: NotificationModel, event?: Event): Promise<void> {
+    event?.stopPropagation();
+    try {
+      await this.notifRepo.deleteNotification(n.id);
+      this.notifications.update((list) => list.filter((item) => item.id !== n.id));
+      if (!n.lu) {
+        this.etat.retirer();
+      }
+      this.toast.succes('Notification supprimée');
+    } catch {
+      this.toast.erreur('Impossible de supprimer la notification');
     }
   }
 

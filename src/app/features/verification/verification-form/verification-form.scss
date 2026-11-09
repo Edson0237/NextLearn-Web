@@ -17,6 +17,13 @@
   padding: var(--space-md) var(--space-page) var(--space-xxxl);
 }
 
+.verif__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
 .verif__etat {
   margin: var(--space-xl) 0;
   text-align: center;

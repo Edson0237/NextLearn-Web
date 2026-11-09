@@ -11,10 +11,12 @@ import { ProgressionRepository } from '../../../core/progression';
 import { ProgressionStats, DayActivity, MatiereActivity, BadgeModel, StudySession } from '../../../core/progression';
 import { AppRoutes } from '../../../core/router';
 
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+
 @Component({
   selector: 'nl-progression-dashboard',
   standalone: true,
-  imports: [TraductionPipe, CommonModule, Icon, AnimatedNumber, AppHeader],
+  imports: [TraductionPipe, CommonModule, Icon, AnimatedNumber, AppHeader, Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './progression-dashboard.html',
   styleUrl: './progression-dashboard.scss',

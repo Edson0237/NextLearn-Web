@@ -23,10 +23,12 @@ import { optimiserJustificatif } from '../../../shared/services/image-optimiseur
  * d'un établissement. Le parcours (école, filière, niveau) a déjà été donné à
  * l'inscription : il est repris tel quel, on ne le redemande pas.
  */
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
+
 @Component({
   selector: 'nl-verification-form',
   standalone: true,
-  imports: [TraductionPipe, Icon, PageBar],
+  imports: [TraductionPipe, Icon, PageBar, Skeleton],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './verification-form.html',
   styleUrl: './verification-form.scss',

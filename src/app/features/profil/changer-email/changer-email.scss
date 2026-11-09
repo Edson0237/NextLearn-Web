@@ -124,6 +124,13 @@
   color: var(--text-secondary);
 }
 
+.nl-mail__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
 .nl-mail__etat {
   text-align: center;
   color: var(--text-muted);

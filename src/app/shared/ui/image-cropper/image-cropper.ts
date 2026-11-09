@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   input,
   OnDestroy,
@@ -11,6 +12,9 @@ import {
 } from '@angular/core';
 import { TraductionPipe } from '../../../core/i18n';
 import { Icon } from '../icon/icon';
+
+const VIEWPORT_SIZE = 280;
+const OUTPUT_SIZE = 512;
 
 @Component({
   selector: 'nl-image-cropper',
@@ -28,12 +32,27 @@ export class ImageCropper implements OnInit, OnDestroy {
   protected readonly previewCanvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
   protected readonly imageUrl = signal<string | null>(null);
+  protected readonly naturalWidth = signal<number>(VIEWPORT_SIZE);
+  protected readonly naturalHeight = signal<number>(VIEWPORT_SIZE);
   protected readonly zoom = signal<number>(1);
   protected readonly offsetX = signal<number>(0);
   protected readonly offsetY = signal<number>(0);
   protected readonly loading = signal<boolean>(true);
   protected readonly processing = signal<boolean>(false);
   protected readonly error = signal<string | null>(null);
+
+  protected readonly baseScale = computed(() => {
+    const nw = this.naturalWidth();
+    const nh = this.naturalHeight();
+    return Math.max(VIEWPORT_SIZE / nw, VIEWPORT_SIZE / nh);
+  });
+
+  protected readonly currentScale = computed(() => this.baseScale() * this.zoom());
+  protected readonly displayedWidth = computed(() => this.naturalWidth() * this.currentScale());
+  protected readonly displayedHeight = computed(() => this.naturalHeight() * this.currentScale());
+
+  protected readonly imgLeft = computed(() => (VIEWPORT_SIZE - this.displayedWidth()) / 2 + this.offsetX());
+  protected readonly imgTop = computed(() => (VIEWPORT_SIZE - this.displayedHeight()) / 2 + this.offsetY());
 
   private imageElement: HTMLImageElement | null = null;
   private isDragging = false;
@@ -65,6 +84,8 @@ export class ImageCropper implements OnInit, OnDestroy {
       const img = new Image();
       img.onload = () => {
         this.imageElement = img;
+        this.naturalWidth.set(img.naturalWidth || img.width || VIEWPORT_SIZE);
+        this.naturalHeight.set(img.naturalHeight || img.height || VIEWPORT_SIZE);
         this.loading.set(false);
         this.reinitialiserCadrage();
       };
@@ -87,7 +108,6 @@ export class ImageCropper implements OnInit, OnDestroy {
   }
 
   private reinitialiserCadrage(): void {
-    if (!this.imageElement) return;
     this.zoom.set(1);
     this.offsetX.set(0);
     this.offsetY.set(0);
@@ -142,9 +162,6 @@ export class ImageCropper implements OnInit, OnDestroy {
     this.processing.set(true);
 
     try {
-      const OUTPUT_SIZE = 512;
-      const VIEWPORT_SIZE = 280;
-
       const canvas = document.createElement('canvas');
       canvas.width = OUTPUT_SIZE;
       canvas.height = OUTPUT_SIZE;
@@ -158,31 +175,13 @@ export class ImageCropper implements OnInit, OnDestroy {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
 
-      const img = this.imageElement;
-      const naturalWidth = img.naturalWidth || img.width;
-      const naturalHeight = img.naturalHeight || img.height;
-
-      // Base scale pour que l'image tienne dans le viewport de 280px
-      const baseScale = Math.max(VIEWPORT_SIZE / naturalWidth, VIEWPORT_SIZE / naturalHeight);
-      const currentScale = baseScale * this.zoom();
-
-      const displayedWidth = naturalWidth * currentScale;
-      const displayedHeight = naturalHeight * currentScale;
-
-      // Position centrée dans le viewport
-      const centerOffsetX = (VIEWPORT_SIZE - displayedWidth) / 2 + this.offsetX();
-      const centerOffsetY = (VIEWPORT_SIZE - displayedHeight) / 2 + this.offsetY();
-
-      // Ratio d'export vers 512px
       const exportRatio = OUTPUT_SIZE / VIEWPORT_SIZE;
+      const drawX = this.imgLeft() * exportRatio;
+      const drawY = this.imgTop() * exportRatio;
+      const drawW = this.displayedWidth() * exportRatio;
+      const drawH = this.displayedHeight() * exportRatio;
 
-      ctx.drawImage(
-        img,
-        centerOffsetX * exportRatio,
-        centerOffsetY * exportRatio,
-        displayedWidth * exportRatio,
-        displayedHeight * exportRatio,
-      );
+      ctx.drawImage(this.imageElement, drawX, drawY, drawW, drawH);
 
       canvas.toBlob(
         (blob) => {
@@ -196,7 +195,7 @@ export class ImageCropper implements OnInit, OnDestroy {
           this.cropped.emit(croppedFile);
         },
         'image/jpeg',
-        0.88,
+        0.9,
       );
     } catch {
       this.processing.set(false);

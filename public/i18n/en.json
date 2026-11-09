@@ -1373,5 +1373,10 @@
   "actionTerminer": "Done",
   "scanCadrageAuto": "Auto framing",
   "scanCadrageAutoOff": "Auto framing off: crop by hand after capture",
-  "emailRegleEcole": "You can use your school address or a personal address (Gmail, Yahoo…). An address from another institution is not accepted."
+  "emailRegleEcole": "You can use your school address or a personal address (Gmail, Yahoo…). An address from another institution is not accepted.",
+  "pwaModifierPhoto": "Change photo",
+  "pwaModifierRecadrerPhoto": "Change or crop photo",
+  "zoneDanger": "Danger zone",
+  "pwaSupprimerNotification": "Delete notification",
+  "pwaChangerNiveauAide": "Filter courses and exams for my academic level"
 }

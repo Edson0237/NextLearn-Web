@@ -8,7 +8,11 @@
 
   <div class="favoris__corps">
     @if (loading()) {
-      <p class="favoris__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="favoris__liste" aria-busy="true" aria-live="polite">
+        @for (i of [1, 2, 3, 4]; track i) {
+          <nl-document-skeleton />
+        }
+      </div>
     } @else if (error()) {
       <div class="favoris__etat favoris__etat--erreur">
         <p>{{ error() }}</p>

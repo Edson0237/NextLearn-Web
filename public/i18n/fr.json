@@ -1373,5 +1373,10 @@
   "actionTerminer": "Terminer",
   "scanCadrageAuto": "Cadrage auto",
   "scanCadrageAutoOff": "Cadrage automatique désactivé : cadre à la main après la prise",
-  "emailRegleEcole": "Tu peux utiliser l’adresse de ton école ou une adresse personnelle (Gmail, Yahoo…). L’adresse d’un autre établissement n’est pas acceptée."
+  "emailRegleEcole": "Tu peux utiliser l’adresse de ton école ou une adresse personnelle (Gmail, Yahoo…). L’adresse d’un autre établissement n’est pas acceptée.",
+  "pwaModifierPhoto": "Modifier la photo",
+  "pwaModifierRecadrerPhoto": "Modifier ou recadrer la photo",
+  "zoneDanger": "Zone de danger",
+  "pwaSupprimerNotification": "Supprimer la notification",
+  "pwaChangerNiveauAide": "Adapter les cours et épreuves à mon niveau"
 }

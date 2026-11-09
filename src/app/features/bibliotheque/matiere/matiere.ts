@@ -16,10 +16,12 @@ import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
 
+import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-skeleton';
+
 @Component({
   selector: 'nl-matiere',
   standalone: true,
-  imports: [TypeDocumentPipe, CascadeEnter, TraductionPipe, CommonModule, DocumentCard, Icon, EmptyState, Button],
+  imports: [TypeDocumentPipe, CascadeEnter, TraductionPipe, CommonModule, DocumentCard, DocumentSkeleton, Icon, EmptyState, Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './matiere.html',
   styleUrl: './matiere.scss',

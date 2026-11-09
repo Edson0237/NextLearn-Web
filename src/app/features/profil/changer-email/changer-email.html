@@ -19,7 +19,10 @@
 
   @switch (ecran()) {
     @case ('chargement') {
-      <p class="nl-mail__etat" role="status">{{ 'chargementEnCours' | t }}</p>
+      <div class="nl-mail__skeleton" aria-busy="true" aria-live="polite">
+        <nl-skeleton height="90px" radius="var(--radius-lg)" />
+        <nl-skeleton height="120px" radius="var(--radius-lg)" />
+      </div>
     }
 
     @case ('erreur') {

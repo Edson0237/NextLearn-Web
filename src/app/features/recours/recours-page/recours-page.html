@@ -8,7 +8,11 @@
 
   <div class="recours__corps">
     @if (loading()) {
-      <p class="recours__etat">{{ 'chargementEnCours' | t }}</p>
+      <div class="recours__skeleton" aria-busy="true" aria-live="polite">
+        <nl-skeleton height="80px" radius="var(--radius-lg)" />
+        <nl-skeleton height="140px" radius="var(--radius-lg)" />
+        <nl-skeleton height="140px" radius="var(--radius-lg)" />
+      </div>
     } @else if (error() && !sending()) {
       <div class="recours__etat recours__etat--erreur">
         <p>{{ error() }}</p>
