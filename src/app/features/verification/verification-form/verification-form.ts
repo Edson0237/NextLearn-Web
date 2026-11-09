@@ -176,6 +176,7 @@ export class VerificationForm implements OnInit {
       this.verification.state.set(
         verificationDepuisJson({ statut: 'en_attente', resoumissionsRestantes: 0, ...depose, requis: true }),
       );
+      this.auth.updateVerificationStatus('en_attente');
       this.toast.succes(tr('verifDossierEnvoye', 'Dossier de vérification envoyé avec succès.'));
       await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending, { replaceUrl: true });
       void this.verification.refresh();

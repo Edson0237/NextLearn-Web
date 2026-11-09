@@ -49,8 +49,60 @@ export interface VerificationState {
 }
 
 /** L'accès au contenu est-il verrouillé faute de dossier validé ? */
-export function bloqueAcces(v: VerificationState): boolean {
+export function bloqueAcces(v: VerificationState, user?: { role?: string; verificationStatus?: string } | null): boolean {
+  if (user?.role && user.role !== 'etudiant' && user.role !== 'user') return false;
+  const userStatus = user?.verificationStatus ? String(user.verificationStatus).toLowerCase().trim() : null;
+  if (userStatus) {
+    return userStatus !== 'approuve' && userStatus !== 'approved';
+  }
   return v.requis && !estApprouve(v.statut);
+}
+
+export type VerificationDestination = 'verification' | 'verification/attente';
+
+/**
+ * Détermine si le compte nécessite une étape de vérification académique.
+ * Retourne le chemin de redirection ('verification' ou 'verification/attente'),
+ * ou `null` si le compte est valide / standard (accès libre).
+ */
+export function determinerDestinationVerification(
+  user: { role?: string; verificationStatus?: string } | undefined | null,
+  verif: VerificationState,
+): VerificationDestination | null {
+  if (user?.role && user.role !== 'etudiant' && user.role !== 'user') {
+    return null;
+  }
+
+  // 1. Contrôle par le statut porté sur l'utilisateur
+  const userStatus = user?.verificationStatus ? String(user.verificationStatus).toLowerCase().trim() : null;
+  if (userStatus) {
+    if (userStatus === 'approuve' || userStatus === 'approved') {
+      return null;
+    }
+    if (
+      userStatus === 'requis' ||
+      userStatus === 'infos_complementaires_requises' ||
+      userStatus === 'rejete' ||
+      userStatus === 'rejected'
+    ) {
+      return 'verification';
+    }
+    if (
+      userStatus === 'en_attente' ||
+      userStatus === 'pending' ||
+      userStatus === 'en_revue' ||
+      userStatus === 'in_review'
+    ) {
+      return 'verification/attente';
+    }
+  }
+
+  // 2. Contrôle par le service de vérification
+  if (verif.requis && !estApprouve(verif.statut)) {
+    return demandeAction(verif.statut) ? 'verification' : 'verification/attente';
+  }
+
+  return null;
 }
 
 /** Compte standard : aucun dossier, aucun blocage. */

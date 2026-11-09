@@ -463,6 +463,10 @@ export class AuthRepository {
     return this.storage.getUser();
   }
 
+  saveUser(user: UserModel): void {
+    this.storage.saveUser(user);
+  }
+
   isFirstLaunch(): boolean {
     return this.storage.isFirstLaunch();
   }

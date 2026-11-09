@@ -6,8 +6,9 @@ import { AuthService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { AppRoutes } from '../../../core/router';
-import { DemandeOtp, enFile, StatutDemandeOtp } from '../../../core/models';
+import { DemandeOtp, enFile, StatutDemandeOtp, determinerDestinationVerification } from '../../../core/models';
 import { ParcoursOtp } from '../../../core/models';
+import { VerificationService } from '../../../core/verification';
 
 /** La file se réveille à la minute ; interroger plus souvent ne montrerait
  * rien de neuf. */
@@ -41,6 +42,7 @@ export class Otp implements OnDestroy {
 
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
+  private readonly verification = inject(VerificationService);
   private readonly feuilles = inject(FeuilleActionService);
   private readonly isLogin2faParRoute = inject(ActivatedRoute).snapshot.data['isLogin2fa'] === true;
 
@@ -142,7 +144,8 @@ export class Otp implements OnDestroy {
       const estConnexion = this.estConnexion();
       const ok = estConnexion ? await this.auth.verifyLoginOtp(code) : await this.auth.verifyOtp(code);
       if (ok) {
-        void this.router.navigateByUrl('/app/' + AppRoutes.home);
+        const dest = determinerDestinationVerification(this.auth.state().user, this.verification.state());
+        void this.router.navigateByUrl('/app/' + (dest ?? AppRoutes.home));
       } else {
         const errServeur = this.auth.state().error;
         this.erreur.set(errServeur || tr('otpCodeIncorrect', 'Code incorrect. Réessaie.'));

@@ -9,7 +9,7 @@ import { VerificationService } from '../../verification/services/verification.se
 import { PendingDestinationService } from '../services/pending-destination.service';
 import { estAuthentifie } from '../../auth/models/auth.model';
 import { ParcoursOtp } from '../../models/parcours-otp.model';
-import { bloqueAcces, demandeAction } from '../../models/verification.model';
+import { determinerDestinationVerification } from '../../models/verification.model';
 import { AppRoutes } from '../routes/app-routes';
 
 /**
@@ -46,11 +46,13 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
     }
 
     const authentifie = estAuthentifie(s);
+    const destVerif = authentifie ? determinerDestinationVerification(s.user, verification.state()) : null;
 
     // ── Splash quitté : décide où partir ──────────────────────────────────────
     if (chemin === AppRoutes.splash) {
       if (authentifie) {
         if (s.isLocked) return aller(AppRoutes.unlock);
+        if (destVerif) return aller(destVerif);
         const destination = pending.consommer();
         return aller(destination ?? AppRoutes.home);
       }
@@ -65,7 +67,9 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
 
     // ── Verrou levé / pas de session : déverrouillage inutile ────────────────
     if (chemin === AppRoutes.unlock) {
-      return authentifie ? aller(AppRoutes.home) : aller(AppRoutes.login);
+      if (!authentifie) return aller(AppRoutes.login);
+      if (destVerif) return aller(destVerif);
+      return aller(AppRoutes.home);
     }
 
     // ── Textes légaux : accessibles dans tous les cas ────────────────────────
@@ -99,24 +103,27 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
     }
 
     if (estRoutePublique) {
+      if (destVerif) return aller(destVerif);
       const destination = pending.consommer();
       return aller(destination ?? AppRoutes.home);
     }
 
     // ── Vérification académique ────────────────────────────────────────────
-    const etatVerif = verification.state();
-    const estRouteVerification = chemin.startsWith(AppRoutes.verificationForm);
+    const estSurRouteVerification =
+      chemin === AppRoutes.verificationForm ||
+      chemin === AppRoutes.verificationPending ||
+      chemin.startsWith(AppRoutes.verificationForm + '/') ||
+      chemin.startsWith(AppRoutes.verificationPending + '/');
 
-    if (bloqueAcces(etatVerif)) {
+    if (destVerif) {
       if (chemin.startsWith(AppRoutes.recours)) return true;
-
-      if (demandeAction(etatVerif.statut)) {
-        return chemin === AppRoutes.verificationForm ? true : aller(AppRoutes.verificationForm);
-      }
-      return chemin === AppRoutes.verificationPending ? true : aller(AppRoutes.verificationPending);
+      if (chemin === destVerif || chemin.startsWith(destVerif + '/')) return true;
+      return aller(destVerif);
     }
 
-    if (estRouteVerification) return aller(AppRoutes.home);
+    if (estSurRouteVerification) {
+      return aller(AppRoutes.home);
+    }
 
     return true;
   };

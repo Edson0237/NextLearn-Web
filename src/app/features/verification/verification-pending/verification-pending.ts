@@ -1,13 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { TraductionPipe } from '../../../core/i18n';
-import { tr } from '../../../core/i18n';
+import { TraductionPipe, tr } from '../../../core/i18n';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
-import { VerificationRepository } from '../../../core/verification';
-import { VerificationService } from '../../../core/verification';
+import { ToastService } from '../../../shared/ui/toast/toast';
+import { VerificationRepository, VerificationService } from '../../../core/verification';
 import { AuthService } from '../../../core/auth';
 import {
   VERIFICATION_AUCUNE,
@@ -17,14 +25,17 @@ import {
   estApprouve,
 } from '../../../core/models';
 import { AppRoutes } from '../../../core/router';
-
 import { Skeleton } from '../../../shared/ui/skeleton/skeleton';
 
 type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';
 
+const INTERVALLE_SONDAGE_MS = 4000;
+
 /**
  * Où en est le dossier de vérification : une carte qui dit l'état, la frise de
  * ce qui reste à passer, et - quand l'étudiant doit agir - le bouton pour le faire.
+ * Actualise l'état en arrière-plan et redirige automatiquement vers l'accueil dès
+ * que le compte est validé, sans nécessiter de rafraîchissement manuel de la page.
  */
 @Component({
   selector: 'nl-verification-pending',
@@ -34,16 +45,21 @@ type Ton = 'primaire' | 'succes' | 'alerte' | 'danger';
   templateUrl: './verification-pending.html',
   styleUrl: './verification-pending.scss',
 })
-export class VerificationPending implements OnInit {
+export class VerificationPending implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly verificationRepo = inject(VerificationRepository);
   private readonly verification = inject(VerificationService);
   private readonly auth = inject(AuthService);
   private readonly actions = inject(FeuilleActionService);
+  private readonly toast = inject(ToastService);
 
   protected readonly Statut = VerificationStatut;
   protected readonly loading = signal(true);
   protected readonly status = signal<VerificationState>(VERIFICATION_AUCUNE);
+
+  private sondageInterval: ReturnType<typeof setInterval> | undefined;
+  private estDetruit = false;
+  private verificationEnCours = false;
 
   /** Le dossier est-il entre les mains de l'équipe (reçu ou en examen) ? */
   protected readonly enCours = computed(() => {
@@ -77,18 +93,83 @@ export class VerificationPending implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
+    await this.verifierStatut(true);
+    if (!this.estDetruit && this.enCours()) {
+      this.demarrerSondage();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.estDetruit = true;
+    this.arreterSondage();
+  }
+
+  @HostListener('document:visibilitychange')
+  onVisibilityChange(): void {
+    if (document.visibilityState === 'visible' && this.enCours() && !this.estDetruit) {
+      void this.verifierStatut(false);
+    }
+  }
+
+  /**
+   * Vérifie le statut auprès de l'API. Si validé, redirige automatiquement vers l'accueil.
+   */
+  protected async verifierStatut(initial = false): Promise<void> {
+    if (this.verificationEnCours) return;
+    this.verificationEnCours = true;
+    if (initial) this.loading.set(true);
+
     try {
       const s = await this.verificationRepo.getMyStatus();
+      if (this.estDetruit) return;
+
       this.status.set(s);
-      // Le service porte l'état que lit la garde de routage : le rafraîchir
-      // ici fait disparaître cet écran dès qu'un administrateur a statué,
-      // sans que l'étudiant ait à faire quoi que ce soit.
-      await this.verification.refresh();
+      this.verification.state.set(s);
+
+      // Si le compte a été approuvé ou n'exige plus de vérification :
+      // 1. Mettre à jour le statut utilisateur en cache / signal
+      // 2. Notifier l'étudiant via un toast de succès
+      // 3. Rediriger immédiatement vers l'accueil PWA sans refresh manuel
+      if (estApprouve(s.statut) || !s.requis) {
+        this.arreterSondage();
+        this.auth.marquerCompteVerifie();
+        this.toast.succes(tr('pwaCompteVerifie', 'Ton compte a été validé ! Bienvenue sur NextLearn.'));
+        void this.router.navigate(['/app', AppRoutes.home], { replaceUrl: true });
+        return;
+      }
+
+      // Si le dossier a basculé vers un statut exigeant une action (rejet ou complément)
+      if (!this.enCours()) {
+        this.arreterSondage();
+        this.auth.updateVerificationStatus(s.statut as any);
+      }
     } catch {
-      // Sans réseau : on garde ce que le service savait déjà.
-      this.status.set(this.verification.state());
+      if (initial && !this.estDetruit) {
+        this.status.set(this.verification.state());
+      }
     } finally {
-      this.loading.set(false);
+      this.verificationEnCours = false;
+      if (initial && !this.estDetruit) {
+        this.loading.set(false);
+      }
+    }
+  }
+
+  private demarrerSondage(): void {
+    this.arreterSondage();
+    this.sondageInterval = setInterval(() => {
+      if (this.estDetruit) {
+        this.arreterSondage();
+        return;
+      }
+      void this.verifierStatut(false);
+    }, INTERVALLE_SONDAGE_MS);
+  }
+
+  private arreterSondage(): void {
+    if (this.sondageInterval !== undefined) {
+      clearInterval(this.sondageInterval);
+      this.sondageInterval = undefined;
     }
   }
 
@@ -132,6 +213,7 @@ export class VerificationPending implements OnInit {
       icon: 'logout',
     });
     if (!confirme) return;
+    this.arreterSondage();
     await this.auth.logout();
     void this.router.navigate(['/app']);
   }

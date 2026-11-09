@@ -5,6 +5,7 @@ import { AuthRepository } from '../repositories/auth-repository';
 import { SessionExpiredService } from '../../network/services/session-expired.service';
 import { VerificationService } from '../../verification/services/verification.service';
 import { VerificationRepository } from '../../verification/repositories/verification-repository';
+import { VerificationStatut, determinerDestinationVerification } from '../../models/verification.model';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/services/verrouillage-app';
 import { Cycle, niveauCourt, NiveauEtude, NiveauxDuCycle, UserModel } from '../../models/user.model';
@@ -105,7 +106,10 @@ export class AuthService {
       // de l'appareil qui les protégeait déjà. Il ne vaut désormais que si
       // l'étudiant l'a demandé - téléphone partagé, poste de salle info.
       const locked = !!user && this.repo.hasLocalPin() && this.verrouillage.actif();
-      if (user) void this.verification.refresh();
+      if (user) {
+        this.verification.syncFromUser(user);
+        await this.verification.refresh();
+      }
       await minSplash;
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user, isLocked: locked });
     } catch {
@@ -141,7 +145,8 @@ export class AuthService {
       await this.repo.setupPin(undefined);
       const user = this.repo.getCurrentUser() ?? undefined;
       await this.envoyerJustificatifEnAttente(user, pendingJustificatif);
-      void this.verification.refresh();
+      if (user) this.verification.syncFromUser(user);
+      await this.verification.refresh();
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
     } catch (e) {
@@ -175,7 +180,8 @@ export class AuthService {
     try {
       await this.repo.verifyLoginOtp(code);
       const user = this.repo.getCurrentUser() ?? undefined;
-      void this.verification.refresh();
+      if (user) this.verification.syncFromUser(user);
+      await this.verification.refresh();
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
     } catch (e) {
@@ -233,7 +239,8 @@ export class AuthService {
       await this.repo.setupPin(pin);
       const user = this.repo.getCurrentUser() ?? undefined;
       await this.envoyerJustificatifEnAttente(user, pendingJustificatif);
-      void this.verification.refresh();
+      if (user) this.verification.syncFromUser(user);
+      await this.verification.refresh();
       this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
       return true;
     } catch (e) {
@@ -329,17 +336,15 @@ export class AuthService {
         return;
       case 'authenticated': {
         const user = this.repo.getCurrentUser() ?? undefined;
+        if (user) this.verification.syncFromUser(user);
         this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
-        if (reponse.verificationStatus === 'pending') {
-          // On attend l'état de vérification avant de naviguer : la garde de
-          // routage s'y fie, et le lire après renverrait vers l'accueil.
-          await this.verification.refresh();
+        const verif = await this.verification.refresh();
+        const dest = determinerDestinationVerification(user, verif);
+        if (dest === AppRoutes.verificationPending) {
           await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending);
+        } else if (dest === AppRoutes.verificationForm) {
+          await this.router.navigateByUrl('/app/' + AppRoutes.verificationForm);
         } else {
-          // L'état de vérification se lit AVANT de naviguer : un compte « requis »
-          // (adresse Google non institutionnelle) doit être aiguillé vers le
-          // dépôt du justificatif, et la garde de routage s'en remet à cet état.
-          await this.verification.refresh();
           await this.router.navigate(['/app', AppRoutes.home]);
         }
         return;
@@ -417,7 +422,8 @@ export class AuthService {
         // Appareil connu : la session existe déjà côté dépôt, l'état doit la
         // refléter - sans quoi la garde de routage renverrait au login.
         const user = this.repo.getCurrentUser() ?? undefined;
-        void this.verification.refresh();
+        if (user) this.verification.syncFromUser(user);
+        await this.verification.refresh();
         this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
         return 'session';
       }
@@ -667,6 +673,24 @@ export class AuthService {
     }
     TabReuseStrategy.vider();
     this._state.set({ ...ETAT_INITIAL, isInitializing: false });
+  }
+
+  updateVerificationStatus(statut: 'requis' | 'en_attente' | 'en_revue' | 'infos_complementaires_requises' | 'approuve' | 'rejete'): void {
+    const u = this._state().user;
+    if (u) {
+      const maj: UserModel = { ...u, verificationStatus: statut };
+      this.repo.saveUser(maj);
+      this._state.update((s) => ({ ...s, user: maj }));
+    }
+    if (statut === 'approuve') {
+      this.verification.reset();
+    } else {
+      this.verification.syncFromUser({ ...(u ?? {}), verificationStatus: statut } as UserModel);
+    }
+  }
+
+  marquerCompteVerifie(): void {
+    this.updateVerificationStatus('approuve');
   }
 
   clearError(): void {
