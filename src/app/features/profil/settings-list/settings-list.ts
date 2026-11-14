@@ -9,7 +9,13 @@ import {
   LIBELLES_ECHELLE,
   PreferencesAccessibilite,
 } from '../../../core/preferences';
-import { StockageHorsLigne } from '../../../core/bibliotheque';
+import {
+  DocumentsRepository,
+  LectureProgress,
+  LectureProgressRepository,
+  pourcentageLu,
+  StockageHorsLigne,
+} from '../../../core/bibliotheque';
 import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n';
 import { PreferenceNotifications } from '../../../core/notifications';
 import { ToastService } from '../../../shared/ui/toast/toast';
@@ -68,9 +74,13 @@ export class SettingsList implements OnInit {
   private readonly theme = inject(ThemeService);
   private readonly acces = inject(PreferencesAccessibilite);
   private readonly stockage = inject(StockageHorsLigne);
+  private readonly lectureRepo = inject(LectureProgressRepository);
+  private readonly docsRepo = inject(DocumentsRepository);
   private readonly favorisEtat = inject(FavorisEtat);
   private readonly traductions = inject(TraductionService);
   private readonly notifications = inject(PreferenceNotifications);
+
+  protected readonly reprises = signal<LectureProgress[]>([]);
 
   async ngOnInit(): Promise<void> {
     // Les compteurs de « Mes ressources » : favoris du compte, fichiers de cet appareil.
@@ -79,6 +89,57 @@ export class SettingsList implements OnInit {
     // compteur annoncerait « 0 fichier » à quelqu'un qui vient d'en
     // télécharger trois.
     await this.stockage.rafraichir();
+    if (this.inline()) {
+      void this.chargerReprises();
+    }
+  }
+
+  private async chargerReprises(): Promise<void> {
+    try {
+      const progression = await this.lectureRepo.getAll();
+      const enCours = [...progression.values()]
+        .filter((p) => {
+          const pct = pourcentageLu(p);
+          return pct > 0 && pct < 1;
+        })
+        .sort((a, b) => (a.derniereLecture < b.derniereLecture ? 1 : -1));
+      this.reprises.set(enCours);
+    } catch {
+      // Hors ligne ou indisponible : on n'affiche pas la ligne.
+    }
+  }
+
+  private async ouvrirReprises(): Promise<void> {
+    const liste = this.reprises();
+    if (liste.length === 0) return;
+    if (liste.length === 1) {
+      void this.router.navigateByUrl('/app/' + AppRoutes.docReaderPath(liste[0].documentId));
+      return;
+    }
+    const locales = new Map(this.stockage.fiches().map((d) => [d.id, d]));
+    const choix = await Promise.all(
+      liste.slice(0, 10).map(async (p) => {
+        let titre = locales.get(p.documentId)?.titre;
+        if (!titre) {
+          titre = await this.docsRepo.getById(p.documentId).then((d) => d?.titre ?? 'Document').catch(() => 'Document');
+        }
+        const pct = Math.round(pourcentageLu(p) * 100);
+        return {
+          value: p.documentId,
+          label: titre,
+          description: `${tr('pwaPage', 'Page')} ${p.pageCourante} / ${p.totalPages} (${pct} %)`,
+          icone: 'schedule' as const,
+        };
+      }),
+    );
+    const choisi = await this.selections.ouvrir<string>({
+      title: tr('homeReprendre', 'Reprendre la lecture'),
+      choices: choix,
+      emptyMessage: tr('selecteurAucunResultat', 'Aucun résultat'),
+    });
+    if (choisi) {
+      void this.router.navigateByUrl('/app/' + AppRoutes.docReaderPath(choisi));
+    }
   }
   private readonly toast = inject(ToastService);
   private readonly actions = inject(FeuilleActionService);
@@ -113,25 +174,39 @@ export class SettingsList implements OnInit {
    * liste de réglages. Réservé au profil : la page des réglages n'en a pas
    * l'usage.
    */
-  private readonly groupeRessources = computed<GroupeReglages>(() => ({
-    titre: tr('profilMesRessources', 'Mes ressources'),
-    lignes: [
-      {
-        icone: 'library_books', titre: tr('profilMaBibliotheque', 'Bibliothèque'), sousTitre: tr('pwaParcourirMatieres', 'Parcourir les matières'),
-        action: () => void this.router.navigate(['/app', AppRoutes.bibliotheque]),
-      },
-      {
-        icone: 'cloud_download', titre: tr('profilMesTelechargements', 'Téléchargés'), sousTitre: tr('pwaDocumentsTelecharges', 'Ceux téléchargés sur l\'appareil'),
-        valeur: String(this.stockage.ids().size),
-        action: () => void this.router.navigate(['/app', AppRoutes.offlineLibrary]),
-      },
-      {
-        icone: 'bookmark', titre: tr('profilMesFavoris', 'Favoris'), sousTitre: tr('pwaRessourcesGardees', 'Les ressources que tu as gardées'),
-        valeur: String(this.favorisEtat.ids().size),
-        action: () => void this.router.navigate(['/app', AppRoutes.favoris]),
-      },
-    ],
-  }));
+  private readonly groupeRessources = computed<GroupeReglages>(() => {
+    const enCours = this.reprises();
+    return {
+      titre: tr('profilMesRessources', 'Mes ressources'),
+      lignes: [
+        ...(enCours.length > 0
+          ? [
+              {
+                icone: 'schedule' as const,
+                titre: tr('homeReprendre', 'Reprendre la lecture'),
+                sousTitre: tr('homeReprendreSousTitre', 'Là où tu t’es arrêté'),
+                valeur: String(enCours.length),
+                action: () => void this.ouvrirReprises(),
+              },
+            ]
+          : []),
+        {
+          icone: 'library_books', titre: tr('profilMaBibliotheque', 'Bibliothèque'), sousTitre: tr('pwaParcourirMatieres', 'Parcourir les matières'),
+          action: () => void this.router.navigate(['/app', AppRoutes.bibliotheque]),
+        },
+        {
+          icone: 'cloud_download', titre: tr('profilMesTelechargements', 'Téléchargés'), sousTitre: tr('pwaDocumentsTelecharges', 'Ceux téléchargés sur l\'appareil'),
+          valeur: String(this.stockage.ids().size),
+          action: () => void this.router.navigate(['/app', AppRoutes.offlineLibrary]),
+        },
+        {
+          icone: 'bookmark', titre: tr('profilMesFavoris', 'Favoris'), sousTitre: tr('pwaRessourcesGardees', 'Les ressources que tu as gardées'),
+          valeur: String(this.favorisEtat.ids().size),
+          action: () => void this.router.navigate(['/app', AppRoutes.favoris]),
+        },
+      ],
+    };
+  });
 
   protected readonly groupes = computed<GroupeReglages[]>(() => {
     const u = this.user();

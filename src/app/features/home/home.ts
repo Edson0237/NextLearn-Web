@@ -26,7 +26,6 @@ import { DocumentCard, EtiquetteDocument } from '../../shared/ui/document-card/d
 import { AppHeader } from '../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../shared/ui/search-bar/search-bar';
 import { SectionHeader } from '../../shared/ui/section-header/section-header';
-import { Badge } from '../../shared/ui/badge/badge';
 import { tr } from '../../core/i18n';
 import { FeuilleSelectionService } from '../../shared/ui/bottom-sheet/feuille-selection';
 import { Icon } from '../../shared/ui/icon/icon';
@@ -48,7 +47,7 @@ interface Reprise {
   standalone: true,
   imports: [TypeDocumentPipe, 
     TraductionPipe, CommonModule, DocumentCard, Icon, EmptyState, Button, AnimatedNumber,
-    AppHeader, SearchBar, SectionHeader, Badge,
+    AppHeader, SearchBar, SectionHeader,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.html',
@@ -220,13 +219,12 @@ export class Home implements OnInit {
       this.error.set(null);
     }
     try {
-      const [rec, pop, recents, stats, contexte, progression] = await Promise.all([
+      const [rec, pop, recents, stats, contexte] = await Promise.all([
         this.docsRepo.getRecommended(),
         this.docsRepo.getPopular(),
         this.docsRepo.getRecent(),
         this.profilRepo.getStats().catch(() => null),
         this.contexteRepo.charger(),
-        this.lectureRepo.getAll().catch(() => new Map<string, LectureProgress>()),
       ]);
 
       this.recommended.set(rec);
@@ -236,17 +234,10 @@ export class Home implements OnInit {
       this.horsLigne.set(Math.max(stats?.docsTelecharges ?? 0, this.stockage.ids().size));
       this.lus.set(stats?.docsLus ?? 0);
       this.contexte.set(contexte);
-      this.reprises.set(
-        this.composerReprises(progression, [...this.stockage.fiches(), ...rec, ...pop, ...recents]),
-      );
     } catch {
       const fichesLocales = this.stockage.fiches();
       if (fichesLocales.length > 0) {
-        const progressionLocale = await this.lectureRepo
-          .getAll()
-          .catch(() => new Map<string, LectureProgress>());
         this.horsLigne.set(this.stockage.ids().size);
-        this.reprises.set(this.composerReprises(progressionLocale, fichesLocales));
         this.recommended.set([...fichesLocales]);
         return;
       }

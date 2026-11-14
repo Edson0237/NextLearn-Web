@@ -102,35 +102,6 @@
         </section>
       }
 
-      <!-- ── Reprendre la lecture ────────────────────────────────────────── -->
-      @if (reprises().length > 0) {
-        <section class="home__section">
-          <nl-section-header
-            [titre]="'homeReprendre' | t"
-            icone="schedule"
-            [sousTitre]="'homeReprendreSousTitre' | t" />
-
-          <div class="home__rail">
-            @for (r of reprises(); track r.document.id) {
-              <button type="button" class="home__reprise" (click)="reprendre(r)">
-                <nl-badge ton="primaire">{{ r.document.matiere }}</nl-badge>
-                <span class="home__reprise-titre">{{ r.document.titre }}</span>
-                <span class="home__reprise-auteur">{{ r.document.enseignant }}</span>
-                <span class="home__reprise-pied">
-                  <span class="home__reprise-page">
-                    {{ 'pwaPage' | t }} {{ r.progression.pageCourante }} / {{ r.progression.totalPages }}
-                  </span>
-                  <span class="home__reprise-pourcent">{{ (r.pourcentage * 100) | number: '1.0-0' }} %</span>
-                </span>
-                <span class="home__reprise-jauge" aria-hidden="true">
-                  <span class="home__reprise-remplie" [style.width.%]="r.pourcentage * 100"></span>
-                </span>
-              </button>
-            }
-          </div>
-        </section>
-      }
-
       <!-- ── Flux unifié par onglets (Recommandés / Populaires / Récents) ── -->
       @if (ongletsDisponibles().length > 0) {
         <section class="home__section">
@@ -178,8 +149,7 @@
       @if (
         recommended().length === 0 &&
         popular().length === 0 &&
-        recent().length === 0 &&
-        reprises().length === 0
+        recent().length === 0
       ) {
         <nl-empty-state
           [title]="'pwaRienAAfficher' | t"
