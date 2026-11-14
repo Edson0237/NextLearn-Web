@@ -91,6 +91,7 @@ export class BibliothequeHome implements OnInit {
     ];
   });
   private dernierePrefSection: SectionPreference | null | undefined = undefined;
+  private dernierParcours: string | undefined = undefined;
   protected readonly searchActive = signal(false);
   protected readonly searchQuery = signal('');
 
@@ -191,6 +192,22 @@ export class BibliothequeHome implements OnInit {
           pref === 'FRANCOPHONE' || pref === 'ANGLOPHONE' ? pref : null;
         this.selectedSection.set(sec);
         if (etaitInitialise) {
+          this.totalTousServeur.set(null);
+          void this.load(true);
+        }
+      });
+    });
+
+    effect(() => {
+      const u = this.user();
+      const parcours = u ? `${u.universite}|${u.filiere}|${u.niveau}` : '';
+      untracked(() => {
+        if (this.dernierParcours === parcours) return;
+        const etaitInitialise = this.dernierParcours !== undefined;
+        this.dernierParcours = parcours;
+        if (etaitInitialise) {
+          this.totalTousServeur.set(null);
+          this.totalServeur.set(null);
           void this.load(true);
         }
       });
