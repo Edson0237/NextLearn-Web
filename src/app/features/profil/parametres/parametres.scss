@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 12px var(--space-page);
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border-light);
 }
@@ -41,5 +41,5 @@
 }
 
 .nl-par__body {
-  padding: 16px 16px 32px;
+  padding: 16px var(--space-page) 32px;
 }

@@ -9,7 +9,7 @@
 
 .nl-epl__entete {
   flex: none;
-  padding: var(--space-lg) var(--space-lg) 0;
+  padding: var(--space-lg) var(--space-page) 0;
 }
 
 .nl-epl__titre {
@@ -19,7 +19,7 @@
 
 .nl-epl__filtres {
   flex: none;
-  padding: var(--space-sm) var(--space-lg) var(--space-md);
+  padding: var(--space-sm) var(--space-page) var(--space-md);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);

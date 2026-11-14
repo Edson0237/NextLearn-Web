@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg) 0;
+  padding: var(--space-md) var(--space-page) 0;
   padding-top: max(var(--space-md), env(safe-area-inset-top));
 }
 
@@ -42,7 +42,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: var(--space-lg) var(--space-lg) var(--space-xxxl);
+  padding: var(--space-lg) var(--space-page) var(--space-xxxl);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);

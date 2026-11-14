@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 12px var(--space-page);
   background: var(--bg-primary);
   border-bottom: 1px solid var(--border-light);
 }
@@ -41,7 +41,7 @@
 }
 
 .nl-del__body {
-  padding: 20px 16px 40px;
+  padding: 20px var(--space-page) 40px;
 }
 
 .nl-del__warning {
