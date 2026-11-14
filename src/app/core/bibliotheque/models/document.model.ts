@@ -1,4 +1,5 @@
 import { tr } from '../../i18n';
+import { traduireOptionReference } from '../../references/utils/traduire-reference';
 /**
  * Modèle Document - traduction de `DocumentModel`
  * (`lib/domains/bibliotheque/domain/models/document_model.dart`).
@@ -60,19 +61,19 @@ export function enregistrerFormatsServeur(liste: readonly { slug: string; label:
 
 export function labelTypeDocument(type: DocumentType): string {
   switch (type) {
-    case DocumentType.cours: return 'Cours';
+    case DocumentType.cours: return traduireOptionReference('COURS', 'Cours');
     case DocumentType.td: return 'TD';
-    case DocumentType.synthese: return 'Synthèse';
-    case DocumentType.epreuve: return 'Épreuve';
-    case DocumentType.annales: return 'Annales';
-    case DocumentType.corrige: return 'Corrigé';
-    case DocumentType.rapport: return 'Rapport';
-    case DocumentType.expose: return 'Exposé';
+    case DocumentType.synthese: return traduireOptionReference('SYNTHESE', 'Synthèse');
+    case DocumentType.epreuve: return traduireOptionReference('EPREUVE', 'Épreuve');
+    case DocumentType.annales: return traduireOptionReference('ANNALES', 'Annales');
+    case DocumentType.corrige: return traduireOptionReference('CORRIGE', 'Corrigé');
+    case DocumentType.rapport: return traduireOptionReference('RAPPORT', 'Rapport');
+    case DocumentType.expose: return traduireOptionReference('EXPOSE', 'Exposé');
     case DocumentType.tp: return 'TP';
     case DocumentType.autre: return 'Document';
     default: {
       const inconnu = formatsServeur.get(String(type))?.label;
-      if (inconnu) return inconnu;
+      if (inconnu) return traduireOptionReference(String(type), inconnu);
       const brut = String(type);
       return brut.charAt(0).toUpperCase() + brut.slice(1);
     }

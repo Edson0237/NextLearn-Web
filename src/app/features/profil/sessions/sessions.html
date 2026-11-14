@@ -37,7 +37,7 @@
                 <span class="nl-ses__item-meta">
                   {{ session.plateforme }} {{ session.versionApp }}
                   @if (session.derniereActivite) {
-                    · Actif le {{ formatDate(session.derniereActivite) }}
+                    {{ 'sessionsActifLe' | t }} {{ formatDate(session.derniereActivite) }}
                   }
                 </span>
               </div>

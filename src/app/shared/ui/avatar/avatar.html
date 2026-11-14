@@ -1,6 +1,6 @@
 @if (editable()) {
   <button type="button" class="nl-avatar-wrap nl-avatar-wrap--editable"
-          aria-label="Changer la photo de profil" (click)="edit.emit()">
+          [attr.aria-label]="'avatarChangerPhoto' | t" (click)="edit.emit()">
     <ng-container [ngTemplateOutlet]="rond" />
     <span class="nl-avatar__camera">
       <nl-icon name="photo_camera" [size]="14" />

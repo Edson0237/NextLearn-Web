@@ -16,6 +16,6 @@
     [class.nl-docx-viewer__conteneur--masque]="chargement() || !!messageErreur()"
     tabindex="0"
     role="region"
-    aria-label="Document Word">
+    [attr.aria-label]="'docWordLabel' | t">
   </div>
 </div>

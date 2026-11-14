@@ -25,10 +25,10 @@
         <div class="recours__info">
           <nl-icon name="check_circle" />
           <h2>{{ 'recoursRienAContester' | t }}</h2>
-          <p>Aucune décision récente n'est contestable (délai : {{ e.delaiJours }} jours).</p>
+          <p>{{ 'recoursAucuneDecision' | t: { delai: e.delaiJours } }}</p>
         </div>
       } @else {
-        <p class="recours__intro">Vous pouvez contester une décision prise dans les {{ e.delaiJours }} derniers jours.</p>
+        <p class="recours__intro">{{ 'recoursDelaiInfo' | t: { delai: e.delaiJours } }}</p>
 
         <div class="recours__choix">
           @for (p of e.possibles; track p.type + p.cibleId) {
@@ -39,7 +39,7 @@
               (click)="selectPossibilite(p.type, p.cibleId)">
               <span class="recours__type-label">{{ p.libelle || labelType(p.type) }}</span>
               @if (p.decision) { <span class="recours__type-decision">{{ p.decision }}</span> }
-              @if (p.dejaOuvert) { <span class="recours__type-decision">Un recours est déjà en cours d’examen.</span> }
+              @if (p.dejaOuvert) { <span class="recours__type-decision">{{ 'recoursDejaEnCours' | t }}</span> }
             </button>
           }
         </div>
@@ -69,7 +69,7 @@
             <div class="recours__item-type">{{ labelType(r.type) }}</div>
             <div class="recours__item-meta">{{ r.dateDepot | date:'short' }} · <span class="recours__statut">{{ labelStatut(r.statut) }}</span></div>
             <p class="recours__item-motif">{{ r.motif }}</p>
-            @if (r.reponse) { <p class="recours__item-motif"><strong>Réponse :</strong> {{ r.reponse }}</p> }
+            @if (r.reponse) { <p class="recours__item-motif"><strong>{{ 'recoursReponseLabel' | t }}</strong> {{ r.reponse }}</p> }
           </div>
         }
       </div>

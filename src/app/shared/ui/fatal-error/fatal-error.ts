@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 import { Icon } from '../icon/icon';
 import { Button } from '../button/button';
+import { TraductionPipe } from '../../../core/i18n';
 
 /**
  * Ce qui s'affiche quand le rendu d'un écran a échoué - traduction
@@ -20,7 +21,7 @@ import { Button } from '../button/button';
 @Component({
   selector: 'nl-fatal-error',
   standalone: true,
-  imports: [Icon, Button],
+  imports: [Icon, Button, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './fatal-error.html',
   styleUrl: './fatal-error.scss',

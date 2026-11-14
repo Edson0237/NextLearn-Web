@@ -60,7 +60,7 @@
             [value]="zoom()"
             (input)="onZoomSlider($event)"
             class="nl-cropper-slider"
-            aria-label="Niveau de zoom"
+            [attr.aria-label]="'cropperNiveauZoom' | t"
           />
           <button type="button" class="nl-cropper-zoom-btn" (click)="zoomIn()" [attr.aria-label]="'Zoom avant'">
             <nl-icon name="zoom_in" [size]="18" />

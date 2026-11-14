@@ -16,7 +16,7 @@
         (ngModelChange)="filtre.set($event)"
       />
       @if (filtre()) {
-        <button type="button" aria-label="Effacer la recherche" (click)="effacerRecherche()">
+        <button type="button" [attr.aria-label]="'selectionEffacerRecherche' | t" (click)="effacerRecherche()">
           <nl-icon name="clear" [size]="16" />
         </button>
       }

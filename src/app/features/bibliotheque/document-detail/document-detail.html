@@ -150,17 +150,17 @@
                 {{ 'docDisponibleHorsLigne' | t }} · {{ localInfo.format.toUpperCase() }}
               </span>
               <span class="doc-detail__hors-ligne-meta">
-                {{ tailleLocaleFormatee(doc.id) }} · Téléchargé le {{ localInfo.dateTelechargement | date: 'dd/MM/yyyy' }}
+                {{ tailleLocaleFormatee(doc.id) }} {{ 'biblioTelechargeLe' | t }} {{ localInfo.dateTelechargement | date: 'dd/MM/yyyy' }}
               </span>
             </div>
           </div>
           <div class="doc-detail__hors-ligne-actions">
             <button type="button" class="doc-detail__hors-ligne-lien" (click)="ouvrirMesTelechargements()">
-              Mes téléchargements
+              {{ 'biblioMesTelechargements' | t }}
             </button>
             <button type="button" class="doc-detail__hors-ligne-supprimer" (click)="supprimerDuStockageLocal()">
               <nl-icon name="delete" [size]="16" />
-              <span>Retirer</span>
+              <span>{{ 'actionRetirer' | t }}</span>
             </button>
           </div>
         </section>

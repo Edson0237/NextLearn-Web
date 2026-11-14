@@ -3,8 +3,7 @@ import { TelechargementEtat } from '../../../shared/services/telechargement-etat
 import { metaDocument, noteDocument } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, untracked } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
-import { tr } from '../../../core/i18n';
-import { TraductionPipe } from '../../../core/i18n';
+import { tr, TraductionPipe, TraductionService } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -81,12 +80,16 @@ export class BibliothequeHome implements OnInit {
   protected readonly documents = signal<DocumentModel[]>([]);
   protected readonly selectedType = signal<DocumentType | null>(null);
   protected readonly selectedMatiere = signal<string | null>(null);
+  private readonly traductions = inject(TraductionService);
   protected readonly selectedSection = signal<SectionAcademique | null>(null);
-  protected readonly sectionsFiltre: readonly { value: SectionAcademique | null; label: string }[] = [
-    { value: null, label: 'Toutes sections' },
-    { value: 'FRANCOPHONE', label: 'Francophone' },
-    { value: 'ANGLOPHONE', label: 'Anglophone' },
-  ];
+  protected readonly sectionsFiltre = computed<{ value: SectionAcademique | null; label: string }[]>(() => {
+    this.traductions.langue();
+    return [
+      { value: null, label: this.traductions.t('sectionToutes', undefined, 'Toutes sections') },
+      { value: 'FRANCOPHONE', label: this.traductions.t('sectionFrancophone', undefined, 'Francophone') },
+      { value: 'ANGLOPHONE', label: this.traductions.t('sectionAnglophone', undefined, 'Anglophone') },
+    ];
+  });
   private dernierePrefSection: SectionPreference | null | undefined = undefined;
   protected readonly searchActive = signal(false);
   protected readonly searchQuery = signal('');

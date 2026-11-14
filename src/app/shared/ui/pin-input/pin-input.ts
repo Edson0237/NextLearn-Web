@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { Icon } from '../icon/icon';
+import { TraductionPipe } from '../../../core/i18n';
 
 const LONGUEUR_PIN = 4;
 const RANGEES = [
@@ -21,7 +22,7 @@ const RANGEES = [
 @Component({
   selector: 'nl-pin-input',
   standalone: true,
-  imports: [Icon],
+  imports: [Icon, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pin-input.html',
   styleUrl: './pin-input.scss',

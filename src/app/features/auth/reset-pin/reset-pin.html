@@ -4,6 +4,7 @@
       <nl-icon name="arrow_back" [size]="20" />
     </button>
     <h1 class="nl-resetpin__titre-entete">{{ 'resetPinTitre' | t }}</h1>
+    <div style="margin-left:auto;"><nl-langue-switcher /></div>
   </header>
 
   <div class="nl-resetpin__corps">
@@ -21,7 +22,7 @@
           @if (chargement) {
             <span class="nl-resetpin__spinner"></span>
           } @else {
-            Recevoir un code
+            {{ 'resetPinRecevoirCode' | t }}
           }
         </button>
       }
@@ -30,9 +31,9 @@
         <h2 class="nl-resetpin__titre">{{ 'resetPinVerifieEmails' | t }}</h2>
         <p class="nl-resetpin__texte">
           @if (reprise) {
-            Un code à 6 chiffres t'attend dans ta boîte mail. Saisis-le ici.
+            {{ 'resetPinCodeEnvoyeBoite' | t }}
           } @else {
-            Un code à 6 chiffres a été envoyé à {{ email() }}. Il expire dans 10 minutes.
+            {{ 'resetPinCodeEnvoyeA' | t: { email: email() } }}
           }
         </p>
 

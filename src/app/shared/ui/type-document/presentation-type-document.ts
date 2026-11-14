@@ -74,7 +74,7 @@ export function presentationType(type: DocumentType | null): PresentationType {
 }
 
 /** `{{ doc.type | typeDoc }}` - pour les gabarits ; pur, donc recalculé seulement si le type change. */
-@Pipe({ name: 'typeDoc', standalone: true })
+@Pipe({ name: 'typeDoc', standalone: true, pure: false })
 export class TypeDocumentPipe implements PipeTransform {
   transform(type: DocumentType | null): PresentationType {
     return presentationType(type);

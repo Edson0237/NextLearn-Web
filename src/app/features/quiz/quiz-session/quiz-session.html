@@ -45,7 +45,7 @@
                   <p class="quiz__corrige-enonce">{{ question.enonce }}</p>
                   @if (!d.estCorrect) {
                     <p class="quiz__corrige-attendu">
-                      Bonne réponse : {{ question.options[d.bonneReponseIndex] }}
+                      {{ 'quizBonneReponseLabel' | t }} {{ question.options[d.bonneReponseIndex] }}
                     </p>
                   }
                   @if (d.explication) {

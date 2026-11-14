@@ -12,9 +12,9 @@
   </div>
 
   <div class="nl-filtres__corps">
-    <p class="nl-filtres__section">Section</p>
+    <p class="nl-filtres__section">{{ 'sectionAcademique' | t }}</p>
     <div class="nl-filtres__puces">
-      @for (s of sections; track s.label) {
+      @for (s of sections(); track s.value) {
         <button
           type="button"
           class="nl-filtres__puce"

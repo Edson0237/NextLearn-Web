@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TraductionPipe, TraductionService } from '../../../core/i18n';
 import { AuthService } from '../../../core/auth';
 import { SectionPreference } from '../../../core/models';
 import { Fraicheur } from '../../services/fraicheur';
@@ -6,28 +7,36 @@ import { Icon } from '../icon/icon';
 
 interface ChoixSection {
   readonly value: SectionPreference;
-  readonly titre: string;
-  readonly description: string;
+  readonly titreCle: string;
+  readonly titreSecours: string;
+  readonly descCle: string;
+  readonly descSecours: string;
   readonly badge: string;
 }
 
 const CHOIX_SECTIONS: readonly ChoixSection[] = [
   {
     value: 'FRANCOPHONE',
-    titre: 'Section Francophone',
-    description: 'Cours, TD et épreuves de la section francophone',
+    titreCle: 'sectionLabelFrancophone',
+    titreSecours: 'Section Francophone',
+    descCle: 'sectionDescFrancophone',
+    descSecours: 'Cours, TD et épreuves de la section francophone',
     badge: 'FR',
   },
   {
     value: 'ANGLOPHONE',
-    titre: 'Section Anglophone',
-    description: 'Courses, tutorials and exams from the anglophone section',
+    titreCle: 'sectionLabelAnglophone',
+    titreSecours: 'Section Anglophone',
+    descCle: 'sectionDescAnglophone',
+    descSecours: 'Cours, TD et épreuves de la section anglophone',
     badge: 'EN',
   },
   {
     value: 'TOUTES',
-    titre: 'Les deux sections',
-    description: 'Afficher les ressources francophones et anglophones',
+    titreCle: 'sectionToutes',
+    titreSecours: 'Toutes sections',
+    descCle: 'sectionDescToutes',
+    descSecours: 'Afficher les documents des deux sections (FR & EN)',
     badge: 'FR+EN',
   },
 ];
@@ -35,7 +44,7 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
 @Component({
   selector: 'nl-section-prompt-modal',
   standalone: true,
-  imports: [Icon],
+  imports: [Icon, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
@@ -44,13 +53,11 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
           <div class="nl-sec-icone">
             <nl-icon name="school" [size]="26" />
           </div>
-          <h2 id="nl-sec-titre" class="nl-sec-titre">Choisis ta section académique</h2>
-          <p class="nl-sec-sous">
-            Pour mieux filtrer ta bibliothèque, indique la section dont tu souhaites voir les documents. Tu pourras modifier ce choix à tout moment dans ton profil.
-          </p>
+          <h2 id="nl-sec-titre" class="nl-sec-titre">{{ 'sectionModalTitre' | t }}</h2>
+          <p class="nl-sec-sous">{{ 'sectionModalSousTitre' | t }}</p>
 
-          <div class="nl-sec-options" role="radiogroup" aria-label="Section académique">
-            @for (opt of options; track opt.value) {
+          <div class="nl-sec-options" role="radiogroup" [attr.aria-label]="'sectionAcademique' | t">
+            @for (opt of options(); track opt.value) {
               <button
                 type="button"
                 role="radio"
@@ -83,9 +90,9 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
             [disabled]="!selection() || saving()"
             (click)="confirmer()">
             @if (saving()) {
-              Enregistrement...
+              {{ 'pwaEnregistrement' | t }}
             } @else {
-              Continuer
+              {{ 'authContinuer' | t }}
             }
           </button>
         </div>
@@ -236,8 +243,17 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
 export class SectionPromptModal {
   private readonly auth = inject(AuthService);
   private readonly fraicheur = inject(Fraicheur);
+  private readonly traductions = inject(TraductionService);
 
-  protected readonly options = CHOIX_SECTIONS;
+  protected readonly options = computed(() => {
+    this.traductions.langue();
+    return CHOIX_SECTIONS.map((c) => ({
+      value: c.value,
+      badge: c.badge,
+      titre: this.traductions.t(c.titreCle, undefined, c.titreSecours),
+      description: this.traductions.t(c.descCle, undefined, c.descSecours),
+    }));
+  });
   protected readonly selection = signal<SectionPreference | null>(null);
   protected readonly saving = signal(false);
   protected readonly erreur = signal<string | null>(null);

@@ -2,13 +2,13 @@
   <nl-icon name="report_problem" [size]="34" />
 </div>
 
-<p class="nl-fatal__titre">Quelque chose s'est mal passé</p>
+<p class="nl-fatal__titre">{{ 'fatalTitre' | t }}</p>
 <p class="nl-fatal__corps">
-  Ce n'est pas de votre fait. Vous pouvez revenir en arrière et réessayer.
+  {{ 'fatalSousTitre' | t }}
 </p>
 
 @if (canGoBack()) {
-  <button nlButton variant="outline" (click)="back.emit()">Revenir en arrière</button>
+  <button nlButton variant="outline" (click)="back.emit()">{{ 'fatalRetour' | t }}</button>
 }
 
 @if (showDetails() && details()) {

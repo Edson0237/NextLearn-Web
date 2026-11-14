@@ -3,6 +3,8 @@
  * `lib/core/models/user_model.dart`.
  */
 
+import { tr } from '../i18n';
+
 /** Niveaux d'étude, alignés sur le référentiel backend (N1..N5). */
 export enum NiveauEtude {
   n1 = 'n1',
@@ -57,12 +59,12 @@ export function niveauCourt(n: NiveauEtude | string): string {
 export function libelleNiveau(n: NiveauEtude, cycle?: Cycle | null): string {
   const rang = rangNiveau(n);
   switch (cycle) {
-    case Cycle.master: return `Master ${rang - 3}`;
-    case Cycle.licencePro: return `Licence Pro ${rang}`;
-    case Cycle.licence: return `Licence ${rang}`;
-    case Cycle.ingenieur: return `Ingénieur ${rang}`;
-    case Cycle.prepa: return `Prépa ${rang}`;
-    default: return `Niveau ${rang}`;
+    case Cycle.master: return `${tr('cycleMaster', 'Master')} ${rang - 3}`;
+    case Cycle.licencePro: return `${tr('cycleLicencePro', 'Licence Pro')} ${rang}`;
+    case Cycle.licence: return `${tr('cycleLicence', 'Licence')} ${rang}`;
+    case Cycle.ingenieur: return `${tr('cycleIngenieur', 'Ingénieur')} ${rang}`;
+    case Cycle.prepa: return `${tr('cyclePrepa', 'Prépa')} ${rang}`;
+    default: return `${tr('communNiveau', 'Niveau')} ${rang}`;
   }
 }
 

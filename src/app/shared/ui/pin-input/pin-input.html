@@ -15,7 +15,7 @@
 </div>
 
 @if (isLoading()) {
-  <div class="nl-pin__chargement" role="status" aria-label="Vérification en cours">
+  <div class="nl-pin__chargement" role="status" [attr.aria-label]="'pinVerificationEnCours' | t">
     <span class="nl-pin__spin"></span>
   </div>
 } @else {
@@ -34,7 +34,7 @@
     }
     <div class="nl-pin__rangee">
       @if (withBiometric()) {
-        <button type="button" class="nl-pin__touche" aria-label="Déverrouiller par empreinte" (click)="biometric.emit()">
+        <button type="button" class="nl-pin__touche" [attr.aria-label]="'pinDeverrouillerEmpreinte' | t" (click)="biometric.emit()">
           <nl-icon name="fingerprint" [size]="24" />
         </button>
       } @else {
@@ -45,7 +45,7 @@
         type="button"
         class="nl-pin__touche nl-pin__touche--secondaire"
         [disabled]="!peutEffacer()"
-        aria-label="Effacer le dernier chiffre"
+        [attr.aria-label]="'pinEffacerDernierChiffre' | t"
         (click)="backspace.emit()"
       >
         <nl-icon name="backspace" [size]="22" />

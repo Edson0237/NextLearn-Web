@@ -56,6 +56,12 @@ export function tr(
   return instance ? instance.t(cle, params, secours) : (secours ?? cle);
 }
 
+/** Langue active courante (`'fr'` tant qu'un dictionnaire anglais n'est pas chargé). */
+export function langueCourante(): Langue {
+  if (!instance) return 'fr';
+  return instance.langue() === 'en' && instance.aDesMessages() ? 'en' : 'fr';
+}
+
 @Injectable({ providedIn: 'root' })
 export class TraductionService {
   private readonly http = inject(HttpClient);
@@ -72,6 +78,10 @@ export class TraductionService {
 
   /** Les messages sont-ils arrivés ? Sert à ne pas afficher de clés brutes. */
   readonly pret = signal(false);
+
+  aDesMessages(): boolean {
+    return Object.keys(this.messages()).length > 0;
+  }
 
   constructor() {
     instance = this;

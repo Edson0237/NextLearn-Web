@@ -8,6 +8,7 @@ import { SecureStorageService } from '../../../core/storage';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { AppRoutes } from '../../../core/router';
 import { ParcoursOtp } from '../../../core/models';
 import { estAuthentifie } from '../../../core/auth';
@@ -30,7 +31,7 @@ type Etape = 'email' | 'code' | 'nouveauPin';
 @Component({
   selector: 'app-reset-pin',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Icon, ResultatPin],
+  imports: [TraductionPipe, PinInput, Icon, ResultatPin, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './reset-pin.html',
   styleUrl: './reset-pin.scss',

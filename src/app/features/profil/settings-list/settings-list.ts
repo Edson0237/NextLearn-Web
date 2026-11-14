@@ -161,8 +161,8 @@ export class SettingsList implements OnInit {
           },
           {
             icone: 'school',
-            titre: 'Section académique',
-            sousTitre: 'Filtrer les cours et épreuves selon ta section',
+            titre: tr('sectionAcademique', 'Section académique'),
+            sousTitre: tr('sectionFiltrerPar', 'Filtrer par section'),
             valeur: this.libelleSection(u?.sectionPreference),
             action: () => void this.ouvrirChoixSection(),
           },
@@ -320,12 +320,12 @@ export class SettingsList implements OnInit {
     const rang = { n1: 1, n2: 2, n3: 3, n4: 4, n5: 5 }[niveau.toLowerCase()] ?? 0;
     if (!rang) return niveau.toUpperCase();
     switch (cycle) {
-      case 'master': return `Master ${rang - 3}`;
-      case 'licencePro': return `Licence Pro ${rang}`;
-      case 'licence': return `Licence ${rang}`;
-      case 'ingenieur': return `Ingénieur ${rang}`;
-      case 'prepa': return `Prépa ${rang}`;
-      default: return `Niveau ${rang}`;
+      case 'master': return `${tr('cycleMaster', 'Master')} ${rang - 3}`;
+      case 'licencePro': return `${tr('cycleLicencePro', 'Licence Pro')} ${rang}`;
+      case 'licence': return `${tr('cycleLicence', 'Licence')} ${rang}`;
+      case 'ingenieur': return `${tr('cycleIngenieur', 'Ingénieur')} ${rang}`;
+      case 'prepa': return `${tr('cyclePrepa', 'Prépa')} ${rang}`;
+      default: return `${tr('communNiveau', 'Niveau')} ${rang}`;
     }
   }
 
@@ -362,7 +362,7 @@ export class SettingsList implements OnInit {
         this.toast.erreur(err);
       } else {
         const nomNiveau = niveaux.find((n) => n.code.toUpperCase() === choix.toUpperCase())?.label ?? choix;
-        this.toast.succes(`Niveau mis à jour : ${nomNiveau}. Les cours sont adaptés.`);
+        this.toast.succes(tr('niveauMisAJour', `Niveau mis à jour : ${nomNiveau}. Les cours sont adaptés.`, { niveau: nomNiveau }));
         this.fraicheur.tick();
       }
     } catch (e: any) {
@@ -372,10 +372,10 @@ export class SettingsList implements OnInit {
 
   private libelleSection(pref?: SectionPreference | null): string {
     switch (pref) {
-      case 'FRANCOPHONE': return 'Francophone';
-      case 'ANGLOPHONE': return 'Anglophone';
-      case 'TOUTES': return 'Les deux sections';
-      default: return 'Non définie';
+      case 'FRANCOPHONE': return tr('sectionFrancophone', 'Francophone');
+      case 'ANGLOPHONE': return tr('sectionAnglophone', 'Anglophone');
+      case 'TOUTES': return tr('sectionToutes', 'Toutes sections');
+      default: return tr('sectionNonDefinie', 'Non définie');
     }
   }
 
@@ -383,11 +383,11 @@ export class SettingsList implements OnInit {
     const u = this.user();
     if (!u) return;
     const choix = await this.selections.ouvrir<SectionPreference>({
-      title: 'Section académique',
+      title: tr('sectionAcademique', 'Section académique'),
       choices: [
-        { value: 'FRANCOPHONE', label: 'Section Francophone' },
-        { value: 'ANGLOPHONE', label: 'Section Anglophone' },
-        { value: 'TOUTES', label: 'Les deux sections' },
+        { value: 'FRANCOPHONE', label: tr('sectionLabelFrancophone', 'Section Francophone') },
+        { value: 'ANGLOPHONE', label: tr('sectionLabelAnglophone', 'Section Anglophone') },
+        { value: 'TOUTES', label: tr('sectionToutes', 'Toutes sections') },
       ],
       currentValue: u.sectionPreference ?? 'TOUTES',
     });
@@ -396,7 +396,7 @@ export class SettingsList implements OnInit {
     if (err) {
       this.toast.erreur(err);
     } else {
-      this.toast.succes(`Section mise à jour : ${this.libelleSection(choix)}.`);
+      this.toast.succes(tr('sectionMiseAJour', `Section mise à jour : ${this.libelleSection(choix)}.`, { section: this.libelleSection(choix) }));
       this.fraicheur.tick();
     }
   }
@@ -540,8 +540,10 @@ export class SettingsList implements OnInit {
 
   protected libelleReduction(): string {
     const choix = this.acces.reduireAnimations();
-    if (choix === null) return 'Suivre le système';
-    return choix ? 'Activé' : 'Désactivé';
+    if (choix === null) return this.traductions.t('langueSuivreSysteme', undefined, 'Suivre le système');
+    return choix
+      ? this.traductions.t('parametresActive', undefined, 'Activé')
+      : this.traductions.t('parametresDesactive', undefined, 'Désactivé');
   }
 
   private async choisirReduction(): Promise<void> {

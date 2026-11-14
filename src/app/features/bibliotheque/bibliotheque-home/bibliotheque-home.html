@@ -39,8 +39,8 @@
     }
   </div>
 
-  <div class="nl-biblio__matieres" role="group" aria-label="Filtrer par section">
-    @for (sec of sectionsFiltre; track sec.label) {
+  <div class="nl-biblio__matieres" role="group" [attr.aria-label]="'sectionFiltrerPar' | t">
+    @for (sec of sectionsFiltre(); track sec.value) {
       <button
         type="button"
         class="nl-biblio__puce nl-cible-fine"
@@ -76,14 +76,14 @@
       </button>
       <button type="button" class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine" (click)="openOffline()">
         <nl-icon name="cloud_done" [size]="14" />
-        Mes téléchargements ({{ nombreHorsLigne() }})
+        {{ 'biblioMesTelechargements' | t }} ({{ nombreHorsLigne() }})
       </button>
     </div>
   } @else if (nombreHorsLigne() > 0) {
     <div class="nl-biblio__matieres">
       <button type="button" class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine" (click)="openOffline()">
         <nl-icon name="cloud_done" [size]="14" />
-        Mes téléchargements ({{ nombreHorsLigne() }})
+        {{ 'biblioMesTelechargements' | t }} ({{ nombreHorsLigne() }})
       </button>
     </div>
   }
@@ -144,7 +144,7 @@
       @if (aPlusDeDocuments()) {
         <div class="nl-biblio__plus" style="display: flex; justify-content: center; margin-top: 16px;">
           <button nlButton variant="outline" size="sm" (click)="afficherPlus()">
-            Afficher plus ({{ visibleDocuments().length }} / {{ filteredDocuments().length }})
+            {{ 'biblioAfficherPlus' | t: { affiches: visibleDocuments().length, total: filteredDocuments().length } }}
           </button>
         </div>
       }

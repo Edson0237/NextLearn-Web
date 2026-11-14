@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { Illustration } from '../illustration/illustration';
 import { Button } from '../button/button';
+import { TraductionPipe } from '../../../core/i18n';
 
 /**
  * Ce qu'on montre quand le premier démarrage ne trouve pas internet -
@@ -16,7 +17,7 @@ import { Button } from '../button/button';
 @Component({
   selector: 'nl-offline-screen',
   standalone: true,
-  imports: [Illustration, Button],
+  imports: [Illustration, Button, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './offline-screen.html',
   styleUrl: './offline-screen.scss',

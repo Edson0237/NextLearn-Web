@@ -7,13 +7,16 @@
       <img class="nl-onb__logo" src="/images/logo-marque.png" alt="" aria-hidden="true" width="30" height="30" />
       NextLearn
     </span>
-    @if (index() < diapositives.length - 1) {
-      <button type="button" class="nl-onb__passer" (click)="passer()">{{ 'onboardingPasser' | t }}</button>
-    }
+    <div style="display:flex;align-items:center;gap:10px;">
+      <nl-langue-switcher />
+      @if (index() < diapositives().length - 1) {
+        <button type="button" class="nl-onb__passer" (click)="passer()">{{ 'onboardingPasser' | t }}</button>
+      }
+    </div>
   </header>
 
   <div class="nl-onb__piste" #piste (scroll)="surDefilement($event)">
-    @for (slide of diapositives; track slide.titre) {
+    @for (slide of diapositives(); track slide.icone) {
       <!-- La teinte descend en variable CSS : les halos en tirent leurs
            transparences par `color-mix`, ce qu'une concaténation de chaîne
            hexadécimale (`accent + '12'`) ne savait faire que sur des
@@ -38,9 +41,9 @@
     }
   </div>
 
-  <footer class="nl-onb__pied" [style.--accent]="diapositives[index()].accent" [style.--encre]="diapositives[index()].encre">
+  <footer class="nl-onb__pied" [style.--accent]="diapositives()[index()].accent" [style.--encre]="diapositives()[index()].encre">
     <div class="nl-onb__points">
-      @for (slide of diapositives; track slide.titre; let i = $index) {
+      @for (slide of diapositives(); track slide.icone; let i = $index) {
         <button
           type="button"
           class="nl-onb__point nl-cible-fine"
@@ -52,8 +55,8 @@
       }
     </div>
     <button type="button" class="nl-onb__cta" (click)="suivant()">
-      {{ (index() === diapositives.length - 1 ? 'onboardingCommencer' : 'onboardingSuivant') | t }}
-      <nl-icon [name]="index() === diapositives.length - 1 ? 'arrow_forward' : 'chevron_right'" [size]="20" />
+      {{ (index() === diapositives().length - 1 ? 'onboardingCommencer' : 'onboardingSuivant') | t }}
+      <nl-icon [name]="index() === diapositives().length - 1 ? 'arrow_forward' : 'chevron_right'" [size]="20" />
     </button>
   </footer>
 </div>

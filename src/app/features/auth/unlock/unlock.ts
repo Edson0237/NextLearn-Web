@@ -8,6 +8,7 @@ import { BiometricService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Identite } from '../../../shared/ui/identite/identite';
+import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { AppRoutes } from '../../../core/router';
 import { initiales } from '../../../core/models';
 
@@ -21,7 +22,7 @@ import { initiales } from '../../../core/models';
 @Component({
   selector: 'app-unlock',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Identite, ResultatPin],
+  imports: [TraductionPipe, PinInput, Identite, ResultatPin, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './unlock.html',
   styleUrl: './unlock.scss',

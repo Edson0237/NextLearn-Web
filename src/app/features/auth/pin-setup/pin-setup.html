@@ -4,15 +4,16 @@
       <nl-icon name="close" [size]="20" />
     </button>
     <h1 class="nl-pinset__titre-entete">{{ 'authCreerTonPin' | t }}</h1>
+    <div style="margin-left:auto;"><nl-langue-switcher /></div>
   </header>
 
   <div class="nl-pinset__corps">
     <div class="nl-pinset__pastille">
       <nl-icon name="fingerprint" [size]="28" />
     </div>
-    <h2 class="nl-pinset__titre">{{ confirmant() ? 'Confirme ton PIN' : 'Choisis un PIN' }}</h2>
+    <h2 class="nl-pinset__titre">{{ (confirmant() ? 'pinSetupConfirmeTitre' : 'pinSetupChoisisTitre') | t }}</h2>
     <p class="nl-pinset__texte">
-      {{ confirmant() ? 'Saisis à nouveau ton code à 4 chiffres' : 'Ce code te permettra de te connecter rapidement' }}
+      {{ (confirmant() ? 'pinSetupConfirmeTexte' : 'pinSetupChoisisTexte') | t }}
     </p>
 
     <nl-pin-input

@@ -7,7 +7,7 @@
       @if (totalPages() > 0) {
         Page {{ page() }} / {{ totalPages() }}
       } @else {
-        Lecture
+        {{ 'pdfLecture' | t }}
       }
     </span>
   </header>

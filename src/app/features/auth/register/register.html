@@ -4,6 +4,7 @@
       <nl-icon name="arrow_back" [size]="20" />
     </button>
     <h1 class="nl-reg__titre-entete">{{ 'authCreerCompte' | t }}</h1>
+    <nl-langue-switcher />
     <span class="nl-reg__compteur">{{ modeGoogle() ? 1 : etape() + 1 }}/{{ totalEtapes() }}</span>
   </header>
 
@@ -59,7 +60,7 @@
           @case ('reconnu') {
             <p class="nl-reg__etat-domaine nl-reg__etat-domaine--ok">
               <nl-icon name="check_circle" [size]="16" />
-              Domaine reconnu{{ domaine().institution ? ' - ' + domaine().institution : '' }}
+              {{ 'registerDomaineReconnu' | t }}{{ domaine().institution ? ' - ' + domaine().institution : '' }}
             </p>
           }
           @case ('refuse') {
@@ -203,12 +204,12 @@
         <label class="nl-reg__depot">
           <input type="file" accept=".pdf,.jpg,.jpeg,.png" (change)="surFichierChoisi($event)" hidden />
           <nl-icon [name]="justificatifFichier() ? 'check_circle' : 'upload_file'" [size]="28" />
-          <strong>{{ justificatifFichier()?.name || 'Choisir un fichier' }}</strong>
+          <strong>{{ justificatifFichier()?.name || ('communChoisirFichier' | t) }}</strong>
           <small>
             @if (justificatifFichier()) {
-              {{ (justificatifFichier()!.size / 1024).toFixed(0) }} Ko - appuie pour changer
+              {{ 'registerFichierChanger' | t: { taille: (justificatifFichier()!.size / 1024).toFixed(0) } }}
             } @else {
-              PDF, JPG ou PNG
+              {{ 'registerFormatsAcceptes' | t }}
             }
           </small>
         </label>
@@ -217,7 +218,7 @@
           @if (chargement()) {
             <span class="nl-reg__spinner"></span>
           } @else {
-            Recevoir le code
+            {{ 'registerRecevoirCode' | t }}
           }
         </button>
         <p class="nl-reg__confidentialite">{{ 'pwaDocumentPourInscription' | t }}</p>

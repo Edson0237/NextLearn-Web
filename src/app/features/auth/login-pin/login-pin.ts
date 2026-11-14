@@ -8,6 +8,7 @@ import { SecureStorageService } from '../../../core/storage';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Identite } from '../../../shared/ui/identite/identite';
+import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { AppRoutes } from '../../../core/router';
 import { initiales } from '../../../core/models';
 
@@ -25,7 +26,7 @@ import { initiales } from '../../../core/models';
 @Component({
   selector: 'app-login-pin',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Identite, ResultatPin, GoogleBouton, MentionsLegales],
+  imports: [TraductionPipe, PinInput, Identite, ResultatPin, GoogleBouton, MentionsLegales, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login-pin.html',
   styleUrl: './login-pin.scss',

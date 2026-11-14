@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { BottomSheetRef, BOTTOM_SHEET_DATA } from '../../../shared/ui/bottom-sheet/bottom-sheet';
 import { BottomSheetShell } from '../../../shared/ui/bottom-sheet/shell/bottom-sheet-shell';
 import { Icon } from '../../../shared/ui/icon/icon';
-import { TraductionPipe } from '../../../core/i18n';
+import { TraductionPipe, TraductionService } from '../../../core/i18n';
 import { HapticService } from '../../../shared/services/haptic';
 import { DocumentType } from '../../../core/bibliotheque';
 import { SectionAcademique } from '../../../core/models';
@@ -43,11 +43,15 @@ export class FiltresSheet {
   protected readonly matiere = signal<string | null>(this.data.matiere);
   protected readonly section = signal<SectionAcademique | null>(this.data.section);
 
-  protected readonly sections: readonly { value: SectionAcademique | null; label: string }[] = [
-    { value: null, label: 'Toutes' },
-    { value: 'FRANCOPHONE', label: 'Francophone' },
-    { value: 'ANGLOPHONE', label: 'Anglophone' },
-  ];
+  private readonly traductions = inject(TraductionService);
+  protected readonly sections = computed<{ value: SectionAcademique | null; label: string }[]>(() => {
+    this.traductions.langue();
+    return [
+      { value: null, label: this.traductions.t('epreuveTypeTous', undefined, 'Tous') },
+      { value: 'FRANCOPHONE', label: this.traductions.t('sectionFrancophone', undefined, 'Francophone') },
+      { value: 'ANGLOPHONE', label: this.traductions.t('sectionAnglophone', undefined, 'Anglophone') },
+    ];
+  });
 
   protected readonly total = computed(() => this.data.compter(this.type(), this.matiere(), this.section()));
   protected readonly modifie = computed(() => this.type() !== null || this.matiere() !== null || this.section() !== null);

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { AppRoutes } from '../../../core/router';
 import { DemandeOtp, enFile, StatutDemandeOtp, determinerDestinationVerification } from '../../../core/models';
 import { ParcoursOtp } from '../../../core/models';
@@ -32,7 +33,7 @@ const PERIODE_SONDAGE_MS = 30_000;
 @Component({
   selector: 'app-otp',
   standalone: true,
-  imports: [TraductionPipe, Icon],
+  imports: [TraductionPipe, Icon, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './otp.html',
   styleUrl: './otp.scss',

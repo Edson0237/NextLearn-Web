@@ -1,5 +1,5 @@
 <div class="offline">
-  <nl-page-bar [titre]="'Mes téléchargements'" (retour)="goBack()">
+  <nl-page-bar [titre]="'biblioMesTelechargements' | t" (retour)="goBack()">
     <button type="button" [disabled]="loading()" [attr.aria-label]="'pwaSynchroniser' | t" (click)="load()">
       <nl-icon name="cloud_sync" [size]="20" />
     </button>
@@ -13,7 +13,7 @@
         <h2 class="offline__stockage-titre">{{ 'pwaStockageAppareil' | t }}</h2>
         @if (stockage.ids().size > 0) {
           <button type="button" class="offline__lien offline__lien--danger nl-cible-fine" (click)="libererEspace()">
-            Libérer de l’espace
+            {{ 'offlineLibererEspace' | t }}
           </button>
         } @else {
           <button type="button" class="offline__lien nl-cible-fine" (click)="gererCache()">
@@ -31,7 +31,7 @@
       </div>
       <div class="offline__stockage-pied">
         <span>
-          Documents NextLearn : <strong>{{ lisible(stockageApp()) }}</strong> ({{ stockage.ids().size }} fichier{{ stockage.ids().size > 1 ? 's' : '' }})
+          {{ 'offlineDocsNextLearn' | t }} <strong>{{ lisible(stockageApp()) }}</strong> ({{ 'offlineFichiers' | t: { n: stockage.ids().size } }})
         </span>
         @if (stockageTotal()) {
           <span>{{ 'pwaStockageTotal' | t: { taille: lisible(stockageTotal()) } }}</span>
@@ -39,7 +39,7 @@
       </div>
     </section>
 
-    <div class="offline__onglets" role="tablist" [attr.aria-label]="'Mes téléchargements'">
+    <div class="offline__onglets" role="tablist" [attr.aria-label]="'biblioMesTelechargements' | t">
       <button
         type="button"
         role="tab"
@@ -47,7 +47,7 @@
         [class.offline__onglet--actif]="onglet() === 'telecharges'"
         [attr.aria-selected]="onglet() === 'telecharges'"
         (click)="choisir('telecharges')">
-        Mes téléchargements ({{ compte('telecharges') }})
+        {{ 'biblioMesTelechargements' | t }} ({{ compte('telecharges') }})
       </button>
       <button
         type="button"
@@ -95,7 +95,7 @@
       </nl-empty-state>
     } @else {
       <nl-section-header
-        [titre]="onglet() === 'telecharges' ? 'Mes téléchargements hors ligne' : ('pwaFichiersRecents' | t)"
+        [titre]="onglet() === 'telecharges' ? ('biblioMesTelechargements' | t) : ('pwaFichiersRecents' | t)"
         [sousTitre]="'pwaResultats' | t: { nombre: liste().length }"
         icone="folder"
         teinte="var(--primary)" />

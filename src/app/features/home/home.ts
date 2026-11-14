@@ -2,13 +2,13 @@ import { Fraicheur } from '../../shared/services/fraicheur';
 import { TelechargementEtat } from '../../shared/services/telechargement-etat';
 import { metaDocument, noteDocument } from '../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, effect, untracked, computed, inject, OnInit, signal } from '@angular/core';
-import { TraductionPipe } from '../../core/i18n';
+import { TraductionPipe, TraductionService } from '../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth';
 import { DocumentsRepository } from '../../core/bibliotheque';
 import { ProfilRepository } from '../../core/profil';
-import { FormatsService } from '../../core/references';
+import { FormatsService, traduireFiliere } from '../../core/references';
 import { ContexteRepository } from '../../core/contexte';
 import { CONTEXTE_OUVERT, MatiereDuProgramme, typeVisible, fonctionnaliteFermee } from '../../core/contexte';
 import {
@@ -142,11 +142,13 @@ export class Home implements OnInit {
   /** Ceux qui vivent derrière la tuile « Plus de formats ». */
   protected readonly typesSecondaires = computed(() => this.typesDisponibles().slice(3));
 
+  private readonly traductions = inject(TraductionService);
   protected readonly user = computed(() => this.auth.state().user);
   protected readonly subtitle = computed(() => {
+    this.traductions.langue();
     const u = this.user();
-    if (!u) return 'Bienvenue sur NextLearn';
-    return [libelleNiveau(u.niveau, u.cycle), u.filiere].filter(Boolean).join(' · ');
+    if (!u) return this.traductions.t('homeBienvenue', undefined, 'Bienvenue sur NextLearn');
+    return [libelleNiveau(u.niveau, u.cycle), u.filiere ? traduireFiliere(u.filiere) : undefined].filter(Boolean).join(' · ');
   });
 
   /**
@@ -254,6 +256,7 @@ export class Home implements OnInit {
 
   /** L'école et le niveau, tels qu'affichés dans l'en-tête. */
   protected readonly cursus = computed(() => {
+    this.traductions.langue();
     const u = this.user();
     if (!u) return undefined;
     return [u.universite, libelleNiveau(u.niveau, u.cycle)].filter(Boolean).join(' • ');

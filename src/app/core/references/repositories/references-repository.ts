@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, isDevMode } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { Failure } from '../../models';
+import { traduireOptionReference } from '../utils/traduire-reference';
 import {
   FiliereOption, JustificatifType, MatiereOption, OptionReference, TypeContenuOption, Universite,
   filiereDepuisJson, justificatifTypeDepuisJson, matiereDepuisJson, optionDepuisJson,
@@ -69,9 +70,9 @@ export class ReferencesRepository {
       // repli en cas de coupure réseau ou route indisponible
     }
     return [
-      { value: 'SN', label: 'Session normale' },
-      { value: 'CC', label: 'Contrôle continu' },
-      { value: 'RATTRAPAGE', label: 'Rattrapage' },
+      { value: 'SN', label: traduireOptionReference('SN', 'Session normale') },
+      { value: 'CC', label: traduireOptionReference('CC', 'Contrôle continu') },
+      { value: 'RATTRAPAGE', label: traduireOptionReference('RATTRAPAGE', 'Rattrapage') },
     ];
   }
 

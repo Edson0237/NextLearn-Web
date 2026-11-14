@@ -6,6 +6,8 @@
  * soustraite à l'administration.
  */
 
+import { traduireFiliere, traduireJustificatif, traduireOptionReference } from '../utils/traduire-reference';
+
 export interface Universite {
   readonly id: string;
   readonly nom: string;
@@ -58,7 +60,7 @@ export function universiteDepuisJson(json: Record<string, unknown>): Universite 
 }
 
 export function filiereDepuisJson(json: Record<string, unknown>): FiliereOption {
-  return { id: String(json['_id'] ?? json['id']), nom: texte(json, 'nom') };
+  return { id: String(json['_id'] ?? json['id']), nom: traduireFiliere(texte(json, 'nom')) };
 }
 
 export function matiereDepuisJson(json: Record<string, unknown>): MatiereOption {
@@ -66,22 +68,26 @@ export function matiereDepuisJson(json: Record<string, unknown>): MatiereOption 
 }
 
 export function optionDepuisJson(json: Record<string, unknown>): OptionReference {
+  const value = texte(json, 'value');
   return {
     id: json['id'] != null ? String(json['id']) : undefined,
-    value: texte(json, 'value'),
-    label: texte(json, 'label'),
+    value,
+    label: traduireOptionReference(value, texte(json, 'label')),
   };
 }
 
 export function typeContenuDepuisJson(json: Record<string, unknown>): TypeContenuOption {
+  const value = texte(json, 'value');
   return {
-    value: texte(json, 'value'),
-    label: texte(json, 'label'),
+    value,
+    label: traduireOptionReference(value, texte(json, 'label')),
     collection: json['collection'] != null ? String(json['collection']) : 'documents',
     couleur: json['color'] != null ? String(json['color']) : undefined,
   };
 }
 
 export function justificatifTypeDepuisJson(json: Record<string, unknown>): JustificatifType {
-  return { value: texte(json, 'value'), label: texte(json, 'label'), description: texte(json, 'description') };
+  const value = texte(json, 'value');
+  const trad = traduireJustificatif(value, texte(json, 'label'), texte(json, 'description'));
+  return { value, label: trad.label, description: trad.description };
 }

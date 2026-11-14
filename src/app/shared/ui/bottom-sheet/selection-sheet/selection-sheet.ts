@@ -5,6 +5,7 @@ import { BottomSheetShell } from '../shell/bottom-sheet-shell';
 import { Icon } from '../../icon/icon';
 import { IconName } from '../../icon/icon-paths';
 import { HapticService } from '../../../services/haptic';
+import { TraductionPipe } from '../../../../core/i18n';
 
 /** Le seuil au-delà duquel le champ de recherche apparaît. */
 export const SEUIL_RECHERCHE = 8;
@@ -46,7 +47,7 @@ export interface SelectionSheetData<T = unknown> {
 @Component({
   selector: 'nl-selection-sheet',
   standalone: true,
-  imports: [BottomSheetShell, Icon, FormsModule],
+  imports: [BottomSheetShell, Icon, FormsModule, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './selection-sheet.html',
   styleUrl: './selection-sheet.scss',

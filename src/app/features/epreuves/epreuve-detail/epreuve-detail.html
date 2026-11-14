@@ -74,7 +74,7 @@
             >
               <nl-icon [name]="telechargements.etat(ep.id) === 'fait' ? 'cloud_done' : 'download'" [size]="18" />
               @if (telechargements.etat(ep.id) === 'fait') {
-                Enregistré hors ligne
+                {{ 'epreuveEnregistreHorsLigne' | t }}
               } @else if (telechargements.etat(ep.id) === 'encours') {
                 {{ telechargements.progression(ep.id) }} %
               } @else {
@@ -159,7 +159,7 @@
                   @if (envoiNote()) {
                     <span class="nl-epd__spinner nl-epd__spinner--petit"></span>
                   } @else {
-                    Envoyer
+                    {{ 'actionEnvoyer' | t }}
                   }
                 </button>
               }

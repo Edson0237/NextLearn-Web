@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { tr } from '../../i18n';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../router/routes/app-routes';
 import { AuthRepository } from '../repositories/auth-repository';
@@ -567,8 +568,9 @@ export class AuthService {
       void this.invaliderCacheProfil();
       return null;
     } catch (e) {
-      this.patch({ isLoading: false, error: this.messageErreur(e, 'Niveau non enregistré.') });
-      return this.messageErreur(e, 'Niveau non enregistré.');
+      const msg = this.messageErreur(e, tr('niveauNonEnregistre', 'Niveau non enregistré.'));
+      this.patch({ isLoading: false, error: msg });
+      return msg;
     }
   }
 
@@ -581,8 +583,9 @@ export class AuthService {
       void this.invaliderCacheProfil();
       return null;
     } catch (e) {
-      this.patch({ isLoading: false, error: this.messageErreur(e, 'Section non enregistrée.') });
-      return this.messageErreur(e, 'Section non enregistrée.');
+      const msg = this.messageErreur(e, tr('sectionNonEnregistree', 'Section non enregistrée.'));
+      this.patch({ isLoading: false, error: msg });
+      return msg;
     }
   }
 

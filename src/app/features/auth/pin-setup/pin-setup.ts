@@ -8,6 +8,7 @@ import { validerPin } from '../../../core/auth';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Icon } from '../../../shared/ui/icon/icon';
+import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { AppRoutes } from '../../../core/router';
 
 /**
@@ -20,7 +21,7 @@ import { AppRoutes } from '../../../core/router';
 @Component({
   selector: 'app-pin-setup',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Icon, ResultatPin],
+  imports: [TraductionPipe, PinInput, Icon, ResultatPin, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './pin-setup.html',
   styleUrl: './pin-setup.scss',

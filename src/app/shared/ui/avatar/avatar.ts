@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { Icon } from '../icon/icon';
+import { TraductionPipe } from '../../../core/i18n';
 
 /**
  * Photo de profil, ou initiales à défaut - traduction d'`AvatarUtilisateur`
@@ -19,7 +20,7 @@ import { Icon } from '../icon/icon';
 @Component({
   selector: 'nl-avatar',
   standalone: true,
-  imports: [Icon, NgTemplateOutlet],
+  imports: [Icon, NgTemplateOutlet, TraductionPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './avatar.html',
   styleUrl: './avatar.scss',

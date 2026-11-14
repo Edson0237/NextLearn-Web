@@ -45,7 +45,7 @@
       />
       <div class="nl-prf__identite-textes">
         <p class="nl-prf__nom">{{ nomComplet() }}</p>
-        <p class="nl-prf__filiere">{{ u.filiere }}</p>
+        <p class="nl-prf__filiere">{{ filiereLabel() }}</p>
         <div class="nl-prf__etiquettes">
           @if (libelleCycle()) {
             <nl-badge [capitales]="true">{{ libelleCycle() }}</nl-badge>

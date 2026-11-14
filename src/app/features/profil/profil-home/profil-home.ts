@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked, viewChild, ElementRef } from '@angular/core';
-import { tr } from '../../../core/i18n';
-import { TraductionPipe } from '../../../core/i18n';
+import { tr, TraductionPipe, TraductionService } from '../../../core/i18n';
+import { traduireFiliere } from '../../../core/references';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { ProfilRepository } from '../../../core/profil';
@@ -78,15 +78,24 @@ export class ProfilHome {
     void this.router.navigate(['/app', AppRoutes.favoris]);
   }
 
+  private readonly traductions = inject(TraductionService);
+
+  protected readonly filiereLabel = computed(() => {
+    this.traductions.langue();
+    const f = this.user()?.filiere;
+    return f ? traduireFiliere(f) : '';
+  });
+
   protected readonly libelleCycle = computed(() => {
+    this.traductions.langue();
     const u = this.user();
     if (!u || !u.cycle) return '';
     switch (u.cycle) {
-      case 'prepa': return 'Prépa';
-      case 'ingenieur': return 'Ingénieur';
-      case 'licence': return 'Licence';
-      case 'licencePro': return 'Licence Pro';
-      case 'master': return 'Master';
+      case 'prepa': return this.traductions.t('cyclePrepa', undefined, 'Prépa');
+      case 'ingenieur': return this.traductions.t('cycleIngenieur', undefined, 'Ingénieur');
+      case 'licence': return this.traductions.t('cycleLicence', undefined, 'Licence');
+      case 'licencePro': return this.traductions.t('cycleLicencePro', undefined, 'Licence Pro');
+      case 'master': return this.traductions.t('cycleMaster', undefined, 'Master');
       default: return '';
     }
   });

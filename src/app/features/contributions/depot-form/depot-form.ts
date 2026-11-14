@@ -101,7 +101,17 @@ export class DepotForm {
   private async chargerMatieres(): Promise<void> {
     const niveau = this.auth.state().user?.niveau;
     try {
-      const items = await this.refs.getMatieres({ niveau: niveau ? niveauCourt(niveau) : undefined });
+      const brut = await this.refs.getMatieres({ niveau: niveau ? niveauCourt(niveau) : undefined });
+      const motifHorsMatiere = /^(SN|TD|TP|CC|DS|ISJ|RATTRAPAGE|SESSION|EXAMEN|EPREUVE|SUJET|CORRIG[EÉ]|CORRECTION|M[EÉ]DIAN)\b/i;
+      const vus = new Set<string>();
+      const items = brut.filter((m) => {
+        const nom = (m.nom ?? '').trim();
+        if (!nom || motifHorsMatiere.test(nom)) return false;
+        const cle = nom.toLowerCase();
+        if (vus.has(cle)) return false;
+        vus.add(cle);
+        return true;
+      });
       this.matieres.set({ statut: 'pret', items });
     } catch {
       this.matieres.set({ statut: 'erreur', items: [] });
@@ -130,7 +140,7 @@ export class DepotForm {
       return;
     }
     if (f.size > this.tailleMaxMo() * 1024 * 1024) {
-      this.toast.erreur(`Ce fichier dépasse ${this.tailleMaxMo()} Mo. Choisis-en un plus léger.`);
+      this.toast.erreur(tr('depotFichierDepasseMax', `Ce fichier dépasse ${this.tailleMaxMo()} Mo. Choisis-en un plus léger.`, { max: this.tailleMaxMo() }));
       return;
     }
     this.fichier.set(f);
@@ -144,7 +154,7 @@ export class DepotForm {
     const titre = this.titre().trim();
     const description = this.description().trim();
 
-    if (titre.length < 3) return this.toast.info("Donne un titre d'au moins 3 caractères.");
+    if (titre.length < 3) return this.toast.info(tr('depotTitreTropCourt', "Donne un titre d'au moins 3 caractères."));
     if (description.length < 10) return this.toast.info(tr('depotDescriptionTropCourte', 'Décris le document en 10 caractères au moins.'));
     if (!this.type()) return this.toast.info(tr('depotChoisisType', 'Choisis le type de document.'));
     if (!this.matiereId()) return this.toast.info(tr('depotChoisisMatiere', 'Choisis la matière.'));

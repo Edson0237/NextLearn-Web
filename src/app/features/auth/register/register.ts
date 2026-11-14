@@ -9,6 +9,7 @@ import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { MentionsLegales } from '../../../shared/ui/consentements/mentions-legales';
+import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
 import { GoogleIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router';
@@ -48,7 +49,7 @@ const CHARGEMENT: Cascade<never> = { statut: 'chargement', items: [], erreur: ''
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [TraductionPipe, Icon, GoogleBouton, MentionsLegales],
+  imports: [TraductionPipe, Icon, GoogleBouton, MentionsLegales, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register.html',
   styleUrl: './register.scss',
