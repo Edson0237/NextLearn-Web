@@ -143,6 +143,7 @@ export class BibliothequeHome implements OnInit {
   });
 
   private static readonly PAS_AFFICHAGE = 30;
+  protected readonly pageCourante = signal<number>(1);
   protected readonly nextCursor = signal<string | null>(null);
   protected readonly hasMoreServer = signal<boolean>(false);
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
@@ -204,17 +205,29 @@ export class BibliothequeHome implements OnInit {
 
   protected async afficherPlus(): Promise<void> {
     const cursor = this.nextCursor();
-    if (cursor && this.hasMoreServer()) {
+    if (this.hasMoreServer()) {
       try {
         const type = this.selectedType();
         const matiere = this.selectedMatiere();
         const section = this.selectedSection();
-        const page = await this.docsRepo.getDocuments(
-          { type: type || undefined, matiereId: matiere || undefined, section: section || undefined },
-          cursor,
-          20,
-        );
-        this.documents.update((docs) => [...docs, ...page.items]);
+        const page = cursor
+          ? await this.docsRepo.getDocuments(
+              { type: type || undefined, matiereId: matiere || undefined, section: section || undefined },
+              cursor,
+              20,
+            )
+          : await this.docsRepo.getDocumentsPage({
+              page: this.pageCourante() + 1,
+              limit: 20,
+              type: type || undefined,
+              matiereId: matiere || undefined,
+              section: section || undefined,
+            });
+        this.documents.update((docs) => {
+          const connus = new Set(docs.map((d) => d.id));
+          return [...docs, ...page.items.filter((d) => !connus.has(d.id))];
+        });
+        this.pageCourante.set(page.page);
         this.nextCursor.set(page.nextCursor ?? null);
         this.hasMoreServer.set(Boolean(page.hasMore));
         this.limiteAffichee.set(this.documents().length);
@@ -267,6 +280,7 @@ export class BibliothequeHome implements OnInit {
         20,
       );
       this.documents.set([...page.items]);
+      this.pageCourante.set(page.page);
       this.nextCursor.set(page.nextCursor ?? null);
       this.hasMoreServer.set(Boolean(page.hasMore));
     } catch {

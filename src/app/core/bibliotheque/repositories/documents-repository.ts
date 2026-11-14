@@ -151,6 +151,7 @@ export class DocumentsRepository {
     type,
     matiereId,
     semestre,
+    section,
   }: {
     page?: number;
     limit?: number;
@@ -158,6 +159,7 @@ export class DocumentsRepository {
     type?: string;
     matiereId?: string;
     semestre?: string;
+    section?: string;
   } = {}): Promise<DocumentPage> {
     const params: Record<string, string> = {
       page: String(page),
@@ -167,6 +169,7 @@ export class DocumentsRepository {
     if (type) params['type'] = type;
     if (matiereId) params['matiereId'] = matiereId;
     if (semestre) params['semestre'] = semestre;
+    if (section) params['section'] = section;
 
     try {
       const reponse = await firstValueFrom(this.http.get('/api/documents', { params }));

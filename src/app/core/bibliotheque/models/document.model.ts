@@ -224,14 +224,27 @@ export function pageDocumentsDepuisApi(json: Record<string, unknown>): DocumentP
     }
   }
 
+  if (
+    !pagination &&
+    json['pagination'] &&
+    typeof json['pagination'] === 'object'
+  ) {
+    pagination = json['pagination'] as Record<string, unknown>;
+  }
+
   const meta = (json['meta'] as Record<string, unknown>) ?? pagination ?? {};
-  const hasMore = pagination ? Boolean(pagination['hasMore']) : undefined;
+  const page = typeof meta['page'] === 'number' ? meta['page'] : 1;
+  const totalPages = typeof meta['totalPages'] === 'number' ? meta['totalPages'] : 1;
+  const hasMore =
+    pagination && typeof pagination['hasMore'] === 'boolean'
+      ? Boolean(pagination['hasMore'])
+      : page < totalPages;
   const nextCursor = pagination?.['nextCursor'] ? String(pagination['nextCursor']) : null;
 
   return {
     items: rawList.map(documentDepuisApi),
-    page: typeof meta['page'] === 'number' ? meta['page'] : 1,
-    totalPages: typeof meta['totalPages'] === 'number' ? meta['totalPages'] : 1,
+    page,
+    totalPages,
     total: typeof meta['total'] === 'number' ? meta['total'] : rawList.length,
     sortApplied: meta['sort'] ? String(meta['sort']) : undefined,
     hasMore,
