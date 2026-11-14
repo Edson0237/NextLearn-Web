@@ -174,37 +174,6 @@
         </section>
       }
 
-      <!-- ── Mes matières ────────────────────────────────────────────────── -->
-      @if (matieresFiliere().length > 0 || matieresTroncCommun().length > 0) {
-        <section class="home__section">
-          <nl-section-header [titre]="'homeMesMatieres' | t" icone="school" teinte="var(--primary)" />
-
-          <div class="home__matieres">
-            @for (m of matieresFiliere(); track m.id) {
-              <button type="button" class="home__matiere" (click)="openMatiere(m)">
-                <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
-                <span class="home__matiere-nom">{{ m.nom }}</span>
-                <nl-icon name="chevron_right" [size]="18" />
-              </button>
-            }
-          </div>
-
-          @if (matieresTroncCommun().length > 0) {
-            <p class="home__tronc-titre">{{ 'homeTroncCommun' | t }}</p>
-            <p class="home__tronc-aide">{{ 'homeTroncCommunAide' | t }}</p>
-            <div class="home__matieres">
-              @for (m of matieresTroncCommun(); track m.id) {
-                <button type="button" class="home__matiere" (click)="openMatiere(m)">
-                  <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
-                  <span class="home__matiere-nom">{{ m.nom }}</span>
-                  <nl-icon name="chevron_right" [size]="18" />
-                </button>
-              }
-            </div>
-          }
-        </section>
-      }
-
       <!-- ── Récemment ajoutés ───────────────────────────────────────────── -->
       @if (recent().length > 0) {
         <section class="home__section">
@@ -243,10 +212,7 @@
       @if (
         recommended().length === 0 &&
         popular().length === 0 &&
-        recent().length === 0 &&
-        reprises().length === 0 &&
-        matieresFiliere().length === 0 &&
-        matieresTroncCommun().length === 0
+        recent().length === 0
       ) {
         <nl-empty-state
           [title]="'pwaRienAAfficher' | t"
