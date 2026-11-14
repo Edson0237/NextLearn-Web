@@ -26,6 +26,7 @@ import { DocumentCard, EtiquetteDocument } from '../../shared/ui/document-card/d
 import { AppHeader } from '../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../shared/ui/search-bar/search-bar';
 import { SectionHeader } from '../../shared/ui/section-header/section-header';
+import { Badge } from '../../shared/ui/badge/badge';
 import { tr } from '../../core/i18n';
 import { FeuilleSelectionService } from '../../shared/ui/bottom-sheet/feuille-selection';
 import { Icon } from '../../shared/ui/icon/icon';
@@ -47,7 +48,7 @@ interface Reprise {
   standalone: true,
   imports: [TypeDocumentPipe, 
     TraductionPipe, CommonModule, DocumentCard, Icon, EmptyState, Button, AnimatedNumber,
-    AppHeader, SearchBar, SectionHeader,
+    AppHeader, SearchBar, SectionHeader, Badge,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.html',
@@ -72,34 +73,6 @@ export class Home implements OnInit {
   protected readonly recommended = signal<DocumentModel[]>([]);
   protected readonly popular = signal<DocumentModel[]>([]);
   protected readonly recent = signal<DocumentModel[]>([]);
-  protected readonly ongletActif = signal<'recommandes' | 'populaires' | 'recents'>('recommandes');
-
-  protected readonly ongletsDisponibles = computed(() => {
-    const liste: { id: 'recommandes' | 'populaires' | 'recents'; labelCle: string; docs: DocumentModel[] }[] = [];
-    if (this.recommended().length > 0) {
-      liste.push({ id: 'recommandes', labelCle: 'homeOngletRecommandes', docs: this.recommended() });
-    }
-    if (this.popular().length > 0) {
-      liste.push({ id: 'populaires', labelCle: 'pwaPopulaires', docs: this.popular() });
-    }
-    if (this.recent().length > 0) {
-      liste.push({ id: 'recents', labelCle: 'homeOngletRecents', docs: this.recent() });
-    }
-    return liste;
-  });
-
-  protected readonly documentsOngletActif = computed(() => {
-    const onglets = this.ongletsDisponibles();
-    if (onglets.length === 0) return [];
-    const courant = onglets.find((o) => o.id === this.ongletActif()) ?? onglets[0];
-    return courant.docs.slice(0, 4);
-  });
-
-  protected readonly ongletCourantId = computed(() => {
-    const onglets = this.ongletsDisponibles();
-    if (onglets.length === 0) return 'recommandes';
-    return (onglets.find((o) => o.id === this.ongletActif()) ?? onglets[0]).id;
-  });
 
   protected readonly streak = signal(0);
   /** Documents disponibles hors ligne et documents lus - les vrais chiffres.
@@ -219,12 +192,13 @@ export class Home implements OnInit {
       this.error.set(null);
     }
     try {
-      const [rec, pop, recents, stats, contexte] = await Promise.all([
+      const [rec, pop, recents, stats, contexte, progression] = await Promise.all([
         this.docsRepo.getRecommended(),
         this.docsRepo.getPopular(),
         this.docsRepo.getRecent(),
         this.profilRepo.getStats().catch(() => null),
         this.contexteRepo.charger(),
+        this.lectureRepo.getAll().catch(() => new Map<string, LectureProgress>()),
       ]);
 
       this.recommended.set(rec);
@@ -234,10 +208,17 @@ export class Home implements OnInit {
       this.horsLigne.set(Math.max(stats?.docsTelecharges ?? 0, this.stockage.ids().size));
       this.lus.set(stats?.docsLus ?? 0);
       this.contexte.set(contexte);
+      this.reprises.set(
+        this.composerReprises(progression, [...this.stockage.fiches(), ...rec, ...pop, ...recents]),
+      );
     } catch {
       const fichesLocales = this.stockage.fiches();
       if (fichesLocales.length > 0) {
+        const progressionLocale = await this.lectureRepo
+          .getAll()
+          .catch(() => new Map<string, LectureProgress>());
         this.horsLigne.set(this.stockage.ids().size);
+        this.reprises.set(this.composerReprises(progressionLocale, fichesLocales));
         this.recommended.set([...fichesLocales]);
         return;
       }
