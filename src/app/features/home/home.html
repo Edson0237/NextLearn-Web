@@ -84,7 +84,7 @@
                 [style.--teinte-fond]="(t | typeDoc).fond"
                 (click)="openBibliotheque(t)">
                 <span class="home__format-vignette">
-                  <nl-icon [name]="(t | typeDoc).icone" [size]="26" />
+                  <nl-icon [name]="(t | typeDoc).icone" [size]="20" />
                 </span>
                 <span class="home__format-nom">{{ (t | typeDoc).label }}</span>
               </button>
@@ -96,7 +96,7 @@
                 class="home__format home__format--autres"
                 (click)="ouvrirAutresFormats()">
                 <span class="home__format-vignette">
-                  <nl-icon name="more_horiz" [size]="26" />
+                  <nl-icon name="more_horiz" [size]="20" />
                 </span>
                 <span class="home__format-nom">{{ 'homePlusDeFormats' | t }}</span>
               </button>

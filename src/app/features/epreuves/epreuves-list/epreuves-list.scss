@@ -138,17 +138,17 @@
 .nl-epl__liste {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  padding: var(--space-lg);
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-page) var(--space-xxl);
 }
 
 .nl-epl__carte {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-lg);
+  gap: var(--space-sm);
+  padding: 12px 14px;
   border: none;
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--bg-primary);
   box-shadow: 0 6px 16px rgba(var(--shadow-color), var(--shadow-card-alpha));
   text-align: left;
@@ -157,9 +157,9 @@
 
 .nl-epl__annee {
   flex: none;
-  width: 56px;
-  height: 56px;
-  border-radius: 15px;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
   background: color-mix(in srgb, var(--type-epreuve) 12%, transparent);
   color: var(--type-epreuve);
   display: flex;
