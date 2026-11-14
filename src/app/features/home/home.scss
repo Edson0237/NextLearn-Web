@@ -208,30 +208,30 @@
 }
 
 .home__onglets {
-  display: flex;
+  width: 100%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   align-items: center;
   gap: 4px;
   padding: 4px;
   border-radius: var(--radius-md);
   background: var(--bg-secondary);
-  overflow-x: auto;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 .home__onglet {
-  flex: none;
-  padding: 7px 12px;
+  min-width: 0;
+  padding: 8px 10px;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-secondary);
-  font: 600 0.8rem/1.2 var(--font-family-body);
+  font: 600 0.82rem/1.2 var(--font-family-body);
+  text-align: center;
   cursor: pointer;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: background 0.15s ease, color 0.15s ease;
 
   &--actif {
