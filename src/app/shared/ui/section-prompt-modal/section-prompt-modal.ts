@@ -92,7 +92,7 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
             @if (saving()) {
               {{ 'pwaEnregistrement' | t }}
             } @else {
-              {{ 'authContinuer' | t }}
+              {{ 'actionContinuer' | t }}
             }
           </button>
         </div>
