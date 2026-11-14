@@ -145,6 +145,7 @@ export class BibliothequeHome implements OnInit {
   private static readonly PAS_AFFICHAGE = 30;
   protected readonly pageCourante = signal<number>(1);
   protected readonly totalServeur = signal<number | null>(null);
+  protected readonly totalTousServeur = signal<number | null>(null);
   protected readonly nextCursor = signal<string | null>(null);
   protected readonly hasMoreServer = signal<boolean>(false);
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
@@ -236,6 +237,9 @@ export class BibliothequeHome implements OnInit {
         this.pageCourante.set(page.page);
         if (page.total > 0) {
           this.totalServeur.set(page.total);
+          if (!type && !matiere) {
+            this.totalTousServeur.set(page.total);
+          }
         }
         this.nextCursor.set(page.nextCursor ?? null);
         this.hasMoreServer.set(Boolean(page.hasMore));
@@ -291,6 +295,11 @@ export class BibliothequeHome implements OnInit {
       this.documents.set([...page.items]);
       this.pageCourante.set(page.page);
       this.totalServeur.set(page.total);
+      if (!type && !matiere) {
+        this.totalTousServeur.set(page.total);
+      } else if (this.totalTousServeur() === null) {
+        void this.chargerTotalTous(section);
+      }
       this.nextCursor.set(page.nextCursor ?? null);
       this.hasMoreServer.set(Boolean(page.hasMore));
     } catch {
@@ -298,12 +307,28 @@ export class BibliothequeHome implements OnInit {
       if (fichesLocales.length > 0) {
         this.documents.set([...fichesLocales]);
         this.totalServeur.set(null);
+        this.totalTousServeur.set(null);
         return;
       }
       if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
       this.error.set('Impossible de charger les documents.');
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  private async chargerTotalTous(section: SectionAcademique | null): Promise<void> {
+    try {
+      const page = await this.docsRepo.getDocuments(
+        { section: section || undefined },
+        undefined,
+        1,
+      );
+      if (this.selectedSection() === section) {
+        this.totalTousServeur.set(page.total);
+      }
+    } catch {
+      // Silencieux : le repli reste le décompte local.
     }
   }
 
@@ -322,6 +347,7 @@ export class BibliothequeHome implements OnInit {
   protected selectSection(section: SectionAcademique | null): void {
     if (this.selectedSection() === section) return;
     this.selectedSection.set(section);
+    this.totalTousServeur.set(null);
     void this.load();
   }
 
@@ -345,13 +371,17 @@ export class BibliothequeHome implements OnInit {
       this.openCatalogue();
       return;
     }
+    const sectionChangee = choix.section !== this.selectedSection();
     const filtreServeurChange =
       choix.type !== this.selectedType() ||
       choix.matiere !== this.selectedMatiere() ||
-      choix.section !== this.selectedSection();
+      sectionChangee;
     this.selectedType.set(choix.type);
     this.selectedMatiere.set(choix.matiere);
     this.selectedSection.set(choix.section);
+    if (sectionChangee) {
+      this.totalTousServeur.set(null);
+    }
     if (filtreServeurChange) {
       void this.load();
     }
@@ -362,7 +392,22 @@ export class BibliothequeHome implements OnInit {
     matiere: string | null,
     section: SectionAcademique | null = this.selectedSection(),
   ): number {
-    return this.documents().filter((d) => this.correspond(d, type, matiere, true, section)).length;
+    const localCount = this.documents().filter((d) =>
+      this.correspond(d, type, matiere, true, section),
+    ).length;
+    if (this.texteRecherche().length < SEUIL_TEXTE && section === this.selectedSection()) {
+      if (type === null && matiere === null && this.totalTousServeur() !== null) {
+        return Math.max(this.totalTousServeur()!, localCount);
+      }
+      if (
+        type === this.selectedType() &&
+        matiere === this.selectedMatiere() &&
+        this.totalServeur() !== null
+      ) {
+        return Math.max(this.totalServeur()!, localCount);
+      }
+    }
+    return localCount;
   }
 
   protected openCatalogue(): void {
