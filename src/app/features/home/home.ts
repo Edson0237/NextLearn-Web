@@ -78,13 +78,13 @@ export class Home implements OnInit {
   protected readonly ongletsDisponibles = computed(() => {
     const liste: { id: 'recommandes' | 'populaires' | 'recents'; labelCle: string; docs: DocumentModel[] }[] = [];
     if (this.recommended().length > 0) {
-      liste.push({ id: 'recommandes', labelCle: 'pwaRecommandesPourVous', docs: this.recommended() });
+      liste.push({ id: 'recommandes', labelCle: 'homeOngletRecommandes', docs: this.recommended() });
     }
     if (this.popular().length > 0) {
       liste.push({ id: 'populaires', labelCle: 'pwaPopulaires', docs: this.popular() });
     }
     if (this.recent().length > 0) {
-      liste.push({ id: 'recents', labelCle: 'homeRecents', docs: this.recent() });
+      liste.push({ id: 'recents', labelCle: 'homeOngletRecents', docs: this.recent() });
     }
     return liste;
   });

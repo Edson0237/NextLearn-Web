@@ -178,43 +178,11 @@
         </section>
       }
 
-      <!-- ── Mes matières (puces horizontales) ───────────────────────────── -->
-      @if (matieresFiliere().length > 0 || matieresTroncCommun().length > 0) {
-        <section class="home__section">
-          <nl-section-header [titre]="'homeMesMatieres' | t" icone="school" teinte="var(--primary)" />
-
-          @if (matieresFiliere().length > 0) {
-            <div class="home__matieres-rail">
-              @for (m of matieresFiliere(); track m.id) {
-                <button type="button" class="home__matiere-puce" (click)="openMatiere(m)">
-                  <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
-                  <span class="home__matiere-puce-nom">{{ m.nom }}</span>
-                </button>
-              }
-            </div>
-          }
-
-          @if (matieresTroncCommun().length > 0) {
-            <p class="home__tronc-titre">{{ 'homeTroncCommun' | t }}</p>
-            <div class="home__matieres-rail">
-              @for (m of matieresTroncCommun(); track m.id) {
-                <button type="button" class="home__matiere-puce" (click)="openMatiere(m)">
-                  <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
-                  <span class="home__matiere-puce-nom">{{ m.nom }}</span>
-                </button>
-              }
-            </div>
-          }
-        </section>
-      }
-
       @if (
         recommended().length === 0 &&
         popular().length === 0 &&
         recent().length === 0 &&
-        reprises().length === 0 &&
-        matieresFiliere().length === 0 &&
-        matieresTroncCommun().length === 0
+        reprises().length === 0
       ) {
         <nl-empty-state
           [title]="'pwaRienAAfficher' | t"
