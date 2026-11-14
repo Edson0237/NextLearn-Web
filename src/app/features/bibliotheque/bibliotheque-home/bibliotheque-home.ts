@@ -144,6 +144,7 @@ export class BibliothequeHome implements OnInit {
 
   private static readonly PAS_AFFICHAGE = 30;
   protected readonly pageCourante = signal<number>(1);
+  protected readonly totalServeur = signal<number | null>(null);
   protected readonly nextCursor = signal<string | null>(null);
   protected readonly hasMoreServer = signal<boolean>(false);
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
@@ -151,6 +152,11 @@ export class BibliothequeHome implements OnInit {
   protected readonly visibleDocuments = computed(() =>
     this.filteredDocuments().slice(0, this.limiteAffichee()),
   );
+  protected readonly totalAffiche = computed(() => {
+    const locaux = this.filteredDocuments().length;
+    if (this.texteRecherche().length >= SEUIL_TEXTE) return locaux;
+    return Math.max(this.totalServeur() ?? 0, locaux);
+  });
   protected readonly aPlusDeDocuments = computed(
     () => this.hasMoreServer() || this.filteredDocuments().length > this.limiteAffichee(),
   );
@@ -228,6 +234,9 @@ export class BibliothequeHome implements OnInit {
           return [...docs, ...page.items.filter((d) => !connus.has(d.id))];
         });
         this.pageCourante.set(page.page);
+        if (page.total > 0) {
+          this.totalServeur.set(page.total);
+        }
         this.nextCursor.set(page.nextCursor ?? null);
         this.hasMoreServer.set(Boolean(page.hasMore));
         this.limiteAffichee.set(this.documents().length);
@@ -281,12 +290,14 @@ export class BibliothequeHome implements OnInit {
       );
       this.documents.set([...page.items]);
       this.pageCourante.set(page.page);
+      this.totalServeur.set(page.total);
       this.nextCursor.set(page.nextCursor ?? null);
       this.hasMoreServer.set(Boolean(page.hasMore));
     } catch {
       const fichesLocales = this.stockage.fiches();
       if (fichesLocales.length > 0) {
         this.documents.set([...fichesLocales]);
+        this.totalServeur.set(null);
         return;
       }
       if (silencieux) return; // une erreur passagère ne remplace pas ce qui est affiché
@@ -297,11 +308,15 @@ export class BibliothequeHome implements OnInit {
   }
 
   protected selectType(type: DocumentType | null): void {
+    if (this.selectedType() === type) return;
     this.selectedType.set(type);
+    void this.load();
   }
 
   protected selectMatiere(id: string | null): void {
+    if (this.selectedMatiere() === id) return;
     this.selectedMatiere.set(id);
+    void this.load();
   }
 
   protected selectSection(section: SectionAcademique | null): void {
@@ -330,11 +345,14 @@ export class BibliothequeHome implements OnInit {
       this.openCatalogue();
       return;
     }
-    const sectionChangee = choix.section !== this.selectedSection();
+    const filtreServeurChange =
+      choix.type !== this.selectedType() ||
+      choix.matiere !== this.selectedMatiere() ||
+      choix.section !== this.selectedSection();
     this.selectedType.set(choix.type);
     this.selectedMatiere.set(choix.matiere);
     this.selectedSection.set(choix.section);
-    if (sectionChangee) {
+    if (filtreServeurChange) {
       void this.load();
     }
   }
@@ -408,9 +426,13 @@ export class BibliothequeHome implements OnInit {
   }
 
   protected reinitialiser(): void {
+    const doitRecharger = this.selectedType() !== null || this.selectedMatiere() !== null;
     this.selectedType.set(null);
     this.selectedMatiere.set(null);
     this.searchQuery.set('');
+    if (doitRecharger) {
+      void this.load();
+    }
   }
 
   protected openProfil(): void {

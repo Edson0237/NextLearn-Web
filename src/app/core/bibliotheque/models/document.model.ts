@@ -233,19 +233,29 @@ export function pageDocumentsDepuisApi(json: Record<string, unknown>): DocumentP
   }
 
   const meta = (json['meta'] as Record<string, unknown>) ?? pagination ?? {};
-  const page = typeof meta['page'] === 'number' ? meta['page'] : 1;
-  const totalPages = typeof meta['totalPages'] === 'number' ? meta['totalPages'] : 1;
+  const rawPage = meta['page'] ?? pagination?.['page'];
+  const rawTotalPages = meta['totalPages'] ?? pagination?.['totalPages'];
+  const rawTotal = meta['total'] ?? pagination?.['total'];
+  const page = Number.isFinite(Number(rawPage)) && Number(rawPage) > 0 ? Number(rawPage) : 1;
+  const totalPages =
+    Number.isFinite(Number(rawTotalPages)) && Number(rawTotalPages) > 0
+      ? Number(rawTotalPages)
+      : 1;
+  const total =
+    rawTotal !== undefined && rawTotal !== null && Number.isFinite(Number(rawTotal))
+      ? Number(rawTotal)
+      : rawList.length;
   const hasMore =
     pagination && typeof pagination['hasMore'] === 'boolean'
       ? Boolean(pagination['hasMore'])
-      : page < totalPages;
+      : page < totalPages || (total > rawList.length && page === 1 && totalPages === 1);
   const nextCursor = pagination?.['nextCursor'] ? String(pagination['nextCursor']) : null;
 
   return {
     items: rawList.map(documentDepuisApi),
     page,
     totalPages,
-    total: typeof meta['total'] === 'number' ? meta['total'] : rawList.length,
+    total,
     sortApplied: meta['sort'] ? String(meta['sort']) : undefined,
     hasMore,
     nextCursor,

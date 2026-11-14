@@ -114,7 +114,7 @@
       </nl-empty-state>
     } @else {
       <p class="nl-biblio__resultats">
-        {{ 'pwaResultats' | t: { nombre: filteredDocuments().length } }}
+        {{ 'pwaResultats' | t: { nombre: totalAffiche() } }}
       </p>
 
       <div class="nl-biblio__liste">
@@ -145,7 +145,7 @@
       @if (aPlusDeDocuments()) {
         <div class="nl-biblio__plus" style="display: flex; justify-content: center; margin-top: 16px;">
           <button nlButton variant="outline" size="sm" (click)="afficherPlus()">
-            {{ 'biblioAfficherPlus' | t: { affiches: visibleDocuments().length, total: filteredDocuments().length } }}
+            {{ 'biblioAfficherPlus' | t: { affiches: visibleDocuments().length, total: totalAffiche() } }}
           </button>
         </div>
       }
