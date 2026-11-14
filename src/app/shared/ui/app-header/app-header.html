@@ -24,7 +24,7 @@
         class="nl-entete__cloche"
         [attr.aria-label]="'homeFavoris' | t"
         (click)="favoris.emit()">
-        <nl-icon name="bookmark_outline" [size]="22" />
+        <nl-icon name="bookmark_outline" [size]="20" />
       </button>
 
       <button
@@ -36,7 +36,7 @@
             : ('homeNotifications' | t)
         "
         (click)="notifications.emit()">
-        <nl-icon name="notifications" [size]="22" />
+        <nl-icon name="notifications" [size]="20" />
         @if (badge(); as compte) {
           <!-- Un point quand il y a peu, le compte au-delà : « 1 » et « 12 »
                n'appellent pas le même geste. -->
@@ -52,7 +52,7 @@
         <nl-avatar
           [initials]="initiales()"
           [photoUrl]="avatarUrl()"
-          [size]="34"
+          [size]="32"
           [onDarkBackground]="false" />
       </button>
     </div>

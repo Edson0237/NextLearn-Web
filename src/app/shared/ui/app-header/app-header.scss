@@ -11,9 +11,9 @@
 .nl-entete {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-page);
-  padding-top: calc(var(--space-md) + env(safe-area-inset-top));
+  gap: 6px;
+  padding: 10px var(--space-page);
+  padding-top: calc(10px + env(safe-area-inset-top));
   // Translucide et flouté : le contenu défile dessous et se devine, sans
   // jamais passer au travers du texte de l'en-tête. Le repli plein évite
   // qu'un navigateur sans `backdrop-filter` laisse le titre illisible.
@@ -70,15 +70,16 @@
 .nl-entete__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 6px;
 }
 
 .nl-entete__cloche {
+  @include cible-etendue(36px);
   position: relative;
   display: grid;
   place-items: center;
-  width: var(--touch-min);
-  height: var(--touch-min);
+  width: 36px;
+  height: 36px;
   border: none;
   border-radius: var(--radius-pilule);
   background: var(--bg-secondary);
@@ -92,26 +93,27 @@
 
 .nl-entete__pastille {
   position: absolute;
-  top: 6px;
-  right: 4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  top: 2px;
+  right: 1px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
   border-radius: var(--radius-pilule);
   // L'anneau de la couleur du fond détache la pastille de l'icône qu'elle
   // chevauche, quel que soit le thème.
   box-shadow: 0 0 0 2px var(--bg-canvas);
   background: var(--danger);
   color: var(--text-on-primary);
-  font: 700 0.6875rem/18px var(--font-family);
+  font: 700 0.65rem/16px var(--font-family);
   text-align: center;
 }
 
 .nl-entete__profil {
+  @include cible-etendue(36px);
   display: grid;
   place-items: center;
-  width: var(--touch-min);
-  height: var(--touch-min);
+  width: 36px;
+  height: 36px;
   padding: 0;
   border: none;
   background: none;
