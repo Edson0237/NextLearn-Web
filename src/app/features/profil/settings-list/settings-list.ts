@@ -107,18 +107,6 @@ export class SettingsList implements OnInit {
 
   protected readonly modalSupportVisible = signal(false);
 
-  protected readonly groupesOuverts = signal<Record<string, boolean>>({});
-
-  protected estGroupeOuvert(titre: string, index: number): boolean {
-    const etats = this.groupesOuverts();
-    return titre in etats ? etats[titre] : index === 0;
-  }
-
-  protected basculerGroupe(titre: string, index: number): void {
-    const ouvert = this.estGroupeOuvert(titre, index);
-    this.groupesOuverts.update((etats) => ({ ...etats, [titre]: !ouvert }));
-  }
-
   /**
    * « Mes ressources » : bibliothèque, téléchargés, favoris - rendus par les
    * mêmes lignes que « Compte » et « Apparence », pour ne faire qu'une seule

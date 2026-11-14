@@ -1,57 +1,40 @@
 <section class="nl-sl" [class.nl-sl--inline]="inline()">
-  @for (g of groupes(); track g.titre; let idx = $index) {
-    @let ouvert = estGroupeOuvert(g.titre, idx);
-    <div class="nl-sl__groupe" [class.nl-sl__groupe--ouvert]="ouvert">
-      <button
-        type="button"
-        class="nl-sl__groupe-entete"
-        [attr.aria-expanded]="ouvert"
-        (click)="basculerGroupe(g.titre, idx)">
-        <h2 class="nl-sl__groupe-titre">{{ g.titre }}</h2>
-        <span class="nl-sl__groupe-meta">
-          <span class="nl-sl__groupe-compte">{{ g.lignes.length }}</span>
-          <nl-icon
-            class="nl-sl__groupe-chevron"
-            [class.nl-sl__groupe-chevron--ouvert]="ouvert"
-            name="expand_more"
-            [size]="18" />
-        </span>
-      </button>
-      @if (ouvert) {
-        <div class="nl-sl__carte">
-          @for (ligne of g.lignes; track ligne.titre) {
-            <button
-              type="button"
-              class="nl-sl__ligne"
-              [class.nl-sl__ligne--destructive]="ligne.destructive"
-              [attr.role]="ligne.bascule ? 'switch' : null"
-              [attr.aria-checked]="ligne.bascule ? ligne.bascule() : null"
-              (click)="ligne.action()"
-            >
-              <div class="nl-sl__ligne-icon" [class.nl-sl__ligne-icon--destructive]="ligne.destructive">
-                <nl-icon [name]="ligne.icone" [size]="20" />
-              </div>
-              <div class="nl-sl__ligne-text">
-                <span class="nl-sl__ligne-titre">{{ ligne.titre }}</span>
-                <span class="nl-sl__ligne-sous">{{ ligne.sousTitre }}</span>
-              </div>
-              @if (ligne.valeur) {
-                <span class="nl-sl__ligne-valeur">{{ ligne.valeur }}</span>
-              }
-              <!-- Une ligne qui bascule une préférence ne mène nulle part : le
-                   chevron mentirait, l'interrupteur dit l'état avant qu'on y
-                   touche. -->
-              @if (ligne.bascule; as etat) {
-                <span class="nl-sl__interrupteur" [class.nl-sl__interrupteur--actif]="etat()" aria-hidden="true">
-                  <span class="nl-sl__interrupteur-pastille"></span>
-                </span>
-              } @else {
-                <nl-icon class="nl-sl__ligne-fleche" name="chevron_right" [size]="20" />
-              }
-            </button>
-          }
-        </div>
-      }
+  @for (g of groupes(); track g.titre) {
+    <div class="nl-sl__groupe">
+      <h2 class="nl-sl__groupe-titre">{{ g.titre }}</h2>
+      <div class="nl-sl__carte">
+        @for (ligne of g.lignes; track ligne.titre) {
+          <button
+            type="button"
+            class="nl-sl__ligne"
+            [class.nl-sl__ligne--destructive]="ligne.destructive"
+            [attr.role]="ligne.bascule ? 'switch' : null"
+            [attr.aria-checked]="ligne.bascule ? ligne.bascule() : null"
+            (click)="ligne.action()"
+          >
+            <div class="nl-sl__ligne-icon" [class.nl-sl__ligne-icon--destructive]="ligne.destructive">
+              <nl-icon [name]="ligne.icone" [size]="20" />
+            </div>
+            <div class="nl-sl__ligne-text">
+              <span class="nl-sl__ligne-titre">{{ ligne.titre }}</span>
+              <span class="nl-sl__ligne-sous">{{ ligne.sousTitre }}</span>
+            </div>
+            @if (ligne.valeur) {
+              <span class="nl-sl__ligne-valeur">{{ ligne.valeur }}</span>
+            }
+            <!-- Une ligne qui bascule une préférence ne mène nulle part : le
+                 chevron mentirait, l'interrupteur dit l'état avant qu'on y
+                 touche. -->
+            @if (ligne.bascule; as etat) {
+              <span class="nl-sl__interrupteur" [class.nl-sl__interrupteur--actif]="etat()" aria-hidden="true">
+                <span class="nl-sl__interrupteur-pastille"></span>
+              </span>
+            } @else {
+              <nl-icon class="nl-sl__ligne-fleche" name="chevron_right" [size]="20" />
+            }
+          </button>
+        }
+      </div>
     </div>
   }
 </section>

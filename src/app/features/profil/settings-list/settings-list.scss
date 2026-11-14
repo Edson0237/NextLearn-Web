@@ -10,64 +10,15 @@
 }
 
 .nl-sl__groupe {
-  margin-bottom: 14px;
-}
-
-.nl-sl__groupe-entete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 10px 14px;
-  margin: 0 0 var(--space-xs);
-  border: 1px solid var(--border-light);
-  border-radius: 14px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-
-  &:active {
-    background: var(--bg-secondary);
-  }
-}
-
-.nl-sl__groupe--ouvert .nl-sl__groupe-entete {
-  border-color: color-mix(in srgb, var(--primary) 30%, var(--border-light));
+  margin-bottom: 24px;
 }
 
 .nl-sl__groupe-titre {
   @include type.nl-label-sm;
-  margin: 0;
-}
-
-.nl-sl__groupe-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-}
-
-.nl-sl__groupe-compte {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 999px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-size: 0.72rem;
-  font-weight: 600;
-}
-
-.nl-sl__groupe-chevron {
-  transition: transform 0.2s ease;
-
-  &--ouvert {
-    transform: rotate(180deg);
-  }
+  // Le retrait de 4 px à gauche décalait chaque titre de section par
+  // rapport à la carte qu'il annonce : deux bords verticaux à 4 px l'un de
+  // l'autre, soit juste assez pour se voir.
+  margin: 0 0 var(--space-sm);
 }
 
 .nl-sl__carte {
