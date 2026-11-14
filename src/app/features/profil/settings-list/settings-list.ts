@@ -21,6 +21,7 @@ import { AppRoutes } from '../../../core/router';
 import { VerrouillageApp } from '../../../core/preferences';
 import { VERSION_APP } from '../../../core/version';
 import { Fraicheur } from '../../../shared/services/fraicheur';
+import { SectionPreference } from '../../../core/models';
 import { PinDialog } from '../dialogues/pin-dialog/pin-dialog';
 import { SupportDialog } from '../dialogues/support-dialog/support-dialog';
 
@@ -157,6 +158,13 @@ export class SettingsList implements OnInit {
             sousTitre: tr('pwaChangerNiveauAide', 'Adapter les cours et épreuves à mon niveau'),
             valeur: u?.niveau ? this.libelleNiveau(u.niveau, u.cycle) : undefined,
             action: () => void this.ouvrirChoixNiveau(),
+          },
+          {
+            icone: 'school',
+            titre: 'Section académique',
+            sousTitre: 'Filtrer les cours et épreuves selon ta section',
+            valeur: this.libelleSection(u?.sectionPreference),
+            action: () => void this.ouvrirChoixSection(),
           },
           {
             icone: 'alternate_email', titre: tr('aproposLigneEmail', 'E-mail'), sousTitre: tr('emailModifierAide', 'Voir et modifier mon adresse e-mail'),
@@ -359,6 +367,37 @@ export class SettingsList implements OnInit {
       }
     } catch (e: any) {
       this.toast.erreur(e?.message || 'Impossible de changer le niveau.');
+    }
+  }
+
+  private libelleSection(pref?: SectionPreference | null): string {
+    switch (pref) {
+      case 'FRANCOPHONE': return 'Francophone';
+      case 'ANGLOPHONE': return 'Anglophone';
+      case 'TOUTES': return 'Les deux sections';
+      default: return 'Non définie';
+    }
+  }
+
+  protected async ouvrirChoixSection(): Promise<void> {
+    const u = this.user();
+    if (!u) return;
+    const choix = await this.selections.ouvrir<SectionPreference>({
+      title: 'Section académique',
+      choices: [
+        { value: 'FRANCOPHONE', label: 'Section Francophone' },
+        { value: 'ANGLOPHONE', label: 'Section Anglophone' },
+        { value: 'TOUTES', label: 'Les deux sections' },
+      ],
+      currentValue: u.sectionPreference ?? 'TOUTES',
+    });
+    if (!choix || choix === u.sectionPreference) return;
+    const err = await this.auth.changerSection(choix);
+    if (err) {
+      this.toast.erreur(err);
+    } else {
+      this.toast.succes(`Section mise à jour : ${this.libelleSection(choix)}.`);
+      this.fraicheur.tick();
     }
   }
 

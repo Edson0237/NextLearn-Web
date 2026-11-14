@@ -572,6 +572,20 @@ export class AuthService {
     }
   }
 
+  /** Enregistre la préférence de section académique et met le profil local à jour. */
+  async changerSection(section: 'FRANCOPHONE' | 'ANGLOPHONE' | 'TOUTES'): Promise<string | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const utilisateur = await this.profilRepo.changerSection(section);
+      this.patch({ isLoading: false, user: utilisateur });
+      void this.invaliderCacheProfil();
+      return null;
+    } catch (e) {
+      this.patch({ isLoading: false, error: this.messageErreur(e, 'Section non enregistrée.') });
+      return this.messageErreur(e, 'Section non enregistrée.');
+    }
+  }
+
   /** Dépose une photo de profil. */
   async changerAvatar(fichier: File): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });

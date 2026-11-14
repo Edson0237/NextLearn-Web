@@ -36,6 +36,7 @@ export class DocumentsRepository {
       filiere?: string;
       niveau?: string;
       semestre?: string;
+      section?: string;
       annee?: string;
       anneeAcademique?: string;
       search?: string;
@@ -56,6 +57,7 @@ export class DocumentsRepository {
     if (filters.filiereId) params['filiereId'] = filters.filiereId;
     if (filters.niveau) params['niveau'] = filters.niveau;
     if (filters.semestre) params['semestre'] = filters.semestre;
+    if (filters.section) params['section'] = filters.section;
     if (filters.annee) params['annee'] = filters.annee;
     if (filters.anneeAcademique) params['anneeAcademique'] = filters.anneeAcademique;
     if (filters.search) params['search'] = filters.search;

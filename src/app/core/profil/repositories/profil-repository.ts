@@ -113,4 +113,15 @@ export class ProfilRepository {
       throw enFailure(e);
     }
   }
+
+  async changerSection(sectionPreference: 'FRANCOPHONE' | 'ANGLOPHONE' | 'TOUTES'): Promise<UserModel> {
+    try {
+      const reponse = await firstValueFrom(this.http.put('/api/profile', { sectionPreference }));
+      const utilisateur = utilisateurDepuisApi(donneesUtilisateur(reponse));
+      this.storage.saveUser(utilisateur);
+      return utilisateur;
+    } catch (e) {
+      throw enFailure(e);
+    }
+  }
 }

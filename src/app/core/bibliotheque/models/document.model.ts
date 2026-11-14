@@ -98,6 +98,7 @@ export interface DocumentModel {
   readonly universite: string;
   readonly niveau: string;
   readonly semestre?: string;
+  readonly section?: 'FRANCOPHONE' | 'ANGLOPHONE';
   readonly dureeMinutes?: number;
   readonly avecCorrige: boolean;
   readonly urlCorrigePdf?: string;
@@ -139,6 +140,10 @@ export function documentDepuisApi(json: Record<string, unknown>): DocumentModel 
         : tr('communNonRenseignee', 'Non renseignée')),
     niveau: String(json['niveau'] ?? ''),
     semestre: json['semestre'] ? String(json['semestre']) : undefined,
+    section:
+      json['section'] === 'FRANCOPHONE' || json['section'] === 'ANGLOPHONE'
+        ? json['section']
+        : undefined,
     dureeMinutes: typeof json['dureeMinutes'] === 'number' ? Math.round(json['dureeMinutes']) : undefined,
     avecCorrige: json['avecCorrige'] === true,
     urlCorrigePdf: json['urlCorrigePdf'] ? String(json['urlCorrigePdf']) : undefined,

@@ -7,6 +7,6 @@ export type { ReponseDomaine } from './domaine.model';
 export { Failure } from './failure.model';
 export { DUREE_REPRISABLE_OTP_MS, ParcoursOtp, parcoursOtpDepuisCode } from './parcours-otp.model';
 export { Cycle, Langue, NiveauEtude, cycleDepuisApi, cycleVersApi, initiales, libelleNiveau, niveauCourt, niveauDepuisTexte, niveauxDuCycleDepuisApi, nomComplet, utilisateurDepuisApi, utilisateurDepuisCache, utilisateurVersCache } from './user.model';
-export type { NiveauxDuCycle, UserModel } from './user.model';
+export type { NiveauxDuCycle, SectionAcademique, SectionPreference, UserModel } from './user.model';
 export { VERIFICATION_AUCUNE, VerificationStatut, bloqueAcces, demandeAction, estApprouve, verificationDepuisJson, determinerDestinationVerification } from './verification.model';
 export type { VerificationState, VerificationDestination } from './verification.model';

@@ -106,6 +106,16 @@ export function langueDepuisTexte(s: string | null | undefined): Langue {
   return s === 'en' ? Langue.en : Langue.fr;
 }
 
+export type SectionAcademique = 'FRANCOPHONE' | 'ANGLOPHONE';
+export type SectionPreference = SectionAcademique | 'TOUTES';
+
+export function sectionPreferenceDepuisTexte(s: unknown): SectionPreference | null {
+  if (typeof s !== 'string') return null;
+  const v = s.trim().toUpperCase();
+  if (v === 'FRANCOPHONE' || v === 'ANGLOPHONE' || v === 'TOUTES') return v;
+  return null;
+}
+
 export interface UserModel {
   readonly id: string;
   readonly email: string;
@@ -117,6 +127,7 @@ export interface UserModel {
   /** Désambiguïse le niveau à l'affichage. */
   readonly cycle?: Cycle;
   readonly langue: Langue;
+  readonly sectionPreference?: SectionPreference | null;
   readonly avatarUrl?: string;
   readonly verificationStatus?: string;
   /** Le compte a-t-il choisi un PIN ? Facultatif : `undefined` tant que le serveur ne l'a pas dit. */
@@ -146,6 +157,7 @@ export function utilisateurDepuisApi(json: Record<string, unknown>): UserModel {
     niveau: niveauDepuisTexte(texte(json['niveau'], 'N1')),
     cycle: cycleDepuisApi(json['cycle'] == null ? undefined : String(json['cycle'])),
     langue: langueDepuisTexte(json['langue'] == null ? undefined : String(json['langue'])),
+    sectionPreference: sectionPreferenceDepuisTexte(json['sectionPreference']),
     avatarUrl: json['avatarUrl'] == null ? undefined : String(json['avatarUrl']),
     verificationStatus:
       json['verificationStatus'] == null ? undefined : String(json['verificationStatus']),
@@ -163,7 +175,7 @@ export function utilisateurVersCache(u: UserModel): Record<string, unknown> {
     id: u.id, email: u.email, nom: u.nom, prenom: u.prenom,
     universite: u.universite, filiere: u.filiere, niveau: u.niveau,
     cycle: u.cycle ? cycleVersApi(u.cycle) : undefined,
-    langue: u.langue, avatarUrl: u.avatarUrl, verificationStatus: u.verificationStatus,
+    langue: u.langue, sectionPreference: u.sectionPreference ?? null, avatarUrl: u.avatarUrl, verificationStatus: u.verificationStatus,
     hasPin: u.hasPin,
   };
 }

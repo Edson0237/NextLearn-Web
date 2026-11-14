@@ -39,6 +39,18 @@
     }
   </div>
 
+  <div class="nl-biblio__matieres" role="group" aria-label="Filtrer par section">
+    @for (sec of sectionsFiltre; track sec.label) {
+      <button
+        type="button"
+        class="nl-biblio__puce nl-cible-fine"
+        [class.nl-biblio__puce--active]="selectedSection() === sec.value"
+        (click)="selectSection(sec.value)">
+        {{ sec.label }}
+      </button>
+    }
+  </div>
+
   <!-- Les matières du programme. Deuxième niveau de filtre : on choisit
        d'abord ce qu'on cherche, ensuite dans quelle matière. -->
   @if (matiereOptions().length > 0) {

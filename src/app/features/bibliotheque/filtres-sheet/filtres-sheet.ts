@@ -5,19 +5,21 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { TraductionPipe } from '../../../core/i18n';
 import { HapticService } from '../../../shared/services/haptic';
 import { DocumentType } from '../../../core/bibliotheque';
+import { SectionAcademique } from '../../../core/models';
 
 export interface FiltresSheetData {
   readonly formats: readonly { type: DocumentType | null; label: string }[];
   readonly matieres: readonly { id: string; nom: string }[];
   readonly type: DocumentType | null;
   readonly matiere: string | null;
+  readonly section: SectionAcademique | null;
   /** Combien de documents donnerait cette combinaison - pour le bouton et les puces. */
-  readonly compter: (type: DocumentType | null, matiere: string | null) => number;
+  readonly compter: (type: DocumentType | null, matiere: string | null, section: SectionAcademique | null) => number;
 }
 
 /** Ce que la feuille rend : une sélection, ou l'envoi vers le catalogue. */
 export type FiltresSheetResultat =
-  | { readonly type: DocumentType | null; readonly matiere: string | null }
+  | { readonly type: DocumentType | null; readonly matiere: string | null; readonly section: SectionAcademique | null }
   | 'catalogue';
 
 /**
@@ -39,17 +41,29 @@ export class FiltresSheet {
 
   protected readonly type = signal<DocumentType | null>(this.data.type);
   protected readonly matiere = signal<string | null>(this.data.matiere);
+  protected readonly section = signal<SectionAcademique | null>(this.data.section);
 
-  protected readonly total = computed(() => this.data.compter(this.type(), this.matiere()));
-  protected readonly modifie = computed(() => this.type() !== null || this.matiere() !== null);
+  protected readonly sections: readonly { value: SectionAcademique | null; label: string }[] = [
+    { value: null, label: 'Toutes' },
+    { value: 'FRANCOPHONE', label: 'Francophone' },
+    { value: 'ANGLOPHONE', label: 'Anglophone' },
+  ];
 
-  /** Le compte d'une puce de format, la matière du brouillon étant appliquée. */
+  protected readonly total = computed(() => this.data.compter(this.type(), this.matiere(), this.section()));
+  protected readonly modifie = computed(() => this.type() !== null || this.matiere() !== null || this.section() !== null);
+
+  /** Le compte d'une puce de format, la matière et la section du brouillon étant appliquées. */
   protected compteFormat(type: DocumentType | null): number {
-    return this.data.compter(type, this.matiere());
+    return this.data.compter(type, this.matiere(), this.section());
   }
 
   protected compteMatiere(id: string | null): number {
-    return this.data.compter(this.type(), id);
+    return this.data.compter(this.type(), id, this.section());
+  }
+
+  protected choisirSection(s: SectionAcademique | null): void {
+    this.haptic.selection();
+    this.section.set(s);
   }
 
   protected choisirType(t: DocumentType | null): void {
@@ -65,10 +79,11 @@ export class FiltresSheet {
   protected reinitialiser(): void {
     this.type.set(null);
     this.matiere.set(null);
+    this.section.set(null);
   }
 
   protected appliquer(): void {
-    this.ref.close({ type: this.type(), matiere: this.matiere() });
+    this.ref.close({ type: this.type(), matiere: this.matiere(), section: this.section() });
   }
 
   protected versCatalogue(): void {

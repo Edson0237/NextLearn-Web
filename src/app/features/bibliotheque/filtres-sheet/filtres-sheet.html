@@ -12,6 +12,19 @@
   </div>
 
   <div class="nl-filtres__corps">
+    <p class="nl-filtres__section">Section</p>
+    <div class="nl-filtres__puces">
+      @for (s of sections; track s.label) {
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="section() === s.value"
+          (click)="choisirSection(s.value)">
+          {{ s.label }}
+        </button>
+      }
+    </div>
+
     <p class="nl-filtres__section">{{ 'biblioFiltresFormat' | t }}</p>
     <div class="nl-filtres__puces">
       @for (f of data.formats; track f.label) {

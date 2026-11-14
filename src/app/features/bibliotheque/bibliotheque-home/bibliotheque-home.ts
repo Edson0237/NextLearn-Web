@@ -12,7 +12,7 @@ import { DocumentCard, EtiquetteDocument } from '../../../shared/ui/document-car
 import { AppHeader } from '../../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../../shared/ui/search-bar/search-bar';
 import { StockageHorsLigne } from '../../../core/bibliotheque';
-import { libelleNiveau } from '../../../core/models';
+import { libelleNiveau, SectionAcademique, SectionPreference } from '../../../core/models';
 import { computed } from '@angular/core';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
@@ -69,6 +69,7 @@ export class BibliothequeHome implements OnInit {
     () =>
       (this.selectedType() ? 1 : 0) +
       (this.selectedMatiere() ? 1 : 0) +
+      (this.selectedSection() ? 1 : 0) +
       (this.texteRecherche().length >= SEUIL_TEXTE ? 1 : 0),
   );
 
@@ -80,6 +81,13 @@ export class BibliothequeHome implements OnInit {
   protected readonly documents = signal<DocumentModel[]>([]);
   protected readonly selectedType = signal<DocumentType | null>(null);
   protected readonly selectedMatiere = signal<string | null>(null);
+  protected readonly selectedSection = signal<SectionAcademique | null>(null);
+  protected readonly sectionsFiltre: readonly { value: SectionAcademique | null; label: string }[] = [
+    { value: null, label: 'Toutes sections' },
+    { value: 'FRANCOPHONE', label: 'Francophone' },
+    { value: 'ANGLOPHONE', label: 'Anglophone' },
+  ];
+  private dernierePrefSection: SectionPreference | null | undefined = undefined;
   protected readonly searchActive = signal(false);
   protected readonly searchQuery = signal('');
 
@@ -148,12 +156,28 @@ export class BibliothequeHome implements OnInit {
     }
 
     effect(() => {
+      const pref = this.user()?.sectionPreference ?? null;
+      untracked(() => {
+        if (this.dernierePrefSection === pref) return;
+        const etaitInitialise = this.dernierePrefSection !== undefined;
+        this.dernierePrefSection = pref;
+        const sec: SectionAcademique | null =
+          pref === 'FRANCOPHONE' || pref === 'ANGLOPHONE' ? pref : null;
+        this.selectedSection.set(sec);
+        if (etaitInitialise) {
+          void this.load(true);
+        }
+      });
+    });
+
+    effect(() => {
       const type = this.selectedType();
       const matiere = this.selectedMatiere();
+      const section = this.selectedSection();
       this.texteRecherche();
       this.filteredDocuments.set(
         this.documents().filter((d) =>
-          this.correspond(d, type, matiere, true),
+          this.correspond(d, type, matiere, true, section),
         ),
       );
       untracked(() => this.limiteAffichee.set(this.documents().length || BibliothequeHome.PAS_AFFICHAGE));
@@ -166,8 +190,9 @@ export class BibliothequeHome implements OnInit {
       try {
         const type = this.selectedType();
         const matiere = this.selectedMatiere();
+        const section = this.selectedSection();
         const page = await this.docsRepo.getDocuments(
-          { type: type || undefined, matiereId: matiere || undefined },
+          { type: type || undefined, matiereId: matiere || undefined, section: section || undefined },
           cursor,
           20,
         );
@@ -189,9 +214,11 @@ export class BibliothequeHome implements OnInit {
     type: DocumentType | null,
     matiereId: string | null,
     avecTexte: boolean,
+    section: SectionAcademique | null = this.selectedSection(),
   ): boolean {
     if (type && d.type !== type) return false;
     if (matiereId && d.matiereId !== matiereId) return false;
+    if (section && d.section && d.section !== section) return false;
     const q = this.texteRecherche();
     if (avecTexte && q.length >= SEUIL_TEXTE) {
       return d.titre.toLowerCase().includes(q) || d.matiere.toLowerCase().includes(q);
@@ -215,8 +242,9 @@ export class BibliothequeHome implements OnInit {
     try {
       const type = this.selectedType();
       const matiere = this.selectedMatiere();
+      const section = this.selectedSection();
       const page = await this.docsRepo.getDocuments(
-        { type: type || undefined, matiereId: matiere || undefined },
+        { type: type || undefined, matiereId: matiere || undefined, section: section || undefined },
         undefined,
         20,
       );
@@ -244,6 +272,12 @@ export class BibliothequeHome implements OnInit {
     this.selectedMatiere.set(id);
   }
 
+  protected selectSection(section: SectionAcademique | null): void {
+    if (this.selectedSection() === section) return;
+    this.selectedSection.set(section);
+    void this.load();
+  }
+
   protected openSearch(): void {
     void this.router.navigate(['/app', AppRoutes.recherche]);
   }
@@ -255,7 +289,8 @@ export class BibliothequeHome implements OnInit {
       matieres: this.matiereOptions(),
       type: this.selectedType(),
       matiere: this.selectedMatiere(),
-      compter: (type, matiere) => this.nombreCorrespondants(type, matiere),
+      section: this.selectedSection(),
+      compter: (type, matiere, section) => this.nombreCorrespondants(type, matiere, section),
     } satisfies FiltresSheetData);
     const choix = await handle.result;
     if (!choix) return;
@@ -263,12 +298,21 @@ export class BibliothequeHome implements OnInit {
       this.openCatalogue();
       return;
     }
+    const sectionChangee = choix.section !== this.selectedSection();
     this.selectedType.set(choix.type);
     this.selectedMatiere.set(choix.matiere);
+    this.selectedSection.set(choix.section);
+    if (sectionChangee) {
+      void this.load();
+    }
   }
 
-  private nombreCorrespondants(type: DocumentType | null, matiere: string | null): number {
-    return this.documents().filter((d) => this.correspond(d, type, matiere, true)).length;
+  private nombreCorrespondants(
+    type: DocumentType | null,
+    matiere: string | null,
+    section: SectionAcademique | null = this.selectedSection(),
+  ): number {
+    return this.documents().filter((d) => this.correspond(d, type, matiere, true, section)).length;
   }
 
   protected openCatalogue(): void {
@@ -312,6 +356,9 @@ export class BibliothequeHome implements OnInit {
 
   protected etiquettesDe(doc: DocumentModel): EtiquetteDocument[] {
     const etiquettes: EtiquetteDocument[] = [{ texte: doc.matiere, ton: 'primaire' }];
+    if (doc.section) {
+      etiquettes.push({ texte: doc.section === 'FRANCOPHONE' ? 'FR' : 'EN' });
+    }
     const parcours = [doc.niveau, doc.semestre].filter(Boolean).join(' • ');
     if (parcours) etiquettes.push({ texte: parcours });
     if (doc.avecCorrige) {

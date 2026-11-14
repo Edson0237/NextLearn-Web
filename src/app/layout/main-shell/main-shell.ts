@@ -7,6 +7,7 @@ import { HapticService } from '../../shared/services/haptic';
 import { IconName } from '../../shared/ui/icon/icon-paths';
 import { ContexteService } from '../../core/contexte';
 import { StockageHorsLigne } from '../../core/bibliotheque';
+import { SectionPromptModal } from '../../shared/ui/section-prompt-modal/section-prompt-modal';
 
 interface Onglet {
   readonly route: string;
@@ -35,7 +36,7 @@ interface Onglet {
 @Component({
   selector: 'app-main-shell',
   standalone: true,
-  imports: [TraductionPipe, RouterOutlet, RouterLink, RouterLinkActive, Icon],
+  imports: [TraductionPipe, RouterOutlet, RouterLink, RouterLinkActive, Icon, SectionPromptModal],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './main-shell.html',
   styleUrl: './main-shell.scss',
