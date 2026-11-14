@@ -184,10 +184,13 @@
               type="button"
               role="radio"
               class="doc-detail__etoile"
+              [class.doc-detail__etoile--active]="valeur <= (noteSurvolee() || noteDonnee())"
               [attr.aria-checked]="valeur === noteDonnee()"
               [attr.aria-label]="'noterSurCinq' | t: { note: valeur }"
+              (mouseenter)="noteSurvolee.set(valeur)"
+              (mouseleave)="noteSurvolee.set(0)"
               (click)="noter(valeur)">
-              <nl-icon [name]="valeur <= noteDonnee() ? 'star_fill' : 'star'" [size]="28" />
+              <nl-icon [name]="valeur <= (noteSurvolee() || noteDonnee()) ? 'star_fill' : 'star'" [size]="28" />
             </button>
           }
         </div>

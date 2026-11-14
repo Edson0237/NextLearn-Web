@@ -80,9 +80,7 @@ export class Numerisation {
 
   /** Crée une page depuis une photo ; la page y est cherchée automatiquement. */
   async creer(fichier: File): Promise<PageNumerisee> {
-    // `from-image` applique l'orientation EXIF : sans elle, une photo prise en
-    // portrait arrive couchée.
-    const source = await createImageBitmap(fichier, { imageOrientation: 'from-image' });
+    const source = await this.chargerImage(fichier);
     // Désactivé : la photo est prise telle quelle, plein cadre, à recadrer à la main si besoin.
     const coins = this.autoCadrage() ? this.detecter(source) : null;
     return this.rendre({
@@ -94,6 +92,34 @@ export class Numerisation {
       reglages: this.reglagesParDefaut(),
       apercuSource: await this.apercuSource(source),
     });
+  }
+
+  private async chargerImage(fichier: File): Promise<ImageBitmap> {
+    try {
+      // `from-image` applique l'orientation EXIF : sans elle, une photo prise en portrait arrive couchée.
+      return await createImageBitmap(fichier, { imageOrientation: 'from-image' });
+    } catch {
+      try {
+        return await createImageBitmap(fichier);
+      } catch {
+        const url = URL.createObjectURL(fichier);
+        try {
+          const img = await new Promise<HTMLImageElement>((ok, ko) => {
+            const el = new Image();
+            el.onload = () => ok(el);
+            el.onerror = () => ko(new Error('Image illisible.'));
+            el.src = url;
+          });
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth || img.width;
+          canvas.height = img.naturalHeight || img.height;
+          canvas.getContext('2d')?.drawImage(img, 0, 0);
+          return await createImageBitmap(canvas);
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      }
+    }
   }
 
   /** Cherche la page dans une image ; `null` quand la détection n'est pas sûre. */

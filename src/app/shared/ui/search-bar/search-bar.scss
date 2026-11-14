@@ -130,3 +130,20 @@
   color: var(--text-on-primary);
   font: 700 0.6875rem/1 var(--font-family);
 }
+
+.nl-recherche__spinner {
+  width: 16px;
+  height: 16px;
+  margin: 0 6px;
+  flex-shrink: 0;
+  border: 2px solid color-mix(in srgb, var(--primary) 22%, transparent);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: nl-searchbar-spin 0.75s linear infinite;
+}
+
+@keyframes nl-searchbar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

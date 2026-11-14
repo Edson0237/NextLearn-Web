@@ -116,10 +116,12 @@ export class CameraScan implements OnInit {
       return;
     }
     try {
-      this.flux = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-        audio: false,
-      });
+      const flux = await this.ouvrirFluxCamera();
+      if (this.arrete) {
+        flux.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      this.flux = flux;
       const v = this.video().nativeElement;
       v.srcObject = this.flux;
       await v.play();
@@ -134,6 +136,25 @@ export class CameraScan implements OnInit {
       const nom = (e as DOMException)?.name;
       this.etat.set(nom === 'NotAllowedError' || nom === 'SecurityError' ? 'refusee' : 'indisponible');
     }
+  }
+
+  private async ouvrirFluxCamera(): Promise<MediaStream> {
+    const contraintes: MediaStreamConstraints[] = [
+      { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false },
+      { video: { facingMode: 'environment' }, audio: false },
+      { video: true, audio: false },
+    ];
+    let derniereErreur: unknown;
+    for (const c of contraintes) {
+      try {
+        return await navigator.mediaDevices.getUserMedia(c);
+      } catch (e) {
+        derniereErreur = e;
+        const nom = (e as DOMException)?.name;
+        if (nom === 'NotAllowedError' || nom === 'SecurityError') throw e;
+      }
+    }
+    throw derniereErreur;
   }
 
   /**
@@ -208,16 +229,34 @@ export class CameraScan implements OnInit {
 
   protected capturer(): void {
     const v = this.video().nativeElement;
-    if (!v.videoWidth || this.capture()) return;
+    if (v.readyState < 2 || !v.videoWidth || this.capture()) return;
     this.capture.set(true);
     const canvas = document.createElement('canvas');
     canvas.width = v.videoWidth;
     canvas.height = v.videoHeight;
-    canvas.getContext('2d')?.drawImage(v, 0, 0);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      this.capture.set(false);
+      return;
+    }
+    ctx.drawImage(v, 0, 0);
     canvas.toBlob(
       (blob) => {
         this.capture.set(false);
-        if (blob) this.photo.emit(new File([blob], `page-${Date.now()}.jpg`, { type: 'image/jpeg' }));
+        if (blob) {
+          this.photo.emit(new File([blob], `page-${Date.now()}.jpg`, { type: 'image/jpeg' }));
+          return;
+        }
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          const [, base64 = ''] = dataUrl.split(',');
+          const bin = atob(base64);
+          const bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          this.photo.emit(new File([bytes], `page-${Date.now()}.jpg`, { type: 'image/jpeg' }));
+        } catch {
+          // Ignore si le canvas ne peut pas être exporté.
+        }
       },
       'image/jpeg',
       0.92,

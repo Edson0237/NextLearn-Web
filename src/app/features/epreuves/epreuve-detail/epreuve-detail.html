@@ -147,11 +147,14 @@
                 <button
                   type="button"
                   class="nl-epd__etoile"
+                  [class.nl-epd__etoile--active]="n <= (noteSurvolee() || noteChoisie())"
                   [attr.aria-label]="'Noter ' + n + ' sur 5'"
                   [disabled]="envoiNote()"
+                  (mouseenter)="noteSurvolee.set(n)"
+                  (mouseleave)="noteSurvolee.set(0)"
                   (click)="choisirNote(n)"
                 >
-                  <nl-icon [name]="n <= noteChoisie() ? 'star_fill' : 'star'" [size]="24" />
+                  <nl-icon [name]="n <= (noteSurvolee() || noteChoisie()) ? 'star_fill' : 'star'" [size]="24" />
                 </button>
               }
               @if (noteChoisie() > 0 && !noteEnvoyee()) {

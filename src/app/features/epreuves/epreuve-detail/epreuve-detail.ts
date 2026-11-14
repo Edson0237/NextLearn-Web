@@ -56,6 +56,7 @@ export class EpreuveDetail {
   protected readonly telechargementEnCours = signal<'epreuve' | 'corrige' | undefined>(undefined);
 
   protected readonly noteChoisie = signal(0);
+  protected readonly noteSurvolee = signal(0);
   protected readonly envoiNote = signal(false);
   protected readonly noteEnvoyee = signal(false);
 

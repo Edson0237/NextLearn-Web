@@ -17,7 +17,9 @@
         [attr.aria-label]="'actionRechercher' | t"
         (input)="surSaisie($event)" />
 
-      @if (valeur()) {
+      @if (loading()) {
+        <span class="nl-recherche__spinner" aria-hidden="true"></span>
+      } @else if (valeur()) {
         <button
           type="button"
           class="nl-recherche__effacer"

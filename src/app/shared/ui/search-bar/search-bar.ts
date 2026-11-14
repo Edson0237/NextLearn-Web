@@ -35,6 +35,8 @@ export class SearchBar {
   readonly avecFiltres = input(false);
   /** Nombre de filtres actifs, pour la pastille du bouton. */
   readonly filtresActifs = input(0);
+  /** Indique qu'une recherche est en cours. */
+  readonly loading = input(false);
 
   readonly ouvrir = output<void>();
   readonly filtrer = output<void>();

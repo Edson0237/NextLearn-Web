@@ -55,6 +55,7 @@ export class DocumentDetail implements OnInit {
   protected readonly isOffline = signal(false);
   /** La note que cet étudiant vient de donner, 0 s'il n'a pas encore noté. */
   protected readonly noteDonnee = signal(0);
+  protected readonly noteSurvolee = signal(0);
 
   private docId = '';
 

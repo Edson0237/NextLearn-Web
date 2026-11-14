@@ -73,6 +73,34 @@ export class Home implements OnInit {
   protected readonly recommended = signal<DocumentModel[]>([]);
   protected readonly popular = signal<DocumentModel[]>([]);
   protected readonly recent = signal<DocumentModel[]>([]);
+  protected readonly ongletActif = signal<'recommandes' | 'populaires' | 'recents'>('recommandes');
+
+  protected readonly ongletsDisponibles = computed(() => {
+    const liste: { id: 'recommandes' | 'populaires' | 'recents'; labelCle: string; docs: DocumentModel[] }[] = [];
+    if (this.recommended().length > 0) {
+      liste.push({ id: 'recommandes', labelCle: 'pwaRecommandesPourVous', docs: this.recommended() });
+    }
+    if (this.popular().length > 0) {
+      liste.push({ id: 'populaires', labelCle: 'pwaPopulaires', docs: this.popular() });
+    }
+    if (this.recent().length > 0) {
+      liste.push({ id: 'recents', labelCle: 'homeRecents', docs: this.recent() });
+    }
+    return liste;
+  });
+
+  protected readonly documentsOngletActif = computed(() => {
+    const onglets = this.ongletsDisponibles();
+    if (onglets.length === 0) return [];
+    const courant = onglets.find((o) => o.id === this.ongletActif()) ?? onglets[0];
+    return courant.docs.slice(0, 4);
+  });
+
+  protected readonly ongletCourantId = computed(() => {
+    const onglets = this.ongletsDisponibles();
+    if (onglets.length === 0) return 'recommandes';
+    return (onglets.find((o) => o.id === this.ongletActif()) ?? onglets[0]).id;
+  });
 
   protected readonly streak = signal(0);
   /** Documents disponibles hors ligne et documents lus - les vrais chiffres.

@@ -168,9 +168,14 @@
 .nl-epd__etoile {
   border: none;
   background: none;
-  color: var(--secondary);
+  color: var(--text-muted, #94a3b8);
   cursor: pointer;
   padding: 2px;
+  transition: color 0.15s ease, transform 0.12s ease;
+
+  &.nl-epd__etoile--active {
+    color: var(--warning, #f59e0b);
+  }
 
   &:disabled {
     opacity: 0.6;

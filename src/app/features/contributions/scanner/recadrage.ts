@@ -39,7 +39,7 @@ import { Icon } from '../../../shared/ui/icon/icon';
       <p class="rec__alerte" role="alert">{{ 'scanCadreInvalide' | t }}</p>
     }
     <div class="rec__actions">
-      <button type="button" class="rec__outil" (click)="coins.set(plein)">
+      <button type="button" class="rec__outil" (click)="appliquerCoins(plein)">
         <nl-icon name="open_in_full" [size]="18" /> {{ 'scanPleinCadre' | t }}
       </button>
       <button type="button" class="rec__outil" (click)="detecter.emit()">

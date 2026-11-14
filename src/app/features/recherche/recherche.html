@@ -3,13 +3,16 @@
     <button class="nl-icon-btn" (click)="goBack()" [attr.aria-label]="'actionRetour' | t">
       <nl-icon name="arrow_back" />
     </button>
-    <div class="recherche__field">
+    <div class="recherche__field" [class.recherche__field--chargement]="loading()">
       <nl-icon name="search" />
       <input
         type="text"
         [attr.placeholder]="'pwaRechercherDocumentMatiere' | t"
         [(ngModel)]="query"
         [attr.aria-label]="'actionRechercher' | t" />
+      @if (loading()) {
+        <span class="recherche__spinner" aria-hidden="true"></span>
+      }
     </div>
   </header>
 
@@ -45,7 +48,20 @@
         <p class="recherche__hint">{{ 'pwaCommencerRecherche' | t }}</p>
       }
     } @else if (loading()) {
-      <p class="recherche__etat">{{ 'pwaRecherche' | t }}</p>
+      <div class="recherche__chargement" role="status" aria-live="polite">
+        <div class="recherche__chargement-entete">
+          <span class="recherche__spinner" aria-hidden="true"></span>
+          <span>{{ 'pwaRecherche' | t }}</span>
+        </div>
+        <div class="recherche__squelettes" aria-hidden="true">
+          @for (item of [1, 2, 3, 4]; track item) {
+            <div class="recherche__squelette-carte">
+              <div class="recherche__squelette-ligne recherche__squelette-ligne--titre"></div>
+              <div class="recherche__squelette-ligne recherche__squelette-ligne--meta"></div>
+            </div>
+          }
+        </div>
+      </div>
     } @else if (error()) {
       <div class="recherche__etat recherche__etat--erreur">
         <p>{{ error() }}</p>

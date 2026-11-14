@@ -61,6 +61,7 @@ export class Scanner implements OnDestroy {
   protected readonly editee = computed(() => this.pages().find((p) => p.id === this.editeeId()) ?? null);
   private avant: { coins: Quad; detectee: boolean; reglages: Reglages } | null = null;
   private minuterieRendu: ReturnType<typeof setTimeout> | undefined;
+  private retoucheEnAttente: Parameters<Numerisation['retoucher']>[1] | null = null;
   private rendu = 0;
 
   private pdf: Uint8Array | null = null;
@@ -125,7 +126,8 @@ export class Scanner implements OnDestroy {
     this.occupe.set(true);
     try {
       for (const f of fichiers) {
-        if (!f.type.startsWith('image/')) {
+        const estImage = f.type.startsWith('image/') || /\.(jpe?g|png|webp|gif|bmp|heic|heif)$/i.test(f.name);
+        if (!estImage) {
           this.toast.erreur(tr('scanImageSeulement', 'Choisis une photo : le scanner ne lit que des images.'));
           continue;
         }
@@ -205,8 +207,11 @@ export class Scanner implements OnDestroy {
   /** « Valider » garde les retouches ; « annuler » remet la page comme elle était. */
   protected async fermerEdition(annuler: boolean): Promise<void> {
     clearTimeout(this.minuterieRendu);
+    const enAttente = this.retoucheEnAttente;
+    this.retoucheEnAttente = null;
     const page = this.editee();
     if (annuler && page && this.avant) await this.appliquer(page, this.avant);
+    else if (!annuler && page && enAttente) await this.appliquer(page, enAttente);
     this.editeeId.set(null);
     this.avant = null;
     this.etape.set('pages');
@@ -256,12 +261,15 @@ export class Scanner implements OnDestroy {
   /** Les curseurs et les poignées bougent vite : on ne refait le rendu qu'une fois le geste posé. */
   private reporterRendu(retouche: Parameters<Numerisation['retoucher']>[1]): void {
     clearTimeout(this.minuterieRendu);
+    this.retoucheEnAttente = { ...this.retoucheEnAttente, ...retouche };
     const sequence = ++this.rendu;
     this.minuterieRendu = setTimeout(async () => {
+      const aAppliquer = this.retoucheEnAttente ?? retouche;
+      this.retoucheEnAttente = null;
       const page = this.editee();
       if (!page) return;
       try {
-        const neuve = await this.num.retoucher(page, retouche);
+        const neuve = await this.num.retoucher(page, aAppliquer);
         if (sequence === this.rendu) this.pages.update((l) => l.map((p) => (p.id === page.id ? neuve : p)));
         else this.num.liberer({ ...neuve, source: { close() {} } as ImageBitmap });
       } catch {

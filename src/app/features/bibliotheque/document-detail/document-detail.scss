@@ -348,8 +348,13 @@
   height: var(--touch-min);
   border: none;
   background: none;
-  color: var(--warning);
+  color: var(--text-muted, #94a3b8);
   cursor: pointer;
+  transition: color 0.15s ease, transform 0.12s ease;
+
+  &.doc-detail__etoile--active {
+    color: var(--warning, #f59e0b);
+  }
 
   &:active {
     transform: scale(0.9);

@@ -63,7 +63,7 @@
         </button>
       </div>
     } @else {
-      <!-- ── Parcourir par format ────────────────────────────────────────── -->
+      <!-- ── Parcourir par format (puces légères) ──────────────────────── -->
       @if (typesRapides().length > 0) {
         <section class="home__section">
           <nl-section-header
@@ -72,33 +72,30 @@
             [action]="'actionVoirTout' | t"
             (agir)="openBibliotheque()" />
 
-          <!-- Trois formats et une porte vers les autres. La tuile porte sa
-               teinte dans un rond, comme une icône d'application : c'est ce
-               qui se reconnaît avant d'avoir lu le libellé. -->
-          <div class="home__formats">
+          <div class="home__formats-puces">
             @for (t of typesRapides(); track t) {
               <button
                 type="button"
-                class="home__format"
+                class="home__format-puce"
                 [style.--teinte]="(t | typeDoc).couleur"
                 [style.--teinte-fond]="(t | typeDoc).fond"
                 (click)="openBibliotheque(t)">
-                <span class="home__format-vignette">
-                  <nl-icon [name]="(t | typeDoc).icone" [size]="26" />
+                <span class="home__format-puce-icone">
+                  <nl-icon [name]="(t | typeDoc).icone" [size]="18" />
                 </span>
-                <span class="home__format-nom">{{ (t | typeDoc).label }}</span>
+                <span class="home__format-puce-nom">{{ (t | typeDoc).label }}</span>
               </button>
             }
 
             @if (typesSecondaires().length > 0) {
               <button
                 type="button"
-                class="home__format home__format--autres"
+                class="home__format-puce home__format-puce--autres"
                 (click)="ouvrirAutresFormats()">
-                <span class="home__format-vignette">
-                  <nl-icon name="more_horiz" [size]="26" />
+                <span class="home__format-puce-icone">
+                  <nl-icon name="more_horiz" [size]="18" />
                 </span>
-                <span class="home__format-nom">{{ 'homePlusDeFormats' | t }}</span>
+                <span class="home__format-puce-nom">{{ 'homePlusDeFormats' | t }}</span>
               </button>
             }
           </div>
@@ -134,20 +131,33 @@
         </section>
       }
 
-      <!-- ── Recommandés ─────────────────────────────────────────────────── -->
-      @if (recommended().length > 0) {
+      <!-- ── Flux unifié par onglets (Recommandés / Populaires / Récents) ── -->
+      @if (ongletsDisponibles().length > 0) {
         <section class="home__section">
-          <nl-section-header
-            [titre]="'pwaRecommandesPourVous' | t"
-            icone="workspace_premium"
-            [action]="'actionVoirTout' | t"
-            (agir)="openBibliotheque()" />
+          <div class="home__onglets-entete">
+            <div class="home__onglets" role="tablist">
+              @for (o of ongletsDisponibles(); track o.id) {
+                <button
+                  type="button"
+                  role="tab"
+                  class="home__onglet"
+                  [class.home__onglet--actif]="ongletCourantId() === o.id"
+                  [attr.aria-selected]="ongletCourantId() === o.id"
+                  (click)="ongletActif.set(o.id)">
+                  {{ o.labelCle | t }}
+                </button>
+              }
+            </div>
+            <button type="button" class="home__voir-tout" (click)="openBibliotheque()">
+              {{ 'actionVoirTout' | t }}
+            </button>
+          </div>
 
           <div class="home__liste">
-            @for (doc of recommended(); track doc.id; let i = $index) {
+            @for (doc of documentsOngletActif(); track doc.id) {
               <nl-document-card
                 [documentId]="doc.id"
-            [title]="doc.titre"
+                [title]="doc.titre"
                 [subject]="doc.matiere"
                 [auteur]="doc.enseignant"
                 [annee]="doc.anneeAcademique"
@@ -168,104 +178,33 @@
         </section>
       }
 
-      <!-- ── Les plus téléchargés ────────────────────────────────────────── -->
-      @if (popular().length > 0) {
-        <section class="home__section">
-          <nl-section-header
-            [titre]="'pwaPopulaires' | t"
-            icone="trending_up"
-            teinte="var(--type-epreuve)"
-            [action]="'actionVoirTout' | t"
-            (agir)="openBibliotheque()" />
-
-          <div class="home__liste">
-            @for (doc of popular(); track doc.id) {
-              <nl-document-card
-                [documentId]="doc.id"
-            [title]="doc.titre"
-                [subject]="doc.matiere"
-                [auteur]="doc.enseignant"
-                [annee]="doc.anneeAcademique"
-                [typeLabel]="(doc.type | typeDoc).label"
-                [typeIcon]="(doc.type | typeDoc).icone"
-                [typeColor]="(doc.type | typeDoc).couleur"
-                [typeBackground]="(doc.type | typeDoc).fond"
-                [etiquettes]="etiquettesDe(doc)"
-                [meta]="metaFor(doc)"
-                [note]="noteFor(doc)"
-                actionIcone="download"
-                [actionLibelle]="'actionTelecharger' | t"
-                [actionEtat]="telechargements.etat(doc.id)"
-                (action)="telecharger(doc)"
-                (activate)="openDocument(doc)" />
-            }
-          </div>
-        </section>
-      }
-
-      <!-- ── Mes matières ────────────────────────────────────────────────── -->
+      <!-- ── Mes matières (puces horizontales) ───────────────────────────── -->
       @if (matieresFiliere().length > 0 || matieresTroncCommun().length > 0) {
         <section class="home__section">
           <nl-section-header [titre]="'homeMesMatieres' | t" icone="school" teinte="var(--primary)" />
 
-          <div class="home__matieres">
-            @for (m of matieresFiliere(); track m.id) {
-              <button type="button" class="home__matiere" (click)="openMatiere(m)">
-                <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
-                <span class="home__matiere-nom">{{ m.nom }}</span>
-                <nl-icon name="chevron_right" [size]="18" />
-              </button>
-            }
-          </div>
-
-          @if (matieresTroncCommun().length > 0) {
-            <p class="home__tronc-titre">{{ 'homeTroncCommun' | t }}</p>
-            <p class="home__tronc-aide">{{ 'homeTroncCommunAide' | t }}</p>
-            <div class="home__matieres">
-              @for (m of matieresTroncCommun(); track m.id) {
-                <button type="button" class="home__matiere" (click)="openMatiere(m)">
+          @if (matieresFiliere().length > 0) {
+            <div class="home__matieres-rail">
+              @for (m of matieresFiliere(); track m.id) {
+                <button type="button" class="home__matiere-puce" (click)="openMatiere(m)">
                   <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
-                  <span class="home__matiere-nom">{{ m.nom }}</span>
-                  <nl-icon name="chevron_right" [size]="18" />
+                  <span class="home__matiere-puce-nom">{{ m.nom }}</span>
                 </button>
               }
             </div>
           }
-        </section>
-      }
 
-      <!-- ── Récemment ajoutés ───────────────────────────────────────────── -->
-      @if (recent().length > 0) {
-        <section class="home__section">
-          <nl-section-header
-            [titre]="'homeRecents' | t"
-            icone="calendar_month"
-            teinte="var(--primary)"
-            [action]="'actionVoirTout' | t"
-            (agir)="openBibliotheque()" />
-
-          <div class="home__liste">
-            @for (doc of recent(); track doc.id) {
-              <nl-document-card
-                [documentId]="doc.id"
-            [title]="doc.titre"
-                [subject]="doc.matiere"
-                [auteur]="doc.enseignant"
-                [annee]="doc.anneeAcademique"
-                [typeLabel]="(doc.type | typeDoc).label"
-                [typeIcon]="(doc.type | typeDoc).icone"
-                [typeColor]="(doc.type | typeDoc).couleur"
-                [typeBackground]="(doc.type | typeDoc).fond"
-                [etiquettes]="etiquettesDe(doc)"
-                [meta]="metaFor(doc)"
-            [note]="noteFor(doc)"
-                actionIcone="download"
-                [actionLibelle]="'actionTelecharger' | t"
-                [actionEtat]="telechargements.etat(doc.id)"
-                (action)="telecharger(doc)"
-                (activate)="openDocument(doc)" />
-            }
-          </div>
+          @if (matieresTroncCommun().length > 0) {
+            <p class="home__tronc-titre">{{ 'homeTroncCommun' | t }}</p>
+            <div class="home__matieres-rail">
+              @for (m of matieresTroncCommun(); track m.id) {
+                <button type="button" class="home__matiere-puce" (click)="openMatiere(m)">
+                  <span class="home__matiere-pastille" [style.background]="couleurMatiere(m)"></span>
+                  <span class="home__matiere-puce-nom">{{ m.nom }}</span>
+                </button>
+              }
+            </div>
+          }
         </section>
       }
 
