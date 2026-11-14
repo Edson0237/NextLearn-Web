@@ -23,8 +23,8 @@
 
 .home__hero {
   position: relative;
-  margin: var(--space-lg) var(--space-page) 0;
-  padding: var(--space-lg);
+  margin: var(--space-md) var(--space-page) 0;
+  padding: 14px 16px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 55%, var(--secondary) 100%);
@@ -67,8 +67,10 @@
 .home__hero-titre {
   position: relative;
   z-index: 1;
-  margin: var(--space-xs) 0 var(--space-lg);
+  margin: 2px 0 var(--space-md);
   @include type.nl-h1;
+  font-size: 1.25rem;
+  line-height: 1.3;
   color: var(--text-on-primary);
 }
 
@@ -159,8 +161,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) 6px;
+  gap: 6px;
+  padding: 10px 6px;
   cursor: pointer;
   @include carte;
 
@@ -180,8 +182,8 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: var(--teinte-fond);
   color: var(--teinte);
@@ -189,6 +191,8 @@
 
 .home__format-nom {
   @include type.nl-label-md;
+  font-size: 0.72rem;
+  line-height: 1.2;
   color: var(--text-primary);
   text-align: center;
   text-transform: none;

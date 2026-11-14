@@ -9,8 +9,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  padding: var(--space-lg);
+  gap: var(--space-sm);
+  padding: 12px 14px;
   overflow: hidden;
   cursor: pointer;
   @include carte;
@@ -28,13 +28,13 @@
   gap: var(--space-md);
 }
 
-// La vignette de type : 40×40, fond teinté, icône de la couleur du type.
+// La vignette de type : 36×36, fond teinté, icône de la couleur du type.
 .nl-doc-card__vignette {
   flex: none;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-sm);
   background: var(--type-bg);
   color: var(--type-color);
@@ -45,7 +45,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .nl-doc-card__etiquettes {
@@ -57,6 +57,8 @@
 .nl-doc-card__titre {
   margin: 0;
   @include type.nl-h3;
+  font-size: 0.92rem;
+  line-height: 1.35;
   // Deux lignes au plus : au-delà, le titre pousse les métadonnées hors de
   // vue et toutes les cartes de la liste perdent leur alignement.
   display: -webkit-box;
@@ -99,7 +101,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding-top: var(--space-md);
+  padding-top: var(--space-sm);
   border-top: 1px solid var(--border-light);
 }
 
