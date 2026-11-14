@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { tr } from '../../../core/i18n';
-import { TraductionPipe } from '../../../core/i18n';
+import { tr, TraductionPipe, TraductionService } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { DepotRepository } from '../../../core/contributions';
-import { ReferencesRepository } from '../../../core/references';
+import { ReferencesRepository, traduireOptionReference } from '../../../core/references';
 import { DepotLicence, LICENCES_PROPOSEES, anneesAcademiquesProposees } from '../../../core/contributions';
 import { TypeContenuOption, MatiereOption, OptionReference } from '../../../core/references';
 import { niveauCourt } from '../../../core/models';
@@ -54,6 +53,7 @@ export class DepotForm {
   private readonly repo = inject(DepotRepository);
   private readonly refs = inject(ReferencesRepository);
   private readonly toast = inject(ToastService);
+  private readonly traductions = inject(TraductionService);
 
   protected readonly licences = LICENCES_PROPOSEES;
   protected readonly annees = anneesAcademiquesProposees(new Date());
@@ -72,6 +72,23 @@ export class DepotForm {
   protected readonly fichier = signal<File | undefined>(undefined);
 
   protected readonly types = signal<Cascade<TypeContenuOption>>({ statut: 'chargement', items: [] });
+  protected readonly typesAffiches = computed(() => {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    const t = this.types();
+    return {
+      statut: t.statut,
+      items: t.items.map((x) => ({ ...x, label: traduireOptionReference(x.value, x.label) })),
+    };
+  });
+  protected readonly sousTypesAffiches = computed(() => {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    return this.sousTypesEpreuve().map((x) => ({
+      ...x,
+      label: traduireOptionReference(x.value, x.label),
+    }));
+  });
   protected readonly matieres = signal<Cascade<MatiereOption>>({ statut: 'chargement', items: [] });
 
   protected readonly envoiEnCours = signal(false);

@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { ApplicationRef, Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
@@ -65,6 +65,7 @@ export function langueCourante(): Langue {
 @Injectable({ providedIn: 'root' })
 export class TraductionService {
   private readonly http = inject(HttpClient);
+  private readonly appRef = inject(ApplicationRef);
 
   private readonly messages = signal<Record<string, string>>({});
   private readonly preference = signal<PreferenceLangue>(this.lirePreference());
@@ -123,6 +124,13 @@ export class TraductionService {
     } finally {
       this.pret.set(true);
       document.documentElement.lang = langue;
+      queueMicrotask(() => {
+        try {
+          this.appRef.tick();
+        } catch {
+          // Hors cycle applicatif (tests unitaires).
+        }
+      });
     }
   }
 

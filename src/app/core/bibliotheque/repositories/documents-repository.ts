@@ -14,7 +14,7 @@ import { StockageHorsLigne } from '../services/stockage-hors-ligne';
 import { enFailure } from '../../network';
 
 /**
- * Accès réseau au catalogue de documents — NextLearn Smart Document Loading Architecture.
+ * Accès réseau au catalogue de documents - NextLearn Smart Document Loading Architecture.
  * Récupère exclusivement les métadonnées et gère l'accès sécurisé à la demande.
  */
 @Injectable({ providedIn: 'root' })

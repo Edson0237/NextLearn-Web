@@ -33,7 +33,7 @@ describe('TypeEpreuve - rattrapage', () => {
   });
 });
 
-describe('durée facultative — jamais « 0 min »', () => {
+describe('durée facultative - jamais « 0 min »', () => {
   const base = { _id: 'e1', annee: 2023, niveau: 'N3', universiteId: { nom: 'SJI' }, matiereId: { _id: 'm', nom: 'Algo' } };
 
   it.each([[undefined], [null], [''], [0], ['0'], [-3], ['abc'], [NaN]])('durée %p → inconnue (undefined), pas 0', (v) => {

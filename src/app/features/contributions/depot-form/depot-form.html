@@ -39,14 +39,14 @@
 
     <label class="nl-depf__champ">
       <span>{{ 'depotType' | t }}</span>
-      @switch (types().statut) {
+      @switch (typesAffiches().statut) {
         @case ('erreur') {
           <p class="nl-depf__erreur">{{ 'depotTypesIndisponibles' | t }}</p>
         }
         @default {
           <select [value]="type() ?? ''" (change)="surChangementType(val($event) || undefined)">
             <option value="" disabled>{{ 'depotTypeIndice' | t }}</option>
-            @for (t of types().items; track t.value) {
+            @for (t of typesAffiches().items; track t.value) {
               <option [value]="t.value">{{ t.label }}</option>
             }
           </select>
@@ -59,7 +59,7 @@
         <span>{{ 'depotSousTypeEpreuve' | t }}</span>
         <select [value]="sousTypeEpreuve() ?? ''" (change)="sousTypeEpreuve.set(val($event) || undefined)">
           <option value="" disabled>{{ 'depotSousTypeEpreuveIndice' | t }}</option>
-          @for (st of sousTypesEpreuve(); track st.value) {
+          @for (st of sousTypesAffiches(); track st.value) {
             <option [value]="st.value">{{ st.label }}</option>
           }
         </select>

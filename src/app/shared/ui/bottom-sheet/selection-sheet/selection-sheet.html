@@ -11,7 +11,7 @@
       <nl-icon name="search" [size]="18" />
       <input
         type="search"
-        [placeholder]="data.searchHint ?? 'Rechercher'"
+        [placeholder]="data.searchHint ?? ('actionRechercher' | t)"
         [ngModel]="filtre()"
         (ngModelChange)="filtre.set($event)"
       />

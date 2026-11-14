@@ -1,5 +1,7 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { TraductionService } from '../../i18n';
 import { ReferencesRepository } from '../repositories/references-repository';
+import { traduireOptionReference } from '../utils/traduire-reference';
 import { DocumentType, enregistrerFormatsServeur } from '../../bibliotheque';
 
 /** Un format de ressource tel que l'administration le propose. */
@@ -21,10 +23,20 @@ export interface FormatPropose {
 @Injectable({ providedIn: 'root' })
 export class FormatsService {
   private readonly repo = inject(ReferencesRepository);
+  private readonly traductions = inject(TraductionService);
 
-  private readonly _formats = signal<readonly FormatPropose[] | null>(null);
-  /** `null` tant que le serveur n'a pas répondu. */
-  readonly formats = this._formats.asReadonly();
+  private readonly _formatsBruts = signal<readonly FormatPropose[] | null>(null);
+  /** `null` tant que le serveur n'a pas répondu. Réactif au changement de langue. */
+  readonly formats = computed<readonly FormatPropose[] | null>(() => {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    const bruts = this._formatsBruts();
+    if (!bruts) return null;
+    return bruts.map((f) => ({
+      type: f.type,
+      label: traduireOptionReference(f.type, f.label),
+    }));
+  });
 
   constructor() {
     void this.charger();
@@ -40,7 +52,7 @@ export class FormatsService {
       const liste = brut
         .map((t) => ({ type: t.value.toLowerCase() as DocumentType, label: t.label }))
         .filter((f) => f.type !== DocumentType.autre);
-      if (liste.length > 0) this._formats.set(liste);
+      if (liste.length > 0) this._formatsBruts.set(liste);
     } catch {
       // Hors ligne : on garde les listes de repli.
     }
@@ -48,11 +60,11 @@ export class FormatsService {
 
   /** Ce format est-il proposé ? Vrai tant qu'on ne sait pas. */
   actif(type: DocumentType): boolean {
-    const f = this._formats();
+    const f = this._formatsBruts();
     return f === null || f.some((x) => x.type === type);
   }
 
   libelle(type: DocumentType): string | undefined {
-    return this._formats()?.find((f) => f.type === type)?.label;
+    return this.formats()?.find((f) => f.type === type)?.label;
   }
 }

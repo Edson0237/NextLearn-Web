@@ -56,7 +56,7 @@ function creerFicheDocument(partiel: Partial<DocumentModel> = {}): DocumentModel
   };
 }
 
-describe('StockageHorsLigne — Stockage local IndexedDB & Cas de tests obligatoires (Section 9)', () => {
+describe('StockageHorsLigne - Stockage local IndexedDB & Cas de tests obligatoires (Section 9)', () => {
   let service: StockageHorsLigne;
   const fetchOriginal = globalThis.fetch;
 

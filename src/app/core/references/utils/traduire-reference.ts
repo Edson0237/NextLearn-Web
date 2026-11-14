@@ -17,23 +17,23 @@ const CYCLES_EN: Readonly<Record<string, string>> = {
 };
 
 const FILIERES_EN: Readonly<Record<string, string>> = {
-  'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)':
-    'Engineering Cycle — Systems, Networks & Telecoms (SRT)',
-  'Cycle Ingénieur — Ingénierie des Systèmes d’Information (ISI)':
-    'Engineering Cycle — Information Systems Engineering (ISI)',
-  'Cycle Ingénieur — Génie Civil (GC)':
-    'Engineering Cycle — Civil Engineering (GC)',
-  'Licence Professionnelle — Conception et Développement d’Applications pour l’Économie Numérique':
-    'Vocational Bachelor — Application Design & Development for the Digital Economy',
-  'Master — Sécurité des Systèmes d’Information (SSI)':
-    'Master — Information Systems Security (SSI)',
-  'Master — Data Science': 'Master — Data Science',
-  'Licence — Gestion': 'Bachelor — Management',
-  'Licence — Finance': 'Bachelor — Finance',
-  'Licence — Marketing': 'Bachelor — Marketing',
-  'Master — Gestion': 'Master — Management',
-  'Master — Finance': 'Master — Finance',
-  'Master — Marketing': 'Master — Marketing',
+  'Cycle Ingénieur - Systèmes, Réseaux & Télécoms (SRT)':
+    'Engineering Cycle - Systems, Networks & Telecoms (SRT)',
+  'Cycle Ingénieur - Ingénierie des Systèmes d’Information (ISI)':
+    'Engineering Cycle - Information Systems Engineering (ISI)',
+  'Cycle Ingénieur - Génie Civil (GC)':
+    'Engineering Cycle - Civil Engineering (GC)',
+  'Licence Professionnelle - Conception et Développement d’Applications pour l’Économie Numérique':
+    'Vocational Bachelor - Application Design & Development for the Digital Economy',
+  'Master - Sécurité des Systèmes d’Information (SSI)':
+    'Master - Information Systems Security (SSI)',
+  'Master - Data Science': 'Master - Data Science',
+  'Licence - Gestion': 'Bachelor - Management',
+  'Licence - Finance': 'Bachelor - Finance',
+  'Licence - Marketing': 'Bachelor - Marketing',
+  'Master - Gestion': 'Master - Management',
+  'Master - Finance': 'Master - Finance',
+  'Master - Marketing': 'Master - Marketing',
   'Ingénieur Généraliste (InGé)': 'General Engineering (InGé)',
   'Ingénieur Généraliste (orientation internationale)':
     'General Engineering (International Track)',
@@ -101,10 +101,12 @@ const JUSTIFICATIFS_EN: Readonly<Record<string, { label: string; description?: s
 };
 
 export function traduireFiliere(nom: string): string {
-  if (!nom || langueCourante() !== 'en') return nom;
-  const exact = FILIERES_EN[nom.trim()];
+  if (!nom) return nom;
+  const normalise = nom.trim().replace(/[—–]/g, '-');
+  if (langueCourante() !== 'en') return normalise;
+  const exact = FILIERES_EN[normalise];
   if (exact) return exact;
-  return nom
+  return normalise
     .replace(/^Cycle Ingénieur\b/i, 'Engineering Cycle')
     .replace(/^Licence Professionnelle\b/i, 'Vocational Bachelor')
     .replace(/^Licence Pro\b/i, 'Vocational Bachelor')

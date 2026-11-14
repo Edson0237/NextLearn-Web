@@ -3,7 +3,7 @@ import { provideHttpClientTesting, HttpTestingController } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { DocumentsRepository } from '../repositories/documents-repository';
 
-describe('DocumentsRepository — Smart Document Loading', () => {
+describe('DocumentsRepository - Smart Document Loading', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],

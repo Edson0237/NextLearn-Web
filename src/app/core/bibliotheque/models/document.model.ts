@@ -185,7 +185,7 @@ export function labelDocumentSort(sort: DocumentSort): string {
   switch (sort) {
     case DocumentSort.recent: return 'Récents';
     case DocumentSort.popular: return 'Populaires';
-    case DocumentSort.alphabetical: return 'A–Z';
+    case DocumentSort.alphabetical: return 'A-Z';
   }
 }
 

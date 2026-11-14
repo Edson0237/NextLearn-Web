@@ -121,10 +121,25 @@ export class BibliothequeHome implements OnInit {
    * ses libellés. La liste ci-dessus ne sert que tant qu'il n'a pas répondu.
    */
   protected readonly tabs = computed(() => {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    const tous = { type: null, label: this.traductions.t('epreuveTypeTous', undefined, 'Tous') };
     const serveur = this.formats.formats();
-    const tous = this.tabsDeRepli[0];
-    if (!serveur) return this.tabsDeRepli;
-    return [tous, ...serveur.map((f) => ({ type: f.type, label: f.label }))];
+    if (serveur) {
+      return [tous, ...serveur.map((f) => ({ type: f.type, label: f.label }))];
+    }
+    return [
+      tous,
+      { type: DocumentType.cours, label: this.traductions.t('biblioFiltreCours', undefined, 'Cours') },
+      { type: DocumentType.td, label: 'TD' },
+      { type: DocumentType.tp, label: 'TP' },
+      { type: DocumentType.synthese, label: this.traductions.t('epreuvesSynthese', undefined, 'Synthèse') },
+      { type: DocumentType.epreuve, label: this.traductions.t('epreuveTitre', undefined, 'Épreuve') },
+      { type: DocumentType.annales, label: this.traductions.t('titreAnnales', undefined, 'Annales') },
+      { type: DocumentType.corrige, label: this.traductions.t('epreuvesCorrige', undefined, 'Corrigé') },
+      { type: DocumentType.rapport, label: this.traductions.t('depotTypeRapport', undefined, 'Rapport') },
+      { type: DocumentType.expose, label: this.traductions.t('depotTypeExpose', undefined, 'Exposé') },
+    ];
   });
 
   private static readonly PAS_AFFICHAGE = 30;
