@@ -69,8 +69,11 @@
   z-index: 1;
   margin: 2px 0 var(--space-md);
   @include type.nl-h1;
-  font-size: 1.25rem;
-  line-height: 1.3;
+  font-size: clamp(0.95rem, 4.35vw, 1.25rem);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--text-on-primary);
 }
 
