@@ -17,7 +17,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg) 0;
+  padding: var(--space-md) var(--space-page) 0;
   padding-top: max(var(--space-md), env(safe-area-inset-top));
 }
 
@@ -44,29 +44,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-xxl) var(--space-xxl) var(--space-xxxl);
+  padding: var(--space-lg) var(--space-page) var(--space-xxl);
   text-align: center;
 }
 
 .nl-pinset__pastille {
-  width: 66px;
-  height: 66px;
+  width: 54px;
+  height: 54px;
   display: grid;
   place-items: center;
-  border-radius: 19px;
+  border-radius: 16px;
   background: color-mix(in srgb, var(--primary) 12%, transparent);
   color: var(--primary);
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
 }
 
 .nl-pinset__titre {
   @include type.nl-h2;
-  margin: 0 0 var(--space-sm);
+  font-size: 1.15rem;
+  line-height: 1.3;
+  margin: 0 0 var(--space-xs);
 }
 
 .nl-pinset__texte {
-  margin: 0 0 var(--space-xxxl);
+  margin: 0 0 var(--space-xl);
   color: var(--text-muted);
-  font: 400 0.95rem/1.5 var(--font-family-body);
+  font: 400 0.875rem/1.45 var(--font-family-body);
   max-width: 280px;
 }

@@ -41,7 +41,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-xl) var(--space-lg);
+  padding: var(--space-lg) var(--space-md);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg-primary);
@@ -68,8 +68,8 @@
 .pending__pastille {
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   background: var(--ton-fond);
   color: var(--ton);

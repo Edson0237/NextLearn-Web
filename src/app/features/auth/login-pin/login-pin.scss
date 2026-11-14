@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   min-height: var(--ecran-haut, 100dvh);
-  padding: var(--space-xxxl) var(--space-xxl) var(--space-xxl);
+  padding: var(--space-xl) var(--space-page) var(--space-xl);
   background: var(--bg-canvas);
   text-align: center;
   overflow-y: auto;
@@ -27,20 +27,22 @@
 .nl-loginpin__avatar {
   // Le rond est dessiné par `nl-identite` : ne reste ici que ce qui relève
   // de la page - sa place dans la colonne et le halo qui le décolle du fond.
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
   border-radius: 50%;
   box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 28%, transparent);
 }
 
 .nl-loginpin__titre {
   @include type.nl-h2;
+  font-size: 1.15rem;
+  line-height: 1.3;
   margin: 0 0 4px;
 }
 
 .nl-loginpin__texte {
-  margin: 0 0 var(--space-xxl);
+  margin: 0 0 var(--space-lg);
   color: var(--text-muted);
-  font: 400 0.95rem/1.5 var(--font-family-body);
+  font: 400 0.875rem/1.45 var(--font-family-body);
 }
 
 .nl-loginpin__champ {
@@ -50,7 +52,7 @@
   flex-direction: column;
   gap: 6px;
   text-align: left;
-  margin-bottom: var(--space-xxl);
+  margin-bottom: var(--space-lg);
 
   span {
     font: 600 0.8rem/1 var(--font-family-body);
@@ -58,13 +60,13 @@
   }
 
   input {
-    height: 48px;
+    height: 44px;
     padding: 0 var(--space-md);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     background: var(--bg-primary);
     color: var(--text-primary);
-    font: 400 0.95rem/1 var(--font-family-body);
+    font: 400 0.9rem/1 var(--font-family-body);
 
     &:focus-visible {
       outline: 2px solid var(--primary);
@@ -74,7 +76,7 @@
 }
 
 .nl-loginpin__pied {
-  margin-top: var(--space-xxxl);
+  margin-top: var(--space-xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
@@ -107,7 +109,7 @@
   margin-top: var(--space-lg);
 
   &--verif {
-    padding: var(--space-lg);
+    padding: var(--space-md);
     border: 1px solid var(--border);
     border-radius: 16px;
     background: var(--bg-primary);
@@ -147,7 +149,7 @@
 
 .nl-loginpin__continuer {
   width: 100%;
-  min-height: 48px;
+  min-height: 44px;
   margin-top: var(--space-md);
   border: none;
   border-radius: var(--radius-sm);
