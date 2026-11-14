@@ -38,10 +38,10 @@ import { estAuthentifie } from '../../core/auth';
       }
 
       @if (majDisponible()) {
-        <div class="nl-bandeau nl-bandeau--maj" role="status">
+        <div class="nl-bandeau nl-bandeau--maj" role="status" aria-live="polite">
           <nl-icon name="refresh" [size]="18" />
           <span class="nl-bandeau__texte">Une nouvelle version est disponible.</span>
-          <button type="button" class="nl-bandeau__action" (click)="appliquerMaj()">
+          <button type="button" class="nl-bandeau__action" [disabled]="majEnCours()" (click)="appliquerMaj()">
             Mettre à jour
           </button>
         </div>
@@ -101,6 +101,7 @@ export class AppShellRoot {
 
   private readonly maj = inject(MiseAJourService);
   protected readonly majDisponible = this.maj.disponible;
+  protected readonly majEnCours = this.maj.rechargementEnCours;
 
   private readonly auth = inject(AuthService);
   private readonly notifications = inject(PreferenceNotifications);

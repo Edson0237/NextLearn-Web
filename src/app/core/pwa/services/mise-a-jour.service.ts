@@ -2,153 +2,293 @@ import { DestroyRef, Injectable, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 import { filter } from 'rxjs';
+import { AppRoutes } from '../../router/routes/app-routes';
 
 const CLE_RECHARGEMENT = 'nl_maj_rechargee_a';
-/** En deçà, un second rechargement automatique serait une boucle. */
+/** En deca, un second rechargement automatique serait une boucle. */
 const DELAI_ANTI_BOUCLE_MS = 10_000;
-const VERIFICATION_PERIODIQUE_MS = 60_000;
-/** Entre deux vérifications déclenchées par un changement d'écran. */
-const DELAI_ENTRE_VERIFICATIONS_MS = 30_000;
-/** Absence minimale (écran éteint, autre application) pour revérifier. */
+/** Delai minimal entre deux verifications de mise a jour lors de la navigation. */
+const DELAI_ENTRE_VERIFICATIONS_MS = 15_000;
+/** Garde minimale contre les rafales apres un echec d'installation SW. */
+const DELAI_RETRY_ECHEC_MS = 5_000;
+/** Absence minimale (ecran eteint, autre application) pour appliquer une mise a jour en attente. */
 const ABSENCE_MIN_MS = 5_000;
+/** Repli si le navigateur annule ou retarde un rechargement demande depuis le bandeau. */
+const DELAI_SECURITE_RECHARGEMENT_MS = 3_000;
 
 /**
- * Seul le scanner où des prises de vue caméra sont gardées en mémoire vive
- * ne doit pas être rechargé au milieu d'un geste. Partout ailleurs,
- * la mise à jour s'applique instantanément et automatiquement.
+ * Ecrans de saisie ou d'authentification ou un rechargement automatique ferait
+ * perdre le contexte en cours : le bandeau reste affiche jusqu'a confirmation
+ * ou sortie vers un ecran sur.
  */
-const ZONES_SENSIBLES = ['/app/depots/scanner'];
+const ZONES_SENSIBLES = [
+  `/app/${AppRoutes.depotScanner}`,
+  `/app/${AppRoutes.depotForm}`,
+  `/app/${AppRoutes.register}`,
+  `/app/${AppRoutes.login}`,
+  `/app/${AppRoutes.verificationForm}`,
+  `/app/${AppRoutes.changerEmail}`,
+  `/app/${AppRoutes.deleteAccount}`,
+] as const;
+
+interface OptionsVerification {
+  contournerDelai?: boolean;
+}
 
 /**
- * Mise à jour de l'application installée.
+ * Orchestration fiable des mises a jour PWA sur Android (Chrome) et iOS (Safari / PWA installee).
  *
- * Le service worker d'Angular garde la version qu'il a en cache et ne bascule
- * sur la suivante qu'au prochain chargement *après* que tous les onglets sont
- * fermés. Chrome, Edge, Samsung Internet et Safari qui avaient déjà visité le
- * site continuaient donc d'afficher l'ancienne version - alors qu'un
- * navigateur neuf, sans service worker, affichait la nouvelle. C'est ce que
- * ce service corrige, pour tous les navigateurs qui gèrent les service workers.
+ * Sur iOS, WebKit suspend l'application sans garantir `visibilitychange('hidden')` ni conserver
+ * les minuteurs `setInterval`. Les verifications s'appuient donc sur le cycle de vie reel
+ * (`pageshow`, `focus`, `visibilitychange`, `pagehide`, `blur`, `online`, `NavigationEnd`).
  *
- * ## Quand on recharge, quand on demande
- *
- * - **Tant que l'utilisateur n'a rien touché**, ou sur les pages publiques
- *   (hors `/app`), la nouvelle version est activée et la page rechargée tout de
- *   suite : il n'y a rien à perdre, et c'est ce qui rattrape le visiteur
- *   qui rouvre le site.
- * - **Une fois qu'il a commencé à interagir dans l'application**, on ne recharge
- *   pas au milieu d'un geste : une page qui se recharge fait perdre un formulaire en
- *   cours de saisie. La version prête est alors appliquée **d'elle-même au premier
- *   moment sûr** - un changement d'écran, ou le retour dans l'application après une
- *   absence - sauf sur les écrans de saisie (scanner, formulaire de dépôt,
- *   inscription, connexion, vérification, changement d'adresse), où le bandeau
- *   propose la mise à jour et l'utilisateur décide.
- * - **Jamais deux rechargements automatiques à moins d'une minute** : si une
- *   version défectueuse relançait la mise à jour en boucle, mieux vaut un
- *   bandeau qu'une page qui clignote.
- *
- * Il vérifie aussi les nouvelles versions au démarrage, au retour sur
- * l'onglet, au retour de la connexion et toutes les 30 minutes : le navigateur
- * ne le fait pas de lui-même pour un onglet qui reste ouvert.
- *
- * Si le service worker déclare son cache irrécupérable (un morceau de code
- * supprimé par un déploiement), on recharge : c'est la page blanche sinon.
+ * Des qu'Angular emet `VERSION_READY`, le Service Worker connait deja la version cible pour toute
+ * nouvelle navigation : un rechargement de page suffit sans chainer systematiquement `activateUpdate()`,
+ * qui peut bloquer sur iOS apres reveil du worker.
  */
 @Injectable({ providedIn: 'root' })
 export class MiseAJourService {
   private readonly updates = inject(SwUpdate, { optional: true });
   private readonly router = inject(Router, { optional: true });
 
-  /** Vrai dès qu'une version plus récente est prête et n'a pas pu être appliquée d'office. */
+  /** Vrai des qu'une version plus recente est prete et attend un moment sur ou une action utilisateur. */
   readonly disponible = signal(false);
+  /** Vrai pendant qu'une verification reseau de manifeste (`ngsw.json`) est en cours. */
+  readonly verificationEnCours = signal(false);
+  /** Vrai entre `VERSION_DETECTED` et la fin (`VERSION_READY` ou `VERSION_INSTALLATION_FAILED`). */
+  readonly installationEnCours = signal(false);
+  /** Vrai pendant la sequence de rechargement afin d'eviter les doubles clics sur le bandeau. */
+  readonly rechargementEnCours = signal(false);
 
   private interagi = false;
   private masqueDepuis: number | null = null;
+  private derniereActivite = Date.now();
   private derniereVerification = 0;
+  private installationEchouee = false;
+  private verificationDiffereeHorsLigne = false;
+  private verificationPromesse: Promise<boolean> | null = null;
+  private minuteurSecuriteRechargement: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     if (!this.updates?.isEnabled) return;
     const updates = this.updates;
 
+    const verifier = (options: OptionsVerification = {}): Promise<boolean> => {
+      if (this.verificationPromesse) return this.verificationPromesse;
+
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        this.verificationDiffereeHorsLigne = true;
+        return Promise.resolve(false);
+      }
+
+      const ecoule = Date.now() - this.derniereVerification;
+      const delaiRequis = this.installationEchouee
+        ? DELAI_RETRY_ECHEC_MS
+        : DELAI_ENTRE_VERIFICATIONS_MS;
+
+      if (!options.contournerDelai && this.derniereVerification > 0 && ecoule < delaiRequis) {
+        return Promise.resolve(false);
+      }
+
+      this.derniereVerification = Date.now();
+      this.verificationDiffereeHorsLigne = false;
+      this.verificationEnCours.set(true);
+
+      // Sur Safari / iOS, signale au navigateur de controler aussi ngsw-worker.js sans bloquer checkForUpdate().
+      if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+        void navigator.serviceWorker
+          .getRegistration()
+          .then((reg) => reg?.update())
+          .catch(() => undefined);
+      }
+
+      const promesse = updates
+        .checkForUpdate()
+        .catch(() => false)
+        .finally(() => {
+          this.verificationPromesse = null;
+          this.verificationEnCours.set(false);
+        });
+
+      this.verificationPromesse = promesse;
+      return promesse;
+    };
+
     const abonnements = [
       updates.versionUpdates.subscribe((evenement) => {
-        if (evenement.type === 'VERSION_READY') {
-          if (this.peutRechargerSansRisque()) {
-            void this.appliquer(true);
-          } else {
-            this.disponible.set(true);
-          }
-        }
-        if (evenement.type === 'VERSION_INSTALLATION_FAILED') {
-          // L'ancienne version continue de fonctionner : rien à annoncer.
-          this.disponible.set(false);
+        switch (evenement.type) {
+          case 'VERSION_DETECTED':
+            this.installationEnCours.set(true);
+            this.installationEchouee = false;
+            break;
+          case 'NO_NEW_VERSION_DETECTED':
+            this.installationEnCours.set(false);
+            this.installationEchouee = false;
+            break;
+          case 'VERSION_READY':
+            this.installationEnCours.set(false);
+            this.installationEchouee = false;
+            this.verificationDiffereeHorsLigne = false;
+            if (this.peutRechargerSansRisque()) {
+              void this.appliquer(true);
+            } else {
+              this.disponible.set(true);
+            }
+            break;
+          case 'VERSION_INSTALLATION_FAILED':
+            // L'ancienne version reste operationnelle : on retentera au prochain retour reseau / premier plan.
+            this.installationEnCours.set(false);
+            this.installationEchouee = true;
+            this.disponible.set(false);
+            break;
         }
       }),
-      updates.unrecoverable.subscribe(() => this.recharger()),
+      updates.unrecoverable.subscribe(() => {
+        this.installationEnCours.set(false);
+        if (this.rechargeRecemment()) {
+          // Evite une boucle infinie de rechargements si le cache reste corrompu apres un redemarrage.
+          this.disponible.set(true);
+          return;
+        }
+        this.memoriserRechargement();
+        this.recharger();
+      }),
     ];
 
-    const verifier = (): void => {
-      this.derniereVerification = Date.now();
-      void updates.checkForUpdate().catch(() => undefined);
+    const memoriserAbsence = (): void => {
+      const maintenant = Date.now();
+      if (this.masqueDepuis === null) {
+        this.masqueDepuis = maintenant;
+      }
+      this.derniereActivite = maintenant;
     };
-    const auRetour = (): void => {
+
+    const gererRetourPremierPlan = (depuisBfCache = false): void => {
+      const maintenant = Date.now();
+      const referenceAbsence = this.masqueDepuis ?? this.derniereActivite;
+      const absence = depuisBfCache ? ABSENCE_MIN_MS : Math.max(0, maintenant - referenceAbsence);
+      this.masqueDepuis = null;
+      this.derniereActivite = maintenant;
+
+      if (absence >= ABSENCE_MIN_MS && !this.zoneSensible(location.pathname)) {
+        this.interagi = false;
+      }
+
+      void verifier({
+        contournerDelai: depuisBfCache || this.installationEchouee || absence >= ABSENCE_MIN_MS,
+      });
+
+      // Revenir apres une vraie absence est un moment sur : personne n'est au milieu d'un geste.
+      if (absence >= ABSENCE_MIN_MS) {
+        this.appliquerSiMomentSur(location.pathname);
+      }
+    };
+
+    const surChangementVisibilite = (): void => {
       if (document.visibilityState === 'hidden') {
-        this.masqueDepuis = Date.now();
+        memoriserAbsence();
         return;
       }
-      const absence = this.masqueDepuis === null ? 0 : Date.now() - this.masqueDepuis;
-      this.masqueDepuis = null;
-      verifier();
-      // Revenir d'une absence est un moment sûr : personne n'est au milieu d'un geste.
-      if (absence >= ABSENCE_MIN_MS) this.appliquerSiMomentSur(location.pathname);
+      gererRetourPremierPlan();
     };
+
+    const surPageShow = (evenement: PageTransitionEvent): void => {
+      // Sur iOS Safari, `persisted` indique une restauration directe depuis le BFCache.
+      if (evenement.persisted || document.visibilityState === 'visible') {
+        gererRetourPremierPlan(Boolean(evenement.persisted));
+      }
+    };
+
+    const surFocus = (): void => {
+      if (document.visibilityState !== 'hidden') {
+        gererRetourPremierPlan();
+      }
+    };
+
+    const surRetourReseau = (): void => {
+      const doitForcer = this.installationEchouee || this.verificationDiffereeHorsLigne;
+      void verifier({ contournerDelai: doitForcer });
+    };
+
+    const surCoupureReseau = (): void => {
+      this.verificationDiffereeHorsLigne = true;
+      this.installationEnCours.set(false);
+    };
+
     const marquerInteraction = (): void => {
       this.interagi = true;
+      this.derniereActivite = Date.now();
     };
 
-    document.addEventListener('visibilitychange', auRetour);
-    window.addEventListener('online', verifier);
-    window.addEventListener('pointerdown', marquerInteraction, { once: true, passive: true });
-    window.addEventListener('keydown', marquerInteraction, { once: true });
-    const minuteur = setInterval(verifier, VERIFICATION_PERIODIQUE_MS);
-    verifier();
+    document.addEventListener('visibilitychange', surChangementVisibilite);
+    window.addEventListener('pageshow', surPageShow);
+    window.addEventListener('pagehide', memoriserAbsence);
+    window.addEventListener('blur', memoriserAbsence);
+    window.addEventListener('focus', surFocus);
+    window.addEventListener('online', surRetourReseau);
+    window.addEventListener('offline', surCoupureReseau);
+    window.addEventListener('pointerdown', marquerInteraction, { passive: true });
+    window.addEventListener('keydown', marquerInteraction, { passive: true });
 
-    // Un changement d'écran est l'autre moment sûr : la version prête s'applique, et c'est
-    // aussi l'occasion de regarder s'il en existe une nouvelle (au plus toutes les deux minutes).
+    // Verification initiale au demarrage.
+    void verifier({ contournerDelai: true });
+
     const navigation = this.router?.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => {
+        this.derniereActivite = Date.now();
         this.appliquerSiMomentSur(e.urlAfterRedirects);
-        if (Date.now() - this.derniereVerification > DELAI_ENTRE_VERIFICATIONS_MS) verifier();
+        if (!this.zoneSensible(e.urlAfterRedirects)) {
+          this.interagi = false;
+        }
+        void verifier();
       });
 
     inject(DestroyRef).onDestroy(() => {
       abonnements.forEach((a) => a.unsubscribe());
       navigation?.unsubscribe();
-      document.removeEventListener('visibilitychange', auRetour);
-      window.removeEventListener('online', verifier);
+      document.removeEventListener('visibilitychange', surChangementVisibilite);
+      window.removeEventListener('pageshow', surPageShow);
+      window.removeEventListener('pagehide', memoriserAbsence);
+      window.removeEventListener('blur', memoriserAbsence);
+      window.removeEventListener('focus', surFocus);
+      window.removeEventListener('online', surRetourReseau);
+      window.removeEventListener('offline', surCoupureReseau);
       window.removeEventListener('pointerdown', marquerInteraction);
       window.removeEventListener('keydown', marquerInteraction);
-      clearInterval(minuteur);
+      if (this.minuteurSecuriteRechargement !== null) {
+        clearTimeout(this.minuteurSecuriteRechargement);
+        this.minuteurSecuriteRechargement = null;
+      }
     });
   }
 
   /**
-   * Active la nouvelle version et recharge. Sur geste explicite (le bandeau)
-   * ou, pour `automatique`, quand rien n'est en jeu.
+   * Recharge l'application pour basculer vers la nouvelle version deja mise en cache par ngsw.
+   * Pour `automatique`, applique la protection anti-boucle et temporise sur geste actif ou zone sensible.
    */
   async appliquer(automatique = false): Promise<void> {
+    if (this.rechargementEnCours()) return;
+    if (automatique && this.rechargeRecemment()) return;
+
+    this.rechargementEnCours.set(true);
     if (automatique) this.memoriserRechargement();
-    try {
-      await this.updates?.activateUpdate();
-    } catch {
-      // Rien à activer (déjà fait, ou service worker occupé) : on recharge quand même.
+    this.disponible.set(false);
+
+    if (this.minuteurSecuriteRechargement !== null) {
+      clearTimeout(this.minuteurSecuriteRechargement);
     }
+    this.minuteurSecuriteRechargement = setTimeout(() => {
+      this.rechargementEnCours.set(false);
+      this.minuteurSecuriteRechargement = null;
+    }, DELAI_SECURITE_RECHARGEMENT_MS);
+
     this.recharger();
   }
 
   /**
-   * Une version est prête et n'a pas été appliquée : si l'écran n'est pas un écran de saisie,
-   * c'est maintenant. Appelée à chaque changement d'écran et au retour dans l'application.
+   * Une version est prete et n'a pas ete appliquee : si l'ecran n'est pas un ecran de saisie,
+   * recharge maintenant. Appelee au changement d'ecran et au retour apres absence.
    */
   appliquerSiMomentSur(url: string): void {
     if (!this.disponible() || this.rechargeRecemment() || this.zoneSensible(url)) return;
@@ -166,7 +306,11 @@ export class MiseAJourService {
 
   private peutRechargerSansRisque(): boolean {
     if (this.rechargeRecemment()) return false;
-    return !this.zoneSensible(location.pathname);
+    const chemin = location.pathname;
+    if (this.zoneSensible(chemin)) return false;
+    // Sur les pages d'application, ne pas interrompre un geste actif ; le bandeau propose ou attend la transition.
+    if (chemin.startsWith('/app') && this.interagi) return false;
+    return true;
   }
 
   private rechargeRecemment(): boolean {
@@ -182,7 +326,7 @@ export class MiseAJourService {
     try {
       sessionStorage.setItem(CLE_RECHARGEMENT, String(Date.now()));
     } catch {
-      // Stockage bloqué : le délai anti-boucle ne protège pas, la mise à jour reste utile.
+      // Stockage bloque : le delai anti-boucle ne protege pas, la mise a jour reste utile.
     }
   }
 }
