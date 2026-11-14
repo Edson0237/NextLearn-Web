@@ -28,7 +28,7 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
     value: 'TOUTES',
     titre: 'Les deux sections',
     description: 'Afficher les ressources francophones et anglophones',
-    badge: 'FR + EN',
+    badge: 'FR+EN',
   },
 ];
 
@@ -42,7 +42,7 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
       <div class="nl-sec-overlay" role="alertdialog" aria-modal="true" aria-labelledby="nl-sec-titre">
         <div class="nl-sec-carte">
           <div class="nl-sec-icone">
-            <nl-icon name="school" [size]="28" />
+            <nl-icon name="school" [size]="26" />
           </div>
           <h2 id="nl-sec-titre" class="nl-sec-titre">Choisis ta section académique</h2>
           <p class="nl-sec-sous">
@@ -58,14 +58,16 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
                 [class.nl-sec-option--actif]="selection() === opt.value"
                 [attr.aria-checked]="selection() === opt.value"
                 [disabled]="saving()"
-                (click)="selection.set(opt.value)">
+                (click)="choisir(opt.value)">
                 <span class="nl-sec-badge">{{ opt.badge }}</span>
                 <span class="nl-sec-texte">
                   <span class="nl-sec-opt-titre">{{ opt.titre }}</span>
                   <span class="nl-sec-opt-desc">{{ opt.description }}</span>
                 </span>
                 @if (selection() === opt.value) {
-                  <nl-icon name="check" [size]="20" />
+                  <span class="nl-sec-check">
+                    <nl-icon name="check" [size]="20" />
+                  </span>
                 }
               </button>
             }
@@ -94,22 +96,26 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
     .nl-sec-overlay {
       position: fixed;
       inset: 0;
-      z-index: 1200;
-      background: rgba(15, 23, 42, 0.72);
+      z-index: 2000;
+      background: rgba(15, 23, 42, 0.55);
       backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 16px;
+      pointer-events: auto;
     }
     .nl-sec-carte {
       width: 100%;
       max-width: 420px;
-      background: var(--surface, #ffffff);
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
+      background: var(--bg-primary, #ffffff);
       color: var(--text-primary, #0f172a);
+      border: 1px solid var(--border, #e2e8f0);
       border-radius: 20px;
       padding: 24px 20px;
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
       display: flex;
       flex-direction: column;
       gap: 14px;
@@ -118,8 +124,8 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
       width: 48px;
       height: 48px;
       border-radius: 14px;
-      background: color-mix(in srgb, var(--primary, #2563eb) 14%, transparent);
-      color: var(--primary, #2563eb);
+      background: var(--primary-soft, #eef4fb);
+      color: var(--primary, #1a4a7e);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -129,13 +135,14 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
       margin: 0;
       font-size: 1.15rem;
       font-weight: 700;
+      color: var(--text-primary, #0f172a);
       text-align: center;
     }
     .nl-sec-sous {
       margin: 0;
       font-size: 0.875rem;
       line-height: 1.45;
-      color: var(--text-secondary, #64748b);
+      color: var(--text-secondary, #475569);
       text-align: center;
     }
     .nl-sec-options {
@@ -153,23 +160,27 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
       padding: 12px 14px;
       border-radius: 14px;
       border: 1.5px solid var(--border, #e2e8f0);
-      background: var(--surface-alt, #f8fafc);
-      color: inherit;
+      background: var(--bg-secondary, #f1f5f9);
+      color: var(--text-primary, #0f172a);
+      font-family: inherit;
       cursor: pointer;
       transition: border-color 0.15s ease, background 0.15s ease;
     }
+    .nl-sec-option:hover:not(:disabled) {
+      border-color: var(--primary, #1a4a7e);
+    }
     .nl-sec-option--actif {
-      border-color: var(--primary, #2563eb);
-      background: color-mix(in srgb, var(--primary, #2563eb) 8%, var(--surface, #ffffff));
+      border-color: var(--primary, #1a4a7e);
+      background: var(--primary-soft, #eef4fb);
     }
     .nl-sec-badge {
       flex-shrink: 0;
-      min-width: 44px;
+      min-width: 48px;
       height: 32px;
       padding: 0 8px;
       border-radius: 8px;
-      background: color-mix(in srgb, var(--primary, #2563eb) 12%, transparent);
-      color: var(--primary, #2563eb);
+      background: var(--primary, #1a4a7e);
+      color: var(--text-on-primary, #ffffff);
       font-size: 0.75rem;
       font-weight: 700;
       display: inline-flex;
@@ -185,10 +196,17 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
     .nl-sec-opt-titre {
       font-size: 0.95rem;
       font-weight: 600;
+      color: var(--text-primary, #0f172a);
     }
     .nl-sec-opt-desc {
       font-size: 0.78rem;
-      color: var(--text-secondary, #64748b);
+      line-height: 1.35;
+      color: var(--text-secondary, #475569);
+    }
+    .nl-sec-check {
+      color: var(--primary, #1a4a7e);
+      display: inline-flex;
+      flex-shrink: 0;
     }
     .nl-sec-erreur {
       margin: 0;
@@ -199,11 +217,12 @@ const CHOIX_SECTIONS: readonly ChoixSection[] = [
     .nl-sec-valider {
       margin-top: 4px;
       width: 100%;
-      padding: 12px 16px;
+      padding: 13px 16px;
       border-radius: 12px;
       border: none;
-      background: var(--primary, #2563eb);
-      color: #ffffff;
+      background: var(--primary, #1a4a7e);
+      color: var(--text-on-primary, #ffffff);
+      font-family: inherit;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
@@ -227,6 +246,11 @@ export class SectionPromptModal {
     const user = this.auth.state().user;
     return Boolean(user && !user.sectionPreference);
   });
+
+  protected choisir(val: SectionPreference): void {
+    this.erreur.set(null);
+    this.selection.set(val);
+  }
 
   protected async confirmer(): Promise<void> {
     const choix = this.selection();
