@@ -17,6 +17,7 @@ import {
   StockageHorsLigne,
 } from '../../../core/bibliotheque';
 import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n';
+import { traduireOptionReference } from '../../../core/references';
 import { PreferenceNotifications } from '../../../core/notifications';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
@@ -409,19 +410,22 @@ export class SettingsList implements OnInit {
     if (!u) return;
     try {
       const res = await this.auth.niveauxDuCycle();
+      const codesSecours: Record<string, string[]> = {
+        prepa: ['N1', 'N2'],
+        licence: ['N1', 'N2', 'N3'],
+        licencePro: ['N1', 'N2', 'N3'],
+        ingenieur: ['N3', 'N4', 'N5'],
+        master: ['N4', 'N5'],
+      };
+      const codes = (u.cycle && codesSecours[u.cycle]) ?? ['N1', 'N2', 'N3', 'N4', 'N5'];
       const niveaux = res.niveaux.length > 0
-        ? res.niveaux
-        : [
-            { code: 'N1', label: this.libelleNiveau('N1', u.cycle) },
-            { code: 'N2', label: this.libelleNiveau('N2', u.cycle) },
-            { code: 'N3', label: this.libelleNiveau('N3', u.cycle) },
-            { code: 'N4', label: this.libelleNiveau('N4', u.cycle) },
-            { code: 'N5', label: this.libelleNiveau('N5', u.cycle) },
-          ];
+        ? res.niveaux.map((n) => ({ code: n.code, label: traduireOptionReference(n.code, n.label) }))
+        : codes.map((code) => ({ code, label: this.libelleNiveau(code, u.cycle) }));
 
+      const suffixeActuel = this.traductions.langue() === 'en' ? ' (Current)' : ' (Actuel)';
       const options: ActionOption<string>[] = niveaux.map((n) => ({
         value: n.code,
-        label: n.label + (n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? ' (Actuel)' : ''),
+        label: n.label + (n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? suffixeActuel : ''),
         icon: n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? 'check' : 'school',
       }));
 

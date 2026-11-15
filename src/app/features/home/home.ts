@@ -26,7 +26,6 @@ import { DocumentCard, EtiquetteDocument } from '../../shared/ui/document-card/d
 import { AppHeader } from '../../shared/ui/app-header/app-header';
 import { SearchBar } from '../../shared/ui/search-bar/search-bar';
 import { SectionHeader } from '../../shared/ui/section-header/section-header';
-import { Badge } from '../../shared/ui/badge/badge';
 import { tr } from '../../core/i18n';
 import { FeuilleSelectionService } from '../../shared/ui/bottom-sheet/feuille-selection';
 import { Icon } from '../../shared/ui/icon/icon';
@@ -48,7 +47,7 @@ interface Reprise {
   standalone: true,
   imports: [TypeDocumentPipe, 
     TraductionPipe, CommonModule, DocumentCard, Icon, EmptyState, Button, AnimatedNumber,
-    AppHeader, SearchBar, SectionHeader, Badge,
+    AppHeader, SearchBar, SectionHeader,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './home.html',

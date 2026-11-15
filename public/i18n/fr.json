@@ -1445,5 +1445,16 @@
   "cropperNiveauZoom": "Niveau de zoom",
   "pinVerificationEnCours": "Vérification en cours",
   "pinEffacerDernierChiffre": "Effacer le dernier chiffre",
-  "skeletonChargementDocs": "Chargement des documents"
+  "skeletonChargementDocs": "Chargement des documents",
+  "dlAnnule": "Téléchargement annulé.",
+  "dlEnregistreHorsLigne": "Enregistré hors ligne",
+  "dlFichierInvalide": "Fichier invalide ou corrompu.",
+  "dlLimiteSimultanee": "Patiente qu'un téléchargement se termine avant d'en lancer un autre.",
+  "dlQuotaDepasse": "Espace de stockage hors ligne insuffisant.",
+  "dlRetireHorsLigne": "Retiré du stockage hors ligne.",
+  "docDisponibleHorsLigne": "Disponible hors ligne",
+  "pwaEnregistrement": "Enregistrement…",
+  "pwaEspaceLibere": "Espace hors ligne libéré.",
+  "pwaLibererEspaceTitre": "Libérer l'espace hors ligne ?",
+  "pwaSupprimerTousLesTelechargements": "Tous les documents enregistrés sur cet appareil seront retirés."
 }

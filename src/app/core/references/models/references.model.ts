@@ -16,7 +16,14 @@ export interface Universite {
 
 export interface FiliereOption {
   readonly id: string;
+  /**
+   * Nom exact tel que stocké par le serveur. C'est la valeur envoyée à l'API
+   * (inscription), qui la compare au référentiel : elle ne doit jamais être
+   * traduite ni retouchée (tirets, apostrophes).
+   */
   readonly nom: string;
+  /** Libellé affiché, traduit selon la langue courante. */
+  readonly libelle: string;
 }
 
 export interface MatiereOption {
@@ -60,7 +67,8 @@ export function universiteDepuisJson(json: Record<string, unknown>): Universite 
 }
 
 export function filiereDepuisJson(json: Record<string, unknown>): FiliereOption {
-  return { id: String(json['_id'] ?? json['id']), nom: traduireFiliere(texte(json, 'nom')) };
+  const nom = texte(json, 'nom');
+  return { id: String(json['_id'] ?? json['id']), nom, libelle: traduireFiliere(nom) };
 }
 
 export function matiereDepuisJson(json: Record<string, unknown>): MatiereOption {

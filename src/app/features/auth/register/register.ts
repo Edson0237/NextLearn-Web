@@ -1,6 +1,5 @@
 import { computed, ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
-import { tr } from '../../../core/i18n';
-import { TraductionPipe } from '../../../core/i18n';
+import { tr, TraductionPipe, TraductionService } from '../../../core/i18n';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import { AuthRepository } from '../../../core/auth';
@@ -15,7 +14,7 @@ import { GoogleIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router';
 import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models';
 import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models';
-import { FiliereOption, JustificatifType, OptionReference, Universite } from '../../../core/references';
+import { FiliereOption, JustificatifType, OptionReference, Universite, traduireFiliere } from '../../../core/references';
 import { Failure } from '../../../core/models';
 
 type Statut = 'verrouille' | 'chargement' | 'pret' | 'erreur';
@@ -61,6 +60,7 @@ export class Register {
   private readonly refs = inject(ReferencesRepository);
   private readonly feuilles = inject(FeuilleSelectionService);
   private readonly toast = inject(ToastService);
+  private readonly traductions = inject(TraductionService);
 
   // ── Étape 1 : informations personnelles ──────────────────────────────────
   protected readonly prenom = signal('');
@@ -88,6 +88,11 @@ export class Register {
   protected readonly levelId = signal<string | undefined>(undefined);
   protected readonly filiereId = signal<string | undefined>(undefined);
   protected readonly filiereNom = signal<string | undefined>(undefined);
+  protected readonly filiereLibelle = computed(() => {
+    this.traductions.langue();
+    const nom = this.filiereNom();
+    return nom ? traduireFiliere(nom) : undefined;
+  });
 
   protected readonly universites = signal<Cascade<Universite>>(CHARGEMENT);
   protected readonly cycles = signal<Cascade<OptionReference>>(VERROUILLE);
@@ -313,7 +318,7 @@ export class Register {
     const choisi = await this.feuilles.ouvrir<string>({
       title: tr('communFiliere', 'Filière'),
       currentValue: this.filiereId(),
-      choices: items.map((f) => ({ value: f.id, label: f.nom })),
+      choices: items.map((f) => ({ value: f.id, label: traduireFiliere(f.nom) })),
       searchHint: tr('actionRechercher', 'Rechercher'),
     });
     if (choisi === undefined) return;

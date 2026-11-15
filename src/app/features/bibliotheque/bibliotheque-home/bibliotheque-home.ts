@@ -147,6 +147,7 @@ export class BibliothequeHome implements OnInit {
   protected readonly pageCourante = signal<number>(1);
   protected readonly totalServeur = signal<number | null>(null);
   protected readonly totalTousServeur = signal<number | null>(null);
+  private readonly matieresConnues = signal<ReadonlyMap<string, string>>(new Map());
   protected readonly nextCursor = signal<string | null>(null);
   protected readonly hasMoreServer = signal<boolean>(false);
   protected readonly filteredDocuments = signal<DocumentModel[]>([]);
@@ -208,6 +209,7 @@ export class BibliothequeHome implements OnInit {
         if (etaitInitialise) {
           this.totalTousServeur.set(null);
           this.totalServeur.set(null);
+          this.matieresConnues.set(new Map());
           void this.load(true);
         }
       });
@@ -251,6 +253,7 @@ export class BibliothequeHome implements OnInit {
           const connus = new Set(docs.map((d) => d.id));
           return [...docs, ...page.items.filter((d) => !connus.has(d.id))];
         });
+        this.memoriserMatieres(page.items);
         this.pageCourante.set(page.page);
         if (page.total > 0) {
           this.totalServeur.set(page.total);
@@ -310,6 +313,7 @@ export class BibliothequeHome implements OnInit {
         20,
       );
       this.documents.set([...page.items]);
+      this.memoriserMatieres(page.items);
       this.pageCourante.set(page.page);
       this.totalServeur.set(page.total);
       if (!type && !matiere) {
@@ -443,8 +447,20 @@ export class BibliothequeHome implements OnInit {
     void this.router.navigateByUrl('/app/' + AppRoutes.docDetailPath(doc.id));
   }
 
+  private memoriserMatieres(items: readonly DocumentModel[]): void {
+    const map = new Map(this.matieresConnues());
+    let change = false;
+    for (const d of items) {
+      if (d.matiereId && d.matiere && !map.has(d.matiereId)) {
+        map.set(d.matiereId, d.matiere);
+        change = true;
+      }
+    }
+    if (change) this.matieresConnues.set(map);
+  }
+
   protected matiereOptions(): { id: string; nom: string }[] {
-    const map = new Map<string, string>();
+    const map = new Map<string, string>(this.matieresConnues());
     for (const d of this.documents()) {
       if (d.matiereId) map.set(d.matiereId, d.matiere);
     }
@@ -488,10 +504,16 @@ export class BibliothequeHome implements OnInit {
   }
 
   protected reinitialiser(): void {
-    const doitRecharger = this.selectedType() !== null || this.selectedMatiere() !== null;
+    const sectionChangee = this.selectedSection() !== null;
+    const doitRecharger =
+      this.selectedType() !== null || this.selectedMatiere() !== null || sectionChangee;
     this.selectedType.set(null);
     this.selectedMatiere.set(null);
+    this.selectedSection.set(null);
     this.searchQuery.set('');
+    if (sectionChangee) {
+      this.totalTousServeur.set(null);
+    }
     if (doitRecharger) {
       void this.load();
     }

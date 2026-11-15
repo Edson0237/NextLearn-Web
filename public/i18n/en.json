@@ -1445,5 +1445,16 @@
   "cropperNiveauZoom": "Zoom level",
   "pinVerificationEnCours": "Verification in progress",
   "pinEffacerDernierChiffre": "Delete last digit",
-  "skeletonChargementDocs": "Loading documents"
+  "skeletonChargementDocs": "Loading documents",
+  "dlAnnule": "Download cancelled.",
+  "dlEnregistreHorsLigne": "Saved offline",
+  "dlFichierInvalide": "Invalid or corrupted file.",
+  "dlLimiteSimultanee": "Wait for a download to finish before starting another.",
+  "dlQuotaDepasse": "Not enough offline storage space.",
+  "dlRetireHorsLigne": "Removed from offline storage.",
+  "docDisponibleHorsLigne": "Available offline",
+  "pwaEnregistrement": "Saving…",
+  "pwaEspaceLibere": "Offline space freed.",
+  "pwaLibererEspaceTitre": "Free up offline space?",
+  "pwaSupprimerTousLesTelechargements": "All documents saved on this device will be removed."
 }
