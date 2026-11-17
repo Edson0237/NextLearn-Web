@@ -37,7 +37,8 @@
   // ── Texte ───────────────────────────────────────────────────────────────
   --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  // WCAG 2.1 AA (>= 4.5:1) sur #ffffff (5.65:1), #f8fafc (5.40:1) et #f1f5f9 (5.16:1).
+  --text-muted: #5b687c;
   --text-on-primary: #ffffff;
 
   // ── Le bleu NextLearn : actions, onglet courant, progression ────────────
