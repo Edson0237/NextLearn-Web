@@ -10,6 +10,11 @@ import {
   DocumentSort,
   DocumentReadAccess,
 } from '../models/document.model';
+import {
+  RequeteCatalogue,
+  ReponseCatalogue,
+  reponseCatalogueDepuisApi,
+} from '../models/catalogue.model';
 import { StockageHorsLigne } from '../services/stockage-hors-ligne';
 import { enFailure } from '../../network';
 
@@ -21,6 +26,106 @@ import { enFailure } from '../../network';
 export class DocumentsRepository {
   private readonly http = inject(HttpClient);
   private readonly stockage = inject(StockageHorsLigne);
+
+  /**
+   * Catalogue v2 (Chantiers P5 & P11) : `GET /api/v2/catalogue`.
+   *
+   * - Par défaut (mode `profil`), aucun paramètre de classe n'est envoyé :
+   *   le Backend déduit la classe depuis le compte de l'étudiant.
+   * - En mode `alternative`, les trois paramètres (`universiteId`, `filiereId`, `niveau`)
+   *   sont envoyés ensemble (§10.1).
+   * - Filtres combinables dans n'importe quel ordre (`type`, `typeEpreuve`,
+   *   `semestre`, `matiere`, `enseignant`, `annee`, `section`, `avecCorrige`, `q`).
+   * - Facettes avec compteurs calculés côté serveur.
+   * - Pagination par curseur (`tri=recent`) ou par page (`annee`, `populaire`, `alpha`).
+   * - Accepte un `AbortSignal` pour annuler proprement une requête supplantée (§9.2).
+   */
+  async catalogue(requete: RequeteCatalogue = {}, signal?: AbortSignal): Promise<ReponseCatalogue> {
+    if (signal?.aborted) {
+      throw new DOMException('Requête annulée', 'AbortError');
+    }
+
+    const params: Record<string, string> = {};
+    const joindre = (v?: string | readonly string[]) => {
+      if (!v) return undefined;
+      if (typeof v === 'string') return v.trim() || undefined;
+      const propre = v.map((s) => s.trim()).filter(Boolean).slice(0, 20);
+      return propre.length > 0 ? propre.join(',') : undefined;
+    };
+
+    // Règle §10.1 (P11) : envoi groupé des 3 paramètres uniquement lorsqu'une classe
+    // alternative complète est sélectionnée ; sinon aucun paramètre de classe n'est envoyé.
+    const universiteId = requete.universiteId?.trim();
+    const filiereId = joindre(requete.filiereId);
+    const niveau = requete.niveau?.trim().toUpperCase();
+    if (universiteId && filiereId && niveau && /^N[1-5]$/.test(niveau)) {
+      params['universiteId'] = universiteId;
+      params['filiereId'] = filiereId;
+      params['niveau'] = niveau;
+    }
+
+    const type = joindre(requete.type);
+    const typeEpreuve = joindre(requete.typeEpreuve);
+    const semestre = joindre(requete.semestre);
+    const matiere = joindre(requete.matiere);
+    const enseignant = joindre(requete.enseignant);
+    const annee = joindre(requete.annee);
+    const section = joindre(requete.section);
+
+    if (type) params['type'] = type.toUpperCase();
+    if (typeEpreuve) params['typeEpreuve'] = typeEpreuve.toUpperCase();
+    if (semestre) params['semestre'] = semestre.toUpperCase();
+    if (matiere) params['matiere'] = matiere;
+    if (enseignant) params['enseignant'] = enseignant;
+    if (annee) params['annee'] = annee;
+    if (section) params['section'] = section.toUpperCase();
+    if (typeof requete.avecCorrige === 'boolean') {
+      params['avecCorrige'] = String(requete.avecCorrige);
+    }
+    if (requete.q) {
+      const q = requete.q.replace(/\s+/g, ' ').trim().slice(0, 80);
+      if (q.length >= 2) params['q'] = q;
+    }
+    const tri = requete.tri ?? 'recent';
+    params['tri'] = tri;
+    if (tri === 'recent' && requete.cursor) {
+      params['cursor'] = requete.cursor;
+    } else if (tri !== 'recent' && requete.page && requete.page > 1) {
+      params['page'] = String(Math.min(1000, Math.max(1, Math.round(requete.page))));
+    }
+    if (requete.limit) {
+      params['limit'] = String(Math.min(50, Math.max(1, Math.round(requete.limit))));
+    }
+
+    try {
+      const observable = this.http.get('/api/v2/catalogue', { params });
+      const reponse = signal
+        ? await new Promise<unknown>((resolve, reject) => {
+            const onAbort = () => {
+              sub.unsubscribe();
+              reject(new DOMException('Requête annulée', 'AbortError'));
+            };
+            signal.addEventListener('abort', onAbort, { once: true });
+            const sub = observable.subscribe({
+              next: (val) => {
+                signal.removeEventListener('abort', onAbort);
+                resolve(val);
+              },
+              error: (err) => {
+                signal.removeEventListener('abort', onAbort);
+                reject(err);
+              },
+            });
+          })
+        : await firstValueFrom(observable);
+      return reponseCatalogueDepuisApi(reponse as Record<string, unknown>);
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        throw e;
+      }
+      throw enFailure(e);
+    }
+  }
 
   /**
    * Smart Document Loading : récupération de métadonnées avec pagination par curseur.

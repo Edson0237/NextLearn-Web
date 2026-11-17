@@ -51,6 +51,11 @@
             {{ 'biblioHorsLigne' | t }}
           </nl-badge>
         }
+        @if (estRetireDuCatalogue()) {
+          <nl-badge icone="warning" [capitales]="true">
+            {{ 'docRetireDuCatalogue' | t }}
+          </nl-badge>
+        }
       </div>
 
       <h1 class="doc-detail__titre">{{ doc.titre }}</h1>
@@ -214,10 +219,10 @@
     </div>
   } @else {
     <nl-empty-state
-      [title]="'pwaDocumentIntrouvable' | t"
+      [title]="'docPlusDisponible' | t"
       [subtitle]="'pwaDocumentSupprime' | t"
-      [ctaLabel]="'homeVoirBibliotheque' | t"
-      (cta)="goBack()">
+      [ctaLabel]="isFavori() ? ('docRetirerFavoris' | t) : ('homeVoirBibliotheque' | t)"
+      (cta)="isFavori() ? retirerFavoriEtRetourner() : allerBibliotheque()">
       <nl-icon icon name="description" [size]="28" />
     </nl-empty-state>
   }

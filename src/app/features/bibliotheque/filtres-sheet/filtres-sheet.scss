@@ -49,6 +49,18 @@
   color: var(--text-muted);
 }
 
+.nl-filtres__recherche {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font: 400 0.85rem var(--font-family-body);
+}
+
 .nl-filtres__puces {
   display: flex;
   flex-wrap: wrap;

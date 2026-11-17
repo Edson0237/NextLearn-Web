@@ -5,9 +5,14 @@
     </div>
   }
   @case ('introuvable') {
-    <div class="nl-epd__attente">
-      <p>{{ 'epreuveIntrouvable' | t }}</p>
-    </div>
+    <nl-page-bar [titre]="'epreuveTitre' | t" (retour)="retour()" />
+    <nl-empty-state
+      [title]="'docPlusDisponible' | t"
+      [subtitle]="'pwaDocumentSupprime' | t"
+      [ctaLabel]="'homeVoirBibliotheque' | t"
+      (cta)="allerBibliotheque()">
+      <nl-icon icon name="assignment" [size]="28" />
+    </nl-empty-state>
   }
   @case ('erreur') {
     <div class="nl-epd__attente">

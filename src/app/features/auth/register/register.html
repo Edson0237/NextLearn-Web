@@ -5,96 +5,134 @@
     </button>
     <h1 class="nl-reg__titre-entete">{{ 'authCreerCompte' | t }}</h1>
     <nl-langue-switcher />
-    <span class="nl-reg__compteur">{{ modeGoogle() ? 1 : etape() + 1 }}/{{ totalEtapes() }}</span>
+    <span class="nl-reg__compteur">{{ modeOAuth() ? 1 : etape() + 1 }}/{{ totalEtapes() }}</span>
   </header>
 
   <div class="nl-reg__progression">
-    <div class="nl-reg__progression-barre" [style.width.%]="modeGoogle() ? 100 : ((etape() + 1) / totalEtapes()) * 100"></div>
+    <div class="nl-reg__progression-barre" [style.width.%]="modeOAuth() ? 100 : ((etape() + 1) / totalEtapes()) * 100"></div>
   </div>
 
   <div class="nl-reg__corps">
     @if (etape() === 0) {
-      <section class="nl-reg__etape">
+      <section class="nl-reg__etape nl-reg__etape--accueil">
         <h2 class="nl-reg__titre">{{ 'registerQuiEsTu' | t }}</h2>
         <p class="nl-reg__sous-titre">{{ 'pwaQuelquesInfos' | t }}</p>
 
-        <!-- Google d'abord : pour une adresse d'établissement, c'est la voie la plus
-             courte, sans code à recopier. Rien ne s'affiche si Google n'est pas
-             configuré. -->
-        @if (!google.desactive()) {
-          <p class="nl-reg__aide-google">{{ 'registerGoogleTexte' | t }}</p>
-        }
-        <nl-google-bouton texte="signup_with" />
-        @if (!google.desactive()) {
-          <p class="nl-reg__ou"><span>{{ 'googleOu' | t }}</span></p>
-        }
-
-        <div class="nl-reg__ligne">
-          <label class="nl-reg__champ">
-            <span class="nl-reg__label">{{ 'registerPrenom' | t }}</span>
-            <input type="text" [value]="prenom()" (input)="prenom.set(val($event))" />
-          </label>
-          <label class="nl-reg__champ">
-            <span class="nl-reg__label">{{ 'communNom' | t }}</span>
-            <input type="text" [value]="nom()" (input)="nom.set(val($event))" />
-          </label>
+        <div class="nl-reg__google">
+          <nl-google-bouton texte="signup_with" />
         </div>
 
-        <label class="nl-reg__champ">
-          <span class="nl-reg__label">{{ 'authEmailInstitutionnelOuPersonnel' | t }}</span>
-          <input
-            type="email"
-            [placeholder]="'authEmailExemples' | t"
-            [value]="email()"
-            (input)="surSaisieEmail(val($event))"
-          />
-        </label>
-
-        <!-- Visible avant la fin de l'inscription, quel que soit l'état de la saisie :
-             une adresse personnelle n'est pas un refus, c'est une vérification. -->
-        <p class="nl-reg__aide-domaine">{{ 'registerAutreAdresse' | t }}</p>
-        @switch (domaine().etat) {
-          @case ('verification') {
-            <p class="nl-reg__etat-domaine nl-reg__etat-domaine--neutre">{{ 'pwaVerificationEnCours' | t }}</p>
-          }
-          @case ('reconnu') {
-            <p class="nl-reg__etat-domaine nl-reg__etat-domaine--ok">
-              <nl-icon name="check_circle" [size]="16" />
-              {{ 'registerDomaineReconnu' | t }}{{ domaine().institution ? ' - ' + domaine().institution : '' }}
-            </p>
-          }
-          @case ('refuse') {
-            <!-- Pas une erreur : une autre procédure. -->
-            <p class="nl-reg__etat-domaine nl-reg__etat-domaine--neutre">
-              <nl-icon name="info" [size]="16" />
-              {{ 'registerHorsEtablissement' | t }}
-            </p>
-          }
+        @if (domaine().google) {
+          <p class="nl-reg__info-google" role="status">{{ 'googleInstitutionnel' | t }}</p>
         }
 
+        @if (!showEmailField()) {
+          <button
+            type="button"
+            class="nl-reg__toggle"
+            (click)="deplierEmail()"
+          >
+            {{ 'authUtiliserAutreAdresse' | t }}
+          </button>
+        }
 
-        <button type="button" class="nl-reg__cta" [disabled]="chargement()" (click)="suivant()">
-          @if (chargement()) {
-            <span class="nl-reg__spinner"></span>
-          } @else {
-            {{ 'docContinuer' | t }}
-          }
-        </button>
+        <div
+          class="nl-reg__progressif"
+          [class.nl-reg__progressif--ouvert]="showEmailField()"
+          [attr.aria-hidden]="!showEmailField()"
+          [attr.inert]="!showEmailField() ? '' : null"
+        >
+          <div class="nl-reg__progressif-contenu">
+            @if (github.disponible()) {
+              <nl-github-bouton />
+            }
+            <p class="nl-reg__ou"><span>{{ 'googleOu' | t }}</span></p>
 
-        <nl-mentions-legales />
+            <div class="nl-reg__ligne">
+              <label class="nl-reg__champ">
+                <span class="nl-reg__label">{{ 'registerPrenom' | t }}</span>
+                <input type="text" [value]="prenom()" (input)="prenom.set(val($event))" />
+              </label>
+              <label class="nl-reg__champ">
+                <span class="nl-reg__label">{{ 'communNom' | t }}</span>
+                <input type="text" [value]="nom()" (input)="nom.set(val($event))" />
+              </label>
+            </div>
 
-        <button type="button" class="nl-reg__lien-connexion" (click)="allerConnexion()">{{ 'authDejaUnCompte' | t }}<strong>{{ 'authSeConnecter' | t }}</strong>
-        </button>
+            <label class="nl-reg__champ">
+              <span class="nl-reg__label">{{ 'authEmailInstitutionnelOuPersonnel' | t }}</span>
+              <input
+                type="email"
+                [placeholder]="'authEmailExemples' | t"
+                [value]="email()"
+                (input)="surSaisieEmail(val($event))"
+              />
+            </label>
+
+            <p class="nl-reg__aide-domaine">{{ 'registerAutreAdresse' | t }}</p>
+            @switch (domaine().etat) {
+              @case ('verification') {
+                <p class="nl-reg__etat-domaine nl-reg__etat-domaine--neutre">{{ 'pwaVerificationEnCours' | t }}</p>
+              }
+              @case ('reconnu') {
+                <p class="nl-reg__etat-domaine nl-reg__etat-domaine--ok">
+                  <nl-icon name="check_circle" [size]="16" />
+                  {{ 'registerDomaineReconnu' | t }}{{ domaine().institution ? ' - ' + domaine().institution : '' }}
+                </p>
+              }
+              @case ('refuse') {
+                <p class="nl-reg__etat-domaine nl-reg__etat-domaine--neutre">
+                  <nl-icon name="info" [size]="16" />
+                  {{ 'registerHorsEtablissement' | t }}
+                </p>
+              }
+            }
+
+            <button type="button" class="nl-reg__cta" [disabled]="chargement()" (click)="suivant()">
+              @if (chargement()) {
+                <span class="nl-reg__spinner"></span>
+              } @else {
+                {{ 'docContinuer' | t }}
+              }
+            </button>
+
+            <button
+              type="button"
+              class="nl-reg__replier"
+              (click)="replierEmail()"
+            >
+              {{ 'authRevenirEnArriere' | t }}
+            </button>
+          </div>
+        </div>
+
+        <div class="nl-reg__compte">
+          <button type="button" class="nl-reg__lien-connexion" (click)="allerConnexion()">
+            {{ 'authDejaUnCompte' | t }}<strong>{{ 'authSeConnecter' | t }}</strong>
+          </button>
+        </div>
+
+        <footer class="nl-reg__bas">
+          <nl-mentions-legales />
+        </footer>
       </section>
     }
 
     @if (etape() === 1) {
       <section class="nl-reg__etape">
-        <h2 class="nl-reg__titre">{{ (modeGoogle() ? 'googleInscriptionTitre' : 'communTonParcours') | t }}</h2>
-        <p class="nl-reg__sous-titre">{{ (modeGoogle() ? 'googleInscriptionAide' : 'pwaInfosDeterminentContenus') | t }}</p>
-        @if (modeGoogle() && !profilGoogleInstitutionnel()) {
-          <!-- Google a prouvé la boîte mail, pas l'appartenance à l'école : même suite que sans adresse institutionnelle. -->
+        <h2 class="nl-reg__titre">{{ (modeOAuth() ? 'googleInscriptionTitre' : 'communTonParcours') | t }}</h2>
+        <p class="nl-reg__sous-titre">{{ (modeOAuth() ? 'googleInscriptionAide' : 'pwaInfosDeterminentContenus') | t }}</p>
+        @if (modeOAuth() && !profilGoogleInstitutionnel()) {
+          <!-- Google / GitHub a prouvé la boîte mail, pas l'appartenance à l'école : même suite que sans adresse institutionnelle. -->
           <p class="nl-reg__info-google">{{ 'googleNonInstitutionnelAide' | t }}</p>
+        }
+        @if (conflitEmailExistant(); as msgConflit) {
+          <div class="nl-reg__erreur" role="alert">
+            <p>{{ msgConflit }}</p>
+            <button type="button" class="nl-reg__lien-connexion" (click)="allerConnexion()">
+              <strong>{{ 'authSeConnecter' | t }}</strong>
+            </button>
+          </div>
         }
 
         @switch (universites().statut) {
@@ -159,7 +197,7 @@
           @if (chargement()) {
             <span class="nl-reg__spinner"></span>
           } @else {
-            {{ (modeGoogle() ? 'googleCreerCompte' : sansEmailInstitutionnel() ? 'docContinuer' : 'pwaRecevoirCode') | t }}
+            {{ (modeOAuth() ? 'googleCreerCompte' : sansEmailInstitutionnel() ? 'docContinuer' : 'pwaRecevoirCode') | t }}
           }
         </button>
       </section>

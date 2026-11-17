@@ -145,15 +145,104 @@
 
 // ── Résultats ──────────────────────────────────────────────────────────────
 
+.nl-biblio__pastilles {
+  @extend %rangee-defilante;
+  align-items: center;
+}
+
+.nl-biblio__pastille {
+  @include cible-etendue(28px);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-pilule);
+  border: 1px solid var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
+  font: 600 0.78rem var(--font-family-body);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.nl-biblio__pastille-reset {
+  @include cible-etendue(28px);
+  flex: none;
+  height: 28px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font: 600 0.78rem var(--font-family-body);
+  text-decoration: underline;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
 .nl-biblio__corps {
   padding: var(--space-lg) var(--space-page) var(--space-xl);
 }
 
+.nl-biblio__barre-resultats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--space-md);
+}
+
+.nl-biblio__resultats-groupe {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .nl-biblio__resultats {
-  margin: 0 0 var(--space-md);
+  margin: 0;
   @include type.nl-label-md;
   text-transform: none;
   letter-spacing: 0;
+}
+
+.nl-biblio__actualiser {
+  @include cible-etendue(28px);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nl-biblio__tris {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nl-biblio__tri-btn {
+  @include cible-etendue(26px);
+  padding: 3px 8px;
+  border-radius: var(--radius-pilule);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font: 500 0.75rem var(--font-family-body);
+  cursor: pointer;
+
+  &--actif {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+  }
 }
 
 .nl-biblio__liste {
@@ -176,6 +265,47 @@
     margin: 0;
     @include type.nl-body-md;
   }
+}
+
+.nl-biblio__erreur-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nl-biblio__erreur-details-btn {
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font: 600 0.8125rem var(--font-family-body);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.nl-biblio__erreur-details {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font: 400 0.78rem var(--font-family-body);
+}
+
+.nl-biblio__erreur-copier {
+  padding: 3px 8px;
+  border-radius: var(--radius-pilule);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--primary);
+  font: 600 0.75rem var(--font-family-body);
+  cursor: pointer;
 }
 
 .nl-biblio__squelette {

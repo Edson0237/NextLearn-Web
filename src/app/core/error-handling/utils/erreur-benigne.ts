@@ -16,10 +16,16 @@
  */
 
 const MESSAGES_RESEAU =
-  /load failed|failed to fetch|networkerror|network request failed|network connection was lost|operation was aborted|request (was )?aborted|the user aborted|cancelled|resizeobserver loop|service ?worker/i;
+  /load failed|failed to fetch|networkerror|network request failed|network connection was lost|internet connection appears to be offline|operation was aborted|request (was )?aborted|the user aborted|cancelled|resizeobserver loop|service ?worker|le serveur met du temps à répondre|^script error\.?$|an errorevent with no error occurred/i;
 
 /** Un module de code qui ne se charge pas n'est pas du bruit : l'écran en dépend. */
-const MODULE_PERDU = /dynamically imported module|importing a module script|chunk/i;
+const MODULE_PERDU =
+  /dynamically imported module|importing a module script|failed to load module script|unexpected token ['"]?<|chunk/i;
+
+/** Vrai lorsque l'erreur correspond à un bloc/chunk JS introuvable ou invalide (déploiement récent, coupure). */
+export function estErreurChargementModule(erreur: unknown): boolean {
+  return MODULE_PERDU.test(messageDe(erreur));
+}
 
 export function estErreurBenigne(erreur: unknown, pageVisible: boolean): boolean {
   // Page en arrière-plan ou à peine revenue : ce qui échoue maintenant est

@@ -37,7 +37,7 @@
               </div>
               <p class="nl-sup__ticket-message">
                 {{ s.cibleType === CibleSignalement.epreuve ? ('signalementTypeEpreuve' | t) : ('signalementTypeDocument' | t) }}
-                · {{ s.motifLabel }}
+                · {{ libelleMotifSignalement(s) }}
               </p>
               @if (s.decisionMotif) {
                 <div class="nl-sup__ticket-reponse">

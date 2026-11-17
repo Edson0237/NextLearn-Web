@@ -3,7 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
-import { GoogleIdentite } from '../../../core/auth';
+import { GoogleIdentite, GithubIdentite } from '../../../core/auth';
 import { TraductionService } from '../../../core/i18n';
 import { filiereDepuisJson } from '../../../core/references';
 import { Register } from './register';
@@ -33,8 +33,9 @@ describe('Register - cascade académique', () => {
         provideHttpClientTesting(),
         provideRouter([{ path: 'app/register/otp', children: [] }]),
         { provide: FeuilleSelectionService, useValue: { ouvrir } },
-        // Google n'est pas l'objet de ces tests : le bouton reste muet, sans requête de configuration.
+        // Google / GitHub ne sont pas l'objet de ces tests : les boutons restent muets, sans requête de configuration.
         { provide: GoogleIdentite, useValue: { disponible: signal(false), desactive: signal(true), preparer: async () => false } },
+        { provide: GithubIdentite, useValue: { disponible: signal(false), desactive: signal(true), preparer: async () => false } },
       ],
     });
     const fixture = TestBed.createComponent(Register);
@@ -221,12 +222,29 @@ describe('Register - cascade académique', () => {
         cycle: 'INGENIEUR',
       }),
     );
+    expect(reqRegister.request.body).not.toHaveProperty('sectionPreference');
+    expect(reqRegister.request.body).not.toHaveProperty('section');
     reqRegister.flush({ data: { tempToken: 'tmp-123', expiresIn: 300 } });
     await pEtape2;
 
     const pFr = traductions.definir('fr');
     controller.expectOne('/i18n/fr.json').flush({});
     await pFr;
+    controller.verify();
+  });
+
+  it("n'affiche aucun champ de section linguistique à l'inscription (uniquement école, cycle, niveau, filière)", async () => {
+    const { controller } = creer({});
+    controller.expectOne('/api/references/universites').flush({ data: [] });
+    await tick();
+
+    // L'étape 2 regroupe uniquement établissement, cycle, niveau et filière (§3.7).
+    const fixture = TestBed.createComponent(Register);
+    controller.expectOne('/api/references/universites').flush({ data: [] });
+    fixture.componentInstance['etape'].set(1);
+    fixture.detectChanges();
+    const texte = (fixture.nativeElement as HTMLElement).textContent ?? '';
+    expect(texte).not.toMatch(/francophone|anglophone|section linguistique/i);
     controller.verify();
   });
 });

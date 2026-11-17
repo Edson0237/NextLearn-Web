@@ -94,6 +94,12 @@
         <nl-icon icon name="cloud_download" [size]="28" />
       </nl-empty-state>
     } @else {
+      @if (onglet() === 'telecharges' && retiresDuCatalogue().size > 0) {
+        <div class="offline__alerte" role="status">
+          <nl-icon name="warning" [size]="18" />
+          <span>{{ 'offlineAlerteRetires' | t }}</span>
+        </div>
+      }
       <nl-section-header
         [titre]="onglet() === 'telecharges' ? ('biblioMesTelechargements' | t) : ('pwaFichiersRecents' | t)"
         [sousTitre]="'pwaResultats' | t: { nombre: liste().length }"

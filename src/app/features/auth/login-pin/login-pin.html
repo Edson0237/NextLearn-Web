@@ -1,74 +1,123 @@
 <div class="nl-loginpin">
-  <div style="width:100%;display:flex;justify-content:flex-end;margin-bottom:8px;">
-    <nl-langue-switcher />
-  </div>
-  <nl-identite
-    class="nl-loginpin__avatar"
-    [initiales]="initialesAffichees"
-    [photoUrl]="photoAffichee"
-    [taille]="84" />
-  <h1 class="nl-loginpin__titre">{{ accroche }}</h1>
-  <!-- Google d'abord. Appareil nouveau d'une adresse Google : pas de code par e-mail, c'est Google qui atteste. -->
-  @if (verificationGoogle()) {
-    <section class="nl-loginpin__google nl-loginpin__google--verif" role="status">
-      <h2>{{ 'googleVerifierAppareil' | t }}</h2>
-      <p>{{ 'googleVerifierAppareilAide' | t }}</p>
-      <nl-google-bouton texte="signin_with" />
-    </section>
-  } @else {
-    <div class="nl-loginpin__google">
-      <nl-google-bouton texte="signin_with" />
+  <!-- En-tête fixe -->
+  <header class="nl-loginpin__entete">
+    <div class="nl-loginpin__langue">
+      <nl-langue-switcher />
     </div>
-    @if (!google.desactive()) {
-      <p class="nl-loginpin__ou"><span>{{ 'googleOu' | t }}</span></p>
+    <nl-identite
+      class="nl-loginpin__avatar"
+      [initiales]="initialesAffichees"
+      [photoUrl]="photoAffichee"
+      [taille]="80" />
+    <h1 class="nl-loginpin__titre">{{ accroche() }}</h1>
+    @if (motifFinSession(); as motif) {
+      <div class="nl-loginpin__motif-session" role="alert">
+        <span>{{ 'sessionDeconnecteMotif' | t: { motif: motif } }}</span>
+        <button
+          type="button"
+          class="nl-loginpin__motif-fermer"
+          (click)="motifFinSession.set(null)"
+          [attr.aria-label]="'actionFermer' | t"
+        >
+          ×
+        </button>
+      </div>
     }
-  }
+  </header>
 
-  @if (etape() === 'email') {
-    <p class="nl-loginpin__texte">{{ 'authEntreEmail' | t }}</p>
+  <!-- Zone centrale à hauteur adaptative -->
+  <main class="nl-loginpin__centre">
+    @if (verificationGoogle()) {
+      <section class="nl-loginpin__google nl-loginpin__google--verif" role="status">
+        <h2>{{ 'googleVerifierAppareil' | t }}</h2>
+        <p>{{ 'googleVerifierAppareilAide' | t }}</p>
+        <nl-google-bouton texte="signin_with" />
+      </section>
+    } @else if (etape() === 'email') {
+      <div class="nl-loginpin__google">
+        <nl-google-bouton texte="signin_with" />
+      </div>
 
-    <label class="nl-loginpin__champ">
-      <span>{{ 'authEmail' | t }}</span>
-      <input
-        type="email"
-        autocomplete="email"
-        [attr.placeholder]="'authEmailExemple' | t"
-        [value]="email()"
-        [disabled]="chargement"
-        (input)="email.set(val($event)); erreur.set(undefined)"
-        (keydown.enter)="continuerAvecEmail()"
+      @if (!showEmailField()) {
+        <button
+          type="button"
+          class="nl-loginpin__toggle"
+          (click)="deplierEmail()"
+        >
+          {{ 'authSeConnecterAvecEmail' | t }}
+        </button>
+      }
+
+      <div
+        class="nl-loginpin__progressif"
+        [class.nl-loginpin__progressif--ouvert]="showEmailField()"
+        [attr.aria-hidden]="!showEmailField()"
+        [attr.inert]="!showEmailField() ? '' : null"
+      >
+        <div class="nl-loginpin__progressif-contenu">
+          @if (github.disponible()) {
+            <nl-github-bouton />
+          }
+          <p class="nl-loginpin__ou"><span>{{ 'googleOu' | t }}</span></p>
+
+          <label class="nl-loginpin__champ">
+            <span>{{ 'authEmail' | t }}</span>
+            <input
+              type="email"
+              autocomplete="email"
+              [attr.placeholder]="'authEmailExemple' | t"
+              [value]="email()"
+              [disabled]="chargement"
+              (input)="email.set(val($event)); erreur.set(undefined)"
+              (keydown.enter)="continuerAvecEmail()"
+            />
+          </label>
+          @if (erreur()) {
+            <p class="nl-loginpin__erreur" role="alert">{{ erreur() }}</p>
+          }
+          <button type="button" class="nl-loginpin__continuer" [disabled]="chargement" (click)="continuerAvecEmail()">
+            {{ 'authContinuer' | t }}
+          </button>
+
+          <button
+            type="button"
+            class="nl-loginpin__replier"
+            (click)="replierEmail()"
+          >
+            {{ 'authRevenirEnArriere' | t }}
+          </button>
+        </div>
+      </div>
+    } @else {
+      <p class="nl-loginpin__texte">{{ 'authEntrePin' | t }}</p>
+      <button type="button" class="nl-loginpin__adresse" (click)="changerAdresse()">
+        {{ email() }} · {{ 'authChangerAdresse' | t }}
+      </button>
+
+      <nl-pin-input
+        [pin]="pin()"
+        [error]="erreur()"
+        [isLoading]="chargement"
+        (digit)="onChiffre($event)"
+        (backspace)="onBackspace()"
       />
-    </label>
-    @if (erreur()) {
-      <p class="nl-loginpin__erreur" role="alert">{{ erreur() }}</p>
+
+      <button type="button" class="nl-loginpin__lien nl-loginpin__pin-oublie" (click)="allerReinitialisation()">
+        {{ 'authPinOublie' | t }}
+      </button>
     }
-    <button type="button" class="nl-loginpin__continuer" [disabled]="chargement" (click)="continuerAvecEmail()">
-      {{ 'authContinuer' | t }}
-    </button>
-  } @else {
-    <p class="nl-loginpin__texte">{{ 'authEntrePin' | t }}</p>
-    <button type="button" class="nl-loginpin__adresse" (click)="changerAdresse()">
-      {{ email() }} · {{ 'authChangerAdresse' | t }}
-    </button>
+  </main>
 
-    <nl-pin-input
-      [pin]="pin()"
-      [error]="erreur()"
-      [isLoading]="chargement"
-      (digit)="onChiffre($event)"
-      (backspace)="onBackspace()"
-    />
-  }
-
-  <nl-mentions-legales />
-
-  <div class="nl-loginpin__pied">
-    @if (etape() === 'pin') {
-      <button type="button" class="nl-loginpin__lien" (click)="allerReinitialisation()">{{ 'authPinOublie' | t }}</button>
-    }
-    <button type="button" class="nl-loginpin__lien nl-loginpin__lien--discret" (click)="allerInscription()">{{ 'authPasEncoreDeCompte' | t }}<strong>{{ 'authSInscrire' | t }}</strong>
+  <!-- Lien S'inscrire proche sous le bloc central ; mentions légales tout en bas -->
+  <div class="nl-loginpin__compte">
+    <button type="button" class="nl-loginpin__lien nl-loginpin__lien--discret" (click)="allerInscription()">
+      {{ 'authPasEncoreDeCompte' | t }}<strong>{{ 'authSInscrire' | t }}</strong>
     </button>
   </div>
+
+  <footer class="nl-loginpin__pied">
+    <nl-mentions-legales />
+  </footer>
 </div>
 
 @if (resultat(); as r) {

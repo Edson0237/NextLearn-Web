@@ -10,7 +10,8 @@ import { Icon } from '../../../shared/ui/icon/icon';
 import { MentionsLegales } from '../../../shared/ui/consentements/mentions-legales';
 import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
-import { GoogleIdentite } from '../../../core/auth';
+import { GithubBouton } from '../../../shared/ui/github-bouton/github-bouton';
+import { GoogleIdentite, GithubIdentite } from '../../../core/auth';
 import { AppRoutes } from '../../../core/router';
 import { DOMAINE_VIDE, EtatDomaine, ReponseDomaine } from '../../../core/models';
 import { Cycle, NiveauEtude, cycleDepuisApi, cycleVersApi, niveauCourt, niveauDepuisTexte } from '../../../core/models';
@@ -48,7 +49,7 @@ const CHARGEMENT: Cascade<never> = { statut: 'chargement', items: [], erreur: ''
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [TraductionPipe, Icon, GoogleBouton, MentionsLegales, LangueSwitcher],
+  imports: [TraductionPipe, Icon, GoogleBouton, GithubBouton, MentionsLegales, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './register.html',
   styleUrl: './register.scss',
@@ -114,13 +115,35 @@ export class Register {
    * et on termine par `inscriptionGoogle` au lieu d'envoyer un code par e-mail.
    */
   protected readonly modeGoogle = signal(false);
-  /** L'identité Google en cours est-elle celle d'un établissement ? Sinon : justificatif à fournir ensuite. */
-  protected readonly profilGoogleInstitutionnel = computed(() => this.auth.profilGoogle()?.institutionnel !== false);
+  protected readonly modeGithub = signal(false);
+  protected readonly modeOAuth = computed(() => this.modeGoogle() || this.modeGithub());
+  protected readonly conflitEmailExistant = signal<string | null>(null);
+  /** L'identité Google/GitHub en cours est-elle celle d'un établissement ? Sinon : justificatif à fournir ensuite. */
+  protected readonly profilGoogleInstitutionnel = computed(() => {
+    if (this.modeGithub()) return this.auth.profilGithub()?.institutionnel !== false;
+    return this.auth.profilGoogle()?.institutionnel !== false;
+  });
 
-  /** Google est-il configuré ? Sans lui, pas de bouton, donc pas de « ou » à afficher. */
+  /** Google / GitHub sont-ils configurés ? Sans eux, pas de bouton, donc pas de « ou » à afficher. */
   protected readonly google = inject(GoogleIdentite);
+  protected readonly github = inject(GithubIdentite);
+
+  /** Divulgation progressive étape 1 : champs masqués jusqu'au tap sur « Utiliser une autre adresse ». */
+  protected readonly showEmailField = signal(false);
+
+  protected deplierEmail(): void {
+    this.showEmailField.set(true);
+  }
+
+  protected replierEmail(): void {
+    this.showEmailField.set(false);
+  }
 
   constructor() {
+    // Appel direct dès la construction de la page d'inscription pour que le
+    // bouton Google se charge en parallèle sans attendre les enfants.
+    void this.google.preparer();
+    void this.github.preparer();
     void this.chargerUniversites();
     // Une adresse hors établissement demande un justificatif : on charge ses types
     // dès que la procédure bascule, sans attendre le troisième pas.
@@ -134,8 +157,21 @@ export class Register {
       if (!profil) return;
       untracked(() => {
         this.modeGoogle.set(true);
+        this.modeGithub.set(false);
         this.prenom.set(profil.prenom);
         this.nom.set(profil.nom);
+        this.email.set(profil.email);
+        this.etape.set(1);
+      });
+    });
+    effect(() => {
+      const profil = this.auth.profilGithub();
+      if (!profil) return;
+      untracked(() => {
+        this.modeGithub.set(true);
+        this.modeGoogle.set(false);
+        this.prenom.set(profil.prenom || profil.login);
+        this.nom.set(profil.nom || profil.login);
         this.email.set(profil.email);
         this.etape.set(1);
       });
@@ -153,7 +189,7 @@ export class Register {
   }
 
   protected totalEtapes(): number {
-    if (this.modeGoogle()) return 1;
+    if (this.modeOAuth()) return 1;
     return this.sansEmailInstitutionnel() ? 3 : 2;
   }
 
@@ -414,6 +450,10 @@ export class Register {
       this.toast.info(tr('pwaCompleteParcours', 'Complète ton parcours avant de continuer.'));
       return;
     }
+    if (this.modeGithub()) {
+      await this.terminerInscriptionGithub();
+      return;
+    }
     if (this.modeGoogle()) {
       await this.terminerInscriptionGoogle();
       return;
@@ -438,6 +478,29 @@ export class Register {
       });
       // Compte créé : `AuthService` a déjà aiguillé vers le choix du PIN.
       if (erreur) this.toast.erreur(erreur);
+    } finally {
+      this.chargement.set(false);
+    }
+  }
+
+  private async terminerInscriptionGithub(): Promise<void> {
+    this.chargement.set(true);
+    this.conflitEmailExistant.set(null);
+    try {
+      const refus = await this.auth.inscriptionGithub({
+        universite: this.universiteNom()!,
+        filiere: this.filiereNom()!,
+        niveau: niveauCourt(this.niveau()!),
+        ...(this.cycle() ? { cycle: cycleVersApi(this.cycle()!) } : {}),
+        ...(this.prenom().trim() ? { prenom: this.prenom().trim() } : {}),
+        ...(this.nom().trim() ? { nom: this.nom().trim() } : {}),
+      });
+      if (refus) {
+        if (refus.statusCode === 409 || refus.code === 'CONFLICT') {
+          this.conflitEmailExistant.set(refus.message);
+        }
+        this.toast.erreur(refus.message);
+      }
     } finally {
       this.chargement.set(false);
     }
@@ -471,9 +534,9 @@ export class Register {
         void this.router.navigateByUrl('/app/' + AppRoutes.otp);
       } else if (this.auth.codeErreurInscription() === 'use_google_auth') {
         // Le serveur tient la règle : cette adresse passe par Google. L'écran
-        // bascule dans l'état « adresse Google » (code masqué, bouton mis en
-        // avant) au lieu de laisser l'étudiant devant une erreur.
+        // bascule sur l'accueil Google en repliant le formulaire e-mail.
         this.domaine.set({ etat: EtatDomaine.reconnu, google: true });
+        this.showEmailField.set(false);
         this.etape.set(0);
         this.toast.erreur(this.auth.state().error ?? 'Cette adresse est gérée par Google.');
       } else {
@@ -485,6 +548,11 @@ export class Register {
   }
 
   protected precedent(): void {
+    if (this.modeGithub()) {
+      this.auth.abandonnerInscriptionGithub();
+      void this.router.navigate(['/app', AppRoutes.login]);
+      return;
+    }
     if (this.modeGoogle()) {
       // On renonce : l'identité Google en attente est oubliée, rien n'a été créé.
       this.auth.abandonnerInscriptionGoogle();

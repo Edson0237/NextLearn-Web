@@ -37,6 +37,17 @@ const TAILLE_MAX_PAR_DEFAUT_MO = 50;
  * repli que la source elle-même emploie tant qu'aucune matière n'est
  * rattachée à la filière.
  */
+export interface DoublonFichierInfo {
+  readonly message: string;
+  readonly conseil?: string;
+  readonly existant?: {
+    readonly type: 'epreuve' | 'document' | 'contribution';
+    readonly id: string;
+    readonly titre?: string;
+    readonly statut?: string;
+  };
+}
+
 @Component({
   selector: 'app-depot-form',
   standalone: true,
@@ -92,6 +103,35 @@ export class DepotForm {
   protected readonly matieres = signal<Cascade<MatiereOption>>({ statut: 'chargement', items: [] });
 
   protected readonly envoiEnCours = signal(false);
+  /** Détails d'un doublon de fichier (Chantier P8 : 409 `DUPLICATE_FILE`). */
+  protected readonly doublonDetecte = signal<DoublonFichierInfo | null>(null);
+  protected readonly pourquoiOuvert = signal(false);
+  /** Erreurs de validation par champ (`details.fields`, Chantier P12 — §18.2). */
+  protected readonly erreursChamps = signal<Readonly<Record<string, string>>>({});
+  protected readonly champsNonRattaches = computed(() => {
+    const connues = new Set([
+      'titre',
+      'description',
+      'type',
+      'typeEpreuve',
+      'auteur',
+      'matiereId',
+      'matiere',
+      'anneeAcademique',
+      'annee',
+      'licence',
+      'sourceDeclaree',
+      'file',
+      'fichier',
+    ]);
+    return Object.entries(this.erreursChamps())
+      .filter(([champ, msg]) => !connues.has(champ) && Boolean(msg))
+      .map(([champ, message]) => ({ champ, message }));
+  });
+  /** Erreur d'envoi (P12 & P13 : `FILE_TOO_LARGE`, `UPLOAD_INVALID`, `5xx` avec `requestId`). */
+  protected readonly erreurDepot = signal<{ readonly message: string; readonly requestId?: string } | null>(null);
+  protected readonly detailsErreurOuverts = signal(false);
+  protected readonly requestIdCopie = signal(false);
 
   /** Le plafond de taille réglé par l'administration (Mo). */
   private readonly scans = inject(ScanTransfert);
@@ -161,10 +201,22 @@ export class DepotForm {
       return;
     }
     this.fichier.set(f);
+    this.doublonDetecte.set(null);
+    this.pourquoiOuvert.set(false);
   }
 
   protected retirerFichier(): void {
     this.fichier.set(undefined);
+    this.doublonDetecte.set(null);
+    this.pourquoiOuvert.set(false);
+  }
+
+  protected basculerPourquoi(): void {
+    this.pourquoiOuvert.update((v) => !v);
+  }
+
+  protected voirDocumentExistant(id: string): void {
+    void this.router.navigateByUrl('/app/' + AppRoutes.docDetailPath(id));
   }
 
   protected async envoyer(): Promise<void> {
@@ -180,6 +232,12 @@ export class DepotForm {
     if (!fichier) return this.toast.info(tr('depotJoinsFichier', 'Joins le fichier PDF.'));
 
     this.envoiEnCours.set(true);
+    this.doublonDetecte.set(null);
+    this.pourquoiOuvert.set(false);
+    this.erreursChamps.set({});
+    this.erreurDepot.set(null);
+    this.detailsErreurOuverts.set(false);
+    this.requestIdCopie.set(false);
     try {
       await this.repo.deposer({
         titre, description,
@@ -195,10 +253,62 @@ export class DepotForm {
       this.toast.succes(tr('depotEnvoye', 'Document envoyé. Tu seras prévenu après la relecture.'));
       void this.router.navigate(['/app', AppRoutes.mesDepots]);
     } catch (e) {
+      if (e instanceof Failure) {
+        if (e.fields) {
+          this.erreursChamps.set(e.fields);
+        }
+        if (e.statusCode === 409 && e.details?.['code'] === 'DUPLICATE_FILE') {
+          const rawExistant = e.details['existant'] as Record<string, unknown> | undefined;
+          const typeExistant = rawExistant?.['type'];
+          const idExistant = rawExistant?.['id'] ? String(rawExistant['id']) : '';
+          const existant: DoublonFichierInfo['existant'] =
+            (typeExistant === 'epreuve' || typeExistant === 'document' || typeExistant === 'contribution') && idExistant
+              ? {
+                  type: typeExistant,
+                  id: idExistant,
+                  titre: rawExistant?.['titre'] ? String(rawExistant['titre']) : undefined,
+                  statut: rawExistant?.['statut'] ? String(rawExistant['statut']) : undefined,
+                }
+              : undefined;
+          const conseil = typeof e.details['conseil'] === 'string' ? e.details['conseil'] : undefined;
+          this.doublonDetecte.set({
+            message: e.message,
+            conseil,
+            existant,
+          });
+        } else {
+          const messageAffiche =
+            e.code === 'FILE_TOO_LARGE'
+              ? `${e.message} (max ${this.tailleMaxMo()} Mo)`
+              : e.message;
+          this.erreurDepot.set({
+            message: messageAffiche,
+            requestId: e.requestId,
+          });
+        }
+      }
       this.toast.erreur(e instanceof Failure ? e.message : 'Envoi impossible. Réessaie.');
     } finally {
       this.envoiEnCours.set(false);
     }
+  }
+
+  protected async copierRequestId(): Promise<void> {
+    const reqId = this.erreurDepot()?.requestId;
+    if (!reqId) return;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(reqId);
+      }
+      this.requestIdCopie.set(true);
+    } catch {
+      this.requestIdCopie.set(true);
+    }
+  }
+
+  protected async contacterSupport(): Promise<void> {
+    await this.copierRequestId();
+    void this.router.navigateByUrl('/app/' + AppRoutes.supportTickets);
   }
 
   protected scanner(): void {

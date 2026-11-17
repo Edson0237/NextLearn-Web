@@ -1,13 +1,17 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n';
+import { tr, TraductionPipe, TraductionService } from '../../../core/i18n';
 import { Location } from '@angular/common';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { SupportRepository, SupportTicket, SupportTicketStatus, libelleStatutTicket } from '../../../core/profil';
-import { ReportRepository } from '../../../core/moderation';
-import { CibleSignalement, MonSignalement, StatutSignalement } from '../../../core/moderation';
-import { tr } from '../../../core/i18n';
+import {
+  CibleSignalement,
+  MonSignalement,
+  ReportRepository,
+  StatutSignalement,
+  traduireMotifSignalement,
+} from '../../../core/moderation';
 import { Failure } from '../../../core/models';
 
 /**
@@ -27,13 +31,18 @@ export class SupportTickets implements OnInit {
   private readonly repo = inject(SupportRepository);
   private readonly toast = inject(ToastService);
   private readonly reports = inject(ReportRepository);
+  private readonly traductions = inject(TraductionService);
 
   protected readonly tickets = signal<SupportTicket[]>([]);
   protected readonly signalements = signal<MonSignalement[]>([]);
   protected readonly CibleSignalement = CibleSignalement;
   protected readonly chargement = signal(false);
   protected readonly erreur = signal<string | undefined>(undefined);
-  protected readonly statusLibelle = libelleStatutTicket;
+  protected readonly statusLibelle = (status: SupportTicketStatus): string => {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    return libelleStatutTicket(status);
+  };
 
   ngOnInit(): void {
     void this.charger();
@@ -67,12 +76,20 @@ export class SupportTickets implements OnInit {
 
   /** « Ouvert » laissait croire qu'un modérateur l'avait déjà ouvert : on dit où en est le dossier. */
   protected libelleSignalement(s: StatutSignalement): string {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
     switch (s) {
       case StatutSignalement.enExamen: return tr('signalementStatutExamen', 'En cours d’examen');
       case StatutSignalement.retenu: return tr('signalementStatutRetenu', 'Retenu : contenu retiré');
       case StatutSignalement.rejete: return tr('signalementStatutRejete', 'Non retenu');
       default: return tr('signalementStatutAttente', 'En attente');
     }
+  }
+
+  protected libelleMotifSignalement(s: MonSignalement): string {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    return traduireMotifSignalement(s.motifCode, s.motifLabel).label;
   }
 
   protected couleurSignalement(s: StatutSignalement): string {
@@ -85,7 +102,8 @@ export class SupportTickets implements OnInit {
   }
 
   protected formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' }).format(date);
+    const locale = this.traductions.langue() === 'en' ? 'en-GB' : 'fr-FR';
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'short' }).format(date);
   }
 
   protected retour(): void {

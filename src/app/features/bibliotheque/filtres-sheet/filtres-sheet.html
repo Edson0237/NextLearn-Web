@@ -39,8 +39,107 @@
       }
     </div>
 
-    @if (data.matieres.length > 0) {
+    @if (facettesNature().length > 0) {
+      <p class="nl-filtres__section">{{ 'depotSousTypeEpreuve' | t }}</p>
+      <div class="nl-filtres__puces">
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="typeEpreuve() === null"
+          (click)="choisirTypeEpreuve(null)">
+          {{ 'epreuveTypeTous' | t }}
+        </button>
+        @for (n of facettesNature(); track codeFacette(n) ?? n.label) {
+          <button
+            type="button"
+            class="nl-filtres__puce"
+            [class.nl-filtres__puce--active]="typeEpreuve() === codeFacette(n)"
+            [disabled]="n.n === 0 && typeEpreuve() !== codeFacette(n)"
+            (click)="choisirTypeEpreuve(codeFacette(n))">
+            {{ libelleFacette(n) }} <span class="nl-filtres__compte">{{ n.n }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (facettesSemestre().length > 0) {
+      <p class="nl-filtres__section">{{ 'biblioFiltreSemestre' | t }}</p>
+      <div class="nl-filtres__puces">
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="semestre() === null"
+          (click)="choisirSemestre(null)">
+          {{ 'epreuveTypeTous' | t }}
+        </button>
+        @for (sem of facettesSemestre(); track codeFacette(sem) ?? sem.label) {
+          <button
+            type="button"
+            class="nl-filtres__puce"
+            [class.nl-filtres__puce--active]="semestre() === codeFacette(sem)"
+            [disabled]="sem.n === 0 && semestre() !== codeFacette(sem)"
+            (click)="choisirSemestre(codeFacette(sem))">
+            {{ libelleFacette(sem) }} <span class="nl-filtres__compte">{{ sem.n }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (facettesCorrige().length > 0) {
+      <p class="nl-filtres__section">{{ 'epreuvesCorrige' | t }}</p>
+      <div class="nl-filtres__puces">
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="avecCorrige() === null"
+          (click)="choisirAvecCorrige(null)">
+          {{ 'epreuveTypeTous' | t }}
+        </button>
+        @for (c of facettesCorrige(); track c.valeur) {
+          <button
+            type="button"
+            class="nl-filtres__puce"
+            [class.nl-filtres__puce--active]="avecCorrige() === c.valeur"
+            [disabled]="c.n === 0 && avecCorrige() !== c.valeur"
+            (click)="choisirAvecCorrige($any(c.valeur))">
+            {{ libelleFacette(c) }} <span class="nl-filtres__compte">{{ c.n }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (facettesAnnee().length > 0) {
+      <p class="nl-filtres__section">{{ 'depotAnneeAcademique' | t }}</p>
+      <div class="nl-filtres__puces">
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="annee() === null"
+          (click)="choisirAnnee(null)">
+          {{ 'epreuveTypeTous' | t }}
+        </button>
+        @for (an of facettesAnnee(); track codeFacette(an) ?? an.label) {
+          <button
+            type="button"
+            class="nl-filtres__puce"
+            [class.nl-filtres__puce--active]="annee() === codeFacette(an)"
+            [disabled]="an.n === 0 && annee() !== codeFacette(an)"
+            (click)="choisirAnnee(codeFacette(an))">
+            {{ libelleFacette(an) }} <span class="nl-filtres__compte">{{ an.n }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (optionsMatieres().length > 0 || rechercheMatiere()) {
       <p class="nl-filtres__section">{{ 'biblioFiltresMatiere' | t }}</p>
+      <input
+        type="search"
+        class="nl-filtres__recherche"
+        [attr.placeholder]="'actionRechercher' | t"
+        [value]="rechercheMatiere()"
+        (input)="rechercheMatiere.set(val($event))"
+      />
       <div class="nl-filtres__puces">
         <button
           type="button"
@@ -49,14 +148,44 @@
           (click)="choisirMatiere(null)">
           {{ 'epreuveTypeTous' | t }} <span class="nl-filtres__compte">{{ compteMatiere(null) }}</span>
         </button>
-        @for (m of data.matieres; track m.id) {
+        @for (m of optionsMatieres(); track m.id) {
           <button
             type="button"
             class="nl-filtres__puce"
             [class.nl-filtres__puce--active]="matiere() === m.id"
-            [disabled]="compteMatiere(m.id) === 0 && matiere() !== m.id"
+            [disabled]="m.n === 0 && matiere() !== m.id"
             (click)="choisirMatiere(m.id)">
-            {{ m.nom }} <span class="nl-filtres__compte">{{ compteMatiere(m.id) }}</span>
+            {{ m.nom }} <span class="nl-filtres__compte">{{ m.n ?? compteMatiere(m.id) }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    @if (optionsEnseignants().length > 0 || rechercheEnseignant()) {
+      <p class="nl-filtres__section">{{ 'biblioFiltreProfesseur' | t }}</p>
+      <input
+        type="search"
+        class="nl-filtres__recherche"
+        [attr.placeholder]="'actionRechercher' | t"
+        [value]="rechercheEnseignant()"
+        (input)="rechercheEnseignant.set(val($event))"
+      />
+      <div class="nl-filtres__puces">
+        <button
+          type="button"
+          class="nl-filtres__puce"
+          [class.nl-filtres__puce--active]="enseignant() === null"
+          (click)="choisirEnseignant(null)">
+          {{ 'epreuveTypeTous' | t }}
+        </button>
+        @for (ens of optionsEnseignants(); track ens.id) {
+          <button
+            type="button"
+            class="nl-filtres__puce"
+            [class.nl-filtres__puce--active]="enseignant() === ens.id"
+            [disabled]="ens.n === 0 && enseignant() !== ens.id"
+            (click)="choisirEnseignant(ens.id)">
+            {{ ens.nom }} <span class="nl-filtres__compte">{{ ens.n }}</span>
           </button>
         }
       </div>
@@ -70,7 +199,7 @@
   </div>
 
   <div class="nl-filtres__pied">
-    <button type="button" class="nl-filtres__valider" [disabled]="total() === 0" (click)="appliquer()">
+    <button type="button" class="nl-filtres__valider" (click)="appliquer()">
       {{ 'biblioFiltresVoir' | t: { nombre: total() } }}
     </button>
   </div>

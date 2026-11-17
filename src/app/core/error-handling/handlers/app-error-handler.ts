@@ -1,9 +1,12 @@
-import { ErrorHandler, Injectable, inject } from '@angular/core';
+import { DestroyRef, ErrorHandler, Injectable, inject } from '@angular/core';
 import { GlobalErrorService } from '../services/global-error.service';
-import { estErreurBenigne } from '../utils/erreur-benigne';
+import { estErreurBenigne, estErreurChargementModule } from '../utils/erreur-benigne';
 
 /** Après un retour sur la page, les requêtes coupées par la suspension échouent encore un instant. */
 const DELAI_RETOUR_MS = 2000;
+const CLE_RECHARGE_MODULE = 'nl_module_recharge_a';
+/** Délai minimal entre deux rechargements automatiques sur perte d'un module paresseux. */
+const DELAI_ANTI_BOUCLE_MODULE_MS = 15_000;
 
 /**
  * Filet de sécurité global - traduction d'`installerFiletErreurs`
@@ -31,26 +34,93 @@ const DELAI_RETOUR_MS = 2000;
 export class AppErrorHandler implements ErrorHandler {
   private readonly global = inject(GlobalErrorService);
   private retourLe = 0;
+  private suspendue = false;
 
   constructor() {
-    const retour = (): void => {
-      if (document.visibilityState === 'visible') this.retourLe = Date.now();
+    const destroyRef = inject(DestroyRef, { optional: true });
+    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+
+    // Sur Safari iOS, le menu `•••`, la feuille Partager et « Sur l'écran d'accueil »
+    // déclenchent `blur` / `focus` sans toujours passer `visibilityState` à `'hidden'`.
+    const surVisibilite = (): void => {
+      if (document.visibilityState === 'hidden') {
+        this.suspendue = true;
+        return;
+      }
+      if (this.suspendue) this.retourLe = Date.now();
+      this.suspendue = false;
     };
-    document.addEventListener('visibilitychange', retour);
-    window.addEventListener('pageshow', retour);
+    const surSuspension = (): void => {
+      this.suspendue = true;
+    };
+    const surReprise = (evenement?: Event): void => {
+      const bfCache = Boolean((evenement as { persisted?: boolean } | undefined)?.persisted);
+      if (this.suspendue || bfCache) this.retourLe = Date.now();
+      this.suspendue = false;
+    };
+
+    document.addEventListener('visibilitychange', surVisibilite);
+    window.addEventListener('pagehide', surSuspension);
+    window.addEventListener('blur', surSuspension);
+    window.addEventListener('pageshow', surReprise);
+    window.addEventListener('focus', surReprise);
+
+    destroyRef?.onDestroy(() => {
+      document.removeEventListener('visibilitychange', surVisibilite);
+      window.removeEventListener('pagehide', surSuspension);
+      window.removeEventListener('blur', surSuspension);
+      window.removeEventListener('pageshow', surReprise);
+      window.removeEventListener('focus', surReprise);
+    });
   }
 
   handleError(error: unknown): void {
+    const visible = typeof document === 'undefined' || document.visibilityState === 'visible';
     const pageVisible =
-      document.visibilityState === 'visible' && Date.now() - this.retourLe > DELAI_RETOUR_MS;
+      !this.suspendue && visible && Date.now() - this.retourLe > DELAI_RETOUR_MS;
 
     if (estErreurBenigne(error, pageVisible)) {
       // eslint-disable-next-line no-console
       console.warn('[ErrorHandler] erreur ignorée (réseau ou page en arrière-plan)', error);
       return;
     }
+
+    if (estErreurChargementModule(error) && this.peutRechargerModule()) {
+      this.memoriserRechargementModule();
+      // eslint-disable-next-line no-console
+      console.warn('[ErrorHandler] module paresseux introuvable, rechargement de la page', error);
+      this.recharger();
+      return;
+    }
+
     // eslint-disable-next-line no-console
     console.error('[ErrorHandler]', error);
     this.global.signaler(error);
+  }
+
+  protected enLigne(): boolean {
+    return typeof navigator === 'undefined' || navigator.onLine !== false;
+  }
+
+  protected recharger(): void {
+    document.location.reload();
+  }
+
+  private peutRechargerModule(): boolean {
+    if (!this.enLigne()) return false;
+    try {
+      const precedent = Number(sessionStorage.getItem(CLE_RECHARGE_MODULE));
+      return !(precedent > 0 && Date.now() - precedent < DELAI_ANTI_BOUCLE_MODULE_MS);
+    } catch {
+      return false;
+    }
+  }
+
+  private memoriserRechargementModule(): void {
+    try {
+      sessionStorage.setItem(CLE_RECHARGE_MODULE, String(Date.now()));
+    } catch {
+      // Ignoré si le stockage de session n'est plus accessible.
+    }
   }
 }

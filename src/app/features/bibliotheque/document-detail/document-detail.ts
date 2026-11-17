@@ -11,11 +11,13 @@ import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleSelectionService } from '../../../shared/ui/bottom-sheet/feuille-selection';
-import { DocumentsRepository } from '../../../core/bibliotheque';
+import { ClasseBibliothequeService, DocumentsRepository } from '../../../core/bibliotheque';
 import { FavorisRepository } from '../../../core/bibliotheque';
 import { OfflineRepository } from '../../../core/bibliotheque';
 import { StockageHorsLigne, formaterTailleOctets, InfoDocumentLocal } from '../../../core/bibliotheque';
 import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
+import { FavorisEtat } from '../../../shared/services/favoris-etat';
+import { Failure } from '../../../core/models';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
 import { CibleSignalement } from '../../../core/moderation';
 import { HistoriqueNavigation } from '../../../core/router';
@@ -40,7 +42,9 @@ export class DocumentDetail implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly docsRepo = inject(DocumentsRepository);
+  private readonly classeBiblio = inject(ClasseBibliothequeService);
   private readonly favorisRepo = inject(FavorisRepository);
+  private readonly favorisEtat = inject(FavorisEtat);
   private readonly offlineRepo = inject(OfflineRepository);
   private readonly stockage = inject(StockageHorsLigne);
   private readonly signalement = inject(SignalementFlux);
@@ -53,6 +57,8 @@ export class DocumentDetail implements OnInit {
   protected readonly document = signal<DocumentModel | null>(null);
   protected readonly isFavori = signal(false);
   protected readonly isOffline = signal(false);
+  /** Vrai si le serveur a répondu 404 (document masqué, en corbeille ou supprimé - Chantier P7). */
+  protected readonly estRetireDuCatalogue = signal(false);
   /** La note que cet étudiant vient de donner, 0 s'il n'a pas encore noté. */
   protected readonly noteDonnee = signal(0);
   protected readonly noteSurvolee = signal(0);
@@ -68,21 +74,39 @@ export class DocumentDetail implements OnInit {
   async load(): Promise<void> {
     this.loading.set(true);
     this.error.set(null);
+    this.estRetireDuCatalogue.set(false);
     await this.stockage.rafraichir();
     try {
+      let introuvableServeur = false;
       const [doc, favoris, offlineIds] = await Promise.all([
-        this.docsRepo.getDocumentDetails(this.docId).catch(() => null),
+        this.docsRepo.getDocumentDetails(this.docId).catch((err) => {
+          if (err instanceof Failure && err.statusCode === 404) {
+            introuvableServeur = true;
+          }
+          return null;
+        }),
         this.favorisRepo.getFavorites().catch(() => []),
         this.offlineRepo.getOfflineIds().catch(() => new Set<string>()),
       ]);
-      const docFinal = doc ?? (await this.docsRepo.getOfflineDocument(this.docId)) ?? null;
+      const copieLocale = await this.docsRepo.getOfflineDocument(this.docId);
+      const docFinal = doc ?? copieLocale ?? null;
       this.document.set(docFinal);
+      if (introuvableServeur || (!doc && !copieLocale)) {
+        this.estRetireDuCatalogue.set(true);
+        if (introuvableServeur) {
+          this.classeBiblio.invaliderCache();
+        }
+        // Consulté ou retiré : toute notification pointant vers ce document est marquée comme lue.
+        if (this.docId) {
+          void this.notifEtat.marquerRessourceLue('document', this.docId);
+        }
+      }
       this.isFavori.set(favoris.some((f) => f.id === this.docId));
       // Deux sources, et c'est voulu : le serveur dit ce que l'étudiant a
       // marqué depuis n'importe quel appareil, le cache local dit ce qui est
       // réellement lisible sur celui-ci.
       this.isOffline.set(offlineIds.has(this.docId) || this.stockage.ids().has(this.docId));
-      if (docFinal) {
+      if (docFinal && !introuvableServeur) {
         void this.docsRepo.recordView(docFinal.id);
         // Consulté : les notifications qui l'annonçaient ne sont plus « nouvelles ».
         void this.notifEtat.marquerRessourceLue('document', docFinal.id);
@@ -98,6 +122,18 @@ export class DocumentDetail implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  protected async retirerFavoriEtRetourner(): Promise<void> {
+    if (this.docId) {
+      await this.favorisRepo.removeFavorite(this.docId).catch(() => undefined);
+      void this.favorisEtat.charger();
+    }
+    this.allerBibliotheque();
+  }
+
+  protected allerBibliotheque(): void {
+    void this.router.navigate(['/app', AppRoutes.bibliotheque]);
   }
 
   protected goBack(): void {

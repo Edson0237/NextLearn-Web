@@ -18,7 +18,7 @@ import { TraductionPipe } from '../../../core/i18n';
     </p>
   `,
   styles: [`
-    .nl-mentions { margin: 0; text-align: center; font: 400 0.8125rem/1.5 var(--font-family-body); color: var(--text-muted); }
+    .nl-mentions { margin: 0; text-align: center; font: 400 0.75rem/1.45 var(--font-family-body); color: var(--text-muted); }
     .nl-mentions a { color: var(--primary); font-weight: 600; text-decoration: underline; }
   `],
 })

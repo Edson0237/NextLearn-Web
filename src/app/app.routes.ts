@@ -54,6 +54,11 @@ export const routes: Routes = [
       import('./features/partage/redirection-document').then((m) => m.RedirectionDocument),
   },
   {
+    path: 'auth/github/callback',
+    loadComponent: () =>
+      import('./features/auth/github-callback/github-callback').then((m) => m.GithubCallback),
+  },
+  {
     path: 'app',
     loadChildren: () =>
       import('./layout/app-shell/app-shell.routes').then((m) => m.APP_SHELL_ROUTES),

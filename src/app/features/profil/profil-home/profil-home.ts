@@ -60,11 +60,13 @@ export class ProfilHome {
     return u ? initiales(u) : '';
   });
   protected readonly libelleNiveau = computed(() => {
+    this.traductions.langue();
     const u = this.user();
     return u ? libelleNiveau(u.niveau, u.cycle) : '';
   });
   /** L'école et le niveau, pour la puce de contexte de l'en-tête. */
   protected readonly cursus = computed(() => {
+    this.traductions.langue();
     const u = this.user();
     if (!u) return undefined;
     return [u.universite, libelleNiveau(u.niveau)].filter(Boolean).join(' • ');

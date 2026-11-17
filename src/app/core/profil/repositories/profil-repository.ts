@@ -2,6 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ProfilStats, profilStatsDepuisApi, SuppressionRapport, suppressionRapportDepuisApi } from '../models/profil.model';
+import {
+  ModificationProfilEtude,
+  ProfilEtude,
+  nettoyerModificationProfilEtude,
+  profilEtudeDepuisApi,
+} from '../models/profil-etude.model';
 import { enFailure } from '../../network/utils/erreur-api';
 import { donnees, donneesUtilisateur } from '../../network/utils/enveloppe-api';
 import { SecureStorageService } from '../../storage/services/secure-storage.service';
@@ -24,6 +30,10 @@ export class ProfilRepository {
       ]);
       const payload = (reponseProfil as Record<string, unknown>) ?? {};
       const data = (payload['data'] as Record<string, unknown>) ?? {};
+      const userJson = data['user'] as Record<string, unknown> | undefined;
+      if (userJson && typeof userJson === 'object' && userJson['id']) {
+        this.storage.saveUser(this.fusionnerAvecUtilisateurLocal(utilisateurDepuisApi(userJson)));
+      }
       const stats = (data['stats'] as Record<string, unknown>) ?? {};
       const base = profilStatsDepuisApi(stats);
 
@@ -77,13 +87,30 @@ export class ProfilRepository {
     }
   }
 
+  private fusionnerAvecUtilisateurLocal(recu: UserModel): UserModel {
+    const actuel = this.storage.getUser();
+    if (!actuel || (recu.id && actuel.id && recu.id !== actuel.id)) {
+      return recu;
+    }
+    return {
+      ...recu,
+      universite: recu.universite || actuel.universite,
+      filiere: recu.filiere || actuel.filiere,
+      cycle: recu.cycle ?? actuel.cycle,
+      sectionPreference: recu.sectionPreference ?? actuel.sectionPreference,
+      hasPin: recu.hasPin ?? actuel.hasPin,
+    };
+  }
+
   /** Dépose une photo de profil. */
   async televerserAvatar(fichier: File): Promise<UserModel> {
     const formulaire = new FormData();
     formulaire.append('avatar', fichier, fichier.name);
     try {
       const reponse = await firstValueFrom(this.http.post('/api/profile/avatar', formulaire));
-      const utilisateur = utilisateurDepuisApi(donneesUtilisateur(reponse));
+      const utilisateur = this.fusionnerAvecUtilisateurLocal(
+        utilisateurDepuisApi(donneesUtilisateur(reponse)),
+      );
       this.storage.saveUser(utilisateur);
       return utilisateur;
     } catch (e) {
@@ -95,7 +122,9 @@ export class ProfilRepository {
   async supprimerAvatar(): Promise<UserModel> {
     try {
       const reponse = await firstValueFrom(this.http.delete('/api/profile/avatar'));
-      const utilisateur = utilisateurDepuisApi(donneesUtilisateur(reponse));
+      const utilisateur = this.fusionnerAvecUtilisateurLocal(
+        utilisateurDepuisApi(donneesUtilisateur(reponse)),
+      );
       this.storage.saveUser(utilisateur);
       return utilisateur;
     } catch (e) {
@@ -106,7 +135,9 @@ export class ProfilRepository {
   async changerNiveau(code: string): Promise<UserModel> {
     try {
       const reponse = await firstValueFrom(this.http.put('/api/profile', { niveau: code }));
-      const utilisateur = utilisateurDepuisApi(donneesUtilisateur(reponse));
+      const utilisateur = this.fusionnerAvecUtilisateurLocal(
+        utilisateurDepuisApi(donneesUtilisateur(reponse)),
+      );
       this.storage.saveUser(utilisateur);
       return utilisateur;
     } catch (e) {
@@ -117,9 +148,42 @@ export class ProfilRepository {
   async changerSection(sectionPreference: 'FRANCOPHONE' | 'ANGLOPHONE' | 'TOUTES'): Promise<UserModel> {
     try {
       const reponse = await firstValueFrom(this.http.put('/api/profile', { sectionPreference }));
-      const utilisateur = utilisateurDepuisApi(donneesUtilisateur(reponse));
+      const recu = this.fusionnerAvecUtilisateurLocal(
+        utilisateurDepuisApi(donneesUtilisateur(reponse)),
+      );
+      const utilisateur: UserModel = { ...recu, sectionPreference };
       this.storage.saveUser(utilisateur);
       return utilisateur;
+    } catch (e) {
+      throw enFailure(e);
+    }
+  }
+
+  // ── Profil d'étude (Chantier P6 : /api/v2/me/profil-etude) ────────────────
+
+  async lireProfilEtude(): Promise<ProfilEtude> {
+    try {
+      const reponse = await firstValueFrom(this.http.get('/api/v2/me/profil-etude'));
+      return profilEtudeDepuisApi(reponse as Record<string, unknown>);
+    } catch (e) {
+      throw enFailure(e);
+    }
+  }
+
+  async mettreAJourProfilEtude(modification: ModificationProfilEtude): Promise<ProfilEtude> {
+    const corps = nettoyerModificationProfilEtude(modification);
+    try {
+      const reponse = await firstValueFrom(this.http.put('/api/v2/me/profil-etude', corps));
+      return profilEtudeDepuisApi(reponse as Record<string, unknown>);
+    } catch (e) {
+      throw enFailure(e);
+    }
+  }
+
+  async reinitialiserProfilEtude(): Promise<ProfilEtude> {
+    try {
+      const reponse = await firstValueFrom(this.http.delete('/api/v2/me/profil-etude'));
+      return profilEtudeDepuisApi(reponse as Record<string, unknown>);
     } catch (e) {
       throw enFailure(e);
     }

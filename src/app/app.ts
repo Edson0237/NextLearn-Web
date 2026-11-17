@@ -1,5 +1,5 @@
 import { Component, inject, isDevMode } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { HistoriqueNavigation } from './core/router/services/historique-navigation';
 import { FatalError } from './shared/ui/fatal-error/fatal-error';
 import { ToastHost } from './shared/ui/toast/toast-host';
@@ -27,6 +27,7 @@ import { MiseAJourService } from './core/pwa/services/mise-a-jour.service';
 })
 export class App {
   private readonly global = inject(GlobalErrorService);
+  private readonly router = inject(Router);
   /** Instancié dès le démarrage : la pile doit connaître le tout premier écran. */
   private readonly historique = inject(HistoriqueNavigation);
   /** Instancié dès le démarrage : `beforeinstallprompt` peut partir avant le premier écran. */
@@ -35,4 +36,23 @@ export class App {
   private readonly miseAJour = inject(MiseAJourService);
   protected readonly erreurFatale = this.global.fatal;
   protected readonly modeDebug = isDevMode();
+
+  /** Efface l'écran d'erreur et revient sur l'écran précédent (ou recharge l'accueil). */
+  protected revenirApresErreur(): void {
+    this.global.reset();
+    const chemin = typeof window !== 'undefined' ? window.location.pathname : '';
+    if (!chemin || chemin === '/') {
+      this.rechargerPage();
+      return;
+    }
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+    void this.router.navigateByUrl('/', { replaceUrl: true });
+  }
+
+  protected rechargerPage(): void {
+    document.location.reload();
+  }
 }

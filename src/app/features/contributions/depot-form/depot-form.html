@@ -25,6 +25,9 @@
         [value]="titre()"
         (input)="titre.set(val($event))"
       />
+      @if (erreursChamps()['titre']; as errTitre) {
+        <p class="nl-depf__erreur">{{ errTitre }}</p>
+      }
     </label>
 
     <label class="nl-depf__champ">
@@ -35,6 +38,9 @@
         [value]="description()"
         (input)="description.set(val($event))"
       ></textarea>
+      @if (erreursChamps()['description']; as errDesc) {
+        <p class="nl-depf__erreur">{{ errDesc }}</p>
+      }
     </label>
 
     <label class="nl-depf__champ">
@@ -52,6 +58,9 @@
           </select>
         }
       }
+      @if (erreursChamps()['type']; as errType) {
+        <p class="nl-depf__erreur">{{ errType }}</p>
+      }
     </label>
 
     @if (estEpreuve()) {
@@ -63,6 +72,9 @@
             <option [value]="st.value">{{ st.label }}</option>
           }
         </select>
+        @if (erreursChamps()['typeEpreuve']; as errTypeEp) {
+          <p class="nl-depf__erreur">{{ errTypeEp }}</p>
+        }
       </label>
     }
 
@@ -77,6 +89,9 @@
     <label class="nl-depf__champ">
       <span>{{ 'depotAuteur' | t }}</span>
       <input type="text" [attr.placeholder]="'depotAuteurIndice' | t" [value]="auteur()" (input)="auteur.set(val($event))" />
+      @if (erreursChamps()['auteur']; as errAuteur) {
+        <p class="nl-depf__erreur">{{ errAuteur }}</p>
+      }
     </label>
 
     <label class="nl-depf__champ">
@@ -98,6 +113,9 @@
           }
         }
       }
+      @if (erreursChamps()['matiereId'] || erreursChamps()['matiere']; as errMatiere) {
+        <p class="nl-depf__erreur">{{ errMatiere }}</p>
+      }
     </label>
 
     <label class="nl-depf__champ">
@@ -107,6 +125,9 @@
           <option [value]="a">{{ a }}</option>
         }
       </select>
+      @if (erreursChamps()['anneeAcademique'] || erreursChamps()['annee']; as errAnnee) {
+        <p class="nl-depf__erreur">{{ errAnnee }}</p>
+      }
     </label>
 
     <h2 class="nl-depf__section">{{ 'depotProvenance' | t }}</h2>
@@ -121,6 +142,9 @@
         </span>
       </button>
     }
+    @if (erreursChamps()['licence']; as errLicence) {
+      <p class="nl-depf__erreur">{{ errLicence }}</p>
+    }
 
     @if (licence() === DepotLicence.autorise || licence() === DepotLicence.institutionnel) {
       <label class="nl-depf__champ">
@@ -131,6 +155,9 @@
           [value]="sourceDeclaree()"
           (input)="sourceDeclaree.set(val($event))"
         />
+        @if (erreursChamps()['sourceDeclaree']; as errSource) {
+          <p class="nl-depf__erreur">{{ errSource }}</p>
+        }
       </label>
     }
 
@@ -164,6 +191,82 @@
           <nl-icon name="close" [size]="18" />
         </button>
       </div>
+    }
+    @if (erreursChamps()['file'] || erreursChamps()['fichier']; as errFichier) {
+      <p class="nl-depf__erreur">{{ errFichier }}</p>
+    }
+
+    @if (erreurDepot(); as err) {
+      <section class="nl-depf__doublon" role="alert">
+        <div class="nl-depf__doublon-entete">
+          <nl-icon name="warning" [size]="20" />
+          <p class="nl-depf__doublon-message">{{ err.message }}</p>
+        </div>
+        @for (item of champsNonRattaches(); track item.champ) {
+          <p class="nl-depf__erreur">{{ item.champ }} : {{ item.message }}</p>
+        }
+        @if (err.requestId; as reqId) {
+          <button
+            type="button"
+            class="nl-depf__doublon-pourquoi"
+            [attr.aria-expanded]="detailsErreurOuverts()"
+            (click)="detailsErreurOuverts.set(!detailsErreurOuverts())"
+          >
+            <span>{{ 'erreurVoirDetails' | t }}</span>
+            <nl-icon [name]="detailsErreurOuverts() ? 'expand_more' : 'chevron_right'" [size]="16" />
+          </button>
+          @if (detailsErreurOuverts()) {
+            <p class="nl-depf__doublon-conseil">
+              {{ 'erreurIdentifiantSupport' | t }} : <code>{{ reqId }}</code>
+              <button type="button" class="nl-depf__doublon-pourquoi" (click)="copierRequestId()">
+                {{ (requestIdCopie() ? 'actionCopie' : 'actionCopier') | t }}
+              </button>
+              <button type="button" class="nl-depf__doublon-pourquoi" (click)="contacterSupport()">
+                {{ 'erreurContacterSupport' | t }}
+              </button>
+            </p>
+          }
+        }
+      </section>
+    }
+
+    @if (doublonDetecte(); as doublon) {
+      <section class="nl-depf__doublon" role="alert">
+        <div class="nl-depf__doublon-entete">
+          <nl-icon name="warning" [size]="20" />
+          <p class="nl-depf__doublon-message">{{ doublon.message }}</p>
+        </div>
+
+        @if (doublon.existant; as ex) {
+          @if (ex.type === 'document' || ex.type === 'epreuve') {
+            <button
+              type="button"
+              class="nl-depf__doublon-lien"
+              (click)="voirDocumentExistant(ex.id)"
+            >
+              <nl-icon name="visibility" [size]="16" />
+              <span>{{ 'depotVoirDocumentExistant' | t }}</span>
+            </button>
+          } @else if (ex.type === 'contribution') {
+            <p class="nl-depf__doublon-statut">{{ 'depotContributionEnTraitement' | t }}</p>
+          }
+        }
+
+        @if (doublon.conseil) {
+          <button
+            type="button"
+            class="nl-depf__doublon-pourquoi"
+            [attr.aria-expanded]="pourquoiOuvert()"
+            (click)="basculerPourquoi()"
+          >
+            <span>{{ 'depotPourquoiDoublon' | t }}</span>
+            <nl-icon [name]="pourquoiOuvert() ? 'expand_more' : 'chevron_right'" [size]="16" />
+          </button>
+          @if (pourquoiOuvert()) {
+            <p class="nl-depf__doublon-conseil">{{ doublon.conseil }}</p>
+          }
+        }
+      </section>
     }
 
     <button type="button" class="nl-depf__cta" [disabled]="envoiEnCours()" (click)="envoyer()">

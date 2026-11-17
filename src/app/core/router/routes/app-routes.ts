@@ -17,6 +17,7 @@ export abstract class AppRoutes {
   static readonly unlock = 'unlock';
   /** Récupération d'un compte dont le PIN a été oublié. */
   static readonly resetPin = 'login/reset-pin';
+  static readonly githubCallback = 'auth/github/callback';
 
   // ── Onglets du shell ─────────────────────────────────────────────────────
   static readonly home = 'home';
@@ -68,8 +69,9 @@ export abstract class AppRoutes {
   // ── Voie de recours ───────────────────────────────────────────────────────
   static readonly recours = 'recours';
 
-  // ── Appareils connectés ───────────────────────────────────────────────────
+  // ── Appareils connectés & Profil d'étude ──────────────────────────────────
   static readonly sessions = 'profil/appareils';
+  static readonly profilEtude = 'profil/etude';
 
   // ── Aides de navigation ───────────────────────────────────────────────────
   static docDetailPath(id: string): string { return `bibliotheque/doc/${id}`; }

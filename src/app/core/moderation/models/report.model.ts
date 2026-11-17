@@ -52,23 +52,58 @@ export enum StatutSignalement {
   rejete = 'rejete',
 }
 
+import { tr } from '../../i18n';
+
 /** Un signalement de contenu envoyé par l'étudiant. */
 export interface MonSignalement {
   readonly id: string;
   readonly cibleType: CibleSignalement;
   readonly cibleTitre: string | null;
+  readonly motifCode: string;
   readonly motifLabel: string;
   readonly status: StatutSignalement;
   readonly decisionMotif: string | null;
   readonly createdAt: Date;
 }
 
+const CLES_MOTIFS: Readonly<Record<string, { readonly label: string; readonly description: string }>> = {
+  DROIT_AUTEUR: { label: 'motifSigDroitAuteur', description: 'motifSigDroitAuteurDesc' },
+  DONNEES_PERSONNELLES: { label: 'motifSigDonneesPerso', description: 'motifSigDonneesPersoDesc' },
+  CONTENU_ILLEGAL: { label: 'motifSigContenuIllegal', description: 'motifSigContenuIllegalDesc' },
+  SUJET_NON_DIVULGUE: { label: 'motifSigSujetNonDivulgue', description: 'motifSigSujetNonDivulgueDesc' },
+  HORS_SUJET: { label: 'motifSigHorsSujet', description: 'motifSigHorsSujetDesc' },
+  DOUBLON: { label: 'motifSigDoublon', description: 'motifSigDoublonDesc' },
+  QUALITE: { label: 'motifSigQualite', description: 'motifSigQualiteDesc' },
+  AUTRE: { label: 'motifSigAutre', description: 'motifSigAutreDesc' },
+};
+
+/**
+ * Traduit le code d'un motif de signalement selon la langue active, en retombant
+ * sur les libellés serveur pour tout nouveau motif ajouté côté back-office.
+ */
+export function traduireMotifSignalement(
+  code: string,
+  labelDefaut: string,
+  descriptionDefaut = '',
+): { label: string; description: string } {
+  const entree = CLES_MOTIFS[code.trim().toUpperCase()];
+  if (!entree) {
+    return { label: labelDefaut, description: descriptionDefaut };
+  }
+  return {
+    label: tr(entree.label, labelDefaut),
+    description: descriptionDefaut ? tr(entree.description, descriptionDefaut) : '',
+  };
+}
+
 export function monSignalementDepuisApi(j: Record<string, unknown>): MonSignalement {
   const statut = Object.values(StatutSignalement).find((s) => s === j['status']);
+  const motifCode = String(j['motif'] ?? j['motifCode'] ?? '');
   return {
     id: String(j['id'] ?? ''),
     cibleType: j['cibleType'] === 'epreuve' ? CibleSignalement.epreuve : CibleSignalement.document,
     cibleTitre: typeof j['cibleTitre'] === 'string' ? j['cibleTitre'] : null,
+    motifCode,
     motifLabel: String(j['motifLabel'] ?? j['motif'] ?? ''),
     status: statut ?? StatutSignalement.ouvert,
     decisionMotif: typeof j['decisionMotif'] === 'string' && j['decisionMotif'] ? j['decisionMotif'] : null,

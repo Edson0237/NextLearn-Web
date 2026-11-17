@@ -141,6 +141,11 @@ export const APP_SHELL_ROUTES: Routes = [
         loadComponent: () => import('../../features/profil/sessions/sessions').then((m) => m.Sessions),
       },
       {
+        path: AppRoutes.profilEtude,
+        loadComponent: () =>
+          import('../../features/profil/profil-etude/profil-etude').then((m) => m.ProfilEtudePage),
+      },
+      {
         path: AppRoutes.matieres,
         loadComponent: () => import('../../features/bibliotheque/catalogue/catalogue').then((m) => m.Catalogue),
       },

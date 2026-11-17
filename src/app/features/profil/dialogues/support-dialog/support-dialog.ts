@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
-import { TraductionPipe } from '../../../../core/i18n';
-import { tr } from '../../../../core/i18n';
+import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
+import { tr, TraductionPipe, TraductionService } from '../../../../core/i18n';
 import { Failure } from '../../../../core/models';
 import { SupportRepository } from '../../../../core/profil';
 import { ToastService } from '../../../../shared/ui/toast/toast';
@@ -17,16 +16,21 @@ import { ToastService } from '../../../../shared/ui/toast/toast';
 export class SupportDialog {
   private readonly support = inject(SupportRepository);
   private readonly toast = inject(ToastService);
+  private readonly traductions = inject(TraductionService);
 
   readonly ferme = output<void>();
 
-  protected readonly categories = [
-    { value: 'CONNEXION', label: tr('supportCatConnexion', 'Connexion') },
-    { value: 'DOCUMENT', label: tr('docTitre', 'Document') },
-    { value: 'COMPTE', label: tr('profilCompte', 'Compte') },
-    { value: 'BUG', label: tr('pwaCategorieBug', 'Bug') },
-    { value: 'AUTRE', label: tr('supportCatAutre', 'Autre') },
-  ];
+  protected readonly categories = computed(() => {
+    this.traductions.langue();
+    this.traductions.aDesMessages();
+    return [
+      { value: 'CONNEXION', label: this.traductions.t('supportCatConnexion', undefined, 'Connexion') },
+      { value: 'DOCUMENT', label: this.traductions.t('supportCatDocument', undefined, 'Document') },
+      { value: 'COMPTE', label: this.traductions.t('supportCatCompte', undefined, 'Compte') },
+      { value: 'BUG', label: this.traductions.t('supportCatBug', undefined, "Bug de l'application") },
+      { value: 'AUTRE', label: this.traductions.t('supportCatAutre', undefined, 'Autre') },
+    ];
+  });
 
   protected readonly categorie = signal('CONNEXION');
   protected readonly sujet = signal('');
@@ -51,7 +55,7 @@ export class SupportDialog {
       this.ferme.emit();
       this.toast.succes(tr('pwaSignalementEnvoye', 'Signalement envoyé.'));
     } catch (e) {
-      this.toast.erreur(e instanceof Failure ? e.message : 'Envoi impossible.');
+      this.toast.erreur(e instanceof Failure ? e.message : tr('signalerEnvoiImpossible', 'Envoi impossible.'));
     } finally {
       this.envoi.set(false);
     }

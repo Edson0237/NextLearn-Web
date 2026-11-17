@@ -240,6 +240,73 @@
   cursor: pointer;
 }
 
+.nl-depf__doublon {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--space-md);
+  border-radius: 14px;
+  border: 1px solid var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg-primary));
+  color: var(--text-primary);
+}
+
+.nl-depf__doublon-entete {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--danger);
+}
+
+.nl-depf__doublon-message {
+  margin: 0;
+  font: 600 0.86rem/1.4 var(--font-family-body);
+  color: var(--text-primary);
+}
+
+.nl-depf__doublon-lien {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary);
+  color: var(--text-on-primary);
+  font: 600 0.84rem var(--font-family-body);
+  cursor: pointer;
+}
+
+.nl-depf__doublon-statut {
+  margin: 0;
+  font: 500 0.82rem/1.35 var(--font-family-body);
+  color: var(--text-secondary);
+}
+
+.nl-depf__doublon-pourquoi {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primary);
+  font: 600 0.82rem var(--font-family-body);
+  cursor: pointer;
+}
+
+.nl-depf__doublon-conseil {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font: 400 0.8rem/1.4 var(--font-family-body);
+}
+
 .nl-depf__cta {
   height: 54px;
   border: none;

@@ -104,7 +104,8 @@ export function traduireFiliere(nom: string): string {
   if (!nom) return nom;
   const normalise = nom.trim().replace(/[—–]/g, '-');
   if (langueCourante() !== 'en') return normalise;
-  const exact = FILIERES_EN[normalise];
+  const cleApostrophe = normalise.replace(/'/g, '’');
+  const exact = FILIERES_EN[normalise] ?? FILIERES_EN[cleApostrophe];
   if (exact) return exact;
   return normalise
     .replace(/^Cycle Ingénieur\b/i, 'Engineering Cycle')
@@ -113,6 +114,8 @@ export function traduireFiliere(nom: string): string {
     .replace(/^Licence\b/i, 'Bachelor')
     .replace(/^Cycle préparatoire\b/i, 'Preparatory Cycle')
     .replace(/^Ingénieur\b/i, 'Engineering')
+    .replace(/Ingénierie des Systèmes d['’]Information/gi, 'Information Systems Engineering')
+    .replace(/Systèmes, Réseaux & Télécoms/gi, 'Systems, Networks & Telecoms')
     .replace(/\bGénie Civil\b/gi, 'Civil Engineering')
     .replace(/\bGestion\b/gi, 'Management');
 }

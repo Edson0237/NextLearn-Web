@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { tr } from '../../../core/i18n';
+import { langueCourante, tr } from '../../../core/i18n';
 import { Failure } from '../../../core/models';
-import { ReportRepository } from '../../../core/moderation';
-import { CibleSignalement } from '../../../core/moderation';
+import { CibleSignalement, ReportRepository, traduireMotifSignalement } from '../../../core/moderation';
 import { BottomSheetService } from '../bottom-sheet/bottom-sheet';
 import { SignalementSaisi, SignalementSheet, SignalementSheetData } from './signalement-sheet';
 import { ToastService } from '../toast/toast';
@@ -45,9 +44,16 @@ export class SignalementFlux {
     for (;;) {
       saisie = await this.sheets.open<SignalementSheet, SignalementSaisi>(SignalementSheet, {
         titre,
-        motifs: catalogue.motifs.map((m) => ({ code: m.code, label: m.label, description: m.description })),
+        motifs: catalogue.motifs.map((m) => {
+          const trad = traduireMotifSignalement(m.code, m.label, m.description);
+          return { code: m.code, label: trad.label, description: trad.description };
+        }),
         motifsMasquants: catalogue.motifs.filter((m) => m.masquageImmediat).map((m) => m.code),
-        information: `Un modérateur examinera ce signalement sous ${catalogue.slaHeures} h.`,
+        information: tr(
+          'signalementInfoDelai',
+          `Un modérateur examinera ce signalement sous ${catalogue.slaHeures} h.`,
+          { heures: catalogue.slaHeures },
+        ),
         motifInitial: saisie?.motif,
         explicationInitiale: saisie?.commentaire,
       } satisfies SignalementSheetData).result;
@@ -60,7 +66,9 @@ export class SignalementFlux {
           motif: saisie.motif,
           commentaire: saisie.commentaire,
         });
-        this.toast.succes(resultat.message);
+        this.toast.succes(
+          langueCourante() === 'en' ? tr('signalementEnregistre', resultat.message) : resultat.message,
+        );
         return;
       } catch (e) {
         // `Failure` masque volontairement les messages bruts du serveur : on

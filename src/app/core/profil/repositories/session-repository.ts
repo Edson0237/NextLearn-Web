@@ -4,31 +4,61 @@ import { firstValueFrom } from 'rxjs';
 import { Appareil } from '../../auth/services/appareil';
 import { enFailure } from '../../network';
 
+export type TypeAppareilSession = 'mobile' | 'tablette' | 'ordinateur' | 'inconnu';
+
 /** Un appareil connecté au compte. */
 export interface SessionAppareil {
   readonly sessionId: string;
   readonly appareil: string;
   /** La session utilisée en ce moment même. */
   readonly courante: boolean;
-  readonly plateforme?: string;
-  readonly versionApp?: string;
+  readonly navigateur?: string;
+  readonly os?: string;
+  readonly type?: TypeAppareilSession;
+  readonly pays?: string;
   readonly ip?: string;
   readonly derniereActivite?: Date;
   readonly creeeLe?: Date;
+  readonly expireLe?: Date;
+}
+
+function textePropre(valeur: unknown): string | undefined {
+  if (typeof valeur !== 'string') return undefined;
+  const t = valeur.trim();
+  return t.length > 0 ? t : undefined;
+}
+
+function dateOptionnelle(valeur: unknown): Date | undefined {
+  if (!valeur) return undefined;
+  const d = new Date(String(valeur));
+  return Number.isNaN(d.getTime()) ? undefined : d;
 }
 
 export function sessionDepuisApi(json: Record<string, unknown>): SessionAppareil {
+  const navigateur = textePropre(json['navigateur']);
+  const os = textePropre(json['os']);
+  const appareilBrut = textePropre(json['appareil']);
+  const compose = [navigateur, os].filter(Boolean).join(' · ');
+  const appareil = appareilBrut ?? (compose.length > 0 ? compose : 'Appareil inconnu');
+
+  const typeBrut = json['type'];
+  const type: TypeAppareilSession | undefined =
+    typeBrut === 'mobile' || typeBrut === 'tablette' || typeBrut === 'ordinateur' || typeBrut === 'inconnu'
+      ? typeBrut
+      : undefined;
+
   return {
     sessionId: String(json['sessionId'] ?? ''),
-    appareil: String(json['appareil'] ?? 'Appareil inconnu'),
+    appareil,
     courante: json['courante'] === true,
-    plateforme: json['plateforme'] == null ? undefined : String(json['plateforme']),
-    versionApp: json['versionApp'] == null ? undefined : String(json['versionApp']),
-    ip: json['ip'] == null ? undefined : String(json['ip']),
-    derniereActivite: json['derniereActiviteLe']
-      ? new Date(String(json['derniereActiviteLe']))
-      : undefined,
-    creeeLe: json['creeeLe'] ? new Date(String(json['creeeLe'])) : undefined,
+    navigateur,
+    os,
+    type,
+    pays: textePropre(json['pays']),
+    ip: textePropre(json['ip']),
+    derniereActivite: dateOptionnelle(json['derniereActiviteLe']),
+    creeeLe: dateOptionnelle(json['creeeLe']),
+    expireLe: dateOptionnelle(json['expireLe']),
   };
 }
 

@@ -94,6 +94,7 @@ export interface DocumentModel {
   readonly titre: string;
   readonly description: string;
   readonly type: DocumentType;
+  readonly typeEpreuve?: string;
   readonly matiere: string;
   readonly enseignant: string;
   readonly universite: string;
@@ -126,6 +127,7 @@ export function documentDepuisApi(json: Record<string, unknown>): DocumentModel 
     titre: String(json['titre'] ?? ''),
     description: String(json['description'] ?? ''),
     type: typeDocumentDepuisApi(String(json['type'] ?? '')),
+    typeEpreuve: json['typeEpreuve'] ? String(json['typeEpreuve']).toUpperCase() : undefined,
     matiere: matiereRef.nom ?? (matiereRef.id ? `Matière #${matiereRef.id}` : 'Matière'),
     // Mêmes replis que `DocumentModel.fromJson` côté Flutter : « Enseignant »
     // et « Université » affirmaient un libellé là où la donnée manque.

@@ -192,6 +192,12 @@ export class SettingsList implements OnInit {
             ]
           : []),
         {
+          icone: 'school',
+          titre: tr('profilEtudeTitre', 'Mon profil d’étude'),
+          sousTitre: tr('profilEtudeSousTitre', 'Objectif, matières difficiles, examen et rappels'),
+          action: () => void this.router.navigateByUrl('/app/' + AppRoutes.profilEtude),
+        },
+        {
           icone: 'library_books', titre: tr('profilMaBibliotheque', 'Bibliothèque'), sousTitre: tr('pwaParcourirMatieres', 'Parcourir les matières'),
           action: () => void this.router.navigate(['/app', AppRoutes.bibliotheque]),
         },

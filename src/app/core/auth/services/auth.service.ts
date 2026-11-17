@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, Injector, signal } from '@angular/core';
 import { tr } from '../../i18n';
 import { Router } from '@angular/router';
 import { AppRoutes } from '../../router/routes/app-routes';
@@ -10,7 +10,7 @@ import { VerificationStatut, determinerDestinationVerification, estApprouve } fr
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/services/verrouillage-app';
 import { Cycle, niveauCourt, NiveauEtude, NiveauxDuCycle, UserModel } from '../../models/user.model';
-import { ProfilGoogle, ReponseGoogle } from '../repositories/auth-repository';
+import { ProfilGoogle, ReponseGoogle, ProfilGithub, ReponseGithub } from '../repositories/auth-repository';
 import { ParcoursOtp } from '../../models/parcours-otp.model';
 import { StatutDemandeOtp } from '../../models/demande-otp.model';
 import { Failure } from '../../models/failure.model';
@@ -20,6 +20,8 @@ import { TabReuseStrategy } from '../../router/strategies/tab-reuse-strategy';
 import { NotificationsEtat } from '../../notifications/services/notifications-etat';
 import { HistoriqueRecherches } from '../../recherche/services/historique-recherches';
 import { StockageHorsLigne } from '../../bibliotheque/services/stockage-hors-ligne';
+import { ClasseBibliothequeService } from '../../bibliotheque/services/classe-bibliotheque.service';
+import { ContexteService } from '../../contexte/services/contexte.service';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
 const SPLASH_MIN_MS = 1500;
@@ -48,6 +50,8 @@ export class AuthService {
   private readonly notificationsEtat = inject(NotificationsEtat);
   private readonly historiqueRecherches = inject(HistoriqueRecherches);
   private readonly stockage = inject(StockageHorsLigne);
+  private readonly classeBiblio = inject(ClasseBibliothequeService);
+  private readonly injector = inject(Injector);
   private readonly router = inject(Router);
 
   private readonly _state = signal<AuthState>(ETAT_INITIAL);
@@ -109,10 +113,13 @@ export class AuthService {
       const locked = !!user && this.repo.hasLocalPin() && this.verrouillage.actif();
       if (user) {
         this.verification.syncFromUser(user);
-        const verif = await this.verification.refresh();
-        if (estApprouve(verif.statut)) {
-          if (user.verificationStatus && user.verificationStatus !== 'approuve') {
-            this.marquerCompteVerifie();
+        const enLigne = typeof navigator === 'undefined' || navigator.onLine !== false;
+        if (enLigne) {
+          const verif = await this.verification.refresh();
+          if (estApprouve(verif.statut)) {
+            if (user.verificationStatus && user.verificationStatus !== 'approuve') {
+              this.marquerCompteVerifie();
+            }
           }
         }
       }
@@ -388,6 +395,86 @@ export class AuthService {
     }
   }
 
+  // ── Connexion et inscription GitHub (Chantier P4) ─────────────────────────
+  readonly profilGithub = signal<ProfilGithub | null>(null);
+
+  abandonnerInscriptionGithub(): void {
+    this.repo.profilGithubEnAttente = null;
+    this.profilGithub.set(null);
+  }
+
+  async connexionGithub(
+    code: string,
+    redirectUri: string,
+    codeVerifier?: string,
+  ): Promise<{ code?: string; statusCode?: number; retryAfterSeconds?: number; message: string } | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const reponse = await this.repo.connexionGithub(code, redirectUri, codeVerifier);
+      await this.handleGithubAuthResponse(reponse);
+      return null;
+    } catch (e) {
+      const message = this.messageErreur(e, 'Connexion GitHub impossible. Réessaie.');
+      this.patch({ isLoading: false, error: message });
+      return {
+        code: e instanceof Failure ? e.code : undefined,
+        statusCode: e instanceof Failure ? e.statusCode : undefined,
+        retryAfterSeconds: e instanceof Failure ? e.retryAfterSeconds : undefined,
+        message,
+      };
+    }
+  }
+
+  async handleGithubAuthResponse(reponse: ReponseGithub): Promise<void> {
+    switch (reponse.status) {
+      case 'new_profile_incomplete':
+        this.profilGithub.set(reponse.profil);
+        this.patch({ isLoading: false });
+        await this.router.navigate(['/app', AppRoutes.register]);
+        return;
+      case 'authenticated': {
+        const user = this.repo.getCurrentUser() ?? undefined;
+        if (user) this.verification.syncFromUser(user);
+        this._state.set({ ...ETAT_INITIAL, isInitializing: false, user });
+        const verif = await this.verification.refresh();
+        const dest = determinerDestinationVerification(user, verif);
+        if (dest === AppRoutes.verificationPending) {
+          await this.router.navigateByUrl('/app/' + AppRoutes.verificationPending);
+        } else if (dest === AppRoutes.verificationForm) {
+          await this.router.navigateByUrl('/app/' + AppRoutes.verificationForm);
+        } else {
+          await this.router.navigate(['/app', AppRoutes.home]);
+        }
+        return;
+      }
+    }
+  }
+
+  async inscriptionGithub(infos: {
+    universite: string;
+    filiere: string;
+    niveau: string;
+    cycle?: string;
+    prenom?: string;
+    nom?: string;
+  }): Promise<{ code?: string; statusCode?: number; message: string } | null> {
+    this.patch({ isLoading: true, error: undefined });
+    try {
+      const reponse = await this.repo.inscriptionGithub(infos);
+      this.profilGithub.set(null);
+      await this.handleGithubAuthResponse(reponse);
+      return null;
+    } catch (e) {
+      const message = this.messageErreur(e, 'Inscription GitHub impossible. Réessaie.');
+      this.patch({ isLoading: false, error: message });
+      return {
+        code: e instanceof Failure ? e.code : undefined,
+        statusCode: e instanceof Failure ? e.statusCode : undefined,
+        message,
+      };
+    }
+  }
+
   /**
    * Première étape de la connexion : l'e-mail seul. Dit comment poursuivre -
    * saisir son PIN, saisir le code reçu par e-mail, ou passer par Google.
@@ -559,12 +646,26 @@ export class AuthService {
     return this.profilRepo.niveauxDuCycle();
   }
 
-  /** Change le niveau et met le profil local à jour. */
+  /** Change le niveau et met le profil local à jour (§3.9 & §6.10). */
   async changerNiveau(code: string): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });
+    const precedent = this._state().user;
     try {
-      const utilisateur = await this.profilRepo.changerNiveau(code);
+      const recu = await this.profilRepo.changerNiveau(code);
+      // Préserve établissement, cycle, filière et préférence linguistique (§3.9 & §6.10)
+      const utilisateur: UserModel = {
+        ...recu,
+        universite: recu.universite || precedent?.universite || '',
+        filiere: recu.filiere || precedent?.filiere || '',
+        cycle: recu.cycle ?? precedent?.cycle,
+        sectionPreference: recu.sectionPreference ?? precedent?.sectionPreference,
+      };
+      this.repo.saveUser(utilisateur);
+      // Quitte toute classe alternative temporaire et revient à la classe du compte actualisée (§6.10)
+      this.classeBiblio.revenirAMaClasse(utilisateur.id);
+      this.classeBiblio.invaliderCache();
       this.patch({ isLoading: false, user: utilisateur });
+      void this.injector.get(ContexteService).charger();
       void this.invaliderCacheProfil();
       return null;
     } catch (e) {
@@ -574,11 +675,23 @@ export class AuthService {
     }
   }
 
-  /** Enregistre la préférence de section académique et met le profil local à jour. */
+  /** Enregistre la préférence de section académique et met le profil local à jour (§3.8 & §4.6). */
   async changerSection(section: 'FRANCOPHONE' | 'ANGLOPHONE' | 'TOUTES'): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });
+    const precedent = this._state().user;
     try {
-      const utilisateur = await this.profilRepo.changerSection(section);
+      const recu = await this.profilRepo.changerSection(section);
+      // Préserve établissement, cycle, filière et niveau (§3.8)
+      const utilisateur: UserModel = {
+        ...recu,
+        universite: recu.universite || precedent?.universite || '',
+        filiere: recu.filiere || precedent?.filiere || '',
+        cycle: recu.cycle ?? precedent?.cycle,
+        niveau: recu.niveau ?? precedent?.niveau ?? NiveauEtude.n1,
+        sectionPreference: section,
+      };
+      this.repo.saveUser(utilisateur);
+      this.classeBiblio.invaliderCache();
       this.patch({ isLoading: false, user: utilisateur });
       void this.invaliderCacheProfil();
       return null;
@@ -644,9 +757,9 @@ export class AuthService {
   }
 
   // ── Déconnexion ───────────────────────────────────────────────────────────
-  async logout(): Promise<void> {
+  async logout(tousLesAppareils = false): Promise<void> {
     try {
-      await this.repo.logout();
+      await this.repo.logout(tousLesAppareils);
     } catch {
       // Ignoré volontairement : la session locale doit tomber quoi qu'il arrive.
     }
@@ -654,6 +767,12 @@ export class AuthService {
     this.notificationsEtat.reinitialiser();
     this.historiqueRecherches.vider();
     this.stockage.revoquerToutesUrlsLocales();
+    this.classeBiblio.reinitialiserSession();
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.removeItem('nl_economie_donnees');
+    } catch {
+      // Ignoré
+    }
     if (typeof caches !== 'undefined') {
       try {
         const cacheKeys = await caches.keys();
@@ -681,6 +800,12 @@ export class AuthService {
     this.notificationsEtat.reinitialiser();
     this.historiqueRecherches.vider();
     this.stockage.revoquerToutesUrlsLocales();
+    this.classeBiblio.reinitialiserSession();
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.removeItem('nl_economie_donnees');
+    } catch {
+      // Ignoré
+    }
     if (typeof caches !== 'undefined') {
       try {
         const cacheKeys = await caches.keys();

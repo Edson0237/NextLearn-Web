@@ -2,6 +2,31 @@
 
 export { DocumentType, enregistrerFormatsServeur, formatServeur, labelTypeDocument, metaDocument, noteDocument, typeConnu, typeDocumentDepuisApi } from './models/document.model';
 export type { DocumentModel } from './models/document.model';
+export {
+  DIMENSIONS_CATALOGUE,
+  FACETTES_VIDES,
+  cleCacheCatalogue,
+  codeFacetteString,
+  reponseCatalogueDepuisApi,
+  ressourceCarteDepuisApi,
+  ressourceVersDocumentModel,
+  sectionCatalogueDepuisPreference,
+} from './models/catalogue.model';
+export type {
+  ClasseConsultation,
+  ContexteClasseBibliotheque,
+  DimensionCatalogue,
+  Facettes,
+  FiltreSectionCatalogue,
+  FiltresActifsCatalogue,
+  ModeClasse,
+  ReponseCatalogue,
+  RequeteCatalogue,
+  RessourceCarte,
+  TriCatalogue,
+  ValeurFacette,
+} from './models/catalogue.model';
+export { ClasseBibliothequeService } from './services/classe-bibliotheque.service';
 export { DocumentsRepository } from './repositories/documents-repository';
 export { FavorisRepository } from './repositories/favoris-repository';
 export { LectureProgressRepository, pourcentageLu } from './repositories/lecture-progress-repository';

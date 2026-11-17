@@ -1,7 +1,7 @@
-import { metaDocument, noteDocument } from '../../../core/bibliotheque';
+import { metaDocument, noteDocument, DocumentsRepository } from '../../../core/bibliotheque';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CascadeEnter } from '../../../shared/directives/cascade-enter';
-import { TraductionPipe } from '../../../core/i18n';
+import { TraductionPipe, tr } from '../../../core/i18n';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DocumentCard } from '../../../shared/ui/document-card/document-card';
@@ -11,8 +11,12 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { Button } from '../../../shared/ui/button/button';
 import { FavorisRepository } from '../../../core/bibliotheque';
 import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
+import { Failure } from '../../../core/models';
 import { AppRoutes } from '../../../core/router';
 import { TypeDocumentPipe } from '../../../shared/ui/type-document/presentation-type-document';
+import { ToastService } from '../../../shared/ui/toast/toast';
+import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
+import { FavorisEtat } from '../../../shared/services/favoris-etat';
 
 import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-skeleton';
 
@@ -27,6 +31,10 @@ import { DocumentSkeleton } from '../../../shared/ui/document-skeleton/document-
 export class Favoris implements OnInit {
   private readonly router = inject(Router);
   private readonly favorisRepo = inject(FavorisRepository);
+  private readonly docsRepo = inject(DocumentsRepository);
+  private readonly favorisEtat = inject(FavorisEtat);
+  private readonly toast = inject(ToastService);
+  private readonly actions = inject(FeuilleActionService);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -53,8 +61,38 @@ export class Favoris implements OnInit {
     void this.router.navigate(['/app', AppRoutes.home]);
   }
 
-  protected openDocument(doc: DocumentModel): void {
-    void this.router.navigateByUrl('/app/' + AppRoutes.docDetailPath(doc.id));
+  protected async openDocument(doc: DocumentModel): Promise<void> {
+    try {
+      if (typeof (this.docsRepo as { getDocumentDetails?: unknown }).getDocumentDetails === 'function') {
+        const detail = await this.docsRepo.getDocumentDetails(doc.id);
+        if (!detail) {
+          await this.gererFavoriRetire(doc);
+          return;
+        }
+      }
+      void this.router.navigateByUrl('/app/' + AppRoutes.docDetailPath(doc.id));
+    } catch (e) {
+      if (e instanceof Failure && e.statusCode === 404) {
+        await this.gererFavoriRetire(doc);
+        return;
+      }
+      void this.router.navigateByUrl('/app/' + AppRoutes.docDetailPath(doc.id));
+    }
+  }
+
+  private async gererFavoriRetire(doc: DocumentModel): Promise<void> {
+    this.documents.update((liste) => liste.filter((d) => d.id !== doc.id));
+    this.toast.info(tr('docPlusDisponible', 'Ce document n’est plus disponible.'));
+    const retirer = await this.actions.confirmer({
+      title: tr('docPlusDisponible', 'Ce document n’est plus disponible'),
+      description: `« ${doc.titre} » a été retiré du catalogue. Veux-tu le retirer de tes favoris ?`,
+      confirmLabel: tr('docRetirerFavoris', 'Retirer des favoris'),
+      destructive: true,
+    });
+    if (retirer) {
+      await this.favorisRepo.removeFavorite(doc.id).catch(() => undefined);
+      void this.favorisEtat.charger();
+    }
   }
 
   protected async remove(doc: DocumentModel, event: Event): Promise<void> {
@@ -62,6 +100,7 @@ export class Favoris implements OnInit {
     try {
       await this.favorisRepo.removeFavorite(doc.id);
       this.documents.set(this.documents().filter((d) => d.id !== doc.id));
+      void this.favorisEtat.charger();
     } catch {
       // Silencieux : on garde la liste telle quelle.
     }

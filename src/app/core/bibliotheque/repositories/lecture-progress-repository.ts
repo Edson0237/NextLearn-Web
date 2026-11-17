@@ -104,6 +104,9 @@ export class LectureProgressRepository {
 
   /** Toute la progression de l'étudiant, indexée par document. */
   async getAll(): Promise<Map<string, LectureProgress>> {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return new Map(Object.entries(this.lireMiroir()));
+    }
     try {
       const reponse = await firstValueFrom(this.http.get('/api/progress/lecture'));
       const data = (reponse as Record<string, unknown>)?.['data'];
@@ -133,6 +136,9 @@ export class LectureProgressRepository {
 
   async getPour(documentId: string): Promise<LectureProgress | null> {
     const local = this.lireMiroir()[documentId] ?? null;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return local;
+    }
     try {
       const reponse = await firstValueFrom(this.http.get(`/api/progress/lecture/${documentId}`));
       const data = (reponse as Record<string, unknown>)?.['data'] as Record<string, unknown> | undefined;

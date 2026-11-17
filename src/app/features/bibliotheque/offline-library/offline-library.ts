@@ -68,6 +68,8 @@ export class OfflineLibrary implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly documents = signal<DocumentModel[]>([]);
   protected readonly offlineIds = signal<Set<string>>(new Set());
+  /** Documents présents sur l'appareil mais retirés du catalogue côté serveur (Chantier P7). */
+  protected readonly retiresDuCatalogue = signal<ReadonlySet<string>>(new Set());
   protected readonly favoris = signal<DocumentModel[]>([]);
   protected readonly progression = signal<Map<string, LectureProgress>>(new Map());
   /** Place occupée et place totale, en octets, telles que le navigateur et IndexedDB les estiment. */
@@ -136,11 +138,36 @@ export class OfflineLibrary implements OnInit {
     await this.stockage.rafraichir();
     const locaux = this.stockage.ids();
     const fichesLocales = this.stockage.fiches();
+    this.offlineIds.set(new Set(locaux));
+    this.documents.set([...fichesLocales]);
     await this.mesurerStockage();
 
+    const enLigne = typeof navigator === 'undefined' || navigator.onLine !== false;
+    if (!enLigne) {
+      const avancementLocal = await this.lectures
+        .getAll()
+        .catch(() => new Map<string, LectureProgress>());
+      this.progression.set(avancementLocal);
+      this.loading.set(false);
+      return;
+    }
+
+    // Des fiches locales existent déjà : on lève le squelette sans bloquer leur lecture,
+    // puis on fusionne la synchro serveur dès qu'elle répond.
+    if (fichesLocales.length > 0) {
+      this.loading.set(false);
+    }
+
     try {
+      let synchroServeurOk = false;
       const [ids, favoris, avancement] = await Promise.all([
-        this.offlineRepo.getOfflineIds().catch(() => new Set<string>()),
+        this.offlineRepo
+          .getOfflineIds()
+          .then((res) => {
+            synchroServeurOk = true;
+            return res;
+          })
+          .catch(() => new Set<string>()),
         this.favorisRepo.getFavorites().catch(() => [] as DocumentModel[]),
         this.lectures.getAll().catch(() => new Map<string, LectureProgress>()),
       ]);
@@ -148,6 +175,15 @@ export class OfflineLibrary implements OnInit {
       this.documents.set([...fichesLocales]);
       this.favoris.set(favoris);
       this.progression.set(avancement);
+      if (synchroServeurOk && locaux.size > 0) {
+        const retires = new Set<string>();
+        for (const idLocal of locaux) {
+          if (!ids.has(idLocal)) {
+            retires.add(idLocal);
+          }
+        }
+        this.retiresDuCatalogue.set(retires);
+      }
     } catch {
       // Hors ligne : les fiches rangées dans IndexedDB avec les fichiers
       // suffisent à dresser la liste complète sans aucun appel réseau.
@@ -244,9 +280,15 @@ export class OfflineLibrary implements OnInit {
     return this.stockage.infoDocument(doc.id);
   }
 
-  /** « Disponible hors ligne » + format (`PDF`/`DOCX`) pour les documents enregistrés dans IndexedDB. */
+  /** « Disponible hors ligne » + format (`PDF`/`DOCX`) + « Retiré du catalogue » (Chantier P7). */
   protected etiquettesDe(doc: DocumentModel): EtiquetteDocument[] {
     const etiquettes: EtiquetteDocument[] = [{ texte: doc.matiere }];
+    if (this.retiresDuCatalogue().has(doc.id)) {
+      etiquettes.push({
+        texte: tr('docRetireDuCatalogue', 'Retiré du catalogue'),
+        icone: 'warning',
+      });
+    }
     const info = this.infoLocaleDe(doc);
     if (info || this.stockage.ids().has(doc.id)) {
       etiquettes.push({

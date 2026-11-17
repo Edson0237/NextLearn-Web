@@ -86,6 +86,7 @@ export const authGuard: CanActivateChildFn = (_route, state) => {
     const routesPubliques = [
       AppRoutes.onboarding, AppRoutes.register, AppRoutes.otp,
       AppRoutes.pinSetup, AppRoutes.login, AppRoutes.loginOtp,
+      AppRoutes.githubCallback,
     ];
     const estRoutePublique = routesPubliques.some((r) => chemin === r || chemin.startsWith(r));
 

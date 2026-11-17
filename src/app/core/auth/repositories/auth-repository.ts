@@ -15,7 +15,15 @@ import { enFailure } from '../../network/utils/erreur-api';
 import { donnees } from '../../network/utils/enveloppe-api';
 
 /** Les routes d'authentification qui peuvent créer une session. */
-const OUVRENT_UNE_SESSION: ReadonlySet<string> = new Set(['/setup-pin', '/login', '/google', '/google/inscription', '/verify-2fa']);
+const OUVRENT_UNE_SESSION: ReadonlySet<string> = new Set([
+  '/setup-pin',
+  '/login',
+  '/google',
+  '/google/inscription',
+  '/github',
+  '/github/inscription',
+  '/verify-2fa',
+]);
 
 /** Durée de repli hors ligne quand aucune échéance n'a encore été mise en cache. */
 const OTP_VALIDITY_MS = 30 * 24 * 60 * 60 * 1000;
@@ -57,6 +65,44 @@ export interface ProfilGoogle {
   readonly picture?: string;
   /** Faux pour une adresse personnelle (gmail…) : Google prouve la boîte mail, pas l'appartenance à l'école. */
   readonly institutionnel: boolean;
+}
+
+export interface ConfigGithub {
+  readonly enabled: boolean;
+  readonly clientId?: string;
+  readonly scope?: string;
+  readonly authorizeUrl?: string;
+  readonly injoignable?: boolean;
+}
+
+/** L'identité certifiée par GitHub, avant que le compte NextLearn n'existe. */
+export interface ProfilGithub {
+  readonly email: string;
+  readonly githubId: string;
+  readonly login: string;
+  readonly prenom: string;
+  readonly nom: string;
+  readonly picture?: string;
+  readonly institutionnel: boolean;
+}
+
+export type ReponseGithub =
+  | { readonly status: 'new_profile_incomplete'; readonly profil: ProfilGithub; readonly tempToken?: string; readonly expiresIn?: number }
+  | { readonly status: 'authenticated'; readonly verificationStatus?: 'pending' };
+
+export function configGithubDepuisApi(data: Record<string, unknown>): ConfigGithub {
+  const clientId = typeof data['clientId'] === 'string' && data['clientId'].trim() ? data['clientId'].trim() : undefined;
+  const enabled = data['enabled'] === true && !!clientId;
+  if (!enabled) return { enabled: false };
+  return {
+    enabled: true,
+    clientId,
+    scope: typeof data['scope'] === 'string' && data['scope'].trim() ? data['scope'].trim() : 'read:user user:email',
+    authorizeUrl:
+      typeof data['authorizeUrl'] === 'string' && data['authorizeUrl'].trim()
+        ? data['authorizeUrl'].trim()
+        : 'https://github.com/login/oauth/authorize',
+  };
 }
 
 /**
@@ -166,6 +212,9 @@ export class AuthRepository {
    * Ne pas pouvoir poser la question n'est pas une réponse.
    */
   private async demanderEtatVerification(): Promise<CycleVerification | null | 'injoignable'> {
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return 'injoignable';
+    }
     try {
       const reponse = await firstValueFrom(this.http.get(`${AUTH_PATH}/verification-status`));
       return cycleVerificationDepuisJson(donnees(reponse));
@@ -389,6 +438,94 @@ export class AuthRepository {
     throw new Failure('Réponse inattendue du serveur.');
   }
 
+  // ── Connexion GitHub (Chantier P4) ───────────────────────────────────────
+
+  /** Faut-il proposer « Continuer avec GitHub », et avec quels paramètres OAuth ? Ne lève jamais. */
+  async configGithub(): Promise<ConfigGithub> {
+    try {
+      const data = donnees(await firstValueFrom(this.http.get(`${AUTH_PATH}/github/config`)));
+      return configGithubDepuisApi(data);
+    } catch {
+      return { enabled: false, injoignable: true };
+    }
+  }
+
+  /** Échange le code OAuth GitHub contre une session ou un profil à compléter. */
+  async connexionGithub(
+    code: string,
+    redirectUri: string,
+    codeVerifier?: string,
+  ): Promise<ReponseGithub> {
+    const data = await this.poster('/github', {
+      code,
+      redirectUri,
+      ...(codeVerifier ? { codeVerifier } : {}),
+      ...this.appareil.pourLAPI(),
+    });
+    return this.statutGithub(data);
+  }
+
+  /** Termine l'inscription d'une première visite GitHub : crée le compte et ouvre la session. */
+  async inscriptionGithub(infos: {
+    universite: string;
+    filiere: string;
+    niveau: string;
+    cycle?: string;
+    prenom?: string;
+    nom?: string;
+  }): Promise<ReponseGithub> {
+    const tempToken = this.profilGithubEnAttente?.tempToken;
+    if (!tempToken) throw new Failure('Cette démarche a expiré. Reconnecte-toi avec GitHub.');
+    const data = await this.poster('/github/inscription', {
+      tempToken,
+      ...infos,
+      ...this.appareil.pourLAPI(),
+    });
+    this.profilGithubEnAttente = null;
+    return this.statutGithub(data);
+  }
+
+  /** La première visite GitHub en cours : l'identité vérifiée, en attendant le parcours académique. */
+  profilGithubEnAttente: { tempToken: string; profil: ProfilGithub } | null = null;
+
+  private async statutGithub(data: Record<string, unknown>): Promise<ReponseGithub> {
+    const status = data['status'];
+    if (status === 'authenticated') {
+      await this.ouvrirSession(data);
+      this.storage.clearTempToken();
+      return {
+        status,
+        ...(data['verificationStatus'] === 'pending' || data['verificationStatus'] === 'requis'
+          ? { verificationStatus: 'pending' as const }
+          : {}),
+      };
+    }
+    const tempToken = data['tempToken'];
+    if (typeof tempToken !== 'string' || tempToken.length === 0) {
+      throw new Failure('Le serveur n’a pas renvoyé de jeton temporaire.');
+    }
+    if (status === 'new_profile_incomplete') {
+      const p = (data['profil'] ?? {}) as Record<string, unknown>;
+      const profil: ProfilGithub = {
+        email: String(data['email'] ?? p['email'] ?? ''),
+        githubId: String(data['githubId'] ?? p['githubId'] ?? ''),
+        login: String(p['login'] ?? data['login'] ?? ''),
+        prenom: String(p['prenom'] ?? ''),
+        nom: String(p['nom'] ?? ''),
+        picture: p['picture'] == null ? undefined : String(p['picture']),
+        institutionnel: p['institutionnel'] !== false,
+      };
+      this.profilGithubEnAttente = { tempToken, profil };
+      return {
+        status,
+        profil,
+        tempToken,
+        expiresIn: typeof data['expiresIn'] === 'number' ? data['expiresIn'] : 900,
+      };
+    }
+    throw new Failure('Réponse inattendue du serveur.');
+  }
+
   async verifyLoginOtp(code: string): Promise<void> {
     const tempToken = this.storage.getTempToken();
     if (!tempToken) throw new Failure('Cette démarche a expiré. Recommencez.');
@@ -433,9 +570,14 @@ export class AuthRepository {
     this.storage.saveLastOtpVerifiedAt(new Date());
   }
 
-  async logout(): Promise<void> {
+  async logout(tousLesAppareils = false): Promise<void> {
     try {
-      await firstValueFrom(this.http.post(`${AUTH_PATH}/logout`, {}));
+      await firstValueFrom(
+        this.http.post(
+          `${AUTH_PATH}/logout`,
+          tousLesAppareils ? { tousLesAppareils: true } : {},
+        ),
+      );
     } catch {
       // Réseau absent, jeton déjà expiré, serveur indisponible : la session
       // locale doit tomber malgré tout.

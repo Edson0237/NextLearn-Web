@@ -20,41 +20,64 @@
         <button type="button" class="nl-ses__revoke-others" (click)="revoquerLesAutres()">{{ 'pwaDeconnecterAutresAppareils' | t }}</button>
       }
 
-      <ul class="nl-ses__liste">
-        @for (session of sessions(); track session.sessionId) {
-          <li class="nl-ses__item" [class.nl-ses__item--courante]="session.courante">
-            <div class="nl-ses__item-main">
-              <div class="nl-ses__item-icon">
-                <nl-icon [name]="iconePour(session)" [size]="22" />
+      @if (sessions().length === 0) {
+        <div class="nl-ses__vide">
+          <p>{{ 'sessionsAucuneActive' | t }}</p>
+        </div>
+      } @else {
+        <ul class="nl-ses__liste">
+          @for (session of sessions(); track session.sessionId) {
+            <li class="nl-ses__item" [class.nl-ses__item--courante]="session.courante">
+              <div class="nl-ses__item-main">
+                <div class="nl-ses__item-icon">
+                  <nl-icon [name]="iconePour(session)" [size]="22" />
+                </div>
+                <div class="nl-ses__item-text">
+                  <span class="nl-ses__item-nom">
+                    {{ session.appareil }}
+                    @if (session.courante) {
+                      <span class="nl-ses__badge-courante">{{ 'sessionsCetAppareil' | t }}</span>
+                    }
+                  </span>
+                  <span class="nl-ses__item-meta">
+                    @if (session.pays) {
+                      <span>{{ nomPays(session.pays) }}</span>
+                    }
+                    @if (session.ip) {
+                      <span>{{ session.pays ? ' · ' : '' }}{{ session.ip }}</span>
+                    }
+                    @if (session.derniereActivite) {
+                      <span>{{ (session.pays || session.ip) ? ' · ' : '' }}{{ formatActiviteRelative(session.derniereActivite) }}</span>
+                    }
+                    @if (session.creeeLe) {
+                      <span>{{ (session.pays || session.ip || session.derniereActivite) ? ' · ' : '' }}{{ 'sessionsConnecteeLe' | t }} {{ formatDate(session.creeeLe) }}</span>
+                    }
+                  </span>
+                </div>
               </div>
-              <div class="nl-ses__item-text">
-                <span class="nl-ses__item-nom">
-                  {{ session.appareil }}
-                  @if (session.courante) {
-                    <span class="nl-ses__badge-courante">{{ 'sessionsCetAppareil' | t }}</span>
-                  }
-                </span>
-                <span class="nl-ses__item-meta">
-                  {{ session.plateforme }} {{ session.versionApp }}
-                  @if (session.derniereActivite) {
-                    {{ 'sessionsActifLe' | t }} {{ formatDate(session.derniereActivite) }}
-                  }
-                </span>
-              </div>
-            </div>
-            @if (!session.courante) {
-              <button
-                type="button"
-                class="nl-ses__item-action"
-                (click)="revoquer(session)"
-                [attr.aria-label]="'Déconnecter ' + session.appareil"
-              >
-                <nl-icon name="logout" [size]="18" />
-              </button>
-            }
-          </li>
+              @if (!session.courante) {
+                <button
+                  type="button"
+                  class="nl-ses__item-action"
+                  (click)="revoquer(session)"
+                  [attr.aria-label]="'Déconnecter ' + session.appareil"
+                >
+                  <nl-icon name="logout" [size]="18" />
+                </button>
+              }
+            </li>
+          }
+        </ul>
+
+        @if (sessions().length === 1) {
+          <p class="nl-ses__seule-info">{{ 'sessionsUnSeulAppareil' | t }}</p>
         }
-      </ul>
+
+        <button type="button" class="nl-ses__logout-all" (click)="deconnecterPartout()">
+          <nl-icon name="logout" [size]="16" />
+          <span>{{ 'sessionsDeconnecterPartout' | t }}</span>
+        </button>
+      }
     }
   </main>
 </div>

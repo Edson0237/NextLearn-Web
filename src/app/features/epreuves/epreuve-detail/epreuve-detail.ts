@@ -5,11 +5,12 @@ import { TraductionPipe } from '../../../core/i18n';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EpreuvesRepository } from '../../../core/epreuves';
 import { EpreuveModel, TypeEpreuve, typeEpreuveCle } from '../../../core/epreuves';
-import { DocumentModel, DocumentType, StockageHorsLigne } from '../../../core/bibliotheque';
+import { ClasseBibliothequeService, DocumentModel, DocumentType, StockageHorsLigne } from '../../../core/bibliotheque';
 import { TelechargementEtat } from '../../../shared/services/telechargement-etat';
 import { Icon } from '../../../shared/ui/icon/icon';
 import { Badge } from '../../../shared/ui/badge/badge';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
+import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { Failure } from '../../../core/models';
 import { SignalementFlux } from '../../../shared/ui/signalement/signalement-flux';
@@ -33,7 +34,7 @@ import { AppRoutes } from '../../../core/router';
 @Component({
   selector: 'app-epreuve-detail',
   standalone: true,
-  imports: [TraductionPipe, Icon, Badge, PageBar],
+  imports: [TraductionPipe, Icon, Badge, PageBar, EmptyState],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './epreuve-detail.html',
   styleUrl: './epreuve-detail.scss',
@@ -44,6 +45,7 @@ export class EpreuveDetail {
 
   protected readonly telechargements = inject(TelechargementEtat);
   private readonly stockage = inject(StockageHorsLigne);
+  private readonly classeBiblio = inject(ClasseBibliothequeService);
   private readonly repo = inject(EpreuvesRepository);
   private readonly toast = inject(ToastService);
   private readonly signalement = inject(SignalementFlux);
@@ -78,6 +80,10 @@ export class EpreuveDetail {
       const ep = await this.repo.getById(this.id);
       if (!ep) {
         this.statut.set('introuvable');
+        if (this.id) {
+          void this.notifEtat.marquerRessourceLue('epreuve', this.id);
+          this.classeBiblio.invaliderCache();
+        }
         return;
       }
       this.epreuve.set(ep);
@@ -107,6 +113,14 @@ export class EpreuveDetail {
           noteMoyenne: localDoc.noteMoyenne,
         });
         this.statut.set('pret');
+        return;
+      }
+      if (e instanceof Failure && e.statusCode === 404) {
+        this.statut.set('introuvable');
+        if (this.id) {
+          void this.notifEtat.marquerRessourceLue('epreuve', this.id);
+          this.classeBiblio.invaliderCache();
+        }
         return;
       }
       this.erreur.set(e instanceof Failure ? e.message : 'Erreur de chargement.');
@@ -200,6 +214,10 @@ export class EpreuveDetail {
     } finally {
       this.envoiNote.set(false);
     }
+  }
+
+  protected allerBibliotheque(): void {
+    void this.router.navigate(['/app', AppRoutes.bibliotheque]);
   }
 
   protected retour(): void {

@@ -1,5 +1,10 @@
 @if (erreurFatale(); as erreur) {
-  <nl-fatal-error class="nl-app" [showDetails]="modeDebug" [details]="erreur.details" />
+  <nl-fatal-error
+    class="nl-app"
+    [canGoBack]="true"
+    [showDetails]="modeDebug"
+    [details]="erreur.details"
+    (back)="revenirApresErreur()" />
 } @else {
   <router-outlet />
 }

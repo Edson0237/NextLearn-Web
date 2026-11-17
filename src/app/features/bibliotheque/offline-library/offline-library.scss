@@ -128,6 +128,18 @@
   gap: var(--space-md);
 }
 
+.offline__alerte {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--warning) 40%, var(--border));
+  background: color-mix(in srgb, var(--warning) 10%, var(--bg-primary));
+  color: var(--text-primary);
+  @include type.nl-body-sm;
+}
+
 .offline__synchro {
   display: flex;
   align-items: center;

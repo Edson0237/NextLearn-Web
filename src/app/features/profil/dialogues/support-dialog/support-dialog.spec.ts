@@ -1,4 +1,7 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { TraductionService } from '../../../../core/i18n';
 import { SupportRepository } from '../../../../core/profil';
 import { ToastService } from '../../../../shared/ui/toast/toast';
 import { Failure } from '../../../../core/models';
@@ -10,12 +13,23 @@ describe('SupportDialog', () => {
 
   function creer() {
     TestBed.configureTestingModule({
-      providers: [{ provide: SupportRepository, useValue: repo }, { provide: ToastService, useValue: toast }],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: SupportRepository, useValue: repo },
+        { provide: ToastService, useValue: toast },
+      ],
     });
     return TestBed.createComponent(SupportDialog).componentInstance as any;
   }
 
-  beforeEach(() => { repo.createTicket.mockReset(); toast.succes.mockReset(); toast.erreur.mockReset(); });
+  beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem('nl_langue', 'fr');
+    repo.createTicket.mockReset();
+    toast.succes.mockReset();
+    toast.erreur.mockReset();
+  });
 
   it('n’envoie rien tant que le sujet ou le message manque', () => {
     const c = creer();
@@ -48,5 +62,43 @@ describe('SupportDialog', () => {
     expect(ferme).toBe(false);
     expect(toast.erreur).toHaveBeenCalledWith('Le serveur met du temps à répondre.');
     expect(c.envoi()).toBe(false);
+  });
+
+  it('met immédiatement à jour les catégories de signalement lors du changement de langue FR -> EN', async () => {
+    const c = creer();
+    const traductions = TestBed.inject(TraductionService);
+    const httpMock = TestBed.inject(HttpTestingController);
+
+    expect(c.categories().map((x: { label: string }) => x.label)).toEqual([
+      'Connexion',
+      'Document',
+      'Compte',
+      "Bug de l'application",
+      'Autre',
+    ]);
+
+    const promesse = traductions.definir('en');
+    httpMock.expectOne('/i18n/en.json').flush({
+      supportCatConnexion: 'Signing in',
+      supportCatDocument: 'Document',
+      supportCatCompte: 'My account',
+      supportCatBug: 'App bug',
+      supportCatAutre: 'Other',
+    });
+    await promesse;
+
+    expect(c.categories().map((x: { label: string }) => x.label)).toEqual([
+      'Signing in',
+      'Document',
+      'My account',
+      'App bug',
+      'Other',
+    ]);
+
+    const retourFr = traductions.definir('fr');
+    httpMock.expectOne('/i18n/fr.json').flush({});
+    await retourFr;
+    httpMock.verify();
+    localStorage.clear();
   });
 });

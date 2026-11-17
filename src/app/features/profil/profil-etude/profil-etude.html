@@ -1,0 +1,269 @@
+<div class="nl-pet">
+  <nl-page-bar [titre]="'profilEtudeTitre' | t" (retour)="retour()" />
+
+  <main class="nl-pet__corps">
+    @if (chargement()) {
+      <div class="nl-pet__squelette" aria-busy="true">
+        <div class="nl-pet__squelette-bloc"></div>
+        <div class="nl-pet__squelette-bloc"></div>
+        <div class="nl-pet__squelette-bloc"></div>
+      </div>
+    } @else if (erreur(); as msg) {
+      <div class="nl-pet__erreur" role="alert">
+        <nl-icon name="warning" [size]="24" />
+        <p>{{ msg }}</p>
+        <button type="button" class="nl-pet__btn-primaire" (click)="charger()">
+          {{ 'actionReessayer' | t }}
+        </button>
+      </div>
+    } @else if (profil(); as p) {
+      <!-- Progression de complétude + 1 seule invitation à la fois -->
+      <section class="nl-pet__carte">
+        <div class="nl-pet__progression-entete">
+          <strong>{{ 'profilEtudeCompletude' | t }}</strong>
+          <span class="nl-pet__pourcentage">{{ p.completude.pourcentage }} %</span>
+        </div>
+        <div class="nl-pet__jauge" role="progressbar" [attr.aria-valuenow]="p.completude.pourcentage" aria-valuemin="0" aria-valuemax="100">
+          <div class="nl-pet__jauge-barre" [style.width.%]="p.completude.pourcentage"></div>
+        </div>
+        @if (invitationActive(); as inv) {
+          <div class="nl-pet__invitation">
+            <nl-icon name="lightbulb" [size]="18" />
+            <span>{{ inv.texte }}</span>
+          </div>
+        }
+      </section>
+
+      <!-- Objectif -->
+      <section class="nl-pet__carte">
+        <h2 class="nl-pet__section-titre">{{ 'profilEtudeObjectif' | t }}</h2>
+        <div class="nl-pet__puces">
+          @for (o of objectifs; track o.value) {
+            <button
+              type="button"
+              class="nl-pet__puce"
+              [class.nl-pet__puce--active]="p.etude.objectif === o.value"
+              [disabled]="sauvegarde()"
+              (click)="choisirObjectif(o.value)"
+            >
+              {{ o.labelCle | t }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- Date du prochain examen -->
+      <section class="nl-pet__carte">
+        <div class="nl-pet__ligne-entete">
+          <h2 class="nl-pet__section-titre">{{ 'profilEtudeProchainExamen' | t }}</h2>
+          @if (p.etude.joursAvantExamen !== null) {
+            <span class="nl-pet__badge-jours">J-{{ p.etude.joursAvantExamen }}</span>
+          }
+        </div>
+        <div class="nl-pet__date-rangee">
+          <input
+            type="date"
+            class="nl-pet__input"
+            [attr.aria-label]="'profilEtudeProchainExamen' | t"
+            [value]="p.etude.dateProchainExamen ?? ''"
+            [disabled]="sauvegarde()"
+            (change)="surChangementDateExamen($event)"
+          />
+          @if (p.etude.dateProchainExamen) {
+            <button
+              type="button"
+              class="nl-pet__btn-secondaire"
+              [disabled]="sauvegarde()"
+              (click)="effacerDateExamen()"
+            >
+              {{ 'actionEffacer' | t }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <!-- Matières difficiles (max 15) + accès rapide vers Explorer -->
+      <section class="nl-pet__carte">
+        <h2 class="nl-pet__section-titre">{{ 'profilEtudeMatieresDifficiles' | t }}</h2>
+        @if (p.etude.matieresDifficiles.length > 0) {
+          <div class="nl-pet__selectionnees">
+            @for (m of p.etude.matieresDifficiles; track m.id) {
+              <div class="nl-pet__matiere-item">
+                <button
+                  type="button"
+                  class="nl-pet__matiere-lien"
+                  (click)="explorerMatiere(m.id)"
+                >
+                  <span>{{ m.nom }}</span>
+                  <nl-icon name="open_in_new" [size]="14" />
+                </button>
+                <button
+                  type="button"
+                  class="nl-pet__matiere-retirer"
+                  [disabled]="sauvegarde()"
+                  (click)="basculerMatiereDifficile(m.id)"
+                  [attr.aria-label]="('actionRetirerFiltre' | t) + ' ' + m.nom"
+                >
+                  <nl-icon name="close" [size]="14" />
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        @if (catalogueMatieres().length > 0) {
+          <input
+            type="search"
+            class="nl-pet__input"
+            [attr.aria-label]="'actionRechercher' | t"
+            [attr.placeholder]="'actionRechercher' | t"
+            [value]="rechercheMatiere()"
+            (input)="rechercheMatiere.set(val($event))"
+          />
+          <div class="nl-pet__puces">
+            @for (m of matieresProposees(); track m.id) {
+              <button
+                type="button"
+                class="nl-pet__puce"
+                [class.nl-pet__puce--active]="idsDifficiles().has(m.id)"
+                [disabled]="sauvegarde()"
+                (click)="basculerMatiereDifficile(m.id)"
+              >
+                {{ m.nom }}
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Langues et formats préférés -->
+      <section class="nl-pet__carte">
+        <h2 class="nl-pet__section-titre">{{ 'profilEtudePreferencesContenu' | t }}</h2>
+        <div class="nl-pet__puces">
+          <button
+            type="button"
+            class="nl-pet__puce"
+            [class.nl-pet__puce--active]="p.etude.languesDocuments.includes('fr')"
+            [disabled]="sauvegarde()"
+            (click)="basculerLangueDoc('fr')"
+          >
+            {{ 'sectionFrancophone' | t }} (FR)
+          </button>
+          <button
+            type="button"
+            class="nl-pet__puce"
+            [class.nl-pet__puce--active]="p.etude.languesDocuments.includes('en')"
+            [disabled]="sauvegarde()"
+            (click)="basculerLangueDoc('en')"
+          >
+            {{ 'sectionAnglophone' | t }} (EN)
+          </button>
+          <button
+            type="button"
+            class="nl-pet__puce"
+            [class.nl-pet__puce--active]="p.etude.formatsPreferes.includes('pdf')"
+            [disabled]="sauvegarde()"
+            (click)="basculerFormatPrefere('pdf')"
+          >
+            PDF
+          </button>
+          <button
+            type="button"
+            class="nl-pet__puce"
+            [class.nl-pet__puce--active]="p.etude.formatsPreferes.includes('docx')"
+            [disabled]="sauvegarde()"
+            (click)="basculerFormatPrefere('docx')"
+          >
+            DOCX
+          </button>
+        </div>
+      </section>
+
+      <!-- Rappels, Économie de données & Suivi -->
+      <section class="nl-pet__carte">
+        <h2 class="nl-pet__section-titre">{{ 'profilEtudeRappelsEtDonnees' | t }}</h2>
+
+        <div class="nl-pet__option-ligne">
+          <div class="nl-pet__option-texte">
+            <strong>{{ 'profilEtudeRappelsQuotidien' | t }}</strong>
+            <small>{{ 'profilEtudeRappelsAide' | t }}</small>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            class="nl-pet__switch"
+            [attr.aria-label]="'profilEtudeRappelsQuotidien' | t"
+            [class.nl-pet__switch--on]="p.etude.rappels.actifs"
+            [attr.aria-checked]="p.etude.rappels.actifs"
+            [disabled]="sauvegarde()"
+            (click)="basculerRappels()"
+          >
+            <span class="nl-pet__switch-curseur"></span>
+          </button>
+        </div>
+
+        @if (p.etude.rappels.actifs) {
+          <div class="nl-pet__date-rangee">
+            <label class="nl-pet__heure-label">
+              <span>{{ 'profilEtudeHeureRappel' | t }}</span>
+              <input
+                type="time"
+                class="nl-pet__input"
+                [value]="p.etude.rappels.heure ?? '18:30'"
+                [disabled]="sauvegarde()"
+                (change)="surChangementHeureRappel($event)"
+              />
+            </label>
+          </div>
+        }
+
+        <div class="nl-pet__option-ligne">
+          <div class="nl-pet__option-texte">
+            <strong>{{ 'profilEtudeEconomieDonnees' | t }}</strong>
+            <small>{{ 'profilEtudeEconomieDonneesAide' | t }}</small>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            class="nl-pet__switch"
+            [attr.aria-label]="'profilEtudeEconomieDonnees' | t"
+            [class.nl-pet__switch--on]="p.etude.economieDonnees"
+            [attr.aria-checked]="p.etude.economieDonnees"
+            [disabled]="sauvegarde()"
+            (click)="basculerEconomieDonnees()"
+          >
+            <span class="nl-pet__switch-curseur"></span>
+          </button>
+        </div>
+
+        <div class="nl-pet__option-ligne">
+          <div class="nl-pet__option-texte">
+            <strong>{{ 'profilEtudeConsentementSuivi' | t }}</strong>
+            <small>{{ 'profilEtudeConsentementSuiviAide' | t }}</small>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            class="nl-pet__switch"
+            [attr.aria-label]="'profilEtudeConsentementSuivi' | t"
+            [class.nl-pet__switch--on]="p.etude.consentementSuivi === true"
+            [attr.aria-checked]="p.etude.consentementSuivi === true"
+            [disabled]="sauvegarde()"
+            (click)="basculerConsentementSuivi()"
+          >
+            <span class="nl-pet__switch-curseur"></span>
+          </button>
+        </div>
+      </section>
+
+      <button
+        type="button"
+        class="nl-pet__reset"
+        [disabled]="sauvegarde()"
+        (click)="reinitialiserProfil()"
+      >
+        {{ 'profilEtudeResetBouton' | t }}
+      </button>
+    }
+  </main>
+</div>

@@ -38,8 +38,9 @@ const CHEMINS_SANS_JETON: readonly string[] = [
   '/auth/reset-pin',
   '/auth/confirm-reset-pin',
   '/auth/refresh',
-  // Connexion Google : le jeton d'identité est la preuve, il n'y a pas encore de session.
+  // Connexion Google / GitHub : le jeton ou le code d'identité est la preuve, il n'y a pas encore de session.
   '/auth/google',
+  '/auth/github',
 ];
 
 /**

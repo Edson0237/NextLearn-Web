@@ -5,7 +5,7 @@
     <label class="nl-sl__support-field">
       <span>{{ 'supportTypeProbleme' | t }}</span>
       <select [value]="categorie()" (change)="categorie.set(val($event))">
-        @for (cat of categories; track cat.value) {
+        @for (cat of categories(); track cat.value) {
           <option [value]="cat.value">{{ cat.label }}</option>
         }
       </select>

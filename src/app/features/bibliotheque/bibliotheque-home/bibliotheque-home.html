@@ -50,6 +50,33 @@
         {{ sec.label }}
       </button>
     }
+    @if (filtreSectionTemporaire()) {
+      <button
+        type="button"
+        class="nl-biblio__puce nl-biblio__puce--lien nl-cible-fine"
+        (click)="revenirASectionProfil()">
+        <nl-icon name="arrow_back" [size]="14" />
+        {{ 'biblioRevenirSectionProfil' | t }}
+      </button>
+    }
+    @for (nat of naturesEpreuve(); track nat.value) {
+      <button
+        type="button"
+        class="nl-biblio__puce nl-cible-fine"
+        [class.nl-biblio__puce--active]="selectedTypeEpreuve() === nat.value"
+        (click)="selectTypeEpreuve(nat.value)">
+        {{ nat.label }} <span class="nl-biblio__puce-compte">{{ nat.n }}</span>
+      </button>
+    }
+    @for (sem of semestresDisponibles(); track sem.value) {
+      <button
+        type="button"
+        class="nl-biblio__puce nl-cible-fine"
+        [class.nl-biblio__puce--active]="selectedSemestre() === sem.value"
+        (click)="selectSemestre(sem.value)">
+        {{ sem.label }} <span class="nl-biblio__puce-compte">{{ sem.n }}</span>
+      </button>
+    }
   </div>
 
   <!-- Les matières du programme. Deuxième niveau de filtre : on choisit
@@ -89,6 +116,29 @@
     </div>
   }
 
+  @if (pastillesActives().length > 0) {
+    <div class="nl-biblio__pastilles" role="region" [attr.aria-label]="'biblioFiltresActifs' | t">
+      @for (p of pastillesActives(); track p.cle) {
+        <button
+          type="button"
+          class="nl-biblio__pastille nl-cible-fine"
+          (click)="retirerPastille(p.cle)"
+          [attr.aria-label]="('actionRetirerFiltre' | t) + ' ' + p.label"
+        >
+          <span>{{ p.label }}</span>
+          <nl-icon name="close" [size]="14" />
+        </button>
+      }
+      <button
+        type="button"
+        class="nl-biblio__pastille-reset nl-cible-fine"
+        (click)="reinitialiser()"
+      >
+        {{ 'biblioToutEffacer' | t }}
+      </button>
+    </div>
+  }
+
   <div class="nl-biblio__corps">
     @if (loading()) {
       <div aria-busy="true" aria-live="polite">
@@ -100,22 +150,68 @@
       <div class="nl-biblio__erreur">
         <nl-icon name="warning" [size]="22" />
         <p>{{ message }}</p>
-        <button nlButton variant="primary" size="sm" (click)="load()">
-          {{ 'actionReessayer' | t }}
-        </button>
+        <div class="nl-biblio__erreur-actions">
+          <button nlButton variant="primary" size="sm" (click)="actualiserCatalogue()">
+            {{ 'actionReessayer' | t }}
+          </button>
+          @if (errorRequestId(); as reqId) {
+            <button
+              type="button"
+              class="nl-biblio__erreur-details-btn"
+              (click)="detailsErreurOuverts.set(!detailsErreurOuverts())"
+            >
+              {{ 'erreurVoirDetails' | t }}
+            </button>
+          }
+        </div>
+        @if (detailsErreurOuverts() && errorRequestId(); as reqId) {
+          <div class="nl-biblio__erreur-details">
+            <span class="nl-biblio__erreur-reqid">{{ 'erreurIdentifiantSupport' | t }} : <code>{{ reqId }}</code></span>
+            <button type="button" class="nl-biblio__erreur-copier" (click)="copierRequestId()">
+              {{ (requestIdCopie() ? 'actionCopie' : 'actionCopier') | t }}
+            </button>
+            <button type="button" class="nl-biblio__erreur-copier" (click)="contacterSupport()">
+              {{ 'erreurContacterSupport' | t }}
+            </button>
+          </div>
+        }
       </div>
     } @else if (filteredDocuments().length === 0) {
       <nl-empty-state
         [title]="'pwaAucunDocument' | t"
         [subtitle]="'pwaEssayezAutreFiltre' | t"
-        [ctaLabel]="nombreFiltres() > 0 ? ('actionReinitialiser' | t) : undefined"
-        (cta)="reinitialiser()">
+        [ctaLabel]="nombreFiltres() > 0 ? ('biblioRetirerDernierFiltre' | t) : undefined"
+        (cta)="retirerDernierFiltre()">
         <nl-icon icon name="search" [size]="28" />
       </nl-empty-state>
     } @else {
-      <p class="nl-biblio__resultats">
-        {{ 'pwaResultats' | t: { nombre: totalAffiche() } }}
-      </p>
+      <div class="nl-biblio__barre-resultats">
+        <div class="nl-biblio__resultats-groupe">
+          <p class="nl-biblio__resultats">
+            {{ 'pwaResultats' | t: { nombre: totalAffiche() } }}
+          </p>
+          <button
+            type="button"
+            class="nl-biblio__actualiser nl-cible-fine"
+            [attr.aria-label]="'actionActualiser' | t"
+            (click)="actualiserCatalogue()"
+          >
+            <nl-icon name="refresh" [size]="15" />
+          </button>
+        </div>
+        <div class="nl-biblio__tris" role="group" [attr.aria-label]="'biblioTrierPar' | t">
+          @for (t of trisDisponibles(); track t.value) {
+            <button
+              type="button"
+              class="nl-biblio__tri-btn nl-cible-fine"
+              [class.nl-biblio__tri-btn--actif]="selectedTri() === t.value"
+              (click)="selectTri(t.value)"
+            >
+              {{ t.label }}
+            </button>
+          }
+        </div>
+      </div>
 
       <div class="nl-biblio__liste">
         @for (doc of visibleDocuments(); track doc.id; let i = $index) {
@@ -125,7 +221,7 @@
             [title]="doc.titre"
             [subject]="doc.matiere"
             [auteur]="doc.enseignant"
-                [annee]="doc.anneeAcademique"
+            [annee]="doc.anneeAcademique"
             [typeLabel]="(doc.type | typeDoc).label"
             [typeIcon]="(doc.type | typeDoc).icone"
             [typeColor]="(doc.type | typeDoc).couleur"

@@ -8,7 +8,7 @@ import { EmptyState } from '../../../shared/ui/empty-state/empty-state';
 import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { DocumentsRepository } from '../../../core/bibliotheque';
 import { ContexteService } from '../../../core/contexte';
-import { DocumentModel, DocumentType } from '../../../core/bibliotheque';
+import { DocumentModel, DocumentType, ressourceVersDocumentModel, ValeurFacette } from '../../../core/bibliotheque';
 import { AppRoutes } from '../../../core/router';
 
 /** La teinte des dossiers : suit le thème, comme le reste de l'interface. */
@@ -115,6 +115,17 @@ export class Catalogue implements OnInit {
       this.error.set(null);
     }
     try {
+      if (typeof (this.docsRepo as { catalogue?: unknown }).catalogue === 'function') {
+        try {
+          const rep = await this.docsRepo.catalogue({ limit: 50 });
+          const items = rep.ressources.map(ressourceVersDocumentModel);
+          this.documents.set(items);
+          this.groupMatieres(items, rep.facettes.matiere);
+          return;
+        } catch {
+          // Repli sur `getDocuments`
+        }
+      }
       const page = await this.docsRepo.getDocuments({}, undefined, 50);
       this.documents.set([...page.items]);
       this.groupMatieres([...page.items]);
@@ -126,7 +137,7 @@ export class Catalogue implements OnInit {
     }
   }
 
-  private groupMatieres(docs: DocumentModel[]): void {
+  private groupMatieres(docs: DocumentModel[], facettesMatieres?: readonly ValeurFacette[]): void {
     const contexteMatieres = this.contexte.matieres();
     const parId = new Map<string, { id: string; nom: string; couleur: string; count: number; troncCommun: boolean }>();
 
@@ -136,13 +147,25 @@ export class Catalogue implements OnInit {
       }
     }
 
-    for (const d of docs) {
-      if (!d.matiereId) continue;
-      if (parId.has(d.matiereId)) {
-        const existing = parId.get(d.matiereId)!;
-        existing.count++;
-      } else {
-        parId.set(d.matiereId, { id: d.matiereId, nom: d.matiere, couleur: '', count: 1, troncCommun: false });
+    if (facettesMatieres && facettesMatieres.length > 0) {
+      for (const f of facettesMatieres) {
+        if (typeof f.valeur !== 'string' || !f.valeur) continue;
+        if (parId.has(f.valeur)) {
+          const existing = parId.get(f.valeur)!;
+          existing.count = f.n;
+        } else {
+          parId.set(f.valeur, { id: f.valeur, nom: f.label, couleur: '', count: f.n, troncCommun: false });
+        }
+      }
+    } else {
+      for (const d of docs) {
+        if (!d.matiereId) continue;
+        if (parId.has(d.matiereId)) {
+          const existing = parId.get(d.matiereId)!;
+          existing.count++;
+        } else {
+          parId.set(d.matiereId, { id: d.matiereId, nom: d.matiere, couleur: '', count: 1, troncCommun: false });
+        }
       }
     }
 

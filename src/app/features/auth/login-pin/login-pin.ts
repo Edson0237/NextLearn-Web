@@ -1,11 +1,13 @@
 import { ResultatPin } from '../../../shared/ui/resultat-pin/resultat-pin';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { TraductionPipe } from '../../../core/i18n';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TraductionPipe, TraductionService } from '../../../core/i18n';
 import { Router } from '@angular/router';
-import { AuthService, GoogleIdentite } from '../../../core/auth';
+import { AuthService, GoogleIdentite, GithubIdentite } from '../../../core/auth';
+import { SessionExpiredService } from '../../../core/network';
 import { MentionsLegales } from '../../../shared/ui/consentements/mentions-legales';
 import { SecureStorageService } from '../../../core/storage';
 import { GoogleBouton } from '../../../shared/ui/google-bouton/google-bouton';
+import { GithubBouton } from '../../../shared/ui/github-bouton/github-bouton';
 import { PinInput } from '../../../shared/ui/pin-input/pin-input';
 import { Identite } from '../../../shared/ui/identite/identite';
 import { LangueSwitcher } from '../../../shared/ui/langue-switcher/langue-switcher';
@@ -26,7 +28,7 @@ import { initiales } from '../../../core/models';
 @Component({
   selector: 'app-login-pin',
   standalone: true,
-  imports: [TraductionPipe, PinInput, Identite, ResultatPin, GoogleBouton, MentionsLegales, LangueSwitcher],
+  imports: [TraductionPipe, PinInput, Identite, ResultatPin, GoogleBouton, GithubBouton, MentionsLegales, LangueSwitcher],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login-pin.html',
   styleUrl: './login-pin.scss',
@@ -35,12 +37,20 @@ export class LoginPin {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   protected readonly google = inject(GoogleIdentite);
+  protected readonly github = inject(GithubIdentite);
   private readonly storage = inject(SecureStorageService);
+  private readonly sessionExpired = inject(SessionExpiredService);
+  private readonly traductions = inject(TraductionService);
 
   private readonly utilisateurCache = this.storage.getUser();
 
   protected readonly email = signal(this.utilisateurCache?.email ?? '');
   protected readonly pin = signal('');
+  /** Motif précis de fin de session (Chantier P2) : affiché une seule fois, puis effacé. */
+  protected readonly motifFinSession = signal<string | null>(this.sessionExpired.consommerMotif());
+
+  /** Divulgation progressive : champs e-mail masqués tant que l'utilisateur n'a pas tapé « Se connecter avec un email ». */
+  protected readonly showEmailField = signal(false);
 
   /**
    * Où en est la connexion : l'adresse d'abord, puis - si le compte a un PIN
@@ -49,6 +59,23 @@ export class LoginPin {
    */
   protected readonly etape = signal<'email' | 'pin'>('email');
   protected readonly erreur = signal<string | undefined>(undefined);
+
+  constructor() {
+    // Appel direct sur la page concernée pour précharger Google et GitHub
+    // dès l'entrée sur l'écran, avant même le rendu complet des enfants.
+    void this.google.preparer();
+    void this.github.preparer();
+  }
+
+  protected deplierEmail(): void {
+    this.erreur.set(undefined);
+    this.showEmailField.set(true);
+  }
+
+  protected replierEmail(): void {
+    this.erreur.set(undefined);
+    this.showEmailField.set(false);
+  }
 
 
   /** Ce que la saisie du PIN a donné, montré plein écran avant de poursuivre. */
@@ -85,10 +112,13 @@ export class LoginPin {
     return (this.auth.state().user ?? this.utilisateurAffiche())?.avatarUrl;
   }
 
-  protected get accroche(): string {
+  protected readonly accroche = computed(() => {
+    this.traductions.langue();
     const u = this.auth.state().user ?? this.utilisateurAffiche();
-    return u ? `Bonjour, ${u.prenom} !` : 'Bienvenue';
-  }
+    return u
+      ? this.traductions.t('authBonjourPrenom', { prenom: u.prenom }, `Bonjour, ${u.prenom} !`)
+      : this.traductions.t('authBienvenue', undefined, 'Bienvenue');
+  });
 
   private utilisateurAffiche() {
     const cache = this.utilisateurCache;

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { tr } from '../../../core/i18n';
-import { TraductionPipe } from '../../../core/i18n';
+import { tr, TraductionPipe, TraductionService } from '../../../core/i18n';
 import { Location } from '@angular/common';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
@@ -8,11 +7,28 @@ import { PageBar } from '../../../shared/ui/page-bar/page-bar';
 import { ToastService } from '../../../shared/ui/toast/toast';
 import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { SessionAppareil, SessionRepository } from '../../../core/profil';
+import { AuthService } from '../../../core/auth';
 import { Failure } from '../../../core/models';
 
+const PAYS_CONNUS_FR: Readonly<Record<string, string>> = {
+  CM: 'Cameroun',
+  FR: 'France',
+  BE: 'Belgique',
+  CA: 'Canada',
+  CH: 'Suisse',
+  CI: "Côte d'Ivoire",
+  SN: 'Sénégal',
+  GA: 'Gabon',
+  CG: 'Congo',
+  CD: 'RD Congo',
+  TD: 'Tchad',
+  US: 'États-Unis',
+  GB: 'Royaume-Uni',
+  DE: 'Allemagne',
+};
+
 /**
- * Sessions / appareils connectés - traduction de `SessionsPage`
- * (`lib/domains/profil/presentation/pages/sessions/sessions_page.dart`).
+ * Sessions / appareils connectés - Chantiers P1 & P3.
  */
 @Component({
   selector: 'app-sessions',
@@ -25,8 +41,10 @@ import { Failure } from '../../../core/models';
 export class Sessions implements OnInit {
   private readonly location = inject(Location);
   private readonly repo = inject(SessionRepository);
+  private readonly auth = inject(AuthService);
   private readonly toast = inject(ToastService);
   private readonly actions = inject(FeuilleActionService);
+  private readonly traductions = inject(TraductionService);
 
   protected readonly sessions = signal<SessionAppareil[]>([]);
   protected readonly chargement = signal(false);
@@ -77,19 +95,77 @@ export class Sessions implements OnInit {
     if (!confirme) return;
     try {
       const ferme = await this.repo.revoquerLesAutres();
-      this.toast.succes(ferme > 0 ? `${ferme} session(s) fermée(s).` : 'Aucune autre session active.');
+      this.toast.succes(ferme > 0 ? `${ferme} appareil(s) déconnecté(s).` : 'Aucun autre appareil actif.');
       await this.charger();
     } catch (e) {
       this.toast.erreur(e instanceof Failure ? e.message : 'Action impossible.');
     }
   }
 
+  protected async deconnecterPartout(): Promise<void> {
+    const confirme = await this.actions.confirmer({
+      title: tr('sessionsDeconnecterPartoutTitre', 'Se déconnecter partout ?'),
+      description: tr(
+        'sessionsDeconnecterPartoutDescription',
+        'Toutes tes sessions actives, y compris cet appareil, seront fermées immédiatement.',
+      ),
+      confirmLabel: tr('profilDeconnecter', 'Déconnecter'),
+      destructive: true,
+    });
+    if (!confirme) return;
+    await this.auth.logout(true);
+  }
+
   protected iconePour(session: SessionAppareil): IconName {
+    switch (session.type) {
+      case 'mobile':
+      case 'tablette':
+        return 'mobile';
+      case 'ordinateur':
+        return 'language';
+      case 'inconnu':
+        return 'devices_other';
+    }
     const app = session.appareil.toLowerCase();
-    if (app.includes('iphone') || app.includes('ios')) return 'mobile';
-    if (app.includes('android') || app.includes('mobile')) return 'mobile';
-    if (app.includes('web') || app.includes('chrome') || app.includes('safari') || app.includes('firefox')) return 'language';
+    if (app.includes('iphone') || app.includes('ios') || app.includes('android') || app.includes('mobile')) {
+      return 'mobile';
+    }
+    if (app.includes('web') || app.includes('chrome') || app.includes('safari') || app.includes('firefox') || app.includes('windows') || app.includes('mac') || app.includes('linux')) {
+      return 'language';
+    }
     return 'devices_other';
+  }
+
+  /** Nom lisible du pays depuis son code ISO (ex. CM -> Cameroun). */
+  protected nomPays(code?: string): string {
+    if (!code) return '';
+    const upper = code.trim().toUpperCase();
+    if (!upper) return '';
+    try {
+      const lang = this.traductions.langue() || 'fr';
+      if (typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function') {
+        const dn = new Intl.DisplayNames([lang], { type: 'region' });
+        const nom = dn.of(upper);
+        if (nom) return nom;
+      }
+    } catch {
+      // Repli sur la table locale ou le code brut
+    }
+    return PAYS_CONNUS_FR[upper] ?? upper;
+  }
+
+  /** « active à l'instant », « active il y a 5 min », « active il y a 2 h »… */
+  protected formatActiviteRelative(date?: Date): string {
+    if (!date) return '';
+    const diffMs = Math.max(0, Date.now() - date.getTime());
+    const minutes = Math.floor(diffMs / 60_000);
+    if (minutes < 1) return 'active à l’instant';
+    if (minutes < 60) return `active il y a ${minutes} min`;
+    const heures = Math.floor(minutes / 60);
+    if (heures < 24) return `active il y a ${heures} h`;
+    const jours = Math.floor(heures / 24);
+    if (jours < 30) return `active il y a ${jours} j`;
+    return `active le ${this.formatDate(date)}`;
   }
 
   protected formatDate(date?: Date): string {
