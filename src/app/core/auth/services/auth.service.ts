@@ -9,7 +9,7 @@ import { VerificationRepository } from '../../verification/repositories/verifica
 import { VerificationStatut, determinerDestinationVerification, estApprouve } from '../../models/verification.model';
 import { AuthState, ETAT_INITIAL, PendingJustificatif, ResultatConnexion } from '../models/auth.model';
 import { VerrouillageApp } from '../../preferences/services/verrouillage-app';
-import { Cycle, niveauCourt, NiveauEtude, NiveauxDuCycle, UserModel } from '../../models/user.model';
+import { Cycle, cycleVersApi, niveauCourt, NiveauEtude, NiveauxDuCycle, UserModel } from '../../models/user.model';
 import { ProfilGoogle, ReponseGoogle, ProfilGithub, ReponseGithub } from '../repositories/auth-repository';
 import { ParcoursOtp } from '../../models/parcours-otp.model';
 import { StatutDemandeOtp } from '../../models/demande-otp.model';
@@ -22,6 +22,7 @@ import { HistoriqueRecherches } from '../../recherche/services/historique-recher
 import { StockageHorsLigne } from '../../bibliotheque/services/stockage-hors-ligne';
 import { ClasseBibliothequeService } from '../../bibliotheque/services/classe-bibliotheque.service';
 import { ContexteService } from '../../contexte/services/contexte.service';
+import { ReferencesRepository, estBrancheTroncCommun, type FiliereOption } from '../../references';
 
 /** Délai minimum pour que l'animation du splash ait le temps de se jouer. */
 const SPLASH_MIN_MS = 1500;
@@ -646,17 +647,60 @@ export class AuthService {
     return this.profilRepo.niveauxDuCycle();
   }
 
-  /** Change le niveau et met le profil local à jour (§3.9 & §6.10). */
-  async changerNiveau(code: string): Promise<string | null> {
+  /**
+   * Filières proposées pour un niveau donné du parcours courant (ex. ISI, SRT, GC
+   * lorsque l'étudiant en Tronc commun consulte le Niveau 3).
+   */
+  async filieresPourNiveau(niveauCode: string): Promise<readonly FiliereOption[]> {
+    const u = this._state().user;
+    if (!u) return [];
+
+    const cibleNiv = niveauCode.trim().toUpperCase();
+    const cycleApi = u.cycle ? cycleVersApi(u.cycle) : 'INGENIEUR';
+    const sansTc = (liste: readonly FiliereOption[]) =>
+      liste.filter((f) => !estBrancheTroncCommun(f.nom));
+
+    try {
+      const refs = this.injector.get(ReferencesRepository, null);
+      if (!refs) return [];
+      const univs = await refs.getUniversites();
+      const norm = (s: string) => s.trim().toLowerCase();
+      const univ =
+        univs.find((x) => norm(x.nom) === norm(u.universite)) ??
+        univs.find((x) => norm(x.nom).includes(norm(u.universite)) || norm(u.universite).includes(norm(x.nom)));
+      if (!univ) return [];
+
+      const cycles = await refs.getCycles(univ.id);
+      const cyc = cycles.find((c) => c.value.toUpperCase() === cycleApi);
+      if (cyc?.id) {
+        const niveaux = await refs.getNiveaux({ cycleId: cyc.id });
+        const niv = niveaux.find((n) => n.value.toUpperCase() === cibleNiv);
+        if (niv?.id) {
+          return sansTc(await refs.getFilieres({ levelId: niv.id }));
+        }
+      }
+      return sansTc(await refs.getFilieres({ universiteId: univ.id, cycle: cycleApi }));
+    } catch {
+      return [];
+    }
+  }
+
+  /** Change le niveau (et optionnellement la filière, pour TC -> N3) et met le profil local à jour (§3.9 & §6.10). */
+  async changerNiveau(code: string, filiere?: string): Promise<string | null> {
     this.patch({ isLoading: true, error: undefined });
     const precedent = this._state().user;
     try {
-      const recu = await this.profilRepo.changerNiveau(code);
+      const recu = filiere
+        ? await this.profilRepo.changerNiveau(code, filiere)
+        : await this.profilRepo.changerNiveau(code);
       // Préserve établissement, cycle, filière et préférence linguistique (§3.9 & §6.10)
       const utilisateur: UserModel = {
         ...recu,
         universite: recu.universite || precedent?.universite || '',
         filiere: recu.filiere || precedent?.filiere || '',
+        filiereOrigine:
+          recu.filiereOrigine ??
+          (recu.filiere === precedent?.filiere || !recu.filiere ? precedent?.filiereOrigine : undefined),
         cycle: recu.cycle ?? precedent?.cycle,
         sectionPreference: recu.sectionPreference ?? precedent?.sectionPreference,
       };

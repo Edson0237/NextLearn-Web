@@ -125,6 +125,8 @@ export interface UserModel {
   readonly prenom: string;
   readonly universite: string;
   readonly filiere: string;
+  /** Filière d'origine (ex. Tronc commun) lorsque l'utilisateur consulte une spécialité de N3+. */
+  readonly filiereOrigine?: string;
   readonly niveau: NiveauEtude;
   /** Désambiguïse le niveau à l'affichage. */
   readonly cycle?: Cycle;
@@ -156,6 +158,7 @@ export function utilisateurDepuisApi(json: Record<string, unknown>): UserModel {
     prenom: texte(json['prenom']),
     universite: texte(json['universite']),
     filiere: texte(json['filiere']),
+    filiereOrigine: json['filiereOrigine'] == null ? undefined : String(json['filiereOrigine']),
     niveau: niveauDepuisTexte(texte(json['niveau'], 'N1')),
     cycle: cycleDepuisApi(json['cycle'] == null ? undefined : String(json['cycle'])),
     langue: langueDepuisTexte(json['langue'] == null ? undefined : String(json['langue'])),
@@ -175,7 +178,9 @@ export function utilisateurDepuisCache(json: Record<string, unknown>): UserModel
 export function utilisateurVersCache(u: UserModel): Record<string, unknown> {
   return {
     id: u.id, email: u.email, nom: u.nom, prenom: u.prenom,
-    universite: u.universite, filiere: u.filiere, niveau: u.niveau,
+    universite: u.universite, filiere: u.filiere,
+    ...(u.filiereOrigine ? { filiereOrigine: u.filiereOrigine } : {}),
+    niveau: u.niveau,
     cycle: u.cycle ? cycleVersApi(u.cycle) : undefined,
     langue: u.langue, sectionPreference: u.sectionPreference ?? null, avatarUrl: u.avatarUrl, verificationStatus: u.verificationStatus,
     hasPin: u.hasPin,

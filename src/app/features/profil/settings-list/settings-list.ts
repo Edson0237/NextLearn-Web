@@ -17,10 +17,10 @@ import {
   StockageHorsLigne,
 } from '../../../core/bibliotheque';
 import { PreferenceLangue, TraductionService, tr } from '../../../core/i18n';
-import { traduireOptionReference } from '../../../core/references';
+import { executerChangementNiveau } from '../services/changement-niveau';
 import { PreferenceNotifications } from '../../../core/notifications';
 import { ToastService } from '../../../shared/ui/toast/toast';
-import { FeuilleActionService, ActionOption } from '../../../shared/ui/bottom-sheet/feuille-action';
+import { FeuilleActionService } from '../../../shared/ui/bottom-sheet/feuille-action';
 import { FeuilleSelectionService, ChoixSelection } from '../../../shared/ui/bottom-sheet/feuille-selection';
 import { IconName } from '../../../shared/ui/icon/icon-paths';
 import { Icon } from '../../../shared/ui/icon/icon';
@@ -412,47 +412,13 @@ export class SettingsList implements OnInit {
   }
 
   protected async ouvrirChoixNiveau(): Promise<void> {
-    const u = this.user();
-    if (!u) return;
-    try {
-      const res = await this.auth.niveauxDuCycle();
-      const codesSecours: Record<string, string[]> = {
-        prepa: ['N1', 'N2'],
-        licence: ['N1', 'N2', 'N3'],
-        licencePro: ['N1', 'N2', 'N3'],
-        ingenieur: ['N3', 'N4', 'N5'],
-        master: ['N4', 'N5'],
-      };
-      const codes = (u.cycle && codesSecours[u.cycle]) ?? ['N1', 'N2', 'N3', 'N4', 'N5'];
-      const niveaux = res.niveaux.length > 0
-        ? res.niveaux.map((n) => ({ code: n.code, label: traduireOptionReference(n.code, n.label) }))
-        : codes.map((code) => ({ code, label: this.libelleNiveau(code, u.cycle) }));
-
-      const suffixeActuel = this.traductions.langue() === 'en' ? ' (Current)' : ' (Actuel)';
-      const options: ActionOption<string>[] = niveaux.map((n) => ({
-        value: n.code,
-        label: n.label + (n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? suffixeActuel : ''),
-        icon: n.code.toUpperCase() === (u.niveau ?? '').toUpperCase() ? 'check' : 'school',
-      }));
-
-      const choix = await this.actions.choisir<string>({
-        title: tr('pwaChangerNiveau', 'Changer de niveau'),
-        options,
-      });
-
-      if (!choix || choix.toUpperCase() === (u.niveau ?? '').toUpperCase()) return;
-
-      const err = await this.auth.changerNiveau(choix);
-      if (err) {
-        this.toast.erreur(err);
-      } else {
-        const nomNiveau = niveaux.find((n) => n.code.toUpperCase() === choix.toUpperCase())?.label ?? choix;
-        this.toast.succes(tr('niveauMisAJour', `Niveau mis à jour : ${nomNiveau}. Les cours sont adaptés.`, { niveau: nomNiveau }));
-        this.fraicheur.tick();
-      }
-    } catch (e: any) {
-      this.toast.erreur(e?.message || 'Impossible de changer le niveau.');
-    }
+    await executerChangementNiveau({
+      auth: this.auth,
+      actions: this.actions,
+      toast: this.toast,
+      fraicheur: this.fraicheur,
+      traductions: this.traductions,
+    });
   }
 
   private libelleSection(pref?: SectionPreference | null): string {

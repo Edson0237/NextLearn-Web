@@ -17,6 +17,10 @@ const CYCLES_EN: Readonly<Record<string, string>> = {
 };
 
 const FILIERES_EN: Readonly<Record<string, string>> = {
+  'Cycle Ingénieur - Tronc commun':
+    'Engineering Cycle - Common Core',
+  'Cycle Ingénieur - Tronc commun (TC)':
+    'Engineering Cycle - Common Core (TC)',
   'Cycle Ingénieur - Systèmes, Réseaux & Télécoms (SRT)':
     'Engineering Cycle - Systems, Networks & Telecoms (SRT)',
   'Cycle Ingénieur - Ingénierie des Systèmes d’Information (ISI)':
@@ -117,7 +121,22 @@ export function traduireFiliere(nom: string): string {
     .replace(/Ingénierie des Systèmes d['’]Information/gi, 'Information Systems Engineering')
     .replace(/Systèmes, Réseaux & Télécoms/gi, 'Systems, Networks & Telecoms')
     .replace(/\bGénie Civil\b/gi, 'Civil Engineering')
+    .replace(/\bTronc commun\b/gi, 'Common Core')
     .replace(/\bGestion\b/gi, 'Management');
+}
+
+/** Indique si une filière (ou code) désigne le Tronc commun du Cycle Ingénieur. */
+export function estBrancheTroncCommun(filiere?: string | null): boolean {
+  if (!filiere) return false;
+  return /tronc\s*commun|\(TC\)|common\s*core/i.test(filiere);
+}
+
+/** Indique si une filière désigne Génie Civil (Cycle Ingénieur, hors Prépa IGC). */
+export function estBrancheGenieCivil(filiere?: string | null, cycle?: string | null): boolean {
+  if (!filiere) return false;
+  if (cycle && cycle !== 'ingenieur' && cycle.toUpperCase() !== 'INGENIEUR') return false;
+  if (/\(IGC\)/i.test(filiere)) return false;
+  return /\(GC\)|g[ée]nie\s+civil/i.test(filiere);
 }
 
 export function traduireOptionReference(value: string, label: string): string {

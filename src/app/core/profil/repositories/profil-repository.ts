@@ -96,6 +96,7 @@ export class ProfilRepository {
       ...recu,
       universite: recu.universite || actuel.universite,
       filiere: recu.filiere || actuel.filiere,
+      filiereOrigine: recu.filiereOrigine ?? (recu.filiere === actuel.filiere ? actuel.filiereOrigine : undefined),
       cycle: recu.cycle ?? actuel.cycle,
       sectionPreference: recu.sectionPreference ?? actuel.sectionPreference,
       hasPin: recu.hasPin ?? actuel.hasPin,
@@ -132,9 +133,10 @@ export class ProfilRepository {
     }
   }
 
-  async changerNiveau(code: string): Promise<UserModel> {
+  async changerNiveau(code: string, filiere?: string): Promise<UserModel> {
     try {
-      const reponse = await firstValueFrom(this.http.put('/api/profile', { niveau: code }));
+      const corps = filiere ? { niveau: code, filiere } : { niveau: code };
+      const reponse = await firstValueFrom(this.http.put('/api/profile', corps));
       const utilisateur = this.fusionnerAvecUtilisateurLocal(
         utilisateurDepuisApi(donneesUtilisateur(reponse)),
       );

@@ -10,6 +10,7 @@ import { VerrouillageApp } from '../../preferences/services/verrouillage-app';
 import { VerificationService } from '../../verification/services/verification.service';
 import { VerificationRepository } from '../../verification/repositories/verification-repository';
 import { ProfilRepository } from '../../profil/repositories/profil-repository';
+import { ReferencesRepository } from '../../references/repositories/references-repository';
 import { ClasseBibliothequeService } from '../../bibliotheque/services/classe-bibliotheque.service';
 import { ContexteService } from '../../contexte/services/contexte.service';
 import { NotificationsEtat } from '../../notifications/services/notifications-etat';
@@ -284,6 +285,16 @@ describe('QA AuthService — Parcours complets, verrou PIN & cold-boot hors lign
 
     expect((await service.niveauxDuCycle()).niveaux).toHaveLength(1);
     expect(await service.changerNiveau('N4')).toBeNull();
+    profilRepoMock.changerNiveau.mockResolvedValueOnce({
+      ...userSample,
+      filiere: 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)',
+      filiereOrigine: 'Cycle Ingénieur — Tronc commun',
+      niveau: NiveauEtude.n3,
+    });
+    expect(await service.changerNiveau('N3', 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)')).toBeNull();
+    expect(profilRepoMock.changerNiveau).toHaveBeenCalledWith('N3', 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)');
+    expect(service.state().user?.filiereOrigine).toBe('Cycle Ingénieur — Tronc commun');
+
     profilRepoMock.changerNiveau.mockRejectedValueOnce(new Failure('Err niveau'));
     expect(await service.changerNiveau('N5')).toBe('Err niveau');
 
@@ -300,5 +311,65 @@ describe('QA AuthService — Parcours complets, verrou PIN & cold-boot hors lign
     service.clearError();
     await service.forgetDevice();
     expect(service.state().user).toBeUndefined();
+    expect(await service.filieresPourNiveau('N3')).toEqual([]);
+  });
+
+  it('filieresPourNiveau() résout universités -> cycles -> niveaux -> filières (avec fallback et gestion d’erreur)', async () => {
+    vi.useFakeTimers();
+    const { service } = setup({
+      hasSession: true,
+      repo: {
+        getCurrentUser: vi.fn().mockReturnValue({
+          ...userSample,
+          universite: 'Saint Jean Ingénieur (SJI)',
+          cycle: Cycle.ingenieur,
+          filiere: 'Cycle Ingénieur — Tronc commun',
+          niveau: NiveauEtude.n1,
+        }),
+      },
+    });
+    await vi.advanceTimersByTimeAsync(1600);
+
+    const refs = TestBed.inject(ReferencesRepository);
+    const getUnivSpy = vi.spyOn(refs, 'getUniversites').mockResolvedValue([
+      { id: 'u-sji', nom: 'Saint Jean Ingénieur (SJI)', type: 'ECOLE', ville: 'Yaoundé' } as any,
+    ]);
+    const getCyclesSpy = vi.spyOn(refs, 'getCycles').mockResolvedValue([
+      { id: 'c-ing', value: 'INGENIEUR', label: 'Cycle Ingénieur' } as any,
+    ]);
+    const getNiveauxSpy = vi.spyOn(refs, 'getNiveaux').mockResolvedValue([
+      { id: 'niv-3', value: 'N3', label: 'Niveau 3', ordre: 3 } as any,
+    ]);
+    const getFilieresSpy = vi.spyOn(refs, 'getFilieres').mockResolvedValue([
+      { id: 'f-tc', nom: 'Cycle Ingénieur — Tronc commun', code: 'TC', niveaux: ['N3'] } as any,
+      { id: 'f-isi', nom: 'Cycle Ingénieur — Systèmes d’Information (ISI)', code: 'ISI', niveaux: ['N3'] } as any,
+      { id: 'f-srt', nom: 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)', code: 'SRT', niveaux: ['N3'] } as any,
+      { id: 'f-gc', nom: 'Cycle Ingénieur — Génie Civil (GC)', code: 'GC', niveaux: ['N3'] } as any,
+    ]);
+
+    const resCascade = await service.filieresPourNiveau('n3');
+    expect(getUnivSpy).toHaveBeenCalledTimes(1);
+    expect(getCyclesSpy).toHaveBeenCalledWith('u-sji');
+    expect(getNiveauxSpy).toHaveBeenCalledWith({ cycleId: 'c-ing' });
+    expect(getFilieresSpy).toHaveBeenCalledWith({ levelId: 'niv-3' });
+    expect(resCascade.map((f) => f.id)).toEqual(['f-isi', 'f-srt', 'f-gc']);
+
+    // Fallback quand le niveau demandé n'est pas retourné par getNiveaux
+    getNiveauxSpy.mockResolvedValueOnce([]);
+    getFilieresSpy.mockResolvedValueOnce([
+      { id: 'f-tc', nom: 'Cycle Ingénieur — Tronc commun', code: 'TC', niveaux: ['N1'] } as any,
+      { id: 'f-isi', nom: 'Cycle Ingénieur — ISI', code: 'ISI', niveaux: ['N3'] } as any,
+    ]);
+    const resFallback = await service.filieresPourNiveau('N4');
+    expect(getFilieresSpy).toHaveBeenLastCalledWith({ universiteId: 'u-sji', cycle: 'INGENIEUR' });
+    expect(resFallback.map((f) => f.id)).toEqual(['f-isi']);
+
+    // Université introuvable -> []
+    getUnivSpy.mockResolvedValueOnce([{ id: 'u-autre', nom: 'ENSPY', type: 'ECOLE', ville: 'Yaoundé' } as any]);
+    expect(await service.filieresPourNiveau('N3')).toEqual([]);
+
+    // Erreur réseau / référentiel -> []
+    getUnivSpy.mockRejectedValueOnce(new Error('Network down'));
+    expect(await service.filieresPourNiveau('N3')).toEqual([]);
   });
 });

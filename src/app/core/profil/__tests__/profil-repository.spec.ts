@@ -32,6 +32,42 @@ describe('ProfilRepository', () => {
     http.verify();
   });
 
+  it('envoie { niveau } seul ou { niveau, filiere } sur PUT /api/profile', async () => {
+    const repo = TestBed.inject(ProfilRepository);
+    const http = TestBed.inject(HttpTestingController);
+
+    const p1 = repo.changerNiveau('N2');
+    const r1 = http.expectOne('/api/profile');
+    expect(r1.request.method).toBe('PUT');
+    expect(r1.request.body).toEqual({ niveau: 'N2' });
+    r1.flush({ data: { user: { id: 'u1', email: 'a@sji.cm', nom: 'A', prenom: 'B', universite: 'SJI', filiere: 'Cycle Ingénieur — ISI', niveau: 'N2', langue: 'FR' } } });
+    const u1 = await p1;
+    expect(u1.niveau).toBe('n2');
+
+    const p2 = repo.changerNiveau('N3', 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)');
+    const r2 = http.expectOne('/api/profile');
+    expect(r2.request.body).toEqual({ niveau: 'N3', filiere: 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)' });
+    r2.flush({
+      data: {
+        user: {
+          id: 'u1',
+          email: 'a@sji.cm',
+          nom: 'A',
+          prenom: 'B',
+          universite: 'SJI',
+          filiere: 'Cycle Ingénieur — Systèmes, Réseaux & Télécoms (SRT)',
+          filiereOrigine: 'Cycle Ingénieur — Tronc commun',
+          niveau: 'N3',
+          langue: 'FR',
+        },
+      },
+    });
+    const u2 = await p2;
+    expect(u2.filiereOrigine).toBe('Cycle Ingénieur — Tronc commun');
+    expect(u2.filiere).toContain('SRT');
+    http.verify();
+  });
+
   it('supprime le compte avec le PIN dans le corps', async () => {
     const repo = TestBed.inject(ProfilRepository);
     const http = TestBed.inject(HttpTestingController);
